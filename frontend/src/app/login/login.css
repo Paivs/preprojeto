@@ -1,0 +1,157 @@
+#login {
+  font-family: var(--font-tertiary);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Canvas dos raios */
+
+.raios-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Card sempre acima dos efeitos */
+
+.card-login {
+  position: relative;
+  z-index: 2;
+}
+
+/* Acessibilidade */
+
+@media (prefers-reduced-motion: reduce) {
+  .raios-canvas {
+      display: none;
+  }
+}
+
+
+.card-login {
+  background: var(--dark-bg-card);
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 440px;
+  color: var(--dark-text-primary);
+  padding: 0 35px 40px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+.top-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.top-login img {
+  width: 9vw;
+}
+
+.txt-card-top {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: -1.5rem;
+  line-height: 0.5;
+}
+
+.txt-card-top h3 {
+  font-size: 1.5rem;
+}
+
+.txt-card-top span {
+  font-size: 0.85em;
+  color: var(--dark-text-tertiary);
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 20vw;
+  gap: 5px;
+}
+
+.form-group label {
+  font-size: 0.75rem;
+  color: var(--dark-text-tertiary);
+  margin-top: 1rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper input {
+  width: 100%;
+  background-color: #0b0f19;
+  border: 1px solid #23293e;
+  border-radius: 8px;
+  padding: 12px 14px 12px 42px;
+  color: #ffffff;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-wrapper input::placeholder {
+  color: #475569;
+}
+
+.input-wrapper input:focus {
+  border-color: var(--light-primary);
+}
+
+.input-wrapper i {
+  position: absolute;
+  top: 25%;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  color: #475569;
+}
+
+.esquecer-senha {
+    font-size: .7rem;
+    color: var(--light-primary);
+}
+
+.esquecer-senha:hover {
+    color: var(--light-primary-hover);
+}
+
+.btn-entrar {
+    margin-top: 2rem;
+}
+
+.btn-entrar button {
+    border: none;
+    background: var(--light-primary);
+    padding: 10px;
+    color: var(--dark-text-primary);
+    border-radius: 6px;
+    width: 100%;
+}
+
+.btn-entrar button:hover {
+    background: var(--light-primary-hover);
+}
