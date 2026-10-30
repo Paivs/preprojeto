@@ -1,41 +1,84 @@
 #login {
   font-family: var(--font-tertiary);
   min-height: 100vh;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
   overflow: hidden;
   position: relative;
-  isolation: isolate;
 }
 
-/* Canvas dos raios */
-
-.raios-canvas {
+.particles-canvas {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1;
   pointer-events: none;
 }
 
-/* Card sempre acima dos efeitos */
-
-.card-login {
-  position: relative;
-  z-index: 2;
+.bg-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* Acessibilidade */
+.orb-1 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
+  top: -100px;
+  left: -100px;
+  animation: floatOrb 14s ease-in-out infinite alternate;
+}
 
-@media (prefers-reduced-motion: reduce) {
-  .raios-canvas {
-      display: none;
+.orb-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #a855f7 0%, transparent 70%);
+  bottom: -150px;
+  right: -100px;
+  animation: floatOrb 18s ease-in-out infinite alternate-reverse;
+}
+
+.orb-3 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, #4c1d95 0%, transparent 70%);
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulseCenter 10s ease-in-out infinite alternate;
+}
+
+@keyframes floatOrb {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(80px, 60px) scale(1.1);
+  }
+  100% {
+    transform: translate(-60px, 100px) scale(0.95);
   }
 }
 
+@keyframes pulseCenter {
+  0% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.25);
+    opacity: 0.6;
+  }
+}
 
 .card-login {
   background: var(--dark-bg-card);
@@ -51,6 +94,7 @@
   border-radius: 16px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   position: relative;
+  z-index: 10;
 }
 
 .top-login {
