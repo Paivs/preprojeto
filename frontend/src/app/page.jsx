@@ -68,9 +68,16 @@ export default function App() {
                 <section id="sobre" className="secao-sobre">
                     <div className="container py-5 py-lg-6">
                         <p className="sobretitulo">O que é a Tenken?</p>
-                        <div className="row g-4 align-items-end">
+                        <div className="row g-4 align-items-start">
                             <div className="col-lg-7"><h2>Mais <span className="destaque-vermelho">cuidado</span> com cada <span className="destaque-vermelho">equipamento</span>. Mais <span className="destaque-vermelho">clareza</span> em cada etapa.</h2></div>
-                            <div className="col-lg-5"><p>Tenken organiza o uso, as inspeções e a manutenção de equipamentos em laboratórios educacionais de robótica e automação. Um fluxo digital para apoiar a segurança, a prevenção e o histórico de utilização.</p></div>
+                            <div className="col-lg-5 sobre-detalhe">
+                                <p>Tenken organiza o uso, as inspeções e a manutenção de equipamentos em laboratórios educacionais de robótica e automação. Um fluxo digital para apoiar a segurança, a prevenção e o histórico de utilização.</p>
+                                <p className="frase-tenken">
+                                    <span lang="ja">小さな点検が、大きな安全を守る。</span>
+                                    <span className="frase-tenken__leitura">(Chiisana tenken ga, ookina anzen wo mamoru.)</span>
+                                    <span className="frase-tenken__traducao">→ “Uma pequena inspeção protege uma grande segurança.”</span>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </section>

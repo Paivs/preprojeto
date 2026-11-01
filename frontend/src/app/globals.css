@@ -213,7 +213,29 @@ a {
 }
 
 .secao-sobre {
+  position: relative;
+  overflow: hidden;
   background: var(--onyx);
+}
+
+.secao-sobre::before {
+  content: "点";
+  position: absolute;
+  left: clamp(-40px, -2vw, 0px);
+  bottom: -70px;
+  z-index: 0;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: clamp(11rem, 22vw, 20rem);
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(245, 243, 244, .07);
+  pointer-events: none;
+  user-select: none;
+}
+
+.secao-sobre .container {
+  position: relative;
+  z-index: 1;
 }
 
 .secao-sobre h2,
@@ -227,6 +249,12 @@ a {
   line-height: 1.05;
 }
 
+.secao-sobre h2 {
+  max-width: 640px;
+  font-size: clamp(2.4rem, 5.6vw, 4.4rem);
+  line-height: 1.03;
+}
+
 .destaque-vermelho {
   color: var(--mahogany-red-2);
 }
@@ -236,6 +264,40 @@ a {
   color: var(--silver);
   font-size: 17px;
   line-height: 1.8;
+}
+
+.sobre-detalhe {
+  padding-top: 8px;
+}
+
+.secao-sobre p.frase-tenken {
+  margin-top: 36px;
+  padding-left: 16px;
+  border-left: 2px solid var(--mahogany-red-2);
+  color: var(--white-smoke);
+  font-size: clamp(16px, 1.5vw, 20px);
+  letter-spacing: .04em;
+}
+
+.frase-tenken__leitura,
+.frase-tenken__traducao {
+  display: block;
+  margin-top: 7px;
+  color: var(--silver);
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+.frase-tenken__traducao {
+  color: var(--white-smoke);
+}
+
+@media (min-width: 992px) {
+  .sobre-detalhe {
+    padding-top: 10px;
+    padding-left: 40px;
+    border-left: 1px solid rgba(164, 22, 26, .55);
+  }
 }
 
 .secao-fluxo {
