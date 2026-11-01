@@ -1,62 +1,39 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import "./Header.css";
+import { useEffect, useState } from "react";
+import styles from "./Header.module.css";
 
-const REVEAL_DISTANCE = 140;
+const DISTANCIA_PARA_MOSTRAR = 140;
 
 export default function Header() {
-  const headerRef = useRef(null);
+  const [visivel, setVisivel] = useState(false);
 
   useEffect(() => {
-    let animationFrame = null;
+    function verificarScroll() {
+      setVisivel(window.scrollY > DISTANCIA_PARA_MOSTRAR);
+    }
 
-    const updateReveal = () => {
-      if (animationFrame !== null) {
-        window.cancelAnimationFrame(animationFrame);
-      }
-
-      animationFrame = window.requestAnimationFrame(() => {
-        const header = headerRef.current;
-        if (!header) return;
-
-        const progress = Math.min(Math.max(window.scrollY / REVEAL_DISTANCE, 0), 1);
-        header.style.opacity = String(progress);
-        header.style.transform = `translateY(${(progress - 1) * 100}%)`;
-        header.style.pointerEvents = progress >= 0.98 ? "auto" : "none";
-        header.setAttribute("aria-hidden", progress >= 0.98 ? "false" : "true");
-        header.inert = progress < 0.98;
-      });
-    };
-
-    window.addEventListener("scroll", updateReveal, { passive: true });
-    updateReveal();
-
-    return () => {
-      window.removeEventListener("scroll", updateReveal);
-      if (animationFrame !== null) {
-        window.cancelAnimationFrame(animationFrame);
-      }
-    };
+    verificarScroll();
+    window.addEventListener("scroll", verificarScroll, { passive: true });
+    return () => window.removeEventListener("scroll", verificarScroll);
   }, []);
 
   return (
     <header
-      ref={headerRef}
-      className="cabecalho cabecalho--oculto"
-      aria-hidden="true"
-      inert={true}
+      className={`${styles.header} ${visivel ? styles.visivel : ""}`}
+      aria-hidden={!visivel}
+      inert={!visivel}
     >
-      <div className="cabecalho__conteudo">
-        <a className="cabecalho__logo" href="#inicio" aria-label="Tenken - inicio">
+      <div className={styles.conteudo}>
+        <a className={styles.logo} href="#inicio" aria-label="Tenken - início">
           <img src="/assets/img/logo-site/logo_horizontal.svg" alt="Tenken" />
         </a>
 
-        <nav className="cabecalho__navegacao" aria-label="Navegacao principal">
-          <a className="cabecalho__link" href="#parceiros">Parceiros</a>
-          <a className="cabecalho__link" href="#sobre">Sobre</a>
-          <a className="cabecalho__link" href="#fluxo">Fluxo</a>
-          <a className="cabecalho__link" href="/login/">Acessar</a>
+        <nav className={styles.menu} aria-label="Navegação principal">
+          <a className={styles.link} href="#parceiros">Parceiros</a>
+          <a className={styles.link} href="#sobre">Sobre</a>
+          <a className={styles.link} href="#fluxo">Fluxo</a>
+          <a className={styles.link} href="/login/">Acessar</a>
         </nav>
       </div>
     </header>
