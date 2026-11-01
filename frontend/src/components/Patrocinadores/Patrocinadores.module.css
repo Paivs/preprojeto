@@ -22,6 +22,8 @@
 .faixa {
   width: 100%;
   overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 64px, #000 calc(100% - 64px), transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 64px, #000 calc(100% - 64px), transparent);
 }
 
 .faixa:hover .trilho {
@@ -54,6 +56,12 @@
   max-width: 155px;
   max-height: 62px;
   object-fit: contain;
+  transition: transform 220ms ease, filter 220ms ease;
+}
+
+.marca:hover img {
+  transform: scale(1.08) translateY(-3px);
+  filter: drop-shadow(0 10px 18px rgba(11, 9, 10, .18));
 }
 
 .marca a {
