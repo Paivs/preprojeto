@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Carrossel.module.css";
 
 const slides = [
@@ -28,10 +28,21 @@ export default function Carrossel() {
     const [indice, setIndice] = useState(0);
     const atual = slides[indice];
 
+    useEffect(() => {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const temporizador = window.setTimeout(() => {
+            setIndice((atual) => (atual + 1) % slides.length);
+        }, 3500);
+
+        return () => window.clearTimeout(temporizador);
+    }, [indice]);
+
     return (
         <section className={styles.secao} aria-label="História e propósito da Tenken">
             <div className={styles.visual}>
                 <img
+                    key={`imagem-${indice}`}
                     className={styles.imagem}
                     src={atual.image}
                     alt={atual.alt}

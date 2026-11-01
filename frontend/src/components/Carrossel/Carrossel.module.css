@@ -29,6 +29,7 @@
   object-fit: cover;
   object-position: center 54%;
   filter: saturate(.76);
+  animation: imagem-entrada 650ms ease both;
 }
 
 .placeholder {
@@ -66,7 +67,7 @@
   right: clamp(24px, 9vw, 150px);
   width: min(43%, 560px);
   transform: translateY(-50%);
-  animation: entrada 360ms ease both;
+  animation: entrada 480ms ease both;
 }
 
 .conteudo h2 {
@@ -154,7 +155,7 @@
 @keyframes entrada {
   from {
     opacity: .45;
-    transform: translate(12px, -50%);
+    transform: translate(36px, -50%);
   }
 
   to {
@@ -163,13 +164,27 @@
   }
 }
 
-@keyframes entrada-mobile {
+@keyframes imagem-entrada {
   from {
-    opacity: .45;
+    opacity: .7;
+    transform: translateX(2.5%) scale(1.015);
   }
 
   to {
     opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes entrada-mobile {
+  from {
+    opacity: .45;
+    transform: translateX(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
