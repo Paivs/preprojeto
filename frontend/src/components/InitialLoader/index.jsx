@@ -15,7 +15,10 @@ export default function InitialLoader() {
 
   useEffect(() => {
     setVisivel(true);
-    const tempo = window.setTimeout(() => setVisivel(false), TEMPO_CARREGANDO);
+    const tempo = window.setTimeout(() => {
+      window.dispatchEvent(new Event("tenken:loader-complete"));
+      setVisivel(false);
+    }, TEMPO_CARREGANDO);
     return () => window.clearTimeout(tempo);
   }, []);
 
