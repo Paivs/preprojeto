@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import "./Patrocinadores.css";
+import styles from "./Patrocinadores.module.css";
 
 const marcas = [
   { nome: "ABB", src: "/assets/img/logo-patrocinadores/abb.png", href: "https://www.abb.com/global/en" },
@@ -18,13 +18,13 @@ const marcas = [
   { nome: "Yaskawa", src: "/assets/img/logo-patrocinadores/yaskawa.webp", href: "https://www.yaskawa-global.com/" },
 ];
 
-function GrupoMarcas({ duplicado = false }) {
+function Marcas({ repetida = false }) {
   return (
-    <div className="grupo-marcas" aria-hidden={duplicado ? "true" : undefined}>
+    <div className={styles.grupo} aria-hidden={repetida ? "true" : undefined}>
       {marcas.map(({ nome, src, href }) => (
-        <div className="marca-patrocinadora" key={nome}>
-          <a href={href} target="_blank" rel="noreferrer" aria-label={duplicado ? undefined : `Visitar o site de ${nome}`} tabIndex={duplicado ? -1 : undefined}>
-            <img src={src} alt={duplicado ? "" : nome} />
+        <div className={styles.marca} key={nome}>
+          <a href={href} target="_blank" rel="noreferrer" aria-label={repetida ? undefined : `Visitar o site de ${nome}`} tabIndex={repetida ? -1 : undefined}>
+            <img src={src} alt={repetida ? "" : nome} />
           </a>
         </div>
       ))}
@@ -33,39 +33,38 @@ function GrupoMarcas({ duplicado = false }) {
 }
 
 export default function Patrocinadores() {
-  const [marcaAtual, setMarcaAtual] = useState(0);
-  const navegar = (direcao) => setMarcaAtual((atual) => (atual + direcao + marcas.length) % marcas.length);
+  const [indice, setIndice] = useState(0);
+  const ir = (direcao) => setIndice((atual) => (atual + direcao + marcas.length) % marcas.length);
 
   return (
-    <section id="parceiros" className="secao-patrocinadores" aria-labelledby="titulo-patrocinadores">
+    <section id="parceiros" className={styles.secao} aria-labelledby="titulo-patrocinadores">
       <div className="container py-5 py-lg-6">
         <div className="mb-3">
           <p className="sobretitulo">Quem caminha com a gente</p>
           <h2 id="titulo-patrocinadores">Instituições e tecnologias que inspiram a Tenken</h2>
         </div>
-        <div className="faixa-patrocinadores" aria-label="Instituições e tecnologias que inspiram a Tenken">
-          <div className="trilho-patrocinadores trilho-patrocinadores--desktop">
-            <GrupoMarcas />
-            <GrupoMarcas duplicado />
+        <div className={styles.faixa} aria-label="Instituições e tecnologias que inspiram a Tenken">
+          <div className={`${styles.trilho} ${styles.trilhoDesktop}`}>
+            <Marcas />
+            <Marcas repetida />
           </div>
-          <div className="carrossel-patrocinadores" aria-roledescription="carrossel">
-            <button className="seta-patrocinadores" type="button" onClick={() => navegar(-1)} aria-label="Ver parceiro anterior"><span aria-hidden="true">←</span></button>
-            <div className="janela-patrocinadores" aria-live="polite">
-              <div className="trilho-patrocinadores-mobile" style={{ transform: `translateX(-${marcaAtual * 100}%)` }}>
-                {marcas.map(({ nome, src, href }, indice) => (
-                  <div className="marca-patrocinadora" key={nome} aria-hidden={indice !== marcaAtual}>
-                    <a href={href} target="_blank" rel="noreferrer" aria-label={`Visitar o site de ${nome}`} tabIndex={indice === marcaAtual ? 0 : -1}>
+          <div className={styles.carrossel} aria-roledescription="carrossel">
+            <button className={styles.seta} type="button" onClick={() => ir(-1)} aria-label="Ver parceiro anterior"><span aria-hidden="true">←</span></button>
+            <div className={styles.janela} aria-live="polite">
+              <div className={styles.trilhoMobile} style={{ transform: `translateX(-${indice * 100}%)` }}>
+                {marcas.map(({ nome, src, href }, i) => (
+                  <div className={styles.marca} key={nome} aria-hidden={i !== indice}>
+                    <a href={href} target="_blank" rel="noreferrer" aria-label={`Visitar o site de ${nome}`} tabIndex={i === indice ? 0 : -1}>
                       <img src={src} alt={nome} />
                     </a>
                   </div>
                 ))}
               </div>
             </div>
-            <button className="seta-patrocinadores" type="button" onClick={() => navegar(1)} aria-label="Ver próximo parceiro"><span aria-hidden="true">→</span></button>
+            <button className={styles.seta} type="button" onClick={() => ir(1)} aria-label="Ver próximo parceiro"><span aria-hidden="true">→</span></button>
           </div>
         </div>
       </div>
     </section>
   );
 }
-

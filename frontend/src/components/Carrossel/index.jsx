@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import "./Carrossel.css";
+import styles from "./Carrossel.module.css";
 
 const slides = [
     {
@@ -25,40 +25,40 @@ const slides = [
 ];
 
 export default function Carrossel() {
-    const [contador, setContador] = useState(0);
-    const slide = slides[contador];
+    const [indice, setIndice] = useState(0);
+    const atual = slides[indice];
 
     return (
-        <section className="carrossel" aria-label="História e propósito da Tenken">
-            <div className="carrossel__visual carrossel__visual--foto">
+        <section className={styles.secao} aria-label="História e propósito da Tenken">
+            <div className={styles.visual}>
                 <img
-                    className="carrossel__imagem"
-                    src={slide.image}
-                    alt={slide.alt}
-                    onError={(event) => {
-                        event.currentTarget.style.display = "none";
-                        event.currentTarget.nextElementSibling.style.display = "flex";
+                    className={styles.imagem}
+                    src={atual.image}
+                    alt={atual.alt}
+                    onError={(evento) => {
+                        evento.currentTarget.style.display = "none";
+                        evento.currentTarget.nextElementSibling.style.display = "flex";
                     }}
                 />
-                <div className="carrossel__placeholder" style={{ display: "none" }}>
-                    <span className="placeholder__marca" aria-hidden="true">T</span>
-                    <span className="placeholder__aviso">Imagem indisponível</span>
+                <div className={styles.placeholder} style={{ display: "none" }}>
+                    <span className={styles.marca} aria-hidden="true">T</span>
+                    <span className={styles.aviso}>Imagem indisponível</span>
                 </div>
-                <div className="carrossel__conteudo" key={contador}>
-                    <h2>{slide.title}</h2>
-                    <p className="carrossel__texto">{slide.text}</p>
+                <div className={styles.conteudo} key={indice}>
+                    <h2>{atual.title}</h2>
+                    <p className={styles.texto}>{atual.text}</p>
                 </div>
-                <span className="carrossel__contador" aria-live="polite">
-                    {String(contador + 1).padStart(2, "0")} <span>/</span> {String(slides.length).padStart(2, "0")}
+                <span className={styles.contador} aria-live="polite">
+                    {String(indice + 1).padStart(2, "0")} <span>/</span> {String(slides.length).padStart(2, "0")}
                 </span>
-                <div className="carrossel__controles" aria-label="Controles do carrossel">
-                    <button type="button" onClick={() => setContador((contador - 1 + slides.length) % slides.length)} aria-label="Slide anterior">‹</button>
-                    <div className="carrossel__indicadores" aria-label="Selecionar slide">
-                        {slides.map((item, index) => (
-                            <button key={index} type="button" aria-label={`Ir para slide ${index + 1}`} aria-current={index === contador ? "true" : undefined} onClick={() => setContador(index)} />
+                <div className={styles.controles} aria-label="Controles do carrossel">
+                    <button type="button" onClick={() => setIndice((indice - 1 + slides.length) % slides.length)} aria-label="Slide anterior">‹</button>
+                    <div className={styles.indicadores} aria-label="Selecionar slide">
+                        {slides.map((item, i) => (
+                            <button key={i} type="button" aria-label={`Ir para slide ${i + 1}`} aria-current={i === indice ? "true" : undefined} onClick={() => setIndice(i)} />
                         ))}
                     </div>
-                    <button type="button" onClick={() => setContador((contador + 1) % slides.length)} aria-label="Próximo slide">›</button>
+                    <button type="button" onClick={() => setIndice((indice + 1) % slides.length)} aria-label="Próximo slide">›</button>
                 </div>
             </div>
         </section>
