@@ -270,3 +270,18 @@ CREATE TABLE resultados_testes (
     FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id) ON DELETE CASCADE,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 ) ENGINE=InnoDB;
+
+
+-- TABELA: pre_matriculas_alunos
+-- RF10/regra de matrícula: guarda os dados de quem gerou matrícula antes de criar a conta.
+-- A matrícula só vira usuário quando o aluno define a senha (POST /api/alunos/cadastro).
+CREATE TABLE pre_matriculas_alunos (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    cpf VARCHAR(14) NOT NULL UNIQUE,
+    telefone VARCHAR(20),
+    matricula VARCHAR(50) NOT NULL UNIQUE,
+    utilizada BOOLEAN NOT NULL DEFAULT FALSE,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
