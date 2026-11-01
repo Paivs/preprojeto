@@ -90,9 +90,11 @@ export default function App() {
                 </section>
 
                 <section className="secao-cta">
-                    <div className="container py-5 py-lg-6 d-lg-flex align-items-end justify-content-between gap-4">
-                        <div><p className="sobretitulo">Comece por aqui</p><h2>Seu laboratório, com mais organização.</h2></div>
-                        <a className="botao-principal" href="/login/">Acessar sistema <span aria-hidden="true">↗</span></a>
+                    <div className="container py-5 py-lg-6">
+                        <div className="cta-painel d-lg-flex align-items-end justify-content-between gap-4">
+                            <div><p className="sobretitulo">Comece por aqui</p><h2>Seu laboratório, com mais organização.</h2></div>
+                            <a className="botao-principal" href="/login/">Acessar sistema <span aria-hidden="true">↗</span></a>
+                        </div>
                     </div>
                 </section>
             </main>
