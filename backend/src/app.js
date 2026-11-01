@@ -3,6 +3,7 @@ import express from "express";
 import helmet from "helmet";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
+import alunoRoutes from "./routes/alunoRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
 
 const app = express();
@@ -22,6 +23,7 @@ app.get("/", (request, response) => {
 });
 
 app.use("/api/health", healthRoutes);
+app.use("/api/alunos", alunoRoutes);
 
 app.use(errorHandler);
 
