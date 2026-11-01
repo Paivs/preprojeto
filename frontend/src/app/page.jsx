@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Patrocinadores from "../components/Patrocinadores";
 import Carrossel from "../components/Carrossel";
 import InitialLoader from "../components/InitialLoader";
@@ -11,10 +14,44 @@ const etapas = [
 ];
 
 export default function App() {
+    const [heroReady, setHeroReady] = useState(false);
+
+    useEffect(() => {
+        const enterHero = () => setHeroReady(true);
+        window.addEventListener("tenken:loader-complete", enterHero);
+        if (!document.querySelector(".overlay")) enterHero();
+
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const elements = document.querySelectorAll(
+            ".secao-sobre .sobretitulo, .secao-sobre h2, .secao-sobre p:not(.sobretitulo), .secao-fluxo .sobretitulo, .secao-fluxo h2, .lista-etapas > li, .secao-cta .sobretitulo, .secao-cta h2, .secao-cta .botao-principal"
+        );
+
+        if (reduceMotion || !("IntersectionObserver" in window)) return () => window.removeEventListener("tenken:loader-complete", enterHero);
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target);
+            });
+        }, { threshold: 0.15, rootMargin: "0px 0px -5% 0px" });
+
+        elements.forEach((element, index) => {
+            element.classList.add("scroll-reveal");
+            element.style.setProperty("--reveal-delay", `${(index % 5) * 90}ms`);
+            observer.observe(element);
+        });
+
+        return () => {
+            window.removeEventListener("tenken:loader-complete", enterHero);
+            observer.disconnect();
+        };
+    }, []);
+
     return (
         <>
             <InitialLoader />
-            <section id="inicio" className="secao-destaque" aria-labelledby="titulo-tenken">
+            <section id="inicio" className={`secao-destaque${heroReady ? " hero-ready" : ""}`} aria-labelledby="titulo-tenken">
                 <video autoPlay muted loop playsInline aria-hidden="true" tabIndex={-1}>
                     <source src="/assets/videos/video-home.mp4" type="video/mp4" />
                 </video>
