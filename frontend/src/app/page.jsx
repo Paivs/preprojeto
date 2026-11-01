@@ -19,7 +19,6 @@ export default function App() {
     useEffect(() => {
         const enterHero = () => setHeroReady(true);
         window.addEventListener("tenken:loader-complete", enterHero);
-        if (!document.querySelector(".overlay")) enterHero();
 
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         const elements = document.querySelectorAll(
