@@ -1,4 +1,5 @@
 import { pool } from "../config/database.js";
+import bcrypt from "bcrypt";
 
 const MAX_INSERT_ATTEMPTS = 5;
 
@@ -81,5 +82,96 @@ export async function gerarMatricula(request, response, next) {
 
       return next(error);
     }
+  }
+}
+
+export async function cadastrarAluno(request, response, next) {
+  const { matricula, senha, confirmarSenha } = request.body ?? {};
+  const errors = [];
+
+  if (typeof matricula !== "string" || !matricula.trim()) {
+    errors.push({ field: "matricula", message: "Matrícula é obrigatória" });
+  }
+
+  if (typeof senha !== "string" || senha.length < 8) {
+    errors.push({ field: "senha", message: "A senha deve ter no mínimo 8 caracteres" });
+  }
+
+  if (typeof confirmarSenha !== "string" || confirmarSenha !== senha) {
+    errors.push({ field: "confirmarSenha", message: "A confirmação deve ser igual à senha" });
+  }
+
+  if (errors.length) {
+    return response.status(400).json({ errors });
+  }
+
+  let connection;
+  let transactionStarted = false;
+
+  try {
+    connection = await pool.getConnection();
+    await connection.beginTransaction();
+    transactionStarted = true;
+
+    const [preMatriculas] = await connection.execute(
+      `SELECT id, nome, email, utilizada
+       FROM pre_matriculas_alunos
+       WHERE matricula = ?
+       FOR UPDATE`,
+      [matricula.trim()],
+    );
+
+    const preMatricula = preMatriculas[0];
+
+    if (!preMatricula) {
+      await connection.rollback();
+      transactionStarted = false;
+      return response.status(404).json({ message: "Matrícula não encontrada" });
+    }
+
+    if (preMatricula.utilizada) {
+      await connection.rollback();
+      transactionStarted = false;
+      return response.status(409).json({ message: "Esta matrícula já foi utilizada" });
+    }
+
+    const senhaHash = await bcrypt.hash(senha, 12);
+    const [insertResult] = await connection.execute(
+      `INSERT INTO usuarios (nome, email, senha_hash, perfil, ativo, matricula)
+       VALUES (?, ?, ?, 'ALUNO', TRUE, ?)`,
+      [preMatricula.nome, preMatricula.email, senhaHash, matricula.trim()],
+    );
+
+    await connection.execute(
+      "UPDATE pre_matriculas_alunos SET utilizada = true WHERE id = ?",
+      [preMatricula.id],
+    );
+
+    await connection.commit();
+    transactionStarted = false;
+
+    return response.status(201).json({
+      id: insertResult.insertId,
+      nome: preMatricula.nome,
+      matricula: matricula.trim(),
+    });
+  } catch (error) {
+    if (transactionStarted) {
+      try {
+        await connection.rollback();
+      } catch (rollbackError) {
+        return next(rollbackError);
+      }
+    }
+
+    if (error.code === "ER_DUP_ENTRY") {
+      return response.status(409).json({
+        message: "Não foi possível concluir o cadastro com os dados informados",
+      });
+    }
+
+    return next(error);
+  } finally {
+    connection?.release();
   }
 }
