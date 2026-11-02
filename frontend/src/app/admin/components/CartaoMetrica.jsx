@@ -1,14 +1,37 @@
 import styles from "./CartaoMetrica.module.css";
 
-export default function CartaoMetrica({ icone, rotulo, valor, descricao }) {
+export default function CartaoMetrica({ icone, categoria, titulo, valor, unidade, contexto, badge, critico }) {
   return (
-    <article className={styles.cartao}>
-      <div className={styles.cabecalho}>
-        <span className={styles.icone}>{icone}</span>
-        <span className={styles.rotulo}>{rotulo}</span>
+    <article className={`${styles.cartao} ${critico ? styles.cartaoCritico : ""}`}>
+      <span className={`${styles.barraTopo} ${critico ? styles.barraTopoCritica : ""}`} />
+
+      <div className={styles.topo}>
+        <div className={styles.rotulos}>
+          <span className={styles.categoria}>{categoria}</span>
+          <span className={styles.titulo}>{titulo}</span>
+        </div>
+
+        {badge ? (
+          <span className={`${styles.badge} ${badge.tom === "neutro" ? styles.badgeNeutro : styles.badgeCritico}`}>
+            {badge.texto}
+          </span>
+        ) : (
+          <span className={styles.icone}>{icone}</span>
+        )}
       </div>
-      <strong className={styles.valor}>{valor}</strong>
-      <span className={styles.descricao}>{descricao}</span>
+
+      <div className={styles.valorLinha}>
+        <strong className={`${styles.valor} ${critico ? styles.valorCritico : ""}`}>{valor}</strong>
+        {unidade && <span className={styles.unidade}>{unidade}</span>}
+      </div>
+
+      {contexto && (
+        <div className={styles.contexto}>
+          {contexto.icone && <span className={critico ? styles.contextoIconeCritico : styles.contextoIcone}>{contexto.icone}</span>}
+          {contexto.destaque && <span className={styles.contextoDestaque}>{contexto.destaque}</span>}
+          {contexto.texto && <span className={styles.contextoTexto}>{contexto.texto}</span>}
+        </div>
+      )}
     </article>
   );
 }

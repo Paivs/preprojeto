@@ -1,6 +1,28 @@
-.cartao { display:flex; min-width:0; flex-direction:column; gap:12px; padding:18px; border:1px solid rgba(177,167,166,.14); border-radius:14px; background:var(--carbon-black); }
-.cabecalho { display:flex; align-items:center; gap:10px; }
-.icone { display:grid; place-items:center; width:30px; height:30px; border-radius:8px; background:rgba(164,22,26,.2); color:var(--mahogany-red-2); flex:none; }
-.rotulo { color:var(--silver); font-size:13px; }
-.valor { color:var(--white); font-size:28px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
-.descricao { color:var(--dust-grey); font-size:12px; }
+.cartao { position:relative; display:flex; min-width:0; flex-direction:column; justify-content:space-between; gap:16px; padding:20px; overflow:hidden; border:1px solid rgba(177,167,166,.14); border-radius:4px; background:var(--carbon-black); transition:background .15s; }
+.cartao:hover { background:#1b1f22; }
+.cartaoCritico { border-color:rgba(164,22,26,.35); }
+
+.barraTopo { position:absolute; top:0; left:0; right:0; height:3px; background:rgba(177,167,166,.14); }
+.barraTopoCritica { background:var(--mahogany-red); }
+
+.topo { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.rotulos { display:flex; flex-direction:column; gap:4px; min-width:0; }
+.categoria { color:var(--silver); font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.titulo { color:var(--white-smoke); font-size:14px; font-weight:600; }
+
+.icone { display:grid; place-items:center; width:36px; height:36px; flex:none; border-radius:4px; background:var(--onyx); color:var(--silver); }
+
+.badge { display:flex; align-items:center; gap:4px; flex:none; padding:3px 8px; border-radius:4px; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; }
+.badgeCritico { color:var(--white); background:var(--mahogany-red); }
+.badgeNeutro { color:var(--silver); background:var(--onyx); }
+
+.valorLinha { display:flex; align-items:baseline; gap:8px; }
+.valor { color:var(--white); font-size:40px; font-weight:700; letter-spacing:-.02em; font-variant-numeric:tabular-nums; line-height:1; }
+.valorCritico { color:var(--mahogany-red-2); }
+.unidade { color:var(--silver); font-size:13px; }
+
+.contexto { display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:11.5px; }
+.contextoIcone { display:inline-flex; color:var(--silver); }
+.contextoIconeCritico { display:inline-flex; color:var(--mahogany-red-2); }
+.contextoDestaque { color:var(--white-smoke); font-weight:600; }
+.contextoTexto { color:var(--silver); }
