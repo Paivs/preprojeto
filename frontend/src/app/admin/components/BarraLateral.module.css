@@ -1,133 +1,15 @@
-.barra {
-  position: sticky;
-  top: 0;
-  display: flex;
-  flex: 0 0 252px;
-  height: 100vh;
-  flex-direction: column;
-  gap: 18px;
-  padding: 18px 14px;
-  background: #f5f6f8;
-  border-right: 1px solid #6670851f;
-  font-family: Inter, sans-serif;
-}
-.marca {
-  display: flex;
-  align-items: center;
-  min-height: 38px;
-  padding: 4px 6px;
-  text-decoration: none;
-}
-.marca img {
-  display: block;
-  width: 145px;
-  height: 30px;
-  object-fit: contain;
-  object-position: left center;
-  filter: brightness(0.2);
-}
-.org {
-  padding: 10px;
-  border: 1px solid #6670851f;
-  border-radius: 10px;
-  color: #0b0d12;
-  background: #fff;
-  font-size: 14px;
-  font-weight: 600;
-}
-.navegacao {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 3px;
-}
-.rotulo {
-  padding: 4px 10px 7px;
-  color: #667085;
-  font-size: 11.5px;
-}
-.item {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  min-height: 36px;
-  padding: 0 10px;
-  border-radius: 9px;
-  color: #667085;
-  font-size: 14px;
-  text-decoration: none;
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-.item:hover {
-  background: #6670851f;
-  color: #0b0d12;
-}
-.ativo {
-  color: #0b0d12;
-  background: #3e5bf61a;
-  box-shadow: inset 0 0 0 1px #3e5bf633;
-  font-weight: 600;
-}
-.icone {
-  width: 18px;
-  height: 18px;
-  flex: none;
-  border: 1.5px solid currentColor;
-  border-radius: 5px;
-  opacity: 0.78;
-}
-.ativo .icone {
-  color: #3e5bf6;
-  border-color: #3e5bf6;
-}
-.rodape {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 10px 2px;
-  border-top: 1px solid #6670851f;
-  color: #667085;
-  font-size: 12px;
-}
-.ponto {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #f5a524;
-}
-.online {
-  background: #12b76a;
-}
-@media (max-width: 860px) {
-  .barra {
-    position: static;
-    width: 100%;
-    height: auto;
-    padding: 12px 14px;
-    border-right: 0;
-    border-bottom: 1px solid #6670851f;
-  }
-  .marca {
-    min-height: 28px;
-  }
-  .marca img {
-    height: 26px;
-  }
-  .org,
-  .rotulo,
-  .rodape {
-    display: none;
-  }
-  .navegacao {
-    flex-direction: row;
-    overflow-x: auto;
-  }
-  .item {
-    min-width: max-content;
-  }
-  .icone {
-    display: none;
-  }
-}
+.barra { position: sticky; top: 0; display: flex; flex: 0 0 252px; height: 100vh; flex-direction: column; gap: 18px; padding: 18px 14px; background: var(--carbon-black); border-right: 1px solid rgba(177,167,166,.14); font-family: Inter, sans-serif; }
+.marca { display: flex; align-items: center; min-height: 38px; padding: 4px 6px; text-decoration: none; }
+.marca img { display: block; width: 145px; height: 30px; object-fit: contain; object-position: left center; filter: invert(1); }
+.org { padding: 10px; border: 1px solid rgba(177,167,166,.14); border-radius: 10px; color: var(--white-smoke); background: var(--onyx); font-size: 14px; font-weight: 600; }
+.navegacao { display: flex; flex: 1; flex-direction: column; gap: 3px; }
+.rotulo { padding: 4px 10px 7px; color: var(--silver); font-size: 11.5px; }
+.item { display: flex; align-items: center; gap: 11px; min-height: 36px; padding: 0 10px; border-radius: 9px; color: var(--silver); font-size: 14px; text-decoration: none; transition: background .15s, color .15s; }
+.item:hover { background: rgba(177,167,166,.12); color: var(--white); }
+.ativo { color: var(--white); background: rgba(164,22,26,.2); box-shadow: inset 0 0 0 1px rgba(186,24,27,.35); font-weight: 600; }
+.icone { width: 18px; height: 18px; flex: none; border: 1.5px solid currentColor; border-radius: 5px; opacity: .78; }
+.ativo .icone { color: var(--mahogany-red-2); border-color: var(--mahogany-red-2); }
+.rodape { display: flex; align-items: center; gap: 8px; padding: 12px 10px 2px; border-top: 1px solid rgba(177,167,166,.14); color: var(--silver); font-size: 12px; }
+.ponto { width: 8px; height: 8px; border-radius: 50%; background: var(--silver); }
+.online { background: var(--mahogany-red-2); }
+@media(max-width: 860px) { .barra { position: static; width: 100%; height: auto; padding: 12px 14px; border-right: 0; border-bottom: 1px solid rgba(177,167,166,.14); } .marca { min-height: 28px; } .marca img { height: 26px; } .org, .rotulo, .rodape { display: none; } .navegacao { flex-direction: row; overflow-x: auto; } .item { min-width: max-content; } .icone { display: none; } }
