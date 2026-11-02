@@ -1,0 +1,48 @@
+.metricas { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.metricaCard { padding: 14px; border: 1px solid rgba(177,167,166,.14); border-radius: 10px; background: var(--carbon-black); border-left: 3px solid rgba(177,167,166,.3); }
+.metricaRotulo { display: block; color: var(--silver); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+.metricaLinha { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; }
+.metricaValor { color: var(--white); font-size: 26px; font-weight: 700; line-height: 1; }
+.metricaPercentual { color: var(--silver); font-size: 12px; }
+.metricaBarraFundo { height: 4px; margin-top: 10px; border-radius: 99px; background: rgba(177,167,166,.14); overflow: hidden; }
+.metricaBarraPreenchida { height: 100%; border-radius: 99px; background: currentColor; }
+.tom-ok { border-left-color: #10b981; } .tom-ok .metricaBarraPreenchida { background: #10b981; }
+.tom-atencao { border-left-color: #f59e0b; } .tom-atencao .metricaBarraPreenchida { background: #f59e0b; }
+.tom-neutro { border-left-color: rgba(177,167,166,.4); } .tom-neutro .metricaBarraPreenchida { background: var(--silver); }
+.tom-critico { border-left-color: #ef4444; } .tom-critico .metricaBarraPreenchida { background: #ef4444; }
+
+.buscaWrap { position: relative; display: flex; align-items: center; width: min(100%, 300px); }
+.iconeBusca { position: absolute; left: 10px; color: var(--silver); pointer-events: none; }
+.buscaInput { width: 100%; min-height: 36px; padding: 0 32px; border: 1px solid rgba(177,167,166,.24); border-radius: 8px; color: var(--white-smoke); background: var(--onyx); font: inherit; font-size: 13px; }
+.buscaLimpar { position: absolute; right: 8px; display: grid; place-items: center; width: 20px; height: 20px; border: none; border-radius: 50%; background: rgba(177,167,166,.18); color: var(--white-smoke); cursor: pointer; }
+
+.badgeTipo { display: inline-flex; align-items: center; padding: 3px 9px; border: 1px solid rgba(177,167,166,.24); border-radius: 99px; color: var(--white-smoke); background: rgba(177,167,166,.1); font-size: 11.5px; }
+
+.badgeStatus { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 99px; font-size: 11.5px; font-weight: 600; }
+.badgeStatus.tom-ok { color: #6ee7b7; background: rgba(16,185,129,.14); border: 1px solid rgba(16,185,129,.4); }
+.badgeStatus.tom-atencao { color: #fcd34d; background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.4); }
+.badgeStatus.tom-neutro { color: var(--silver); background: rgba(177,167,166,.12); border: 1px solid rgba(177,167,166,.3); }
+.badgeStatus.tom-critico { color: #fca5a5; background: rgba(239,68,68,.14); border: 1px solid rgba(239,68,68,.4); }
+.pontoStatus { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.menuStatus { position: absolute; top: calc(100% + 4px); left: 0; z-index: 5; display: flex; min-width: 190px; flex-direction: column; padding: 6px; border: 1px solid rgba(177,167,166,.24); border-radius: 8px; background: var(--carbon-black); box-shadow: 0 12px 28px -8px rgba(0,0,0,.6); }
+.menuStatusItem { padding: 7px 9px; border: none; border-radius: 6px; background: transparent; color: var(--white-smoke); font: inherit; font-size: 12.5px; text-align: left; cursor: pointer; }
+.menuStatusItem:hover { background: rgba(177,167,166,.12); }
+.menuStatusVazio { padding: 7px 9px; color: var(--silver); font-size: 12px; }
+
+.paginacaoBotoes { display: flex; align-items: center; gap: 4px; }
+.paginaAtiva { min-height: 34px; padding: 0 11px; border: 1px solid var(--mahogany-red-2); border-radius: 8px; color: var(--white); background: var(--mahogany-red); font: inherit; font-size: 12px; cursor: pointer; }
+
+.tipoSelector { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.tipoOpcao { display: flex; flex-direction: column; gap: 4px; padding: 12px; border: 1px solid rgba(177,167,166,.24); border-radius: 10px; background: var(--onyx); color: var(--white-smoke); text-align: left; cursor: pointer; }
+.tipoOpcao span { color: var(--silver); font-size: 12px; }
+.tipoOpcaoAtiva { border-color: var(--mahogany-red-2); background: rgba(164,22,26,.14); box-shadow: inset 0 0 0 1px var(--mahogany-red-2); }
+
+.rodapeGrid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 16px; margin-top: 16px; }
+.historicoLista { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.historicoItem { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(177,167,166,.1); color: var(--white-smoke); font-size: 13px; }
+.historicoItem:last-child { border-bottom: 0; padding-bottom: 0; }
+.historicoHora { flex: none; color: var(--silver); font-size: 11.5px; }
+
+@media (max-width: 960px) { .metricas { grid-template-columns: repeat(2, minmax(0, 1fr)); } .rodapeGrid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .metricas { grid-template-columns: 1fr; } .buscaWrap { width: 100%; } }

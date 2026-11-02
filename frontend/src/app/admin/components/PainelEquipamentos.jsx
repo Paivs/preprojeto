@@ -3,7 +3,7 @@ import { formatarPercentual, nomeItem, valorItem } from "../lib/formatadores";
 import BadgePercentual from "./BadgePercentual";
 import styles from "./PainelEquipamentos.module.css";
 
-export default function PainelEquipamentos({ total, porStatus, carregando }) {
+export default function PainelEquipamentos({ total, porStatus, carregando, titulo = "Equipamentos por status" }) {
   const itens = Array.isArray(porStatus) ? porStatus : [];
   const raio = 62;
   const circunferencia = 2 * Math.PI * raio;
@@ -12,7 +12,7 @@ export default function PainelEquipamentos({ total, porStatus, carregando }) {
   return (
     <section className={styles.painel}>
       <div className={styles.cabecalho}>
-        <span className={styles.titulo}>Equipamentos por status</span>
+        <span className={styles.titulo}>{titulo}</span>
         <span className={styles.subtitulo}>{total ?? 0} no total</span>
       </div>
 
