@@ -76,3 +76,15 @@ export async function inativar(id) {
 
   return resultado.affectedRows > 0;
 }
+
+export async function contarPorStatus() {
+  const [linhas] = await pool.query(
+    "SELECT status, COUNT(*) AS total FROM equipamentos GROUP BY status",
+  );
+  return linhas;
+}
+
+export async function contarTotal() {
+  const [[{ total }]] = await pool.query("SELECT COUNT(*) AS total FROM equipamentos");
+  return Number(total);
+}
