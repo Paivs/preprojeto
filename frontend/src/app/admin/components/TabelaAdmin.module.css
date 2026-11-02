@@ -1,0 +1,27 @@
+.cabecalhoPagina { display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin:0 0 18px; }
+.cabecalhoPagina h2 { margin:0; color:#0b0d12; font-size:20px; font-weight:600; }
+.cabecalhoPagina p { margin:4px 0 0; color:#667085; font-size:14px; }
+.botao { min-height:36px; padding:0 13px; border:1px solid #3e5bf6; border-radius:8px; color:#fff; background:#3e5bf6; font:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+.botaoSecundario { min-height:34px; padding:0 11px; border:1px solid #66708524; border-radius:8px; color:#0b0d12; background:#fff; font:inherit; font-size:12px; cursor:pointer; }
+.barraFerramentas { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin-bottom:14px; }
+.campo, .seletor { min-height:36px; padding:0 10px; border:1px solid #66708524; border-radius:8px; color:#0b0d12; background:#fff; font:inherit; font-size:13px; }
+.campoBusca { width:min(100%,280px); }
+.painel { border:1px solid #6670851f; border-radius:10px; background:#fff; overflow:hidden; box-shadow:0 1px 2px #0b0d120a; }
+.tabela { width:100%; border-collapse:collapse; text-align:left; font-size:13px; }
+.tabela th { padding:11px 14px; border-bottom:1px solid #6670851f; color:#667085; background:#f5f6f8; font-size:11px; font-weight:600; text-transform:uppercase; white-space:nowrap; }
+.tabela td { padding:11px 14px; border-bottom:1px solid #6670851f; color:#0b0d12; vertical-align:middle; }
+.tabela tr:last-child td { border-bottom:0; }
+.acoes { display:flex; align-items:center; gap:6px; }
+.status { display:inline-flex; padding:3px 8px; border-radius:99px; background:#6670851f; color:#667085; font-size:11px; white-space:nowrap; }
+.statusAtivo { color:#087443; background:#12b76a1f; }
+.estado { padding:24px; color:#667085; text-align:center; font-size:13px; }
+.erro { margin:0 0 14px; padding:10px 12px; border-radius:8px; color:#b42318; background:#f0443814; font-size:13px; }
+.formGrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.formField { display:grid; gap:5px; color:#667085; font-size:12px; }
+.formField input, .formField select, .formField textarea { width:100%; min-height:38px; padding:8px 10px; border:1px solid #66708524; border-radius:8px; color:#0b0d12; background:#fff; font:inherit; font-size:13px; }
+.formField textarea { min-height:82px; resize:vertical; }
+.check { display:flex; align-items:center; gap:8px; color:#667085; font-size:13px; }
+.modalAcoes { display:flex; justify-content:flex-end; gap:8px; margin-top:16px; }
+.subTitulo { margin:20px 0 10px; font-size:15px; font-weight:600; }
+.paginacao { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-top:1px solid #6670851f; color:#667085; font-size:12px; }
+@media(max-width:760px){.cabecalhoPagina{align-items:flex-start;flex-direction:column}.painel{overflow-x:auto}.tabela{min-width:680px}.formGrid{grid-template-columns:1fr}.barraFerramentas>*{flex:1}.campoBusca{width:100%}}
