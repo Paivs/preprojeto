@@ -1,0 +1,42 @@
+.barra {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.trilha {
+  color: var(--silver);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.barra h1 {
+  margin: 4px 0 0;
+  color: var(--white);
+  font-size: clamp(24px, 3vw, 32px);
+}
+
+.conta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--white-smoke);
+  font-size: 14px;
+}
+
+.conta button {
+  padding: 8px 16px;
+  color: var(--white-smoke);
+  background: transparent;
+  border: 1px solid var(--silver);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 180ms, color 180ms;
+}
+
+.conta button:hover {
+  color: var(--white);
+  border-color: var(--white);
+}
