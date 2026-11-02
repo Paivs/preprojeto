@@ -1,12 +1,13 @@
-import cors from "cors";
+﻿import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 
- import { errorHandler } from "./middlewares/errorHandler.js";
- import alunoRoutes from "./routes/alunoRoutes.js";
-+import equipamentoRoutes from "./routes/equipamentoRoutes.js";
- import healthRoutes from "./routes/healthRoutes.js";
- import usuarioRoutes from "./routes/usuarioRoutes.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+import alunoRoutes from "./routes/alunoRoutes.js";
+import equipamentoRoutes from "./routes/EquipamentoRoutes.js";
+import componenteRoutes from "./routes/ComponenteRoutes.js";
+import healthRoutes from "./routes/healthRoutes.js";
+import usuarioRoutes from "./routes/usuarioRoutes.js";
 
 const app = express();
 
@@ -24,10 +25,13 @@ app.get("/", (request, response) => {
   });
 });
 
- app.use("/api/health", healthRoutes);
- app.use("/api/alunos", alunoRoutes);
-+app.use("/api/equipamentos", equipamentoRoutes);
- app.use("/api/usuarios", usuarioRoutes);
+app.use("/api/health", healthRoutes);
+app.use("/api/alunos", alunoRoutes);
+app.use("/api/equipamentos", equipamentoRoutes);
+app.use("/api/componentes", componenteRoutes);
+app.use("/api/usuarios", usuarioRoutes);
 app.use(errorHandler);
 
 export default app;
+
+
