@@ -6,8 +6,24 @@ async function requisitar(caminho, token) {
     cache: "no-store",
   });
   const corpo = await resposta.json().catch(() => ({}));
-  if (!resposta.ok) throw new Error(corpo.message || corpo.erro || `Erro ${resposta.status}`);
+  if (!resposta.ok) throw new Error(corpo.message || corpo.mensagem || corpo.erro || `Erro ${resposta.status}`);
   return corpo;
+}
+
+export async function chamarApi(caminho, token, opcoes = {}) {
+  const resposta = await fetch(`${API_URL}${caminho}`, {
+    ...opcoes,
+    headers: {
+      ...(opcoes.body ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...opcoes.headers,
+    },
+    cache: "no-store",
+  });
+  if (resposta.status === 204) return null;
+  const corpo = await resposta.json().catch(() => ({}));
+  if (!resposta.ok) throw new Error(corpo.message || corpo.mensagem || corpo.erro || `Erro ${resposta.status}`);
+  return corpo.dados ?? corpo;
 }
 
 export function carregarSessao() {

@@ -1,0 +1,11 @@
+.layout { min-height: 100vh; display: flex; background: #f5f6f8; color: #0b0d12; font-family: Inter, sans-serif; }
+.main { flex: 1; min-width: 0; padding: 28px 32px 48px; }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 26px; }
+.breadcrumb { color: #667085; font-size: 12px; }
+.header h1 { margin: 4px 0 0; font-size: 24px; font-weight: 600; }
+.user { display: flex; align-items: center; gap: 14px; color: #667085; font-size: 13px; }
+.user button { padding: 7px 12px; border: 1px solid #66708524; border-radius: 8px; background: #fff; color: #0b0d12; cursor: pointer; }
+.loginPage { min-height: 100vh; padding: 22px; background: #f5f6f8; color: #0b0d12; font-family: Inter, sans-serif; }
+.loginHead { display: flex; align-items: center; justify-content: space-between; max-width: 1120px; margin: 0 auto; color: #667085; font-size: 13px; }
+.loginHead a { color: #0b0d12; font-size: 17px; font-weight: 700; text-decoration: none; }
+@media (max-width: 860px) { .layout { display: block; } .main { padding: 20px 16px 32px; } .header { align-items: flex-start; } .header h1 { font-size: 20px; } .user { font-size: 11px; } }

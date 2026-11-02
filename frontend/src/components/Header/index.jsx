@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
 
 const DISTANCIA_PARA_MOSTRAR = 140;
 
 export default function Header() {
   const [visivel, setVisivel] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     function verificarScroll() {
@@ -17,6 +19,8 @@ export default function Header() {
     window.addEventListener("scroll", verificarScroll, { passive: true });
     return () => window.removeEventListener("scroll", verificarScroll);
   }, []);
+
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) return null;
 
   return (
     <header

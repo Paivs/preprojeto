@@ -1,71 +1,9 @@
-.intro {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.intro h2 {
-  margin: 0;
-  color: var(--white);
-  font-size: 20px;
-}
-
-.intro p {
-  margin: 4px 0 0;
-  color: var(--silver);
-  font-size: 14px;
-}
-
-.botaoAtualizar {
-  padding: 10px 18px;
-  color: var(--white-smoke);
-  background: transparent;
-  border: 1px solid var(--silver);
-  border-radius: 9px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: border-color 180ms, color 180ms;
-}
-
-.botaoAtualizar:hover:not(:disabled) {
-  color: var(--white);
-  border-color: var(--white);
-}
-
-.botaoAtualizar:disabled {
-  opacity: .6;
-  cursor: default;
-}
-
-.faixaErro {
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  color: var(--white-smoke);
-  background: rgba(164, 22, 26, .25);
-  border: 1px solid var(--mahogany-red-2);
-  border-radius: 8px;
-  font-size: 14px;
-}
-
-.cartoes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.paineis {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
-  margin-bottom: 24px;
-}
-
-.rodape {
-  display: flex;
-  justify-content: space-between;
-  color: var(--dust-grey);
-  font-size: 12px;
-}
+.intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.intro h2 { margin: 0; color: #0b0d12; font-size: 20px; font-weight: 600; }
+.intro p { margin: 4px 0 0; color: #667085; font-size: 14px; }
+.botaoAtualizar { padding: 9px 14px; color: #fff; background: #3e5bf6; border: 1px solid #3e5bf6; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.botaoAtualizar:disabled { opacity: .6; cursor: wait; }
+.faixaErro { padding: 12px 16px; margin-bottom: 20px; color: #0b0d12; background: #3e5bf61a; border: 1px solid #3e5bf6; border-radius: 8px; font-size: 14px; }
+.cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.paineis { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 18px; }
+.rodape { display: flex; justify-content: space-between; color: #667085; font-size: 12px; }

@@ -40,7 +40,7 @@ export default function VisaoDashboard({ dashboard, loading, error, updatedAt, o
 
       <div className={styles.cartoes}>
         <CartaoMetrica icone={iconeEquipamento} rotulo="Equipamentos" valor={equipamentos?.total ?? "—"} descricao="Total cadastrado" />
-        <CartaoMetrica icone={iconeChamado} rotulo="Chamados abertos" valor={totalChamados || "—"} descricao="Soma dos status retornados" />
+        <CartaoMetrica icone={iconeChamado} rotulo="Chamados" valor={totalChamados || "—"} descricao="Total por status" />
         <CartaoMetrica icone={iconeAlerta} rotulo="Equipamentos críticos" valor={equipamentos?.criticos ?? "—"} descricao="Com chamados críticos" />
         <CartaoMetrica icone={iconeOcorrencia} rotulo="Ocorrências recentes" valor={ocorrencias?.ultimos_30_dias ?? "—"} descricao="Últimos 30 dias" />
       </div>
