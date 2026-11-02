@@ -1,42 +1,109 @@
 .barra {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
+  gap: 16px;
   margin-bottom: 32px;
+  font-family: "DM Sans", sans-serif;
+}
+
+.trilhaBloco {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .trilha {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--silver);
   font-size: 12px;
-  letter-spacing: .08em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.separador {
+  color: var(--dust-grey);
 }
 
 .barra h1 {
   margin: 4px 0 0;
   color: var(--white);
-  font-size: clamp(24px, 3vw, 32px);
+  font-size: clamp(22px, 3vw, 30px);
 }
 
 .conta {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   color: var(--white-smoke);
   font-size: 14px;
 }
 
-.conta button {
-  padding: 8px 16px;
-  color: var(--white-smoke);
-  background: transparent;
-  border: 1px solid var(--silver);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: border-color 180ms, color 180ms;
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--mahogany-red);
+  color: var(--white);
 }
 
-.conta button:hover {
+.avatar svg {
+  width: 18px;
+  height: 18px;
+}
+
+.identidade {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  margin-right: 6px;
+}
+
+.nome {
+  color: var(--white-smoke);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cargo {
+  color: var(--mahogany-red-2);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sair {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  color: var(--white-smoke);
+  background: var(--carbon-black);
+  border: 1px solid rgba(177, 167, 166, 0.24);
+  border-radius: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 180ms, color 180ms, background 180ms;
+}
+
+.sair svg {
+  width: 15px;
+  height: 15px;
+  color: var(--mahogany-red-2);
+}
+
+.sair:hover {
   color: var(--white);
   border-color: var(--white);
+  background: #1c2023;
 }
