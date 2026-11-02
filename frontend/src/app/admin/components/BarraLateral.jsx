@@ -9,7 +9,9 @@ const itens = [
   ["/admin/chamados", "Chamados e OS", "chamados"],
   ["/admin/checklists", "Checklists", "checklists"],
   ["/admin/ocorrencias", "Ocorrências", "ocorrencias"],
-  ["/admin/gestao", "Usuários e relatórios", "gestao"],
+  ["/admin/usuarios", "Gestão de Usuários", "gestao"],
+  ["/admin/gestao", "Pré-cadastros", "gestao"],
+  ["/admin/relatorios", "Relatórios", "gestao"],
 ];
 
 const icones = {
