@@ -1,16 +1,44 @@
-.area { display:flex; justify-content:center; padding:48px 0; }
-.cartao { width:min(100%,380px); padding:28px; background:var(--carbon-black); border:1px solid rgba(177,167,166,.14); border-radius:14px; }
-.selo { color:var(--mahogany-red-2); font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
-.cartao h2 { margin:10px 0 6px; color:var(--white); font-size:22px; }
-.cartao p { margin:0 0 24px; color:var(--silver); font-size:14px; line-height:1.6; }
-.formulario { display:flex; flex-direction:column; gap:6px; }
-.formulario label { margin-top:12px; color:var(--silver); font-size:12px; font-weight:600; text-transform:uppercase; }
-.formulario input { padding:10px 12px; color:var(--white-smoke); background:var(--onyx); border:1px solid rgba(177,167,166,.24); border-radius:8px; font-size:14px; }
-.formulario input:focus-visible { outline:2px solid var(--mahogany-red-2); outline-offset:2px; }
+.area { display:flex; justify-content:center; padding:48px 16px; }
+.cartao { width:min(100%,400px); padding:28px; background:var(--carbon-black); border:1px solid rgba(177,167,166,.14); border-radius:12px; box-shadow:0 20px 48px -12px rgba(0,0,0,.6); }
+
+.marca { display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; margin-bottom:20px; }
+.marcaIcone { display:flex; align-items:center; justify-content:center; width:48px; height:48px; color:var(--mahogany-red); background:var(--onyx); border:1px solid rgba(177,167,166,.18); border-radius:8px; }
+.titulo { margin:0; color:var(--white-smoke); font-size:22px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; }
+.subRotulo { margin:4px 0 0; color:var(--silver); font-size:11px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; font-family:monospace; }
+
+.bannerErro { display:flex; align-items:flex-start; gap:10px; padding:12px; margin-bottom:16px; color:var(--white-smoke); background:var(--carbon-black); border:1px solid var(--dark-garnet); border-radius:8px; }
+.bannerErroIcone { flex:none; margin-top:1px; color:var(--mahogany-red-2); }
+.bannerErroConteudo { display:flex; flex:1; flex-direction:column; gap:2px; line-height:1.4; }
+.bannerErroTitulo { color:var(--mahogany-red-2); font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.bannerErroTexto { color:var(--dust-grey); font-size:12px; }
+.bannerErroFechar { flex:none; padding:2px; color:var(--silver); background:none; border:0; cursor:pointer; }
+.bannerErroFechar:hover { color:var(--white-smoke); }
+
+.formulario { display:flex; flex-direction:column; gap:14px; }
+.campo { display:flex; flex-direction:column; gap:6px; }
+.rotuloCampo { display:flex; align-items:center; gap:6px; color:var(--silver); font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
+.campo input { width:100%; padding:10px 12px; color:var(--white-smoke); background:var(--onyx); border:1px solid rgba(177,167,166,.24); border-radius:8px; font-size:14px; box-sizing:border-box; }
+.campo input:focus-visible { outline:2px solid var(--mahogany-red-2); outline-offset:2px; border-color:var(--mahogany-red); }
+
+.inputComBotao { position:relative; display:flex; align-items:center; }
+.inputComBotao input { padding-right:38px; }
+.botaoOlho { position:absolute; right:6px; display:flex; align-items:center; justify-content:center; padding:6px; color:var(--silver); background:none; border:0; cursor:pointer; }
+.botaoOlho:hover { color:var(--white-smoke); }
+
+.opcaoSessao { display:flex; align-items:center; gap:8px; color:var(--silver); font-size:12px; cursor:pointer; user-select:none; }
+.opcaoSessao input { width:15px; height:15px; accent-color:var(--mahogany-red); cursor:pointer; }
+
 .erro { margin:10px 0 0; color:var(--mahogany-red-2); font-size:13px; }
-.botaoPrincipal { margin-top:20px; padding:12px; color:var(--white); background:var(--mahogany-red); border:1px solid var(--mahogany-red-2); border-radius:8px; font-weight:600; cursor:pointer; }
+
+.botaoPrincipal { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:4px; padding:12px; color:var(--white); background:var(--mahogany-red); border:1px solid var(--mahogany-red-2); border-radius:8px; font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; }
+.botaoPrincipal:hover:not(:disabled) { background:var(--mahogany-red-2); }
+.botaoPrincipal:active:not(:disabled) { background:var(--dark-garnet); }
 .botaoPrincipal:disabled { opacity:.6; cursor:wait; }
+
 .notaApi { display:flex; align-items:center; gap:8px; margin-top:20px; color:var(--silver); font-size:12px; }
 .notaApi code { margin-left:auto; color:var(--dust-grey); font-size:11px; }
 .ponto { width:8px; height:8px; border-radius:50%; background:var(--silver); }
 .pontoAtivo { background:var(--mahogany-red-2); }
+
+.rodapeSeguranca { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:16px; padding-top:14px; border-top:1px solid rgba(177,167,166,.14); color:var(--silver); font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+.rodapeSeguranca svg { color:var(--mahogany-red-2); }
