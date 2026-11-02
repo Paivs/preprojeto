@@ -1,11 +1,11 @@
 import * as EquipamentoService from "../services/equipamentoService.js";
 
 function responderErro(erro, res, next) {
-  if (erro instanceof TypeError) {
-    return res.status(400).json({ sucesso: false, erro: erro.message });
+  if (erro instanceof TypeError || erro.status) {
+    return res.status(erro.status || 400).json({ sucesso: false, mensagem: erro.message });
   }
-  if (erro.message.includes("não encontrado")) {
-    return res.status(404).json({ sucesso: false, erro: erro.message });
+  if (erro.message.includes("encontrado")) {
+    return res.status(404).json({ sucesso: false, mensagem: erro.message });
   }
   return next(erro);
 }

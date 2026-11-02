@@ -1,6 +1,6 @@
 export default class Componente {
   constructor({ id, nome, categoria, quantidade_total = 1 }) {
-    if (!Number.isInteger(id) || id <= 0) {
+    if (id !== undefined && (!Number.isInteger(Number(id)) || Number(id) <= 0)) {
       throw new TypeError("ID deve ser um inteiro positivo.");
     }
     if (typeof nome !== "string" || nome.trim() === "") {
@@ -13,7 +13,7 @@ export default class Componente {
       throw new TypeError("Quantidade total deve ser um inteiro maior ou igual a zero.");
     }
 
-    this.id = id;
+    if (id !== undefined) this.id = Number(id);
     this.nome = nome.trim();
     this.categoria = categoria.trim();
     this.quantidade_total = quantidade_total;

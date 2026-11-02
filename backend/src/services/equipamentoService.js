@@ -9,7 +9,7 @@ function validarId(idRecebido) {
   return id;
 }
 
-export async function listar({ pagina = 1, limite = 10 } = {}) {
+export async function listar({ pagina = 1, limite = 20, tipo, localizacao, status } = {}) {
   const paginaNum = Number(pagina);
   const limiteNum = Number(limite);
 
@@ -21,7 +21,7 @@ export async function listar({ pagina = 1, limite = 10 } = {}) {
   }
 
   const offset = (paginaNum - 1) * limiteNum;
-  const { equipamentos, total } = await EquipamentoModel.listar({ limite: limiteNum, offset });
+  const { equipamentos, total } = await EquipamentoModel.listar({ limite: limiteNum, offset, tipo, localizacao, status });
 
   return {
     equipamentos,
@@ -44,8 +44,8 @@ export async function buscarPorId(idRecebido) {
 }
 
 export async function criar(dados) {
-  const equipamentoDominio = new Equipamento({ id: 1, ...dados });
-  return await EquipamentoModel.criar(equipamentoDominio);
+  const equipamentoDominio = new Equipamento(dados);
+  return EquipamentoModel.criar(equipamentoDominio);
 }
 
 export async function atualizar(idRecebido, dados) {

@@ -4,8 +4,8 @@ import helmet from "helmet";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
 import alunoRoutes from "./routes/alunoRoutes.js";
-import equipamentoRoutes from "./routes/EquipamentoRoutes.js";
-import componenteRoutes from "./routes/ComponenteRoutes.js";
+import equipamentoRoutes from "./routes/equipamentoRoutes.js";
+import componenteRoutes from "./routes/componenteRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
 
@@ -33,5 +33,3 @@ app.use("/api/usuarios", usuarioRoutes);
 app.use(errorHandler);
 
 export default app;
-
-

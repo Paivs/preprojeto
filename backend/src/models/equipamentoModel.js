@@ -1,11 +1,20 @@
 import { pool } from "../config/database.js";
 
-export async function listar({ limite, offset }) {
+export async function listar({ limite, offset, tipo, localizacao, status }) {
+  const filtros = [];
+  const valores = [];
+  for (const [campo, valor] of [["tipo", tipo], ["localizacao", localizacao], ["status", status]]) {
+    if (valor) {
+      filtros.push(`${campo} = ?`);
+      valores.push(valor);
+    }
+  }
+  const where = filtros.length ? `WHERE ${filtros.join(" AND ")}` : "";
   const [linhas] = await pool.query(
-    "SELECT * FROM equipamentos ORDER BY id LIMIT ? OFFSET ?",
-    [limite, offset],
+    `SELECT * FROM equipamentos ${where} ORDER BY id LIMIT ? OFFSET ?`,
+    [...valores, limite, offset],
   );
-  const [[{ total }]] = await pool.query("SELECT COUNT(*) AS total FROM equipamentos");
+  const [[{ total }]] = await pool.query(`SELECT COUNT(*) AS total FROM equipamentos ${where}`, valores);
 
   return { equipamentos: linhas, total: Number(total) };
 }
@@ -29,7 +38,7 @@ export async function criar(equipamento) {
   ];
   const [resultado] = await pool.query(sql, valores);
 
-  return { id: resultado.insertId, ...equipamento };
+  return { ...equipamento, id: resultado.insertId };
 }
 
 export async function atualizar(id, equipamento) {

@@ -20,7 +20,7 @@ export async function criar(componente) {
   const valores = [componente.nome, componente.categoria, componente.quantidade_total];
   const [resultado] = await pool.query(sql, valores);
 
-  return { id: resultado.insertId, ...componente };
+  return { ...componente, id: resultado.insertId };
 }
 
 export async function atualizar(id, componente) {

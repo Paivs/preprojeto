@@ -9,7 +9,7 @@ function validarId(idRecebido) {
   return id;
 }
 
-export async function listar({ pagina = 1, limite = 10 } = {}) {
+export async function listar({ pagina = 1, limite = 20 } = {}) {
   const paginaNum = Number(pagina);
   const limiteNum = Number(limite);
 
@@ -44,8 +44,8 @@ export async function buscarPorId(idRecebido) {
 }
 
 export async function criar(dados) {
-  const componenteDominio = new Componente({ id: 1, ...dados });
-  return await ComponenteModel.criar(componenteDominio);
+  const componenteDominio = new Componente(dados);
+  return ComponenteModel.criar(componenteDominio);
 }
 
 export async function atualizar(idRecebido, dados) {

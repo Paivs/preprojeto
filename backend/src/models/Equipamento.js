@@ -3,7 +3,7 @@ const STATUS_VALIDOS = ["DISPONIVEL", "RESERVADO", "EM_USO", "EM_MANUTENCAO", "I
 
 export default class Equipamento {
   constructor({ id, codigo_patrimonio, nome, tipo, localizacao, status = "DISPONIVEL" }) {
-    if (!Number.isInteger(id) || id <= 0) {
+    if (id !== undefined && (!Number.isInteger(Number(id)) || Number(id) <= 0)) {
       throw new TypeError("ID deve ser um inteiro positivo.");
     }
     if (typeof codigo_patrimonio !== "string" || codigo_patrimonio.trim() === "") {
@@ -22,7 +22,7 @@ export default class Equipamento {
       throw new TypeError(`Status deve ser um de: ${STATUS_VALIDOS.join(", ")}.`);
     }
 
-    this.id = id;
+    if (id !== undefined) this.id = Number(id);
     this.codigo_patrimonio = codigo_patrimonio.trim();
     this.nome = nome.trim();
     this.tipo = tipo;
