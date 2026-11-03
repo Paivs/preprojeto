@@ -9,7 +9,7 @@ const itens = [
   { href: "/professor/agendamentos", label: "Agendamentos", icon: "calendar_month", pronto: true },
   { href: "/professor/turmas", label: "Minhas turmas", icon: "groups" },
   { href: "/professor/inspecoes", label: "Inspeções", icon: "fact_check" },
-  { href: "/professor/equipamentos", label: "Equipamentos", icon: "precision_manufacturing" },
+  { href: "/professor/equipamentos", label: "Equipamentos", icon: "precision_manufacturing", pronto: true },
 ];
 
 export default function BarraLateralProfessor() {
