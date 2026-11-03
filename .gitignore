@@ -28,6 +28,7 @@ Thumbs.db
 .vscode/
 .idea/
 AGENTS.md
+skills-lock.json
 
 # docker/mysql local data
 mysql-data/
