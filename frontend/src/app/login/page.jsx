@@ -1,21 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import AuthLayout from "@/components/auth/AuthLayout";
 import styles from "@/components/auth/authForm.module.css";
 import { apiFetch } from "@/lib/api";
 import { saveSession } from "@/lib/session";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [matricula, setMatricula] = useState("");
   const [senha, setSenha] = useState("");
   const [alerta, setAlerta] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const cadastroConcluido = searchParams.get("cadastro") === "ok";
 
   async function enviarFormulario(event) {
     event.preventDefault();
     setAlerta("");
+    setEnviando(true);
 
     try {
       const resultado = await apiFetch("/api/usuarios/login", {
@@ -31,11 +35,14 @@ export default function LoginPage() {
         403: "Conta inativa. Procure a coordenação.",
       };
       setAlerta(mensagens[error.status] ?? "Não foi possível entrar agora. Tente de novo.");
+    } finally {
+      setEnviando(false);
     }
   }
 
   return (
     <AuthLayout title="Entrar" subtitle="Acesse com sua matrícula e senha">
+      {cadastroConcluido && <p className={styles.success}>Conta criada. Faça login.</p>}
       <form className={styles.form} onSubmit={enviarFormulario}>
         {alerta && <p className={styles.alert} role="alert">{alerta}</p>}
         <div className={styles.field}>
@@ -69,8 +76,18 @@ export default function LoginPage() {
           />
         </div>
 
-        <button className={styles.button} type="submit">Entrar</button>
+        <button className={styles.button} type="submit" disabled={enviando}>
+          {enviando ? "Entrando" : "Entrar"}
+        </button>
       </form>
     </AuthLayout>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   );
 }
