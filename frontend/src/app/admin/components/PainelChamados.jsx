@@ -11,11 +11,11 @@ export default function PainelChamados({ porStatus, porSeveridade, carregando })
     <section className={styles.painel}>
       <div className={styles.cabecalho}>
         <span className={styles.titulo}>Chamados</span>
-        <span className={styles.subtitulo}>Dados da API</span>
+        <span className={styles.subtitulo}>Chamados por situação</span>
       </div>
 
       {status.length === 0 ? (
-        <p className={styles.vazio}>{carregando ? "Carregando dados…" : "Nenhum chamado retornado pela API."}</p>
+        <p className={styles.vazio}>{carregando ? "Carregando chamados…" : "Não há chamados para mostrar."}</p>
       ) : (
         <table className={styles.tabela}>
           <thead>
@@ -38,9 +38,9 @@ export default function PainelChamados({ porStatus, porSeveridade, carregando })
       )}
 
       <div className={styles.severidade}>
-        <h4>Severidade em aberto</h4>
+        <h4>Chamados abertos por prioridade</h4>
         {severidade.length === 0 ? (
-          <p className={styles.vazio}>Sem dados de severidade.</p>
+          <p className={styles.vazio}>Não há chamados abertos.</p>
         ) : (
           severidade.map((item, index) => (
             <div className={styles.barraLinha} key={nomeItem(item, index)}>

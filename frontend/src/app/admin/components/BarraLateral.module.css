@@ -1,205 +1,185 @@
-.barra {
-  position: sticky;
+.sidebar {
+  position: fixed;
+  left: 0;
   top: 0;
-  display: flex;
-  flex: 0 0 252px;
   height: 100vh;
+  width: 260px;
+  background: var(--surface-lowest, #0b0f12);
+  z-index: 50;
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 16px 14px;
-  background: var(--carbon-black);
-  border-right: 1px solid rgba(177, 167, 166, 0.14);
+  border-right: 1px solid var(--border-subtle, #22272b);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
   font-family: "DM Sans", sans-serif;
+  user-select: none;
 }
 
-.topo {
+.topSection {
   display: flex;
   flex-direction: column;
-  gap: 14px;
 }
 
-.marcaLinha {
+.brandHeader {
+  height: 64px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 2px 6px;
+  background: var(--surface-lowest, #0b0f12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.marca {
+.brandLink {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 38px;
+  gap: 12px;
   text-decoration: none;
-  color: var(--white-smoke);
+  color: inherit;
 }
 
-.marcaIcone {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.brandBadge {
   width: 32px;
   height: 32px;
-  flex: none;
   border-radius: 4px;
-  background: var(--mahogany-red);
-  color: var(--white);
-}
-
-.marcaIcone svg {
-  width: 18px;
-  height: 18px;
-}
-
-.marcaTexto {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.marcaNome {
-  color: var(--white-smoke);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.marcaSub {
-  color: var(--silver);
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-}
-
-.org {
-  padding: 10px;
-  border: 1px solid rgba(177, 167, 166, 0.14);
-  border-radius: 4px;
-  color: var(--white-smoke);
-  background: var(--onyx);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.navegacao {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.rotulo {
-  padding: 4px 10px 2px;
-  color: var(--silver);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.item {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  min-height: 38px;
-  padding: 0 10px;
-  border-radius: 4px;
-  color: var(--silver);
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background 0.15s, color 0.15s;
-}
-
-.item:hover {
-  background: rgba(177, 167, 166, 0.12);
-  color: var(--white);
-}
-
-.ativo {
-  color: var(--white);
-  background: rgba(164, 22, 26, 0.22);
-  box-shadow: inset 0 0 0 1px rgba(186, 24, 27, 0.35);
-  font-weight: 600;
-}
-
-.icone {
+  background: var(--mahogany-red, #a4161a);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  flex: none;
-  opacity: 0.85;
+  flex-shrink: 0;
 }
 
-.icone svg {
-  width: 100%;
-  height: 100%;
+.brandBadge span {
+  font-size: 20px;
 }
 
-.ativo .icone {
-  color: var(--mahogany-red-2);
-  opacity: 1;
+.brandInfo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
 }
 
-.rodape {
+.brandTitle {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--white-smoke, #f5f3f4);
+}
+
+.brandSub {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--silver, #b1a7a6);
+  letter-spacing: 0.16em;
+}
+
+.brandStatusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mahogany-red, #a4161a);
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(164, 22, 26, 0.6);
+}
+
+.sectionHeading {
+  padding: 18px 24px 8px;
+}
+
+.sectionHeading span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--silver, #b1a7a6);
+}
+
+.navMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 16px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--silver, #b1a7a6);
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.navIcon {
+  font-size: 20px;
+  color: inherit;
+}
+
+.navLabel {
+  letter-spacing: 0.01em;
+}
+
+.navItem:hover {
+  background: var(--surface-container, #1c2023);
+  color: var(--white-smoke, #f5f3f4);
+}
+
+.navItemActive {
+  background: var(--mahogany-red, #a4161a) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(164, 22, 26, 0.4);
+}
+
+.footer {
+  padding: 16px;
+  background: var(--surface-lowest, #0b0f12);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.telemetryCard {
+  padding: 10px 12px;
+  border-radius: 4px;
+  background: var(--surface-low, #181c1f);
+  border: 1px solid var(--border-subtle, #22272b);
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px;
-  border-radius: 4px;
-  background: var(--onyx);
-  color: var(--silver);
-  font-size: 12px;
 }
 
-.ponto {
+.pulseDot {
   width: 8px;
   height: 8px;
-  flex: none;
   border-radius: 50%;
-  background: var(--silver);
+  flex-shrink: 0;
 }
 
-.online {
-  background: var(--mahogany-red-2);
-  box-shadow: 0 0 0 3px rgba(186, 24, 27, 0.18);
+.pulseDotOnline {
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  animation: pulseAnim 2s infinite ease-in-out;
 }
 
-@media (max-width: 860px) {
-  .barra {
-    position: static;
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    align-items: center;
-    padding: 10px 14px;
-    border-right: 0;
-    border-bottom: 1px solid rgba(177, 167, 166, 0.14);
-  }
-  .topo {
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    min-width: 0;
-  }
-  .marcaIcone {
-    width: 28px;
-    height: 28px;
-  }
-  .marcaSub,
-  .rotulo,
-  .rodape {
-    display: none;
-  }
-  .navegacao {
-    flex-direction: row;
-    overflow-x: auto;
-  }
-  .item span:last-child {
-    display: none;
-  }
+.pulseDotOffline {
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+}
+
+@keyframes pulseAnim {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.telemetryText {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--silver, #b1a7a6);
 }

@@ -13,6 +13,9 @@ export default function CartaoMetrica({ icone, categoria, titulo, valor, unidade
 
         {badge ? (
           <span className={`${styles.badge} ${badge.tom === "neutro" ? styles.badgeNeutro : styles.badgeCritico}`}>
+            {critico && (
+              <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>warning</span>
+            )}
             {badge.texto}
           </span>
         ) : (
@@ -27,6 +30,7 @@ export default function CartaoMetrica({ icone, categoria, titulo, valor, unidade
 
       {contexto && (
         <div className={styles.contexto}>
+          {contexto.ponto && <span className={styles.contextoDot} aria-hidden="true" />}
           {contexto.icone && <span className={critico ? styles.contextoIconeCritico : styles.contextoIcone}>{contexto.icone}</span>}
           {contexto.destaque && <span className={styles.contextoDestaque}>{contexto.destaque}</span>}
           {contexto.texto && <span className={styles.contextoTexto}>{contexto.texto}</span>}

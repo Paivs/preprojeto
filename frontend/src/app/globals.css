@@ -1,6 +1,11 @@
 :root {
   --onyx: #0b090a;
   --carbon-black: #161a1d;
+  --surface-lowest: #0b0f12;
+  --surface-low: #181c1f;
+  --surface-container: #1c2023;
+  --surface-high: #262a2e;
+  --surface-highest: #313538;
   --dark-garnet: #660708;
   --mahogany-red: #a4161a;
   --mahogany-red-2: #ba181b;
@@ -8,6 +13,36 @@
   --dust-grey: #d3d3d3;
   --white-smoke: #f5f3f4;
   --white: #fff;
+  --border-subtle: #22272b;
+  --border-high: #313538;
+  --status-ok: #10b981;
+  --status-ok-bg: #064e3b;
+  --status-warning: #f59e0b;
+  --status-warning-bg: #78350f;
+  --status-critical: #ef4444;
+  --status-critical-bg: #7f1d1d;
+  --status-neutral: #6b7280;
+  --status-neutral-bg: #1f2428;
+  --accent-tertiary: #9ecaff;
+  --accent-tertiary-bg: #003258;
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
 }
 
 html {

@@ -1,215 +1,212 @@
-.layout {
+.wrapper {
   min-height: 100vh;
-  display: flex;
-  background: var(--onyx);
-  color: var(--white-smoke);
+  background: var(--onyx, #0b090a);
+  color: var(--white-smoke, #f5f3f4);
   font-family: "DM Sans", sans-serif;
+  display: flex;
 }
 
-.main {
+.loginContainer {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--onyx, #0b090a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.contentSpine {
   flex: 1;
   min-width: 0;
-  padding: 24px 32px 48px;
+  padding-left: 260px; /* Offset for fixed sidebar */
+  display: flex;
+  flex-direction: column;
 }
 
-.header {
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 260px;
+  right: 0;
+  height: 64px;
+  background: rgba(11, 15, 18, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle, #22272b);
+  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding-bottom: 16px;
-  margin-bottom: 26px;
-  border-bottom: 1px solid rgba(177, 167, 166, 0.14);
+  padding: 0 32px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+  user-select: none;
 }
 
-.headerEsquerda {
+.topbarLeft {
   display: flex;
   align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .breadcrumb {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--silver);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: var(--silver, #b1a7a6);
 }
 
-.separador {
-  color: var(--dust-grey);
+.breadcrumbRoot {
+  text-decoration: none;
+  color: var(--silver, #b1a7a6);
+  transition: color 0.15s;
 }
 
-.breadcrumbAtual {
-  color: var(--mahogany-red-2);
+.breadcrumbRoot:hover {
+  color: var(--white-smoke, #f5f3f4);
 }
 
-.statusApi {
+.breadcrumbCurrent {
+  color: #ffb4ac; /* Stitch primary accent */
+  font-weight: 700;
+}
+
+.verticalDivider {
+  width: 1px;
+  height: 16px;
+  background: var(--border-high, #313538);
+}
+
+.statusPill {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 10px;
+  gap: 8px;
+  padding: 4px 10px;
   border-radius: 4px;
-  background: var(--carbon-black);
-  color: var(--silver);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  background: var(--surface-low, #181c1f);
+  border: 1px solid var(--border-subtle, #22272b);
 }
 
-.statusPonto {
+.statusDot {
   width: 7px;
   height: 7px;
-  flex: none;
   border-radius: 50%;
-  background: var(--dust-grey);
+  flex-shrink: 0;
 }
 
-.statusApi.online .statusPonto {
+.statusDotOnline {
   background: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+  box-shadow: 0 0 6px #10b981;
+  animation: pulseDot 2s infinite ease-in-out;
 }
 
-.statusApi.online {
-  color: #a7f3d0;
-}
-
-.statusApi.offline .statusPonto {
+.statusDotOffline {
   background: #ef4444;
 }
 
-.statusApi.offline {
-  color: #fecaca;
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
 }
 
-.header h1 {
-  margin: 4px 0 0;
-  color: var(--white);
-  font-size: 24px;
-  font-weight: 600;
+.statusText {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-tertiary, #9ecaff);
 }
 
-.user {
+.topbarRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userBadge {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--silver);
-  font-size: 13px;
+  padding: 4px 12px 4px 6px;
+  border-radius: 4px;
+  background: var(--surface-low, #181c1f);
+  border: 1px solid var(--border-subtle, #22272b);
 }
 
-.avatar {
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--mahogany-red, #a4161a);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  flex: none;
-  border-radius: 50%;
-  background: var(--mahogany-red);
-  color: var(--white);
+  flex-shrink: 0;
 }
 
-.avatar svg {
-  width: 18px;
-  height: 18px;
-}
-
-.identidade {
+.userInfo {
   display: flex;
   flex-direction: column;
   line-height: 1.2;
-  margin-right: 6px;
 }
 
-.nome {
-  color: var(--white-smoke);
+.userName {
   font-size: 13px;
   font-weight: 600;
+  color: var(--white-smoke, #f5f3f4);
 }
 
-.cargo {
-  color: var(--mahogany-red-2);
-  font-size: 10.5px;
+.userRole {
+  font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #ffb4ac;
 }
 
-.sair {
+.logoutBtn {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 12px;
-  border: 1px solid rgba(177, 167, 166, 0.24);
+  padding: 8px 14px;
   border-radius: 4px;
-  background: var(--carbon-black);
-  color: var(--white-smoke);
-  font-size: 12.5px;
+  background: var(--surface-high, #262a2e);
+  border: 1px solid var(--border-subtle, #22272b);
+  color: var(--white-smoke, #f5f3f4);
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: border-color 180ms, color 180ms;
+  transition: background 0.15s, color 0.15s;
 }
 
-.sair svg {
-  width: 15px;
-  height: 15px;
-  color: var(--mahogany-red-2);
+.logoutBtn:hover {
+  background: var(--surface-highest, #313538);
+  color: #ffffff;
 }
 
-.sair:hover {
-  color: var(--white);
-  border-color: var(--white);
+.mainView {
+  position: relative;
+  margin-top: 64px; /* Offset for topbar */
+  padding: 24px 32px 48px;
+  min-height: calc(100vh - 64px);
+  background: var(--onyx, #0b090a);
 }
 
-.loginPage {
-  min-height: 100vh;
-  padding: 22px;
-  background: var(--onyx);
-  color: var(--white-smoke);
-  font-family: "DM Sans", sans-serif;
-}
-
-.loginHead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1120px;
-  margin: 0 auto;
-  color: var(--silver);
-  font-size: 13px;
-}
-
-.loginHead a {
-  color: var(--white);
-  font-size: 17px;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-@media (max-width: 860px) {
-  .layout {
-    display: block;
+@media (max-width: 900px) {
+  .contentSpine {
+    padding-left: 0;
   }
-  .main {
-    padding: 20px 16px 32px;
+  .topbar {
+    left: 0;
+    padding: 0 16px;
   }
-  .header {
-    align-items: flex-start;
-  }
-  .header h1 {
-    font-size: 20px;
-  }
-  .user {
-    font-size: 11px;
-  }
-  .identidade {
-    display: none;
+  .mainView {
+    padding: 20px 16px 36px;
   }
 }

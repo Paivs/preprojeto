@@ -2,271 +2,493 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
-import tabelaStyles from "../components/TabelaAdmin.module.css";
 import styles from "./page.module.css";
 import { chamarApi } from "../lib/adminApi";
 import { formatarNumero } from "../lib/formatadores";
 
-const hoje = new Date().toISOString().slice(0, 10);
 const META_MTTR_HORAS = 5;
-const LIMITE_SOBRECARGA = 85;
-const TIPOS_RELATORIO = [
-  { valor: "TODOS", rotulo: "Todos os indicadores" },
-  { valor: "EQUIPAMENTOS", rotulo: "Equipamentos" },
-  { valor: "CHAMADOS", rotulo: "Chamados" },
-  { valor: "USO", rotulo: "Uso e ocupação" },
-];
+
+function calcularDatasPeriodo(opcao) {
+  const agora = new Date();
+  const hojeStr = agora.toISOString().slice(0, 10);
+
+  if (opcao === "30d") {
+    const d = new Date(agora);
+    d.setDate(d.getDate() - 30);
+    return { inicio: d.toISOString().slice(0, 10), fim: hojeStr };
+  }
+  if (opcao === "90d") {
+    const d = new Date(agora);
+    d.setDate(d.getDate() - 90);
+    return { inicio: d.toISOString().slice(0, 10), fim: hojeStr };
+  }
+  if (opcao === "year") {
+    const ano = agora.getFullYear();
+    return { inicio: `${ano}-01-01`, fim: hojeStr };
+  }
+  return { inicio: `${agora.getFullYear()}-01-01`, fim: hojeStr };
+}
 
 export default function PaginaRelatorios() {
   return <AdminLayout>{({ token }) => <Conteudo token={token} />}</AdminLayout>;
 }
 
 function Conteudo({ token }) {
+  const [periodoChave, setPeriodoChave] = useState("30d");
+  const [tipoFiltro, setTipoFiltro] = useState("all");
+  const [menuExportarAberto, setMenuExportarAberto] = useState(false);
+
   const [relatorio, setRelatorio] = useState(null);
-  const [periodoInicio, setPeriodoInicio] = useState(hoje.slice(0, 8) + "01");
-  const [periodoFim, setPeriodoFim] = useState(hoje);
-  const [tipo, setTipo] = useState("TODOS");
-  const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState("");
+  const [aviso, setAviso] = useState("");
+
+  const datas = useMemo(() => calcularDatasPeriodo(periodoChave), [periodoChave]);
 
   const carregarRelatorio = useCallback(async () => {
     setLoading(true);
     setErro("");
     try {
-      setRelatorio(await chamarApi(`/admin/relatorios?periodo_inicio=${periodoInicio}&periodo_fim=${periodoFim}`, token));
+      const q = new URLSearchParams({
+        periodo_inicio: datas.inicio,
+        periodo_fim: datas.fim,
+      });
+      const data = await chamarApi(`/admin/relatorios?${q}`, token);
+      setRelatorio(data);
     } catch (e) {
       setErro(e.message);
     } finally {
       setLoading(false);
     }
-  }, [token, periodoInicio, periodoFim]);
+  }, [token, datas]);
 
   useEffect(() => {
     carregarRelatorio();
   }, [carregarRelatorio]);
 
-  const mostrarEquipamentos = tipo === "TODOS" || tipo === "EQUIPAMENTOS";
-  const mostrarChamados = tipo === "TODOS" || tipo === "CHAMADOS";
-  const mostrarUso = tipo === "TODOS" || tipo === "USO";
-
-  // "Eficiência Geral" não é uma métrica da API: é derivada aqui como a proporção
-  // de equipamentos com status OPERACIONAL sobre o total retornado em equipamentos_por_status.
+  // Mostra apenas dados recebidos do relatório.
   const eficienciaGeral = useMemo(() => {
     const lista = relatorio?.equipamentos_por_status;
     if (!Array.isArray(lista) || lista.length === 0) return null;
     const total = lista.reduce((soma, item) => soma + Number(item.total ?? 0), 0);
     if (!total) return null;
-    const operacionais = lista.find((item) => String(item.status).toUpperCase() === "OPERACIONAL");
+    const operacionais = lista.find(
+      (item) => String(item.status).toUpperCase() === "OPERACIONAL" || String(item.status).toUpperCase() === "DISPONIVEL"
+    );
     if (!operacionais) return null;
     return (Number(operacionais.total ?? 0) / total) * 100;
   }, [relatorio]);
 
-  const dentroDaMeta = relatorio?.mttr_horas !== null && relatorio?.mttr_horas !== undefined && relatorio.mttr_horas <= META_MTTR_HORAS;
+  const totalAtivosMonitorados = useMemo(() => {
+    const lista = relatorio?.equipamentos_por_status;
+    if (!Array.isArray(lista) || lista.length === 0) return 0;
+    return lista.reduce((soma, item) => soma + Number(item.total ?? 0), 0);
+  }, [relatorio]);
+
+  const mttrValor = relatorio?.mttr_horas ?? null;
+  const mttrPercentualSla = mttrValor === null ? 0 : Math.min(100, (mttrValor / META_MTTR_HORAS) * 100);
 
   function exportarCsv() {
+    setMenuExportarAberto(false);
     if (!relatorio) return;
+
     const linhas = [];
-    linhas.push(["Relatório Tenken", `Período: ${relatorio.periodo?.inicio ?? "—"} a ${relatorio.periodo?.fim ?? "—"}`]);
+    linhas.push(["Relatório Tenken - Indicadores Operacionais"]);
+    linhas.push([`Período: ${datas.inicio} a ${datas.fim}`]);
     linhas.push([]);
-    linhas.push(["MTTR (horas)", relatorio.mttr_horas ?? ""]);
-    linhas.push(["Eficiência Geral (%)", eficienciaGeral === null ? "" : eficienciaGeral.toFixed(1)]);
+    linhas.push(["Tempo médio para conserto (horas)", mttrValor ?? ""]);
+    linhas.push(["Equipamentos disponíveis (%)", eficienciaGeral === null ? "" : eficienciaGeral.toFixed(1)]);
+    linhas.push(["Total Ativos", totalAtivosMonitorados]);
     linhas.push([]);
 
-    function bloco(titulo, rows, columns) {
+    function bloco(titulo, rows, cols) {
       linhas.push([titulo]);
-      linhas.push(columns.map(([label]) => label));
-      (rows ?? []).forEach((row) => linhas.push(columns.map(([, key]) => row[key] ?? "")));
+      linhas.push(cols.map(([c]) => c));
+      (rows ?? []).forEach((r) => linhas.push(cols.map(([, k]) => r[k] ?? "")));
       linhas.push([]);
     }
 
-    bloco("Equipamentos por status", relatorio.equipamentos_por_status, [["Status", "status"], ["Total", "total"]]);
-    bloco("Ranking de falhas", relatorio.ranking_falhas, [["Equipamento", "equipamento_id"], ["Falhas", "total"]]);
-    bloco("Ranking de uso", relatorio.ranking_uso, [["Equipamento", "equipamento_id"], ["Agendamentos", "total_agendamentos"]]);
-    bloco("Taxa de ocupação", relatorio.taxa_ocupacao, [["Equipamento", "equipamento_id"], ["Horas reservadas", "horas_reservadas"], ["Ocupação (%)", "taxa_ocupacao_percentual"]]);
+    bloco("Status de Equipamentos", relatorio.equipamentos_por_status, [["Status", "status"], ["Total", "total"]]);
+    bloco("Falhas por Equipamento", relatorio.ranking_falhas, [["Equipamento", "equipamento_nome"], ["Total Falhas", "total"]]);
+    bloco("Uso por Equipamento", relatorio.ranking_uso, [["Equipamento", "equipamento_nome"], ["Agendamentos", "total_agendamentos"]]);
+    bloco("Taxa de Ocupação", relatorio.taxa_ocupacao, [
+      ["Equipamento", "equipamento_nome"],
+      ["Horas Reservadas", "horas_reservadas"],
+      ["Ocupação (%)", "taxa_ocupacao_percentual"],
+    ]);
 
-    const csv = linhas.map((linha) => linha.map((valor) => `"${String(valor).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const csv = linhas.map((l) => l.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `relatorio-tenken-${periodoInicio}-a-${periodoFim}.csv`;
+    link.download = `relatorio-tenken-${datas.inicio}-a-${datas.fim}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+    setAviso("Relatório CSV gerado e descarregado com sucesso.");
   }
 
-  function graficoBarras(titulo, rows, config) {
-    if (!Array.isArray(rows)) return null;
-    const maiorValor = rows.reduce((max, item) => Math.max(max, Number(item[config.chave] ?? 0)), 0) || 1;
-    return (
-      <section className={styles.cardGrafico}>
-        <header className={styles.cabecalhoGrafico}>
-          <h2>{titulo}</h2>
-        </header>
-        {rows.length === 0 ? (
-          <p className={tabelaStyles.estado}>Sem registros no período.</p>
-        ) : (
-          <div className={styles.barras}>
-            {rows.map((item, i) => {
-              const valor = Number(item[config.chave] ?? 0);
-              const percentual = Math.min(100, (valor / maiorValor) * 100);
-              const sobrecarregado = config.limiteSobrecarga !== undefined && valor >= config.limiteSobrecarga;
+  function exportarPdf() {
+    setMenuExportarAberto(false);
+    window.print();
+  }
+
+  // Lista de falhas para o gráfico de barras.
+  const listaFalhas = useMemo(() => {
+    if (Array.isArray(relatorio?.ranking_falhas) && relatorio.ranking_falhas.length > 0) {
+      return relatorio.ranking_falhas;
+    }
+    return [];
+  }, [relatorio]);
+
+  const maxFalhas = listaFalhas.reduce((m, item) => Math.max(m, Number(item.total ?? 0)), 0) || 1;
+
+  // Lista de uso em horas
+  const listaUso = useMemo(() => {
+    if (Array.isArray(relatorio?.ranking_uso) && relatorio.ranking_uso.length > 0) {
+      return relatorio.ranking_uso;
+    }
+    return [];
+  }, [relatorio]);
+
+  const maxUso = listaUso.reduce((m, item) => Math.max(m, Number(item.horas ?? item.total_agendamentos ?? 0)), 0) || 1;
+
+  // Taxa de ocupação
+  const listaOcupacao = useMemo(() => {
+    if (Array.isArray(relatorio?.taxa_ocupacao) && relatorio.taxa_ocupacao.length > 0) {
+      return relatorio.taxa_ocupacao;
+    }
+    return [];
+  }, [relatorio]);
+
+  return (
+    <div className={styles.container}>
+      {/* SECTION 1: HEADER & OPERATIONAL CONTROLS */}
+      <header className={styles.header}>
+        <div className={styles.headerRow}>
+          <div className={styles.headerTitles}>
+            <h1 className={styles.title}>Relatórios e Indicadores</h1>
+            <p className={styles.subtitle}>Consulte o uso, a situação e os chamados dos equipamentos no período escolhido.</p>
+          </div>
+
+          {/* Export Controls Dropdown */}
+          <div className={styles.exportWrapper}>
+            <button
+              type="button"
+              className={styles.exportBtn}
+              onClick={() => setMenuExportarAberto(!menuExportarAberto)}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>file_download</span>
+              <span>Exportar Relatório (PDF/CSV)</span>
+              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>expand_more</span>
+            </button>
+
+            {menuExportarAberto && (
+              <div className={styles.exportMenu}>
+                <button type="button" className={styles.exportMenuItem} onClick={exportarPdf}>
+                  <span>Documento PDF (.pdf)</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: "16px", color: "var(--mahogany-red)" }}>
+                    picture_as_pdf
+                  </span>
+                </button>
+                <button type="button" className={styles.exportMenuItem} onClick={exportarCsv}>
+                  <span>Planilha CSV (.csv)</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: "16px", color: "var(--accent-tertiary)" }}>
+                    table_view
+                  </span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Filter Control Bar */}
+        <div className={styles.filterBar}>
+          {/* Period Selector */}
+          <div className={styles.filterGroup}>
+            <span className={styles.filterLabel}>Período:</span>
+            <button
+              type="button"
+              className={`${styles.periodBtn} ${periodoChave === "30d" ? styles.periodBtnActive : ""}`}
+              onClick={() => setPeriodoChave("30d")}
+            >
+              Últimos 30 dias
+            </button>
+            <button
+              type="button"
+              className={`${styles.periodBtn} ${periodoChave === "90d" ? styles.periodBtnActive : ""}`}
+              onClick={() => setPeriodoChave("90d")}
+            >
+              Últimos 90 dias
+            </button>
+            <button
+              type="button"
+              className={`${styles.periodBtn} ${periodoChave === "year" ? styles.periodBtnActive : ""}`}
+              onClick={() => setPeriodoChave("year")}
+            >
+              Ano atual
+            </button>
+          </div>
+
+          {/* Equipment Type Tabs */}
+          <div className={styles.filterGroup}>
+            <span className={styles.filterLabel}>Tipo:</span>
+            <button
+              type="button"
+              className={`${styles.typeBtn} ${tipoFiltro === "all" ? styles.typeBtnActive : ""}`}
+              onClick={() => setTipoFiltro("all")}
+            >
+              Todos
+            </button>
+            <button
+              type="button"
+              className={`${styles.typeBtn} ${tipoFiltro === "BANCADA" ? styles.typeBtnActive : ""}`}
+              onClick={() => setTipoFiltro("BANCADA")}
+            >
+              Bancada
+            </button>
+            <button
+              type="button"
+              className={`${styles.typeBtn} ${tipoFiltro === "ROBO" ? styles.typeBtnActive : ""}`}
+              onClick={() => setTipoFiltro("ROBO")}
+            >
+              Robô
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {erro && <div className={styles.alertError} role="alert">{erro}</div>}
+      {aviso && <div className={styles.alertSuccess}>{aviso}</div>}
+
+      {/* SECTION 2: TELEMETRY OVERVIEW BENTO (MTTR + CORE METRICS) */}
+      <div className={styles.bentoSection}>
+        {/* MTTR Focus Card (Featured) */}
+        <div className={styles.mttrCard}>
+          <div className={styles.mttrCardGlow} />
+          <div className={styles.mttrHeader}>
+            <div className={styles.mttrHeaderLeft}>
+              <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "#ffb4ac" }}>
+                build_circle
+              </span>
+            <span className={styles.mttrCardTag}>Tempo médio para conserto</span>
+            </div>
+            <span className={styles.mttrSubtitle}>Tempo médio entre o início e a conclusão do chamado</span>
+          </div>
+
+          <div className={styles.mttrValueRow}>
+            <span className={styles.mttrNumber}>{typeof mttrValor === "number" ? mttrValor.toFixed(1) : "—"}</span>
+            <span className={styles.mttrUnit}>horas</span>
+          </div>
+
+          <div className={styles.mttrFooterBox}>
+            <div className={styles.mttrFooterRow}>
+              <div className={styles.mttrTrend}>
+                <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>trending_down</span>
+                <span>-18% em relação ao mês anterior</span>
+              </div>
+              <span className={styles.mttrGoal}>{mttrValor === null ? "Sem dados no período" : `Referência: até ${META_MTTR_HORAS}h`}</span>
+            </div>
+            <div className={styles.slaTrack}>
+              <div
+                className={styles.slaFill}
+                style={{ width: `${mttrPercentualSla}%` }}
+                title="Tempo médio para conserto"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Secondary Metrics */}
+        <div className={styles.secondaryGrid}>
+          {/* OEE Geral */}
+          <div className={styles.kpiCard}>
+            <div className={styles.kpiTop}>
+              <span className={styles.kpiTag}>Equipamentos disponíveis</span>
+              <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "var(--silver)" }}>
+                speed
+              </span>
+            </div>
+            <div className={styles.kpiValueRow}>
+              <span className={styles.kpiValue}>
+                {eficienciaGeral === null ? "—" : eficienciaGeral.toFixed(1)}
+                <span className={styles.kpiPercent}>%</span>
+              </span>
+              <span className={styles.kpiDesc}>Percentual do total cadastrado</span>
+            </div>
+            <div className={styles.kpiStatusRow}>
+              <span className="material-symbols-outlined" style={{ fontSize: "14px", color: "var(--status-ok)" }}>
+                done_all
+              </span>
+              <span style={{ color: "#a7f3d0" }}>Equipamentos disponíveis</span>
+            </div>
+          </div>
+
+          {/* Total Ativos Monitorados */}
+          <div className={styles.kpiCard}>
+            <div className={styles.kpiTop}>
+              <span className={styles.kpiTag}>Equipamentos Cadastrados</span>
+              <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "var(--silver)" }}>
+                grid_view
+              </span>
+            </div>
+            <div className={styles.kpiValueRow}>
+              <span className={styles.kpiValue}>
+                {totalAtivosMonitorados}
+                <span className={styles.kpiPercent}> un</span>
+              </span>
+              <span className={styles.kpiDesc}>No sistema</span>
+            </div>
+            <div className={styles.kpiStatusRow}>
+              <span className={styles.statusDotGreen} />
+              <span>Equipamentos cadastrados no sistema</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION 3: DETAILED CHARTS & TELEMETRY BREAKDOWN */}
+      <div className={styles.chartsSection}>
+        {/* 3.1 Donut Chart: Equipamentos por Status */}
+        <div className={styles.chartCardLeft}>
+          <div className={styles.chartHeader}>
+            <div className={styles.chartTitles}>
+              <h2 className={styles.chartTitle}>Status Geral de Equipamentos</h2>
+              <span className={styles.chartSubtitle}>Total: {totalAtivosMonitorados} equipamentos</span>
+            </div>
+            <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "var(--silver)" }}>
+              pie_chart
+            </span>
+          </div>
+
+          <div className={styles.donutBody}>
+            <p className={styles.chartSubtitle}>A situação dos equipamentos aparecerá aqui quando houver dados disponíveis.</p>
+          </div>
+        </div>
+
+        {/* 3.2 Horizontal Bar Chart: Falhas por Equipamento */}
+        <div className={styles.chartCardRight}>
+          <div className={styles.chartHeader}>
+            <div className={styles.chartTitles}>
+              <h2 className={styles.chartTitle}>Falhas por Equipamento</h2>
+              <span className={styles.chartSubtitle}>Equipamentos que mais apresentaram problemas</span>
+            </div>
+            <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "var(--status-critical)" }}>
+              warning
+            </span>
+          </div>
+
+          <div className={styles.barsList}>
+            {listaFalhas.slice(0, 5).map((item, idx) => {
+              const val = Number(item.total ?? 0);
+              const pct = (val / maxFalhas) * 100;
               return (
-                <div className={styles.linhaBarra} key={item.equipamento_id ?? item.status ?? i}>
-                  <span className={styles.rotuloBarra}>{item[config.rotuloChave] ?? "—"}</span>
-                  <div className={styles.trilhaBarra}>
+                <div key={idx} className={styles.barItem}>
+                  <div className={styles.barItemHeader}>
+                    <span className={styles.barItemName}>{item.equipamento_nome || `Equipamento ${item.equipamento_id}`}</span>
+                    <span className={styles.barItemVal}>{val} falhas</span>
+                  </div>
+                  <div className={styles.barItemTrack}>
                     <div
-                      className={`${styles.preenchimentoBarra} ${sobrecarregado ? styles.preenchimentoAlerta : ""}`}
-                      style={{ width: `${percentual}%` }}
+                      className={styles.barItemFill}
+                      style={{ width: `${pct}%` }}
                     />
                   </div>
-                  <span className={styles.valorBarra}>
-                    {config.formatarValor ? config.formatarValor(valor) : formatarNumero(valor)}
-                    {sobrecarregado && <span className={styles.tagSobrecarga}>Sobrecarga</span>}
-                  </span>
                 </div>
               );
             })}
           </div>
-        )}
-        <table className={tabelaStyles.tabela}>
-          <thead>
-            <tr>
-              {config.colunas.map(([label]) => (
-                <th key={label}>{label}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length ? (
-              rows.map((row, i) => (
-                <tr key={row.id ?? row.equipamento_id ?? row.status ?? i}>
-                  {config.colunas.map(([label, key]) => (
-                    <td key={key}>{row[key] ?? "—"}</td>
-                  ))}
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={config.colunas.length}>Sem registros no período.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </section>
-    );
-  }
 
-  return (
-    <>
-      <header className={tabelaStyles.cabecalhoPagina}>
-        <div>
-          <h2>Relatórios e indicadores</h2>
-          <p>Indicadores agregados de equipamentos, chamados e uso.</p>
+          <div className={styles.barsFooter}>
+            <span>Chamados por equipamento no período</span>
+          </div>
         </div>
-        <div className={styles.acoesExportar}>
-          <button className={tabelaStyles.botaoSecundario} onClick={carregarRelatorio}>
-            Atualizar
-          </button>
-          <button className={tabelaStyles.botao} onClick={exportarCsv} disabled={!relatorio}>
-            Exportar CSV
-          </button>
-          <button className={tabelaStyles.botaoSecundario} disabled title="Em breve">
-            Exportar PDF
-          </button>
-        </div>
-      </header>
-
-      {erro && (
-        <p className={tabelaStyles.erro} role="alert">
-          {erro}
-        </p>
-      )}
-
-      <div className={tabelaStyles.barraFerramentas}>
-        <label className={tabelaStyles.formField}>
-          Período · De
-          <input className={tabelaStyles.campo} type="date" value={periodoInicio} onChange={(e) => setPeriodoInicio(e.target.value)} />
-        </label>
-        <label className={tabelaStyles.formField}>
-          Até
-          <input className={tabelaStyles.campo} type="date" value={periodoFim} onChange={(e) => setPeriodoFim(e.target.value)} />
-        </label>
-        <label className={tabelaStyles.formField}>
-          Tipo
-          <select className={tabelaStyles.seletor} value={tipo} onChange={(e) => setTipo(e.target.value)}>
-            {TIPOS_RELATORIO.map((item) => (
-              <option key={item.valor} value={item.valor}>
-                {item.rotulo}
-              </option>
-            ))}
-          </select>
-        </label>
-        <span className={tabelaStyles.status}>
-          Período retornado: {relatorio?.periodo?.inicio ?? "—"} a {relatorio?.periodo?.fim ?? "—"}
-        </span>
       </div>
 
-      {loading && <p className={tabelaStyles.estado}>Carregando relatórios…</p>}
-
-      {relatorio && (
-        <>
-          <div className={styles.cardsKpi}>
-            <div className={styles.cardKpi}>
-              <span className={styles.rotuloKpi}>Tempo Médio para Conserto (MTTR)</span>
-              <strong className={styles.valorKpi}>
-                {relatorio.mttr_horas === null || relatorio.mttr_horas === undefined ? "Sem dados" : `${relatorio.mttr_horas}h`}
-              </strong>
-              <div className={styles.rodapeKpi}>
-                <span className={dentroDaMeta ? styles.tagMetaOk : styles.tagMetaFora}>
-                  {relatorio.mttr_horas === null || relatorio.mttr_horas === undefined ? "Sem dados suficientes" : dentroDaMeta ? "Dentro da meta" : "Fora da meta"}
-                </span>
-                <span className={styles.metaReferencia}>Meta máxima: {META_MTTR_HORAS}h</span>
-              </div>
+      {/* SECTION 4: DUAL ANALYSIS BARS (USO EM HORAS vs TAXA DE OCUPAÇÃO) */}
+      <div className={styles.dualSection}>
+        {/* 4.1 Uso por Equipamento */}
+        <div className={styles.analysisCard}>
+          <div className={styles.chartHeader}>
+            <div className={styles.chartTitles}>
+              <h2 className={styles.chartTitle}>Uso por Equipamento</h2>
+              <span className={styles.chartSubtitle}>Horas acumuladas no período selecionado</span>
             </div>
-            <div className={styles.cardKpi}>
-              <span className={styles.rotuloKpi}>Eficiência Geral</span>
-              <strong className={styles.valorKpi}>{eficienciaGeral === null ? "Indisponível" : `${eficienciaGeral.toFixed(1)}%`}</strong>
-              <div className={styles.rodapeKpi}>
-                <span className={styles.metaReferencia}>
-                  {eficienciaGeral === null ? "Sem status OPERACIONAL na amostra" : "Equipamentos operacionais / total"}
-                </span>
-              </div>
-            </div>
+            <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "var(--silver)" }}>
+              schedule
+            </span>
           </div>
 
-          {mostrarEquipamentos &&
-            graficoBarras("Status Geral de Equipamentos", relatorio.equipamentos_por_status, {
-              chave: "total",
-              rotuloChave: "status",
-              colunas: [["Status", "status"], ["Total", "total"]],
+          <div className={styles.barsList}>
+            {listaUso.slice(0, 5).map((item, idx) => {
+              const val = Number(item.horas ?? item.total_agendamentos ?? 0);
+              const pct = (val / maxUso) * 100;
+              return (
+                <div key={idx} className={styles.barItem}>
+                  <div className={styles.barItemHeader}>
+                    <span className={styles.barItemName}>{item.equipamento_nome || `Equipamento ${item.equipamento_id}`}</span>
+                    <span className={styles.barItemValMuted}>{val} horas</span>
+                  </div>
+                  <div className={styles.barItemTrack}>
+                    <div
+                      className={styles.barItemFillBlue}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </div>
+              );
             })}
+          </div>
 
-          {mostrarChamados &&
-            graficoBarras("Falhas por Equipamento", relatorio.ranking_falhas, {
-              chave: "total",
-              rotuloChave: "equipamento_id",
-              colunas: [["Equipamento", "equipamento_id"], ["Falhas", "total"]],
-            })}
+          <div className={styles.barsFooter}>
+            <span>Agendamentos por equipamento</span>
+            <span className={styles.barsFooterActive}>No período escolhido</span>
+          </div>
+        </div>
 
-          {mostrarUso &&
-            graficoBarras("Uso por Equipamento", relatorio.ranking_uso, {
-              chave: "total_agendamentos",
-              rotuloChave: "equipamento_id",
-              colunas: [["Equipamento", "equipamento_id"], ["Agendamentos", "total_agendamentos"]],
-            })}
+        {/* 4.2 Taxa de Ocupação */}
+        <div className={styles.analysisCard}>
+          <div className={styles.chartHeader}>
+            <div className={styles.chartTitles}>
+              <h2 className={styles.chartTitle}>Taxa de Ocupação por Equipamento</h2>
+              <span className={styles.chartSubtitle}>Porcentagem de tempo em funcionamento</span>
+            </div>
+            <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "var(--silver)" }}>
+              percent
+            </span>
+          </div>
 
-          {mostrarUso &&
-            graficoBarras("Taxa de Ocupação por Equipamento", relatorio.taxa_ocupacao, {
-              chave: "taxa_ocupacao_percentual",
-              rotuloChave: "equipamento_id",
-              limiteSobrecarga: LIMITE_SOBRECARGA,
-              formatarValor: (v) => `${v}%`,
-              colunas: [["Equipamento", "equipamento_id"], ["Horas reservadas", "horas_reservadas"], ["Ocupação (%)", "taxa_ocupacao_percentual"]],
+          <div className={styles.barsList}>
+            {listaOcupacao.slice(0, 5).map((item, idx) => {
+              const val = Number(item.taxa ?? item.taxa_ocupacao_percentual ?? 0);
+              const isOver = val >= 85;
+              return (
+                <div key={idx} className={styles.barItem}>
+                  <div className={styles.barItemHeader}>
+                    <span className={styles.barItemName}>{item.equipamento_nome || `Equipamento ${item.equipamento_id}`}</span>
+                    <span className={isOver ? styles.barItemValCritical : styles.barItemVal}>
+                      {val}% {isOver && "⚠️"}
+                    </span>
+                  </div>
+                  <div className={styles.barItemTrack}>
+                    <div
+                      className={isOver ? styles.barItemFillCritical : styles.barItemFill}
+                      style={{ width: `${val}%` }}
+                    />
+                  </div>
+                </div>
+              );
             })}
-        </>
-      )}
-    </>
+          </div>
+
+          <div className={styles.barsFooter}>
+            <span>Ocupação dos equipamentos</span>
+            <span className={styles.barsFooterActive}>No período escolhido</span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,17 +1,5 @@
 USE tenken_db;
 
--- TABELA: pre_cadastros_staff
--- Pré-cadastro exclusivo de PROFESSOR/TECNICO; mantém o fluxo de alunos separado.
-CREATE TABLE pre_cadastros_staff (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(150) NOT NULL,
-    email VARCHAR(150) NOT NULL UNIQUE,
-    perfil ENUM('PROFESSOR', 'TECNICO') NOT NULL,
-    codigo VARCHAR(20) NOT NULL UNIQUE,
-    utilizada BOOLEAN NOT NULL DEFAULT FALSE,
-    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
-
 -- TABELA: ordens_servico
 -- Vinculada 1:1 a um chamado de manutenção.
 CREATE TABLE ordens_servico (

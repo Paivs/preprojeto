@@ -17,7 +17,7 @@ export default function PainelEquipamentos({ total, porStatus, carregando, titul
       </div>
 
       {itens.length === 0 ? (
-        <p className={styles.vazio}>{carregando ? "Carregando dados…" : "Nenhum status retornado pela API."}</p>
+        <p className={styles.vazio}>{carregando ? "Carregando equipamentos…" : "Não há equipamentos para mostrar."}</p>
       ) : (
         <>
           <div className={styles.grafico}>

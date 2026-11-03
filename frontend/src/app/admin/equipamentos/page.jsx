@@ -3,13 +3,24 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import PainelEquipamentos from "../components/PainelEquipamentos";
-import tabela from "../components/TabelaAdmin.module.css";
 import styles from "./page.module.css";
 import { chamarApi } from "../lib/adminApi";
 
 const STATUS = ["DISPONIVEL", "RESERVADO", "EM_USO", "EM_MANUTENCAO", "INATIVO"];
-const ROTULO_STATUS = { DISPONIVEL: "Operacional", RESERVADO: "Reservado", EM_USO: "Em Uso", EM_MANUTENCAO: "Em Manutenção", INATIVO: "Inativo" };
-const TOM_STATUS = { DISPONIVEL: "ok", EM_USO: "ok", RESERVADO: "neutro", EM_MANUTENCAO: "atencao", INATIVO: "neutro" };
+const ROTULO_STATUS = {
+  DISPONIVEL: "Operacional",
+  RESERVADO: "Reservado",
+  EM_USO: "Em Uso",
+  EM_MANUTENCAO: "Em Manutenção",
+  INATIVO: "Inativo",
+};
+const TOM_STATUS = {
+  DISPONIVEL: "ok",
+  EM_USO: "ok",
+  RESERVADO: "neutro",
+  EM_MANUTENCAO: "atencao",
+  INATIVO: "inativo",
+};
 const TRANSICOES = {
   DISPONIVEL: [["RESERVADO", "Reservar"], ["EM_USO", "Marcar em uso"], ["EM_MANUTENCAO", "Enviar p/ manutenção"]],
   EM_USO: [["DISPONIVEL", "Disponibilizar"], ["EM_MANUTENCAO", "Enviar p/ manutenção"]],
@@ -17,35 +28,15 @@ const TRANSICOES = {
   EM_MANUTENCAO: [["DISPONIVEL", "Disponibilizar"]],
   INATIVO: [["DISPONIVEL", "Reativar"]],
 };
+
 const ITENS_POR_PAGINA = 10;
-const vazio = { codigo_patrimonio: "", nome: "", tipo: "BANCADA", localizacao: "" };
+
+function gerarPatrimonioInicial() {
+  return `PAT-2024-${Math.floor(100 + Math.random() * 899)}`;
+}
 
 export default function PaginaEquipamentos() {
   return <AdminLayout>{({ token }) => <Conteudo token={token} />}</AdminLayout>;
-}
-
-function IconeBusca() {
-  return (
-    <svg className={styles.iconeBusca} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
-}
-
-function IconeFechar() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
-      <line x1="4" y1="4" x2="20" y2="20" /><line x1="20" y1="4" x2="4" y2="20" />
-    </svg>
-  );
-}
-
-function IconeSeta() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  );
 }
 
 function Conteudo({ token }) {
@@ -53,8 +44,13 @@ function Conteudo({ token }) {
   const [busca, setBusca] = useState("");
   const [statusFiltro, setStatusFiltro] = useState("");
   const [pagina, setPagina] = useState(1);
-  const [form, setForm] = useState(vazio);
-  const [aberto, setAberto] = useState(false);
+  const [modalAberto, setModalAberto] = useState(false);
+  const [form, setForm] = useState({
+    codigo_patrimonio: gerarPatrimonioInicial(),
+    nome: "",
+    tipo: "BANCADA",
+    localizacao: "",
+  });
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
   const [aviso, setAviso] = useState("");
@@ -62,216 +58,699 @@ function Conteudo({ token }) {
   const [historico, setHistorico] = useState([]);
 
   const carregar = useCallback(async () => {
-    setLoading(true); setErro("");
+    setLoading(true);
+    setErro("");
     try {
       const q = new URLSearchParams({ pagina: "1", limite: "100" });
       if (statusFiltro) q.set("status", statusFiltro);
       const dados = await chamarApi(`/equipamentos?${q}`, token);
       setItens(dados.dados ?? dados ?? []);
-    } catch (e) { setErro(e.message); } finally { setLoading(false); }
+    } catch (e) {
+      setErro(e.message);
+    } finally {
+      setLoading(false);
+    }
   }, [token, statusFiltro]);
 
-  useEffect(() => { carregar(); }, [carregar]);
-  useEffect(() => { setPagina(1); }, [busca, statusFiltro]);
+  useEffect(() => {
+    carregar();
+  }, [carregar]);
 
+  useEffect(() => {
+    setPagina(1);
+  }, [busca, statusFiltro]);
+
+  // Contagem por status
   const contagemPorStatus = useMemo(() => {
     const mapa = Object.fromEntries(STATUS.map((s) => [s, 0]));
-    itens.forEach((item) => { if (mapa[item.status] !== undefined) mapa[item.status] += 1; });
+    itens.forEach((item) => {
+      if (mapa[item.status] !== undefined) mapa[item.status] += 1;
+    });
     return mapa;
   }, [itens]);
 
+  // Métricas do topo (Stitch strip)
   const metricas = useMemo(() => {
     const total = itens.length || 0;
     const operacionais = contagemPorStatus.DISPONIVEL + contagemPorStatus.EM_USO;
-    const criar = (valor, tom) => ({ valor, percentual: total ? Math.round((valor / total) * 100) : 0, tom });
+    const manutencao = contagemPorStatus.EM_MANUTENCAO;
+    const reservados = contagemPorStatus.RESERVADO;
+    const inativos = contagemPorStatus.INATIVO;
+
+    const calcPct = (v) => (total ? Math.round((v / total) * 100) : 0);
+
     return [
-      { rotulo: "Operacionais", ...criar(operacionais, "ok") },
-      { rotulo: "Reservados", ...criar(contagemPorStatus.RESERVADO, "neutro") },
-      { rotulo: "Em Manutenção", ...criar(contagemPorStatus.EM_MANUTENCAO, "atencao") },
-      { rotulo: "Inativos", ...criar(contagemPorStatus.INATIVO, "neutro") },
+      {
+        rotulo: "Operacionais",
+        valor: operacionais,
+        pct: calcPct(operacionais),
+        icone: "check_circle",
+        classeTom: styles.tomOperacional,
+        progressoCor: "#10b981",
+      },
+      {
+        rotulo: "Em Manutenção",
+        valor: manutencao,
+        pct: calcPct(manutencao),
+        icone: "engineering",
+        classeTom: styles.tomManutencao,
+        progressoCor: "#f59e0b",
+      },
+      {
+        rotulo: "Reservados",
+        valor: reservados,
+        pct: calcPct(reservados),
+        icone: "pending_actions",
+        classeTom: styles.tomReservado,
+        progressoCor: "#aa8986",
+      },
+      {
+        rotulo: "Inativos",
+        valor: inativos,
+        pct: calcPct(inativos),
+        icone: "do_not_disturb_on",
+        classeTom: styles.tomInativo,
+        progressoCor: "#6b7280",
+      },
     ];
   }, [itens, contagemPorStatus]);
 
+  // Distribuição Robôs vs Bancadas
   const porCategoria = useMemo(() => {
     const bancadas = itens.filter((i) => i.tipo === "BANCADA").length;
     const robos = itens.filter((i) => i.tipo === "ROBO").length;
-    return [{ status: "Bancadas", total: bancadas }, { status: "Robôs", total: robos }];
+    return [
+      { status: "Bancadas", total: bancadas },
+      { status: "Robôs", total: robos },
+    ];
   }, [itens]);
 
-  const visiveis = useMemo(
-    () => itens.filter((item) => `${item.nome} ${item.codigo_patrimonio} ${item.localizacao}`.toLowerCase().includes(busca.toLowerCase())),
-    [itens, busca]
-  );
+  // Filtro de busca
+  const visiveis = useMemo(() => {
+    return itens.filter((item) =>
+      `${item.nome} ${item.codigo_patrimonio} ${item.localizacao}`
+        .toLowerCase()
+        .includes(busca.toLowerCase())
+    );
+  }, [itens, busca]);
 
+  // Paginação
   const totalPaginas = Math.max(1, Math.ceil(visiveis.length / ITENS_POR_PAGINA));
   const paginaAtual = Math.min(pagina, totalPaginas);
-  const paginados = visiveis.slice((paginaAtual - 1) * ITENS_POR_PAGINA, paginaAtual * ITENS_POR_PAGINA);
+  const paginados = visiveis.slice(
+    (paginaAtual - 1) * ITENS_POR_PAGINA,
+    paginaAtual * ITENS_POR_PAGINA
+  );
 
-  async function salvar(event) {
-    event.preventDefault(); setErro("");
+  function abrirModalCadastro() {
+    setForm({
+      codigo_patrimonio: gerarPatrimonioInicial(),
+      nome: "",
+      tipo: "BANCADA",
+      localizacao: "",
+    });
+    setModalAberto(true);
+  }
+
+  async function salvarEquipamento(event) {
+    event.preventDefault();
+    setErro("");
     try {
-      await chamarApi("/equipamentos", token, { method: "POST", body: JSON.stringify(form) });
-      setForm(vazio); setAberto(false); setAviso("Equipamento cadastrado.");
+      await chamarApi("/equipamentos", token, {
+        method: "POST",
+        body: JSON.stringify(form),
+      });
+      setModalAberto(false);
+      setAviso("Equipamento cadastrado com sucesso.");
       await carregar();
-    } catch (e) { setErro(e.message); }
+    } catch (e) {
+      setErro(e.message);
+    }
   }
 
   async function mudarStatus(item, status) {
     setMenuStatusId(null);
     try {
-      await chamarApi(`/equipamentos/${item.id}/status`, token, { method: "PATCH", body: JSON.stringify({ status }) });
-      setHistorico((atual) => [{ id: `${item.id}-${Date.now()}`, nome: item.nome, de: item.status, para: status, quando: new Date() }, ...atual].slice(0, 6));
+      await chamarApi(`/equipamentos/${item.id}/status`, token, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
+      setHistorico((atual) => [
+        {
+          id: `${item.id}-${Date.now()}`,
+          codigo: item.codigo_patrimonio,
+          nome: item.nome,
+          de: item.status,
+          para: status,
+          quando: new Date(),
+        },
+        ...atual,
+      ].slice(0, 6));
       await carregar();
-    } catch (e) { setErro(e.message); }
+    } catch (e) {
+      setErro(e.message);
+    }
   }
 
   async function inativar(item) {
-    if (!window.confirm(`Inativar ${item.nome}?`)) return;
+    if (!window.confirm(`Tem certeza que deseja inativar ${item.nome}?`)) return;
     try {
       await chamarApi(`/equipamentos/${item.id}`, token, { method: "DELETE" });
-      setHistorico((atual) => [{ id: `${item.id}-${Date.now()}`, nome: item.nome, de: item.status, para: "INATIVO", quando: new Date() }, ...atual].slice(0, 6));
+      setHistorico((atual) => [
+        {
+          id: `${item.id}-${Date.now()}`,
+          codigo: item.codigo_patrimonio,
+          nome: item.nome,
+          de: item.status,
+          para: "INATIVO",
+          quando: new Date(),
+        },
+        ...atual,
+      ].slice(0, 6));
       setAviso("Equipamento inativado.");
       await carregar();
-    } catch (e) { setErro(e.message); }
+    } catch (e) {
+      setErro(e.message);
+    }
   }
 
-  function limparFiltros() { setBusca(""); setStatusFiltro(""); }
+  function limparFiltros() {
+    setBusca("");
+    setStatusFiltro("");
+  }
 
   return (
-    <>
-      <header className={tabela.cabecalhoPagina}>
-        <div><h2>Equipamentos</h2><p>Inventário conectado à API do Tenken.</p></div>
-        <button className={tabela.botao} onClick={() => setAberto(!aberto)}>{aberto ? "Fechar cadastro" : "+ Cadastrar Equipamento"}</button>
-      </header>
+    <div className={styles.container}>
+      {/* Top Utility Bar */}
+      <div className={styles.topUtilityBar}>
+        <div className={styles.headerTitleBlock}>
+          <h1 className={styles.title}>Equipamentos</h1>
+          <p className={styles.subtitle}>Consulte e atualize os equipamentos do laboratório.</p>
+        </div>
 
-      {erro && <p className={tabela.erro} role="alert">{erro}</p>}
-      {aviso && <p className={tabela.estado}>{aviso}</p>}
+        <div className={styles.topActions}>
+          <button
+            type="button"
+            className={styles.refreshBtn}
+            onClick={carregar}
+            title="Atualizar lista de equipamentos"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "var(--accent-tertiary)" }}>
+              refresh
+            </span>
+            <span>Atualizar lista</span>
+          </button>
 
-      <div className={styles.metricas}>
+          <button
+            type="button"
+            className={styles.newEquipmentBtn}
+            onClick={abrirModalCadastro}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add</span>
+            <span>Cadastrar equipamento</span>
+          </button>
+        </div>
+      </div>
+
+      {erro && <div className={styles.alertError} role="alert">{erro}</div>}
+      {aviso && <div className={styles.alertSuccess}>{aviso}</div>}
+
+      {/* Metric Badges Strip */}
+      <div className={styles.metricStrip}>
         {metricas.map((m) => (
-          <div key={m.rotulo} className={`${styles.metricaCard} ${styles[`tom-${m.tom}`]}`}>
-            <span className={styles.metricaRotulo}>{m.rotulo}</span>
-            <div className={styles.metricaLinha}>
-              <strong className={styles.metricaValor}>{m.valor}</strong>
-              <span className={styles.metricaPercentual}>{m.percentual}%</span>
+          <div key={m.rotulo} className={styles.metricCard}>
+            <div className={styles.metricCardTop}>
+              <span className={styles.metricLabel}>{m.rotulo}</span>
+              <span className={`material-symbols-outlined ${m.classeTom}`} style={{ fontSize: "18px" }}>
+                {m.icone}
+              </span>
             </div>
-            <div className={styles.metricaBarraFundo}><div className={styles.metricaBarraPreenchida} style={{ width: `${m.percentual}%` }} /></div>
+            <div className={styles.metricValueRow}>
+              <span className={styles.metricNumber}>{String(m.valor).padStart(2, "0")}</span>
+              <span className={styles.metricSubNumber}>/ {m.pct}%</span>
+            </div>
+            <div className={styles.metricBarTrack}>
+              <div
+                className={styles.metricBarFill}
+                style={{ width: `${m.pct}%`, backgroundColor: m.progressoCor }}
+              />
+            </div>
           </div>
         ))}
       </div>
 
-      {aberto && (
-        <form className={tabela.painel} style={{ padding: 16, marginBottom: 16 }} onSubmit={salvar}>
-          <h3 className={tabela.subTitulo} style={{ marginTop: 0 }}>Cadastrar Novo Equipamento</h3>
-          <div className={tabela.formGrid}>
-            <label className={tabela.formField}>Patrimônio<input required value={form.codigo_patrimonio} onChange={(e) => setForm({ ...form, codigo_patrimonio: e.target.value })} /></label>
-            <label className={tabela.formField}>Nome do Equipamento<input required value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} /></label>
-            <label className={tabela.formField} style={{ gridColumn: "1 / -1" }}>
-              Tipo
-              <div className={styles.tipoSelector}>
-                <button type="button" className={`${styles.tipoOpcao} ${form.tipo === "BANCADA" ? styles.tipoOpcaoAtiva : ""}`} onClick={() => setForm({ ...form, tipo: "BANCADA" })}>
-                  <strong>Bancada</strong><span>Posto de trabalho ou CLP</span>
+      {/* Main Search, Filtering, and Primary Action Bar */}
+      <div className={styles.filterBar}>
+        <div className={styles.filterControls}>
+          {/* Search Box */}
+          <div className={styles.searchBox}>
+            <span className={`material-symbols-outlined ${styles.searchIcon}`}>search</span>
+            <input
+              type="text"
+              placeholder="Pesquisar por nome, patrimônio ou localização..."
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              className={styles.searchInput}
+            />
+            {busca && (
+              <button
+                type="button"
+                className={styles.clearSearchBtn}
+                onClick={() => setBusca("")}
+                aria-label="Limpar pesquisa"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>close</span>
+              </button>
+            )}
+          </div>
+
+          {/* Status Select */}
+          <div className={styles.selectWrapper}>
+            <span className={`material-symbols-outlined ${styles.selectIcon}`}>tune</span>
+            <select
+              value={statusFiltro}
+              onChange={(e) => setStatusFiltro(e.target.value)}
+              className={styles.statusSelect}
+            >
+              <option value="">Todos os status ({itens.length})</option>
+              {STATUS.map((s) => (
+                <option key={s} value={s}>
+                  {ROTULO_STATUS[s]} ({contagemPorStatus[s] ?? 0})
+                </option>
+              ))}
+            </select>
+            <span className={`material-symbols-outlined ${styles.selectArrow}`}>expand_more</span>
+          </div>
+
+          {(busca || statusFiltro) && (
+            <button
+              type="button"
+              className={styles.resetFiltersBtn}
+              onClick={limparFiltros}
+              title="Limpar busca e filtros"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>restart_alt</span>
+              <span>Limpar Filtros</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Table Ticker Info */}
+      <div className={styles.tableTicker}>
+        <div className={styles.tickerLeft}>
+          <span className={styles.tickerTag}>EQUIPAMENTOS CADASTRADOS</span>
+        </div>
+        <div className={styles.tickerRight}>
+          <span>{ITENS_POR_PAGINA} POR PÁGINA</span>
+          <span>•</span>
+          <span className={styles.tickerHighlight}>LISTA DE EQUIPAMENTOS</span>
+        </div>
+      </div>
+
+      {/* Main Technical Table */}
+      <div className={styles.tableCard}>
+        <div className={styles.tableResponsive}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nome do Equipamento</th>
+                <th>Tipo</th>
+                <th>Localização</th>
+                <th>Status</th>
+                <th style={{ textAlign: "right" }}>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginados.map((item) => {
+                const tom = TOM_STATUS[item.status] || "neutro";
+                const rotuloStatus = ROTULO_STATUS[item.status] || item.status;
+                const isRobo = item.tipo === "ROBO";
+
+                return (
+                  <tr key={item.id} className={styles.tableRow}>
+                    <td className={styles.codeCell}>
+                      <code>{item.codigo_patrimonio}</code>
+                    </td>
+
+                    <td className={styles.nameCell}>
+                      <span className={styles.equipmentName}>{item.nome}</span>
+                    </td>
+
+                    <td>
+                      <span className={styles.typeBadge}>
+                        <span
+                          className={`material-symbols-outlined ${styles.typeIcon}`}
+                          style={{ color: isRobo ? "var(--mahogany-red)" : "var(--accent-tertiary)" }}
+                        >
+                          {isRobo ? "smart_toy" : "table_restaurant"}
+                        </span>
+                        <span>{isRobo ? "Robô" : "Bancada"}</span>
+                      </span>
+                    </td>
+
+                    <td>
+                      <div className={styles.locationCell}>
+                        <span className="material-symbols-outlined" style={{ fontSize: "16px", color: "var(--silver)" }}>
+                          pin_drop
+                        </span>
+                        <span>{item.localizacao}</span>
+                      </div>
+                    </td>
+
+                    <td>
+                      <span className={`${styles.statusBadge} ${styles[`status_${tom}`]}`}>
+                        <span className={`${styles.statusDot} ${styles[`dot_${tom}`]}`} />
+                        <span>{rotuloStatus}</span>
+                      </span>
+                    </td>
+
+                    <td style={{ textAlign: "right" }}>
+                      <div className={styles.actionsCell}>
+                        {/* Dropdown Mudar Status */}
+                        <div className={styles.statusDropdownWrapper}>
+                          <button
+                            type="button"
+                            className={styles.actionBtn}
+                            onClick={() => setMenuStatusId(menuStatusId === item.id ? null : item.id)}
+                          >
+                            <span>Mudar Status</span>
+                            <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>
+                              arrow_drop_down
+                            </span>
+                          </button>
+
+                          {menuStatusId === item.id && (
+                            <div className={styles.actionMenu}>
+                              {(TRANSICOES[item.status] ?? []).map(([novoStatus, rotulo]) => (
+                                <button
+                                  key={novoStatus}
+                                  type="button"
+                                  className={styles.actionMenuItem}
+                                  onClick={() => mudarStatus(item, novoStatus)}
+                                >
+                                  <span className={styles.actionMenuDot} />
+                                  <span>{rotulo}</span>
+                                </button>
+                              ))}
+                              {(TRANSICOES[item.status] ?? []).length === 0 && (
+                                <span className={styles.actionMenuEmpty}>Nenhuma opção disponível</span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Inativar / Reativar */}
+                        {item.status !== "INATIVO" ? (
+                          <button
+                            type="button"
+                            className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
+                            onClick={() => inativar(item)}
+                            title="Inativar Equipamento"
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>
+                              power_settings_new
+                            </span>
+                            <span>Inativar</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className={`${styles.actionBtn} ${styles.actionBtnSuccess}`}
+                            onClick={() => mudarStatus(item, "DISPONIVEL")}
+                            title="Reativar Equipamento"
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>
+                              restart_alt
+                            </span>
+                            <span>Reativar</span>
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          {loading ? (
+            <div className={styles.tableEmpty}>Carregando equipamentos...</div>
+          ) : visiveis.length === 0 ? (
+            <div className={styles.tableEmpty}>Nenhum equipamento encontrado.</div>
+          ) : null}
+        </div>
+
+        {/* Pagination Strip */}
+        <div className={styles.paginationStrip}>
+          <span className={styles.paginationInfo}>
+            Página {paginaAtual} de {totalPaginas} ({visiveis.length} registros)
+          </span>
+
+          <div className={styles.paginationButtons}>
+            <button
+              type="button"
+              disabled={paginaAtual === 1}
+              onClick={() => setPagina(paginaAtual - 1)}
+              className={styles.pageBtn}
+              aria-label="Página anterior"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>chevron_left</span>
+            </button>
+
+            {Array.from({ length: totalPaginas }, (_, i) => i + 1).slice(0, 7).map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => setPagina(n)}
+                className={`${styles.pageBtn} ${n === paginaAtual ? styles.pageBtnActive : ""}`}
+              >
+                {n}
+              </button>
+            ))}
+
+            <button
+              type="button"
+              disabled={paginaAtual === totalPaginas}
+              onClick={() => setPagina(paginaAtual + 1)}
+              className={styles.pageBtn}
+              aria-label="Próxima página"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>chevron_right</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Operational Diagnostics & Telemetry Strip */}
+      <div className={styles.diagnosticsStrip}>
+        {/* Audit Log Preview */}
+        <div className={styles.auditLogCard}>
+          <div className={styles.auditLogHeader}>
+            <div className={styles.auditLogTitleRow}>
+              <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "var(--mahogany-red)" }}>
+                history
+              </span>
+              <span className={styles.auditLogTitle}>Histórico de Alterações de Status</span>
+            </div>
+            <span className={styles.auditLogMeta}>Sessão Atual</span>
+          </div>
+
+          <div className={styles.auditList}>
+            {historico.length === 0 ? (
+              <p className={styles.auditEmpty}>Nenhuma alteração de status realizada nesta sessão.</p>
+            ) : (
+              historico.map((h) => (
+                <div key={h.id} className={styles.auditItem}>
+                  <div className={styles.auditItemLeft}>
+                    <span className={styles.auditItemCode}>{h.codigo}</span>
+                    <span className={styles.auditItemText}>
+                      {h.nome}: alterado de <span className={styles.auditOldStatus}>{ROTULO_STATUS[h.de] ?? h.de}</span> para{" "}
+                      <span className={styles.auditNewStatus}>{ROTULO_STATUS[h.para] ?? h.para}</span>
+                    </span>
+                  </div>
+                  <div className={styles.auditItemTime}>
+                    {h.quando.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Category Distribution Ratio Donut */}
+        <PainelEquipamentos
+          titulo="Distribuição por Categoria"
+          total={itens.length}
+          porStatus={porCategoria}
+          carregando={loading}
+        />
+      </div>
+
+      {/* CADASTRO DE EQUIPAMENTO MODAL */}
+      {modalAberto && (
+        <div className={styles.modalOverlay} role="dialog" aria-modal="true">
+          <div className={styles.modalCard}>
+            {/* Modal Header */}
+            <div className={styles.modalHeader}>
+              <div className={styles.modalHeaderLeft}>
+                <div className={styles.modalHeaderIcon}>
+                  <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>add_box</span>
+                </div>
+                <div className={styles.modalHeaderTitles}>
+                  <h2 className={styles.modalTitle}>Cadastrar Novo Equipamento</h2>
+                  <span className={styles.modalSubtitle}>MÓDULO DE GESTÃO DE ATIVOS // TENKEN OS</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className={styles.modalCloseBtn}
+                onClick={() => setModalAberto(false)}
+                aria-label="Fechar modal"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>close</span>
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={salvarEquipamento} className={styles.modalForm}>
+              {/* Patrimônio */}
+              <div className={styles.modalField}>
+                <label htmlFor="modal-patrimonio" className={styles.modalLabel}>
+                  <span>Patrimônio <strong style={{ color: "var(--mahogany-red)" }}>*</strong></span>
+                  <span className={styles.modalLabelHint}>Formato Obrigatório</span>
+                </label>
+                <div className={styles.modalInputWrapper}>
+                  <span className={`material-symbols-outlined ${styles.modalInputIcon}`}>badge</span>
+                  <input
+                    id="modal-patrimonio"
+                    required
+                    value={form.codigo_patrimonio}
+                    onChange={(e) => setForm({ ...form, codigo_patrimonio: e.target.value })}
+                    placeholder="ex: PAT-2024-089"
+                    className={styles.modalInput}
+                  />
+                </div>
+              </div>
+
+              {/* Nome */}
+              <div className={styles.modalField}>
+                <label htmlFor="modal-nome" className={styles.modalLabel}>
+                  <span>Nome do Equipamento <strong style={{ color: "var(--mahogany-red)" }}>*</strong></span>
+                </label>
+                <div className={styles.modalInputWrapper}>
+                  <span className={`material-symbols-outlined ${styles.modalInputIcon}`}>precision_manufacturing</span>
+                  <input
+                    id="modal-nome"
+                    required
+                    value={form.nome}
+                    onChange={(e) => setForm({ ...form, nome: e.target.value })}
+                    placeholder="ex: Braço Robótico Articulado TK-6"
+                    className={styles.modalInput}
+                  />
+                </div>
+              </div>
+
+              {/* Tipo Selector: Bancada vs Robô Cards */}
+              <div className={styles.modalField}>
+                <span className={styles.modalLabel}>
+                  <span>Tipo de Equipamento <strong style={{ color: "var(--mahogany-red)" }}>*</strong></span>
+                </span>
+                <div className={styles.typeCardsGrid}>
+                  <label
+                    className={`${styles.typeCard} ${form.tipo === "BANCADA" ? styles.typeCardSelected : ""}`}
+                  >
+                    <div className={styles.typeCardLeft}>
+                      <input
+                        type="radio"
+                        name="equipment_type"
+                        value="BANCADA"
+                        checked={form.tipo === "BANCADA"}
+                        onChange={() => setForm({ ...form, tipo: "BANCADA" })}
+                        className={styles.typeRadio}
+                      />
+                      <div className={styles.typeCardTexts}>
+                        <span className={styles.typeCardTitle}>Bancada</span>
+                        <span className={styles.typeCardDesc}>Posto de trabalho / CLP</span>
+                      </div>
+                    </div>
+                    <span className="material-symbols-outlined" style={{ fontSize: "22px", color: "var(--accent-tertiary)" }}>
+                      table_restaurant
+                    </span>
+                  </label>
+
+                  <label
+                    className={`${styles.typeCard} ${form.tipo === "ROBO" ? styles.typeCardSelected : ""}`}
+                  >
+                    <div className={styles.typeCardLeft}>
+                      <input
+                        type="radio"
+                        name="equipment_type"
+                        value="ROBO"
+                        checked={form.tipo === "ROBO"}
+                        onChange={() => setForm({ ...form, tipo: "ROBO" })}
+                        className={styles.typeRadio}
+                      />
+                      <div className={styles.typeCardTexts}>
+                        <span className={styles.typeCardTitle}>Robô</span>
+                        <span className={styles.typeCardDesc}>Braço / Scara / AGV</span>
+                      </div>
+                    </div>
+                    <span className="material-symbols-outlined" style={{ fontSize: "22px", color: "var(--mahogany-red)" }}>
+                      smart_toy
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Localização */}
+              <div className={styles.modalField}>
+                <label htmlFor="modal-local" className={styles.modalLabel}>
+                  <span>Localização Física <strong style={{ color: "var(--mahogany-red)" }}>*</strong></span>
+                </label>
+                <div className={styles.modalInputWrapper}>
+                  <span className={`material-symbols-outlined ${styles.modalInputIcon}`}>location_on</span>
+                  <input
+                    id="modal-local"
+                    required
+                    value={form.localizacao}
+                    onChange={(e) => setForm({ ...form, localizacao: e.target.value })}
+                    placeholder="ex: Sala B-104 - Lab Robótica"
+                    className={styles.modalInput}
+                  />
+                </div>
+              </div>
+
+              {/* Status Inicial Notifier */}
+              <div className={styles.initialStatusNotifier}>
+                <div className={styles.notifierLeft}>
+                  <span className="material-symbols-outlined" style={{ fontSize: "16px", color: "var(--status-ok)" }}>
+                    info
+                  </span>
+                  <span>Status inicial padrão:</span>
+                </div>
+                <span className={styles.notifierBadge}>Operacional</span>
+              </div>
+
+              {/* Footer Actions */}
+              <div className={styles.modalActions}>
+                <button
+                  type="button"
+                  className={styles.cancelBtn}
+                  onClick={() => setModalAberto(false)}
+                >
+                  Cancelar
                 </button>
-                <button type="button" className={`${styles.tipoOpcao} ${form.tipo === "ROBO" ? styles.tipoOpcaoAtiva : ""}`} onClick={() => setForm({ ...form, tipo: "ROBO" })}>
-                  <strong>Robô</strong><span>Braço, Scara, AGV</span>
+                <button type="submit" className={styles.saveBtn}>
+                  <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>save</span>
+                  <span>Salvar Equipamento</span>
                 </button>
               </div>
-            </label>
-            <label className={tabela.formField}>Localização<input required value={form.localizacao} onChange={(e) => setForm({ ...form, localizacao: e.target.value })} /></label>
+            </form>
           </div>
-          <div className={tabela.modalAcoes}><button className={tabela.botao}>Salvar Equipamento</button></div>
-        </form>
+        </div>
       )}
-
-      <div className={tabela.barraFerramentas}>
-        <div className={styles.buscaWrap}>
-          <IconeBusca />
-          <input className={styles.buscaInput} placeholder="Buscar por nome, patrimônio ou local" value={busca} onChange={(e) => setBusca(e.target.value)} />
-          {busca && <button type="button" className={styles.buscaLimpar} aria-label="Limpar busca" onClick={() => setBusca("")}><IconeFechar /></button>}
-        </div>
-        <select className={tabela.seletor} value={statusFiltro} onChange={(e) => setStatusFiltro(e.target.value)}>
-          <option value="">Status: Todos ({itens.length})</option>
-          {STATUS.map((s) => <option key={s} value={s}>Status: {ROTULO_STATUS[s]} ({contagemPorStatus[s]})</option>)}
-        </select>
-        {(busca || statusFiltro) && <button className={tabela.botaoSecundario} onClick={limparFiltros}>Limpar Filtros</button>}
-        <button className={tabela.botaoSecundario} onClick={carregar}>Atualizar</button>
-      </div>
-
-      <section className={tabela.painel}>
-        <table className={tabela.tabela}>
-          <thead>
-            <tr><th>Código</th><th>Nome</th><th>Tipo</th><th>Localização</th><th>Status Operacional</th><th>Ações de Controle</th></tr>
-          </thead>
-          <tbody>
-            {paginados.map((item) => (
-              <tr key={item.id}>
-                <td><code>{item.codigo_patrimonio}</code></td>
-                <td>{item.nome}</td>
-                <td><span className={styles.badgeTipo}>{item.tipo === "ROBO" ? "Robô" : "Bancada"}</span></td>
-                <td>{item.localizacao}</td>
-                <td>
-                  <span className={`${styles.badgeStatus} ${styles[`tom-${TOM_STATUS[item.status] ?? "neutro"}`]}`}>
-                    <span className={styles.pontoStatus} />{ROTULO_STATUS[item.status] ?? item.status}
-                  </span>
-                </td>
-                <td>
-                  <div className={tabela.acoes} style={{ position: "relative" }}>
-                    <button className={tabela.botaoSecundario} onClick={() => setMenuStatusId(menuStatusId === item.id ? null : item.id)}>
-                      Mudar Status <IconeSeta />
-                    </button>
-                    {menuStatusId === item.id && (
-                      <div className={styles.menuStatus}>
-                        {(TRANSICOES[item.status] ?? []).map(([novoStatus, rotulo]) => (
-                          <button key={novoStatus} className={styles.menuStatusItem} onClick={() => mudarStatus(item, novoStatus)}>{rotulo}</button>
-                        ))}
-                        {(TRANSICOES[item.status] ?? []).length === 0 && <span className={styles.menuStatusVazio}>Sem transições disponíveis</span>}
-                      </div>
-                    )}
-                    {item.status !== "INATIVO" && <button className={tabela.botaoSecundario} onClick={() => inativar(item)}>Inativar</button>}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {loading ? (
-          <p className={tabela.estado}>Carregando equipamentos…</p>
-        ) : visiveis.length === 0 ? (
-          <p className={tabela.estado}>Nenhum equipamento localizado.</p>
-        ) : null}
-
-        <div className={tabela.paginacao}>
-          <span>{visiveis.length} equipamento(s) · {ITENS_POR_PAGINA} por página</span>
-          <div className={styles.paginacaoBotoes}>
-            <button className={tabela.botaoSecundario} disabled={paginaAtual === 1} onClick={() => setPagina(paginaAtual - 1)}>‹</button>
-            {Array.from({ length: totalPaginas }, (_, i) => i + 1).slice(0, 7).map((n) => (
-              <button key={n} className={n === paginaAtual ? styles.paginaAtiva : tabela.botaoSecundario} onClick={() => setPagina(n)}>{n}</button>
-            ))}
-            <button className={tabela.botaoSecundario} disabled={paginaAtual === totalPaginas} onClick={() => setPagina(paginaAtual + 1)}>›</button>
-          </div>
-        </div>
-      </section>
-
-      <div className={styles.rodapeGrid}>
-        <section className={tabela.painel} style={{ padding: 16 }}>
-          <h3 className={tabela.subTitulo} style={{ marginTop: 0 }}>Histórico de Alterações de Status</h3>
-          {historico.length === 0 ? (
-            <p className={tabela.estado}>Nenhuma alteração nesta sessão.</p>
-          ) : (
-            <ul className={styles.historicoLista}>
-              {historico.map((h) => (
-                <li key={h.id} className={styles.historicoItem}>
-                  <span>{h.nome}: alterado de <strong>{ROTULO_STATUS[h.de] ?? h.de}</strong> para <strong>{ROTULO_STATUS[h.para] ?? h.para}</strong></span>
-                  <span className={styles.historicoHora}>{h.quando.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <PainelEquipamentos titulo="Distribuição por Categoria" total={itens.length} porStatus={porCategoria} carregando={loading} />
-      </div>
-    </>
+    </div>
   );
 }

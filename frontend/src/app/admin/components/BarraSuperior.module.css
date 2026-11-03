@@ -2,82 +2,69 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 32px;
+  height: 64px;
+  padding: 0 32px;
+  background: rgba(11, 15, 18, 0.92);
+  border-bottom: 1px solid var(--border-subtle, #22272b);
   font-family: "DM Sans", sans-serif;
 }
 
 .trilhaBloco {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 16px;
 }
 
 .trilha {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--silver);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: var(--silver, #b1a7a6);
 }
 
-.separador {
-  color: var(--dust-grey);
-}
-
-.barra h1 {
-  margin: 4px 0 0;
-  color: var(--white);
-  font-size: clamp(22px, 3vw, 30px);
+.trilhaAtual {
+  color: #ffb4ac;
+  font-weight: 700;
 }
 
 .conta {
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: var(--white-smoke);
-  font-size: 14px;
+  gap: 16px;
 }
 
 .avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--mahogany-red, #a4161a);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  flex: none;
-  border-radius: 50%;
-  background: var(--mahogany-red);
-  color: var(--white);
-}
-
-.avatar svg {
-  width: 18px;
-  height: 18px;
 }
 
 .identidade {
   display: flex;
   flex-direction: column;
   line-height: 1.2;
-  margin-right: 6px;
 }
 
 .nome {
-  color: var(--white-smoke);
   font-size: 13px;
   font-weight: 600;
+  color: var(--white-smoke, #f5f3f4);
 }
 
 .cargo {
-  color: var(--mahogany-red-2);
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #ffb4ac;
 }
 
 .sair {
@@ -85,25 +72,18 @@
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  color: var(--white-smoke);
-  background: var(--carbon-black);
-  border: 1px solid rgba(177, 167, 166, 0.24);
   border-radius: 4px;
-  font-size: 12.5px;
+  background: var(--surface-high, #262a2e);
+  border: 1px solid var(--border-subtle, #22272b);
+  color: var(--white-smoke, #f5f3f4);
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: border-color 180ms, color 180ms, background 180ms;
-}
-
-.sair svg {
-  width: 15px;
-  height: 15px;
-  color: var(--mahogany-red-2);
+  transition: background 0.15s;
 }
 
 .sair:hover {
-  color: var(--white);
-  border-color: var(--white);
-  background: #1c2023;
+  background: var(--surface-highest, #313538);
 }
