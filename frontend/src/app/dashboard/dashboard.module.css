@@ -1,0 +1,26 @@
+.page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 24px;
+  color: var(--white-smoke);
+  background: var(--onyx);
+}
+
+.card {
+  width: min(100%, 560px);
+  padding: 32px;
+  background: var(--carbon-black);
+  border: 1px solid var(--dark-garnet);
+  border-radius: 8px;
+}
+
+.card h1 {
+  margin: 0 0 24px;
+  font-size: clamp(24px, 5vw, 32px);
+}
+
+.card p {
+  margin: 12px 0 0;
+  color: var(--silver);
+}
