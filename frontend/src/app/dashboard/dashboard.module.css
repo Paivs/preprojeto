@@ -24,3 +24,18 @@
   margin: 12px 0 0;
   color: var(--silver);
 }
+
+.logoutButton {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 28px;
+  color: var(--white);
+  background: var(--mahogany-red);
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logoutButton:hover {
+  background: var(--mahogany-red-2);
+}
