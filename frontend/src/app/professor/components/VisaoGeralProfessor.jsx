@@ -23,7 +23,7 @@ export default function VisaoGeralProfessor() {
     .filter((item) => item.data === HOJE_DEMO && item.status !== "CANCELADO")
     .sort((a, b) => a.inicio.localeCompare(b.inicio)), [dados.agendamentos]);
   const pendencias = useMemo(() => dados.inspecoes
-    .filter((item) => !item.resultado)
+    .filter((item) => !item.resultado && !item.cancelada)
     .sort((a, b) => `${a.data}${a.horario}`.localeCompare(`${b.data}${b.horario}`)), [dados.inspecoes]);
 
   const metricas = [
