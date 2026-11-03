@@ -1,4 +1,4 @@
-import { getToken } from "./session";
+import { clearSession, getToken } from "./session";
 
 export async function apiFetch(path, options = {}) {
   const { body, headers: cabecalhosOriginais, ...opcoes } = options;
@@ -37,6 +37,12 @@ export async function apiFetch(path, options = {}) {
     erro.errors = Array.isArray(dados?.errors)
       ? dados.errors.filter((item) => item && typeof item.field === "string" && typeof item.message === "string")
       : [];
+
+    if (resposta.status === 401 && path !== "/api/usuarios/login" && typeof window !== "undefined") {
+      clearSession();
+      window.location.assign("/login");
+    }
+
     throw erro;
   }
 
