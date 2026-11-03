@@ -177,6 +177,7 @@ export default function CadastroPage() {
             <button className={styles.button} type="submit" disabled={enviando}>{enviando ? "Gerando" : "Gerar matrícula"}</button>
           </form>
           </>}
+        </>
       ) : (
         <form className={styles.form} onSubmit={enviarCadastro} noValidate>
           {campo("matricula", "Matrícula")}
