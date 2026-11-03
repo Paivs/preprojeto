@@ -1,18 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import AuthLayout from "@/components/auth/AuthLayout";
 import styles from "@/components/auth/authForm.module.css";
 import { apiFetch } from "@/lib/api";
 
 export default function CadastroPage() {
+  const router = useRouter();
   const [etapa, setEtapa] = useState(1);
-  const [formulario, setFormulario] = useState({ nome: "", email: "", cpf: "", telefone: "", matricula: "" });
+  const [formulario, setFormulario] = useState({ nome: "", email: "", cpf: "", telefone: "", matricula: "", senha: "", confirmarSenha: "" });
   const [erros, setErros] = useState({});
   const [alerta, setAlerta] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [matriculaGerada, setMatriculaGerada] = useState("");
   const [copiado, setCopiado] = useState(false);
+  const [criandoConta, setCriandoConta] = useState(false);
 
   function atualizarCampo(event) {
     const { name, value } = event.target;
@@ -60,6 +63,33 @@ export default function CadastroPage() {
     }
   }
 
+  async function enviarCadastro(event) {
+    event.preventDefault();
+    setAlerta("");
+    const novosErros = {};
+    if (formulario.senha.length < 8) novosErros.senha = "A senha deve ter pelo menos 8 caracteres.";
+    if (formulario.senha !== formulario.confirmarSenha) novosErros.confirmarSenha = "As senhas não coincidem.";
+    setErros(novosErros);
+    if (Object.keys(novosErros).length) return;
+
+    setCriandoConta(true);
+    try {
+      await apiFetch("/api/alunos/cadastro", {
+        method: "POST",
+        body: {
+          matricula: formulario.matricula,
+          senha: formulario.senha,
+          confirmarSenha: formulario.confirmarSenha,
+        },
+      });
+      router.replace("/login?cadastro=ok");
+    } catch {
+      setAlerta("Não foi possível criar a conta. Tente de novo.");
+    } finally {
+      setCriandoConta(false);
+    }
+  }
+
   function irParaEtapaMatricula() {
     setFormulario((atual) => ({ ...atual, matricula: "" }));
     setEtapa(2);
@@ -101,9 +131,9 @@ export default function CadastroPage() {
         <span className={etapa === 1 ? styles.stepActive : ""}>1. Gerar matrícula</span>
         <span className={etapa === 2 ? styles.stepActive : ""}>2. Criar senha</span>
       </div>
+      {alerta && <p className={styles.alert} role="alert">{alerta}</p>}
       {etapa === 1 ? (
         <>
-          {alerta && <p className={styles.alert} role="alert">{alerta}</p>}
           {matriculaGerada ? (
             <div className={styles.form}>
               <p>Matrícula gerada:</p>
@@ -133,9 +163,14 @@ export default function CadastroPage() {
           </form>
           </>}
       ) : (
-        <div className={styles.form}>
+        <form className={styles.form} onSubmit={enviarCadastro} noValidate>
           {campo("matricula", "Matrícula")}
-        </div>
+          {campo("senha", "Senha", "password", true)}
+          {campo("confirmarSenha", "Confirmar senha", "password", true)}
+          <button className={styles.button} type="submit" disabled={criandoConta}>
+            {criandoConta ? "Criando conta" : "Criar conta"}
+          </button>
+        </form>
       )}
     </AuthLayout>
   );
