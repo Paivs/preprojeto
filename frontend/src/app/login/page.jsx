@@ -1,15 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import AuthLayout from "@/components/auth/AuthLayout";
 import styles from "@/components/auth/authForm.module.css";
+import { apiFetch } from "@/lib/api";
+import { saveSession } from "@/lib/session";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [matricula, setMatricula] = useState("");
   const [senha, setSenha] = useState("");
 
-  function enviarFormulario(event) {
+  async function enviarFormulario(event) {
     event.preventDefault();
+
+    const resultado = await apiFetch("/api/usuarios/login", {
+      method: "POST",
+      body: { matricula: matricula.trim().toUpperCase(), senha },
+    });
+
+    saveSession(resultado.token, resultado.usuario);
+    router.replace("/dashboard");
   }
 
   return (
