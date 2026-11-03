@@ -5,7 +5,7 @@ import { agendamentosDemo } from "../lib/agendamentosDemo";
 import { equipamentosDemo } from "../lib/equipamentosDemo";
 import { inspecoesDemo } from "../lib/inspecoesDemo";
 import { turmasDemo } from "../lib/turmasDemo";
-import { criarReservaLocal } from "../lib/professorDemoActions";
+import { calcularResultadoInspecao, criarReservaLocal } from "../lib/professorDemoActions";
 
 const ProfessorDemoContext = createContext(null);
 const STORAGE_KEY = "tenken_professor_demo_v1";
@@ -119,8 +119,34 @@ export default function ProfessorDemoProvider({ children }) {
     return { ok: true };
   }
 
+  function registrarInspecao(id, formulario) {
+    const inspecao = dados.inspecoes.find((item) => item.id === id);
+    if (!inspecao || inspecao.resultado || inspecao.cancelada) {
+      return { ok: false, message: "Esta inspeção não está mais pendente." };
+    }
+    const equipamento = dados.equipamentos.find((item) => item.id === inspecao.equipamentoId);
+    const checklist = Object.entries(formulario.respostas).map(([itemId, conforme]) => ({ id: itemId, critico: ["estrutura", "energia", "celula", "emergencia", "cabos", "desligamento", "integridade"].includes(itemId), conforme }));
+    if (!checklist.length || checklist.some((item) => typeof item.conforme !== "boolean")) {
+      return { ok: false, message: "Responda todos os itens antes de salvar." };
+    }
+    const resultado = calcularResultadoInspecao(checklist.map((item) => ({ id: item.id, critico: item.critico })), Object.fromEntries(checklist.map((item) => [item.id, item.conforme])));
+    const statusEquipamento = resultado === "REPROVADO"
+      ? "EM_MANUTENCAO"
+      : inspecao.etapa === "POS_USO" ? "DISPONIVEL" : "EM_USO";
+
+    setDados((atual) => ({
+      ...atual,
+      inspecoes: atual.inspecoes.map((item) => item.id === id ? { ...item, resultado, respostas: formulario.respostas, observacoes: formulario.observacoes, concluidaEm: new Date().toISOString() } : item),
+      agendamentos: inspecao.etapa === "PRE_USO" && resultado !== "REPROVADO"
+        ? atual.agendamentos.map((item) => item.id === inspecao.agendamentoId ? { ...item, status: "EM_ANDAMENTO", inspecao: resultado } : item)
+        : atual.agendamentos.map((item) => item.id === inspecao.agendamentoId ? { ...item, inspecao: resultado } : item),
+      equipamentos: atual.equipamentos.map((item) => item.id === inspecao.equipamentoId ? { ...item, status: statusEquipamento } : item),
+    }));
+    return { ok: true, resultado, equipamento: equipamento?.nome };
+  }
+
   return (
-    <ProfessorDemoContext.Provider value={{ dados, setDados, criarAgendamento, cancelarAgendamento, concluirAgendamento }}>
+    <ProfessorDemoContext.Provider value={{ dados, setDados, criarAgendamento, cancelarAgendamento, concluirAgendamento, registrarInspecao }}>
       {children}
     </ProfessorDemoContext.Provider>
   );
