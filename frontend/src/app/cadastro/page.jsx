@@ -12,6 +12,7 @@ export default function CadastroPage() {
   const [alerta, setAlerta] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [matriculaGerada, setMatriculaGerada] = useState("");
+  const [copiado, setCopiado] = useState(false);
 
   function atualizarCampo(event) {
     const { name, value } = event.target;
@@ -64,6 +65,16 @@ export default function CadastroPage() {
     setEtapa(2);
   }
 
+  async function copiarMatricula() {
+    try {
+      await navigator.clipboard.writeText(matriculaGerada);
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2000);
+    } catch {
+      setCopiado(false);
+    }
+  }
+
   function campo(nome, rotulo, tipo = "text", obrigatorio = false) {
     return (
       <div className={styles.field}>
@@ -97,6 +108,10 @@ export default function CadastroPage() {
             <div className={styles.form}>
               <p>Matrícula gerada:</p>
               <strong style={{ color: "var(--white)", fontSize: "2rem" }}>{matriculaGerada}</strong>
+              <p>Guarde esta matrícula: ela é o seu login</p>
+              <button className={styles.button} type="button" onClick={copiarMatricula}>
+                {copiado ? "Copiado" : "Copiar"}
+              </button>
               <button className={styles.button} type="button" onClick={() => {
                 setFormulario((atual) => ({ ...atual, matricula: matriculaGerada }));
                 setEtapa(2);
