@@ -53,3 +53,18 @@
   color: var(--silver);
   line-height: 1.6;
 }
+
+@media (max-width: 767px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .videoPanel {
+    display: none;
+  }
+
+  .contentPanel {
+    width: 100%;
+    padding: 24px;
+  }
+}
