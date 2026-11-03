@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
@@ -139,11 +139,11 @@ function Conteudo({ token }) {
           </p>
         </div>
 
-        <button type="button" className={styles.refreshBtn} onClick={carregar}>
+        <button type="button" className={styles.refreshBtn} onClick={carregar} aria-label="Atualizar lista">
           <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "var(--accent-tertiary)" }}>
             refresh
           </span>
-          <span>Atualizar lista</span>
+          <span className={styles.refreshLabel}>Atualizar lista</span>
         </button>
       </div>
 
@@ -213,7 +213,7 @@ function Conteudo({ token }) {
         })}
         {loading ? <div className={styles.emptyState}>Carregando chamados...</div> : filtrados.length === 0 ? <div className={styles.emptyState}>Nenhum chamado encontrado.</div> : null}
       </div>
-      <div className={styles.listFooter}><span>Exibindo <strong>{filtrados.length}</strong> chamados</span><span>CHAMADOS TENKEN</span></div>
+      <div className={styles.listFooter}><span>Exibindo <strong>{filtrados.length}</strong> chamados</span></div>
       {selecionado && (
         <div className={styles.modalOverlay} role="dialog" aria-modal="true" aria-labelledby="ticket-detail-title" onMouseDown={(e) => { if (e.target === e.currentTarget) setSelecionado(null); }}>
           <section className={styles.modalCard}>

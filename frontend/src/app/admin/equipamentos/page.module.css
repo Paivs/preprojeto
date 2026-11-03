@@ -1042,3 +1042,16 @@
 .saveBtn:hover {
   background: var(--mahogany-hover, #ba181b);
 }
+@media (max-width: 760px) {
+  .topUtilityBar { align-items: stretch; flex-direction: column; gap: 14px; }
+  .topActions { width: 100%; flex-wrap: wrap; }
+  .topActions button { flex: 1 1 180px; }
+  .metricStrip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filterControls { flex-wrap: wrap; }
+  .searchBox { min-width: 0; width: 100%; }
+  .selectWrapper { flex: 1 1 100%; }
+  .tableTicker { flex-wrap: wrap; }
+  .tableResponsive { max-width: 100%; }
+  .table { min-width: 680px; }
+  .paginationStrip { gap: 10px; flex-wrap: wrap; }
+}

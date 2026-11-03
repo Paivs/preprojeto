@@ -12,26 +12,20 @@ const itens = [
   { href: "/admin/relatorios", label: "Relatórios", icon: "analytics" },
 ];
 
-export default function BarraLateral({ statusApi }) {
+export default function BarraLateral({ statusApi, aberta = false, onNavegar, onFechar }) {
   const pathname = usePathname();
   const online = statusApi === "online";
   const textoStatus = online ? "Sistema conectado" : statusApi === "offline" ? "Sistema indisponível" : "Verificando conexão";
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${aberta ? styles.sidebarAberta : ""}`}>
       <div className={styles.topSection}>
         {/* Header / Brand */}
         <div className={styles.brandHeader}>
           <Link href="/" className={styles.brandLink} aria-label="Tenken Início">
-            <div className={styles.brandBadge}>
-              <span className="material-symbols-outlined">precision_manufacturing</span>
-            </div>
-            <div className={styles.brandInfo}>
-              <span className={styles.brandTitle}>TENKEN</span>
-              <span className={styles.brandSub}>GESTÃO DE LABORATÓRIO</span>
-            </div>
+            <img src="/assets/img/logo-site/logo_horizontal.svg" alt="Tenken" className={styles.brandLogo} />
           </Link>
-          <div className={styles.brandStatusDot} />
+          <button type="button" className={styles.mobileCloseBtn} onClick={onFechar} aria-label="Fechar menu"><span className="material-symbols-outlined">close</span></button>
         </div>
 
         {/* Section Label */}
@@ -49,10 +43,12 @@ export default function BarraLateral({ statusApi }) {
                 href={item.href}
                 className={`${styles.navItem} ${isActive ? styles.navItemActive : ""}`}
                 aria-current={isActive ? "page" : undefined}
+                onClick={onNavegar}
               >
                 <span className={`material-symbols-outlined ${styles.navIcon}`}>{item.icon}</span>
                 <span className={styles.navLabel}>{item.label}</span>
               </Link>
+
             );
           })}
         </nav>
