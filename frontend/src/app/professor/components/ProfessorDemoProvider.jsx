@@ -6,6 +6,7 @@ import { equipamentosDemo } from "../lib/equipamentosDemo";
 import { inspecoesDemo } from "../lib/inspecoesDemo";
 import { turmasDemo } from "../lib/turmasDemo";
 import { calcularResultadoInspecao, criarReservaLocal } from "../lib/professorDemoActions";
+import { obterChecklist } from "../lib/checklistDemo";
 
 const ProfessorDemoContext = createContext(null);
 const STORAGE_KEY = "tenken_professor_demo_v1";
@@ -125,11 +126,11 @@ export default function ProfessorDemoProvider({ children }) {
       return { ok: false, message: "Esta inspeção não está mais pendente." };
     }
     const equipamento = dados.equipamentos.find((item) => item.id === inspecao.equipamentoId);
-    const checklist = Object.entries(formulario.respostas).map(([itemId, conforme]) => ({ id: itemId, critico: ["estrutura", "energia", "celula", "emergencia", "cabos", "desligamento", "integridade"].includes(itemId), conforme }));
-    if (!checklist.length || checklist.some((item) => typeof item.conforme !== "boolean")) {
+    const checklist = obterChecklist(inspecao, equipamento);
+    if (!checklist.length || checklist.some((item) => typeof formulario.respostas[item.id] !== "boolean")) {
       return { ok: false, message: "Responda todos os itens antes de salvar." };
     }
-    const resultado = calcularResultadoInspecao(checklist.map((item) => ({ id: item.id, critico: item.critico })), Object.fromEntries(checklist.map((item) => [item.id, item.conforme])));
+    const resultado = calcularResultadoInspecao(checklist, formulario.respostas);
     const statusEquipamento = resultado === "REPROVADO"
       ? "EM_MANUTENCAO"
       : inspecao.etapa === "POS_USO" ? "DISPONIVEL" : "EM_USO";
