@@ -7,8 +7,8 @@ import styles from "./BarraLateralProfessor.module.css";
 const itens = [
   { href: "/professor", label: "Visão geral", icon: "dashboard", pronto: true },
   { href: "/professor/agendamentos", label: "Agendamentos", icon: "calendar_month", pronto: true },
-  { href: "/professor/turmas", label: "Minhas turmas", icon: "groups" },
-  { href: "/professor/inspecoes", label: "Inspeções", icon: "fact_check" },
+  { href: "/professor/turmas", label: "Minhas turmas", icon: "groups", pronto: true },
+  { href: "/professor/inspecoes", label: "Inspeções", icon: "fact_check", pronto: true },
   { href: "/professor/equipamentos", label: "Equipamentos", icon: "precision_manufacturing", pronto: true },
 ];
 
