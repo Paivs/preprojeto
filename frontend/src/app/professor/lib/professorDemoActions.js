@@ -60,3 +60,10 @@ export function criarReservaLocal(dados, formulario) {
     equipamentoAtualizado: { ...equipamento, status: "RESERVADO" },
   };
 }
+
+export function calcularResultadoInspecao(checklist, respostas) {
+  const falhaCritica = checklist.some((item) => item.critico && respostas[item.id] === false);
+  if (falhaCritica) return "REPROVADO";
+  const temFalha = checklist.some((item) => respostas[item.id] === false);
+  return temFalha ? "APROVADO_COM_RESSALVAS" : "APROVADO";
+}
