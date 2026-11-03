@@ -3,7 +3,7 @@ import { formatarPercentual, nomeItem, valorItem } from "../lib/formatadores";
 import BadgePercentual from "./BadgePercentual";
 import styles from "./PainelEquipamentos.module.css";
 
-export default function PainelEquipamentos({ total, porStatus, carregando, titulo = "Equipamentos por status" }) {
+export default function PainelEquipamentos({ total, porStatus, carregando, cores = CORES_DONUT, titulo = "Equipamentos por status" }) {
   const itens = Array.isArray(porStatus) ? porStatus : [];
   const raio = 62;
   const circunferencia = 2 * Math.PI * raio;
@@ -46,7 +46,7 @@ export default function PainelEquipamentos({ total, porStatus, carregando, titul
             {itens.map((item, index) => (
               <BadgePercentual
                 key={nomeItem(item, index)}
-                cor={CORES_DONUT[index % CORES_DONUT.length]}
+                cor={cores[index % cores.length]}
                 rotulo={nomeItem(item, index)}
                 percentual={formatarPercentual(valorItem(item), total)}
                 quantidade={valorItem(item)}

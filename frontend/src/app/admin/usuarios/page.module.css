@@ -1,4 +1,4 @@
-﻿/* Stitch user management screen, expressed as a CSS Module. */
+/* Stitch user management screen, expressed as a CSS Module. */
 .container { gap: 1rem; color: var(--on-surface, #e0e3e7); font-family: "DM Sans", sans-serif; }
 .topBanner { align-items: flex-end; padding: 1.5rem 0 1rem; }
 .title { color: var(--on-surface, #e0e3e7); font-size: 2rem; line-height: 2.5rem; letter-spacing: -0.015em; }
@@ -161,4 +161,37 @@
   .searchWrapper { width: 100%; flex: initial; }
   .modalRow { align-items: stretch; flex-direction: column; }
   .paginationStrip { align-items: flex-start; flex-direction: column; }
+}
+.tableEmpty { height: 8rem; padding: 2rem 1rem !important; text-align: center; vertical-align: middle; }
+@media (max-width: 760px) {
+  .topBanner, .controlBar { align-items: stretch; flex-direction: column; }
+  .bannerLeft, .searchWrapper { width: 100%; min-width: 0; }
+  .searchAndAction { width: 100%; flex-direction: column; align-items: stretch; }
+  .newUserBtn { width: 100%; }
+  .paginationStrip { gap: .75rem; flex-wrap: wrap; }
+}
+
+/* Gentle styling for the user creation form */
+.modalOverlay { background: rgb(5 7 9 / 62%); backdrop-filter: blur(3px); }
+.modalCard { border: 1px solid #30363d; border-radius: 0.75rem; background: #15191d; box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 35%); }
+.modalHeader { padding: 1.25rem 1.5rem; background: #15191d; }
+.modalHeaderTitleRow { gap: 0; }
+.modalTitle { margin: 0; color: #f1f3f5; font-size: 1.15rem; font-weight: 650; letter-spacing: -0.01em; }
+.modalDescription { margin: 0.35rem 0 0; color: #9ba3ab; font-size: 0.875rem; line-height: 1.45; }
+.modalForm { gap: 1.1rem; padding: 1.5rem; }
+.modalLabel { color: #c4c9ce; font-size: 0.8125rem; font-weight: 550; }
+.optionalLabel { margin-left: 0.25rem; color: #858e97; font-size: 0.75rem; font-weight: 400; }
+.modalInput, .modalSelect { min-height: 2.8rem; border: 1px solid #343b42; border-radius: 0.45rem; background: #101316; transition: border-color .15s, box-shadow .15s; }
+.modalInput::placeholder { color: #707982; }
+.modalInput:focus, .modalSelect:focus { border-color: #9b5558; box-shadow: 0 0 0 3px rgb(164 22 26 / 14%); outline: none; }
+.modalCloseBtn, .cancelBtn { border: 1px solid #343b42; border-radius: 0.45rem; background: transparent; color: #c4c9ce; }
+.modalActions { padding-top: 0.4rem; }
+.saveBtn { border-radius: 0.45rem; background: #8f2428; color: #fff; }
+.saveBtn:hover { background: #a42e32; }
+.cancelBtn:hover { background: #20262b; }
+@media (max-width: 620px) {
+  .modalOverlay { padding: 0.75rem; }
+  .modalHeader, .modalForm { padding: 1rem; }
+  .modalRow { flex-direction: column; }
+  .modalActions { align-items: stretch; flex-direction: column-reverse; }
 }

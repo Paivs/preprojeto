@@ -195,6 +195,7 @@
   margin-top: 64px; /* Offset for topbar */
   padding: 24px 32px 48px;
   min-height: calc(100vh - 64px);
+  overflow-x: hidden;
   background: var(--onyx, #0b090a);
 }
 
@@ -209,4 +210,22 @@
   .mainView {
     padding: 20px 16px 36px;
   }
+}
+
+.backdrop { display: none; }
+.menuBtn { display: none; }
+@media (max-width: 1024px) {
+  .contentSpine { padding-left: 0; }
+  .topbar { left: 0; padding: 0 20px; }
+  .menuBtn { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--border-subtle, #22272b); background: var(--surface-low, #181c1f); color: var(--white-smoke, #f5f3f4); cursor: pointer; }
+  .backdrop { display: block; position: fixed; inset: 0; z-index: 45; border: 0; background: rgba(0,0,0,.62); }
+  .mainView { padding: 20px 24px 36px; }
+}
+@media (max-width: 560px) {
+  .topbar { padding: 0 12px; }
+  .topbarRight { gap: 8px; }
+  .userBadge { padding-right: 6px; }
+  .userInfo { display: none; }
+  .logoutBtn { padding: 8px; font-size: 0; }
+  .mainView { padding: 16px 12px 28px; }
 }

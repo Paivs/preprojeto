@@ -90,7 +90,6 @@ export default function VisaoDashboard({ dashboard, loading, error, updatedAt, o
           unidade="unidades ativas"
           contexto={{
             texto: "No sistema",
-            ponto: true,
           }}
         />
 
@@ -142,7 +141,6 @@ export default function VisaoDashboard({ dashboard, loading, error, updatedAt, o
         <div className={styles.severityHeader}>
           <div className={styles.severityTitleBlock}>
             <div className={styles.severityTitleRow}>
-              <div className={styles.severityTitleDot} />
               <h3 className={styles.severityTitle}>Chamados Abertos por Severidade</h3>
             </div>
             <p className={styles.severitySubtitle}>Veja quantos chamados abertos há em cada nível de prioridade.</p>
@@ -182,7 +180,6 @@ export default function VisaoDashboard({ dashboard, loading, error, updatedAt, o
             return (
               <div key={def.chave} className={`${styles.miniCard} ${styles[`miniCard_${def.tom}`]}`}>
                 <div className={styles.miniCardTop}>
-                  <span className={`${styles.miniDot} ${styles[`dot_${def.tom}`]}`} />
                   <span className={`${styles.miniLabel} ${styles[`text_${def.tom}`]}`}>{def.rotulo}</span>
                 </div>
 

@@ -362,9 +362,6 @@ function Conteudo({ token }) {
           <span className={styles.tickerTag}>EQUIPAMENTOS CADASTRADOS</span>
         </div>
         <div className={styles.tickerRight}>
-          <span>{ITENS_POR_PAGINA} POR PÁGINA</span>
-          <span>•</span>
-          <span className={styles.tickerHighlight}>LISTA DE EQUIPAMENTOS</span>
         </div>
       </div>
 
@@ -584,6 +581,7 @@ function Conteudo({ token }) {
           titulo="Distribuição por Categoria"
           total={itens.length}
           porStatus={porCategoria}
+          cores={["#ffffff", "#a4161a"]}
           carregando={loading}
         />
       </div>

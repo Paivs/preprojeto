@@ -262,7 +262,11 @@ function Conteudo({ token }) {
               </tr>
             </thead>
             <tbody>
-              {usuariosPagina.map((u) => {
+              {loading ? (
+                <tr><td colSpan={7} className={styles.tableEmpty}>Carregando usuários...</td></tr>
+          ) : filtrados.length === 0 ? (
+                <tr><td colSpan={7} className={styles.tableEmpty}>Nenhum usuário encontrado.</td></tr>
+          ) : usuariosPagina.map((u) => {
                 const iniciais = extrairIniciais(u.nome);
                 const isAdmin = u.perfil === "ADMIN";
                 const isProfessor = u.perfil === "PROFESSOR";
@@ -387,11 +391,6 @@ function Conteudo({ token }) {
             </tbody>
           </table>
 
-          {loading ? (
-            <div className={styles.tableEmpty}>Carregando usuários...</div>
-          ) : filtrados.length === 0 ? (
-            <div className={styles.tableEmpty}>Nenhum usuário encontrado.</div>
-          ) : null}
         </div>
 
         {/* Pagination */}
@@ -441,8 +440,10 @@ function Conteudo({ token }) {
           <div className={styles.modalCard}>
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderTitleRow}>
-                <span className={styles.modalHeaderDot} />
-                <span className={styles.modalTitle}>Novo Usuário // Cadastramento</span>
+                <div>
+                  <h2 className={styles.modalTitle}>Adicionar usuário</h2>
+                  <p className={styles.modalDescription}>Preencha os dados para criar um novo acesso ao sistema.</p>
+                </div>
               </div>
               <button
                 type="button"
@@ -456,10 +457,10 @@ function Conteudo({ token }) {
 
             <form onSubmit={criarUsuario} className={styles.modalForm}>
               <div className={styles.modalField}>
-                <label className={styles.modalLabel}>Nome Completo</label>
+                  <label className={styles.modalLabel}>Nome</label>
                 <input
                   required
-                  placeholder="ex: Dr. Fernando Vasconcelos"
+                  placeholder="Como devemos chamar essa pessoa?"
                   value={novoUsuario.nome}
                   onChange={(e) => setNovoUsuario({ ...novoUsuario, nome: e.target.value })}
                   className={styles.modalInput}
@@ -467,11 +468,11 @@ function Conteudo({ token }) {
               </div>
 
               <div className={styles.modalField}>
-                <label className={styles.modalLabel}>E-mail Institucional</label>
+                  <label className={styles.modalLabel}>E-mail</label>
                 <input
                   type="email"
                   required
-                  placeholder="ex: fernando.vasconcelos@tenken.org"
+                  placeholder="nome@instituicao.edu.br"
                   value={novoUsuario.email}
                   onChange={(e) => setNovoUsuario({ ...novoUsuario, email: e.target.value })}
                   className={styles.modalInput}
@@ -480,9 +481,9 @@ function Conteudo({ token }) {
 
               <div className={styles.modalRow}>
                 <div className={styles.modalField} style={{ flex: 1 }}>
-                  <label className={styles.modalLabel}>Matrícula (opcional)</label>
+                  <label className={styles.modalLabel}>Matrícula <span className={styles.optionalLabel}>opcional</span></label>
                   <input
-                    placeholder="ex: PROF-9021"
+                    placeholder="Se houver"
                     value={novoUsuario.matricula}
                     onChange={(e) => setNovoUsuario({ ...novoUsuario, matricula: e.target.value })}
                     className={styles.modalInput}
@@ -490,7 +491,7 @@ function Conteudo({ token }) {
                 </div>
 
                 <div className={styles.modalField} style={{ flex: 1 }}>
-                  <label className={styles.modalLabel}>Perfil de Acesso</label>
+                  <label className={styles.modalLabel}>Perfil</label>
                   <select
                     value={novoUsuario.perfil}
                     onChange={(e) => setNovoUsuario({ ...novoUsuario, perfil: e.target.value })}
@@ -514,7 +515,7 @@ function Conteudo({ token }) {
                 </button>
                 <button type="submit" className={styles.saveBtn}>
                   <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>save</span>
-                  <span>Provisionar Usuário</span>
+                  <span>Criar acesso</span>
                 </button>
               </div>
             </form>

@@ -1,29 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
 import BarraLateral from "./BarraLateral";
 import FormularioLogin from "./FormularioLogin";
 import { carregarSessao, entrarComoAdmin, limparSessao, salvarSessao, verificarSaude } from "../lib/adminApi";
 import { API_URL } from "../lib/constantes";
 import styles from "./AdminLayout.module.css";
 
-const rotulosPagina = {
-  "/admin": "Visão Geral",
-  "/admin/equipamentos": "Equipamentos",
-  "/admin/chamados": "Chamados e OS",
-  "/admin/usuarios": "Usuários",
-  "/admin/relatorios": "Relatórios",
-};
-
 export default function AdminLayout({ children }) {
-  const pathname = usePathname();
   const [token, setToken] = useState("");
   const [usuario, setUsuario] = useState(null);
   const [statusApi, setStatusApi] = useState("checking");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [menuAberto, setMenuAberto] = useState(false);
 
   useEffect(() => {
     verificarSaude().then(setStatusApi);
@@ -71,33 +61,19 @@ export default function AdminLayout({ children }) {
     );
   }
 
-  const online = statusApi === "online";
-  const textoStatus = online ? "Sistema conectado" : statusApi === "offline" ? "Sistema indisponível" : "Verificando conexão";
-  const paginaAtual = rotulosPagina[pathname] || "Administração";
-
   return (
     <div className={styles.wrapper}>
       {/* Persistent Technical Sidebar */}
-      <BarraLateral statusApi={statusApi} />
+      <BarraLateral statusApi={statusApi} aberta={menuAberto} onNavegar={() => setMenuAberto(false)} onFechar={() => setMenuAberto(false)} />
+      {menuAberto && <button type="button" className={styles.backdrop} aria-label="Fechar menu" onClick={() => setMenuAberto(false)} />}
 
       {/* Main Administrative Spine */}
       <div className={styles.contentSpine}>
         {/* Fixed Technical Topbar */}
         <header className={styles.topbar}>
-          <div className={styles.topbarLeft}>
-            <nav className={styles.breadcrumb} aria-label="Trilha de navegação">
-              <Link href="/admin" className={styles.breadcrumbRoot}>TENKEN</Link>
-              <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>chevron_right</span>
-              <span>Administração</span>
-              <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>chevron_right</span>
-              <span className={styles.breadcrumbCurrent}>{paginaAtual}</span>
-            </nav>
-            <div className={styles.verticalDivider} />
-            <div className={styles.statusPill}>
-              <span className={`${styles.statusDot} ${online ? styles.statusDotOnline : styles.statusDotOffline}`} />
-              <span className={styles.statusText}>{textoStatus}</span>
-            </div>
-          </div>
+          <button type="button" className={styles.menuBtn} onClick={() => setMenuAberto(true)} aria-label="Abrir menu" aria-expanded={menuAberto}>
+            <span className="material-symbols-outlined">menu</span>
+          </button>
 
           <div className={styles.topbarRight}>
             <div className={styles.userBadge}>
