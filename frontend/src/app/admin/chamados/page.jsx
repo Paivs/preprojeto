@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
@@ -36,6 +36,7 @@ function Conteudo({ token }) {
   const [erro, setErro] = useState("");
   const [aviso, setAviso] = useState("");
   const [historico, setHistorico] = useState({});
+  const [selecionado, setSelecionado] = useState(null);
 
   const carregar = useCallback(async () => {
     setLoading(true);
@@ -63,6 +64,7 @@ function Conteudo({ token }) {
         method: "PATCH",
         body: JSON.stringify({ status: value }),
       });
+      setSelecionado((atual) => atual?.id === item.id ? { ...atual, status: value } : atual);
       setAviso(`Status do chamado #${item.id} atualizado para ${value}.`);
       await carregar();
     } catch (e) {
@@ -71,14 +73,14 @@ function Conteudo({ token }) {
   }
 
   async function encaminhar(item) {
-    const id = window.prompt("ID do usuário com perfil TECNICO:");
+    const id = window.prompt("ID do usuÃ¡rio com perfil TECNICO:");
     if (!id) return;
     try {
       await chamarApi(`/chamados/${item.id}/tecnico`, token, {
         method: "PATCH",
         body: JSON.stringify({ tecnico_id: Number(id) }),
       });
-      setAviso(`Chamado #${item.id} encaminhado ao técnico ID ${id}.`);
+      setAviso(`Chamado #${item.id} encaminhado ao tÃ©cnico ID ${id}.`);
       await carregar();
     } catch (e) {
       setErro(e.message);
@@ -91,7 +93,7 @@ function Conteudo({ token }) {
         method: "POST",
         body: JSON.stringify({}),
       });
-      setAviso(`Ordem de serviço ${os.numero ?? os.id} emitida com sucesso.`);
+      setAviso(`Ordem de serviÃ§o ${os.numero ?? os.id} emitida com sucesso.`);
     } catch (e) {
       setErro(e.message);
     }
@@ -107,7 +109,7 @@ function Conteudo({ token }) {
   }
 
   async function adicionarHistorico(id) {
-    const descricao = window.prompt("Descrição do registro de manutenção:");
+    const descricao = window.prompt("DescriÃ§Ã£o do registro de manutenÃ§Ã£o:");
     if (!descricao) return;
     try {
       await chamarApi(`/chamados/${id}/historico`, token, {
@@ -148,183 +150,127 @@ function Conteudo({ token }) {
       {erro && <div className={styles.alertError} role="alert">{erro}</div>}
       {aviso && <div className={styles.alertSuccess}>{aviso}</div>}
 
-      {/* Control / Filter Bar */}
+      {/* Filters inspired by the Stitch work order screen */}
       <div className={styles.filterBar}>
-        <div className={styles.searchBox}>
-          <span className={`material-symbols-outlined ${styles.searchIcon}`}>search</span>
-          <input
-            type="text"
-            placeholder="Buscar por título, equipamento ou número..."
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            className={styles.searchInput}
-          />
-          {busca && (
-            <button type="button" className={styles.clearBtn} onClick={() => setBusca("")}>
-              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>close</span>
-            </button>
-          )}
+        <div className={styles.filterTopRow}>
+          <div className={styles.searchBox}>
+            <span className={`material-symbols-outlined ${styles.searchIcon}`}>search</span>
+            <input type="text" placeholder="Buscar por título, equipamento ou número..." value={busca} onChange={(e) => setBusca(e.target.value)} className={styles.searchInput} />
+            {busca && <button type="button" className={styles.clearBtn} onClick={() => setBusca("")} aria-label="Limpar busca"><span className="material-symbols-outlined">close</span></button>}
+          </div>
+          <div className={styles.filterGroup}>
+            <span className={styles.filterLabel}>Severidade:</span>
+            <button type="button" className={`${styles.filterPill} ${!severidade ? styles.filterPillActive : ""}`} onClick={() => setSeveridade("")}>Todas</button>
+            {SEVERIDADES.map((value) => <button key={value} type="button" className={`${styles.filterPill} ${severidade === value ? styles.filterPillActive : ""}`} onClick={() => setSeveridade(value)}>{value}</button>)}
+          </div>
         </div>
-
-        <div className={styles.selectsRow}>
-          <div className={styles.selectWrapper}>
-            <span className={`material-symbols-outlined ${styles.selectIcon}`}>filter_alt</span>
-            <select
-              className={styles.select}
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <option value="">Todos os status</option>
-              {STATUS.map((x) => (
-                <option key={x} value={x}>{ROTULO_STATUS[x] || x}</option>
-              ))}
-            </select>
+        <div className={styles.filterBottomRow}>
+          <div className={styles.filterGroup}>
+            <span className={styles.filterLabel}>Status:</span>
+            <button type="button" className={`${styles.filterPill} ${!status ? styles.filterPillActive : ""}`} onClick={() => setStatus("")}>Todos</button>
+            {STATUS.map((value) => <button key={value} type="button" className={`${styles.filterPill} ${status === value ? styles.filterPillActive : ""}`} onClick={() => setStatus(value)}>{ROTULO_STATUS[value] || value}</button>)}
           </div>
-
-          <div className={styles.selectWrapper}>
-            <span className={`material-symbols-outlined ${styles.selectIcon}`}>warning</span>
-            <select
-              className={styles.select}
-              value={severidade}
-              onChange={(e) => setSeveridade(e.target.value)}
-            >
-              <option value="">Todas as prioridades</option>
-              {SEVERIDADES.map((x) => (
-                <option key={x} value={x}>{x}</option>
-              ))}
-            </select>
-          </div>
+          <span className={styles.resultsCount}>Exibindo <strong>{filtrados.length}</strong> itens</span>
         </div>
       </div>
 
-      {/* Table Frame */}
-      <div className={styles.tableCard}>
-        <div className={styles.tableResponsive}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Chamado</th>
-                <th>Equipamento</th>
-                <th>Prioridade</th>
-                <th>Status</th>
-                <th style={{ textAlign: "right" }}>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtrados.map((item) => {
-                const sevUpper = String(item.severidade || "").toUpperCase();
-                let sevClass = styles.sevBaixa;
-                if (sevUpper === "CRITICA" || sevUpper === "CRÍTICA") sevClass = styles.sevCritica;
-                else if (sevUpper === "ALTA") sevClass = styles.sevAlta;
-                else if (sevUpper === "MEDIA" || sevUpper === "MÉDIA") sevClass = styles.sevMedia;
+      <div className={styles.ticketList}>
+        {filtrados.map((item) => {
+          const severidadeAtual = String(item.severidade || "").toUpperCase();
+          const severidadeClass = severidadeAtual === "CRITICA" ? styles.sevCritica : severidadeAtual === "ALTA" ? styles.sevAlta : severidadeAtual === "MEDIA" ? styles.sevMedia : styles.sevBaixa;
+          const statusClass = item.status === "CONCLUIDO" ? styles.statusDone : item.status === "EM_ATENDIMENTO" ? styles.statusActive : styles.statusWaiting;
+          const dataAbertura = item.aberto_em ? new Date(item.aberto_em).toLocaleString("pt-BR") : "Data não informada";
 
-                return (
-                  <tr key={item.id} className={styles.tableRow}>
-                    <td>
-                      <div className={styles.callTitleBlock}>
-                        <strong className={styles.callTitle}>{item.titulo}</strong>
-                        <span className={styles.callMeta}>
-                          #{item.id} · {item.aberto_em ? new Date(item.aberto_em).toLocaleDateString("pt-BR") : "Data não informada"}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td className={styles.equipmentCell}>
-                      <span className="material-symbols-outlined" style={{ fontSize: "16px", color: "var(--silver)" }}>
-                        precision_manufacturing
-                      </span>
-                      <span>{item.equipamento_nome || `Equipamento #${item.equipamento_id}`}</span>
-                    </td>
-
-                    <td>
-                      <span className={`${styles.sevBadge} ${sevClass}`}>
-                        <span className={styles.sevDot} />
-                        <span>{item.severidade}</span>
-                      </span>
-                    </td>
-
-                    <td>
-                      <select
-                        aria-label={`Status do chamado ${item.id}`}
-                        className={styles.statusSelect}
-                        value={item.status}
-                        onChange={(e) => atualizarStatus(item, e.target.value)}
-                      >
-                        {STATUS.map((x) => (
-                          <option key={x} value={x}>{ROTULO_STATUS[x] || x}</option>
-                        ))}
-                      </select>
-                    </td>
-
-                    <td style={{ textAlign: "right" }}>
-                      <div className={styles.actionsRow}>
-                        <button
-                          type="button"
-                          className={styles.actionBtn}
-                          onClick={() => encaminhar(item)}
-                          title="Encaminhar para técnico"
-                        >
-                          <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>engineering</span>
-                          <span>Técnico</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          className={styles.actionBtn}
-                          onClick={() => emitirOS(item)}
-                          title="Emitir Ordem de Serviço"
-                        >
-                          <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>description</span>
-                          <span>Emitir OS</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          className={styles.actionBtn}
-                          onClick={() => verHistorico(item.id)}
-                          title="Consultar histórico"
-                        >
-                          <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>history</span>
-                          <span>Histórico</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
-                          onClick={() => adicionarHistorico(item.id)}
-                          title="Registrar manutenção"
-                        >
-                          <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>post_add</span>
-                          <span>Registrar</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-
-          {loading ? (
-            <div className={styles.emptyState}>Carregando chamados...</div>
-          ) : filtrados.length === 0 ? (
-            <div className={styles.emptyState}>Nenhum chamado encontrado.</div>
-          ) : null}
-        </div>
-
-        <div className={styles.tableFooter}>
-          <span>{filtrados.length} chamado(s) retornado(s)</span>
-          <span style={{ color: "#ffb4ac" }}>CHAMADOS TENKEN</span>
-        </div>
+          return (
+            <article key={item.id} className={styles.ticketCard}>
+              <span className={`${styles.ticketAccent} ${severidadeClass}`} />
+              <div className={styles.ticketIdentity}>
+                <div className={styles.ticketIcon}><span className="material-symbols-outlined">precision_manufacturing</span></div>
+                <div className={styles.ticketIdBlock}>
+                  <strong className={styles.ticketCode}>#CH-{String(item.id).padStart(4, "0")}</strong>
+                  <span className={styles.ticketPlace}>Equipamento #{item.equipamento_id}</span>
+                </div>
+              </div>
+              <div className={styles.ticketDetails}>
+                <span className={styles.ticketEquipment}><span className="material-symbols-outlined">token</span>{item.equipamento_nome || `Equipamento #${item.equipamento_id}`}</span>
+                <h2 className={styles.ticketTitle}>{item.titulo}</h2>
+                <div className={styles.ticketMeta}>
+                  <span><span className="material-symbols-outlined">account_circle</span>Solicitante #{item.solicitante_id ?? "—"}</span>
+                  <span><span className="material-symbols-outlined">schedule</span>{dataAbertura}</span>
+                </div>
+              </div>
+              <div className={styles.ticketActions}>
+                <div className={styles.ticketBadges}>
+                  <span className={`${styles.sevBadge} ${severidadeClass}`}><span className={styles.sevDot} />{item.severidade}</span>
+                  <span className={`${styles.statusBadge} ${statusClass}`}>{ROTULO_STATUS[item.status] || item.status}</span>
+                </div>
+                <button type="button" className={styles.openTicketBtn} onClick={() => setSelecionado(item)}>
+                  Abrir <span className="material-symbols-outlined">arrow_forward</span>
+                </button>
+              </div>
+            </article>
+          );
+        })}
+        {loading ? <div className={styles.emptyState}>Carregando chamados...</div> : filtrados.length === 0 ? <div className={styles.emptyState}>Nenhum chamado encontrado.</div> : null}
       </div>
-
-      {/* Painéis de Histórico Expandidos */}
+      <div className={styles.listFooter}><span>Exibindo <strong>{filtrados.length}</strong> chamados</span><span>CHAMADOS TENKEN</span></div>
+      {selecionado && (
+        <div className={styles.modalOverlay} role="dialog" aria-modal="true" aria-labelledby="ticket-detail-title" onMouseDown={(e) => { if (e.target === e.currentTarget) setSelecionado(null); }}>
+          <section className={styles.modalCard}>
+            <header className={styles.modalHeader}>
+              <div className={styles.modalHeading}>
+                <div className={styles.modalIcon}><span className="material-symbols-outlined">assignment_late</span></div>
+                <div>
+                  <div className={styles.modalBadges}>
+                    <strong className={styles.modalCode}>#CH-{String(selecionado.id).padStart(4, "0")}</strong>
+                    <span className={`${styles.sevBadge} ${String(selecionado.severidade).toUpperCase() === "CRITICA" ? styles.sevCritica : String(selecionado.severidade).toUpperCase() === "ALTA" ? styles.sevAlta : String(selecionado.severidade).toUpperCase() === "MEDIA" ? styles.sevMedia : styles.sevBaixa}`}>{selecionado.severidade}</span>
+                    <span className={styles.statusBadge}>{ROTULO_STATUS[selecionado.status] || selecionado.status}</span>
+                  </div>
+                  <span className={styles.modalEyebrow}>Ficha técnica do chamado</span>
+                </div>
+              </div>
+              <button type="button" className={styles.closeModalBtn} onClick={() => setSelecionado(null)} aria-label="Fechar detalhes"><span className="material-symbols-outlined">close</span></button>
+            </header>
+            <div className={styles.modalBody}>
+              <div className={styles.modalMetaGrid}>
+                <div><span>Equipamento</span><strong>{selecionado.equipamento_nome || `Equipamento #${selecionado.equipamento_id}`}</strong></div>
+                <div><span>Solicitante</span><strong>Usuário #{selecionado.solicitante_id ?? "—"}</strong></div>
+                <div><span>Abertura</span><strong>{selecionado.aberto_em ? new Date(selecionado.aberto_em).toLocaleString("pt-BR") : "Data não informada"}</strong></div>
+              </div>
+              <section className={styles.modalDescription}>
+                <span>Descrição técnica</span>
+                <h2 id="ticket-detail-title">{selecionado.titulo}</h2>
+                <p>{selecionado.descricao || "Nenhuma descrição adicional foi informada."}</p>
+              </section>
+              <div className={styles.modalActionPanel}>
+                <div>
+                  <span className={styles.modalEyebrow}>Ações de atendimento</span>
+                  <h3>Atualização e ordem de serviço</h3>
+                </div>
+                <label className={styles.statusControl}>
+                  <span>Status</span>
+                  <select aria-label={`Status do chamado ${selecionado.id}`} className={styles.statusSelect} value={selecionado.status} onChange={(e) => atualizarStatus(selecionado, e.target.value)}>
+                    {STATUS.map((value) => <option key={value} value={value}>{ROTULO_STATUS[value] || value}</option>)}
+                  </select>
+                </label>
+                <div className={styles.modalActions}>
+                  <button type="button" className={styles.actionBtn} onClick={() => encaminhar(selecionado)}><span className="material-symbols-outlined">engineering</span>Encaminhar técnico</button>
+                  <button type="button" className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => emitirOS(selecionado)}><span className="material-symbols-outlined">build_circle</span>Emitir OS</button>
+                  <button type="button" className={styles.actionBtn} onClick={() => verHistorico(selecionado.id)}><span className="material-symbols-outlined">history</span>Ver histórico</button>
+                  <button type="button" className={styles.actionBtn} onClick={() => adicionarHistorico(selecionado.id)}><span className="material-symbols-outlined">post_add</span>Registrar manutenção</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
+      {/* PainÃ©is de HistÃ³rico Expandidos */}
       {Object.entries(historico).map(([id, registros]) => (
         <div className={styles.historyPanel} key={id}>
           <div className={styles.historyHeader}>
             <div className={styles.historyTitleRow}>
               <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "#ffb4ac" }}>history</span>
-              <strong>Histórico de Manutenção do Chamado #{id}</strong>
+              <strong>HistÃ³rico de ManutenÃ§Ã£o do Chamado #{id}</strong>
             </div>
           </div>
           <div className={styles.historyList}>
@@ -338,7 +284,7 @@ function Conteudo({ token }) {
                 </div>
               ))
             ) : (
-              <p className={styles.emptyState}>Ainda não há atualizações para este chamado.</p>
+              <p className={styles.emptyState}>Ainda nÃ£o hÃ¡ atualizaÃ§Ãµes para este chamado.</p>
             )}
           </div>
         </div>
