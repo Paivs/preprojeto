@@ -1,0 +1,3 @@
+.pagina { display: flex; min-height: 100vh; background: var(--onyx); color: var(--white-smoke); font-family: Inter, sans-serif; }
+.principal { flex: 1; min-width: 0; padding: 40px clamp(24px, 4vw, 48px); overflow-y: auto; }
+@media (max-width: 860px) { .pagina { flex-direction: column; } }

@@ -85,9 +85,10 @@ export async function contarPorStatusESeveridade() {
 
 export async function rankingFalhas() {
   const [linhas] = await pool.query(
-    `SELECT equipamento_id, COUNT(*) AS total
-     FROM chamados_manutencao
-     GROUP BY equipamento_id
+    `SELECT c.equipamento_id, e.nome AS equipamento_nome, COUNT(*) AS total
+     FROM chamados_manutencao c
+     LEFT JOIN equipamentos e ON e.id = c.equipamento_id
+     GROUP BY c.equipamento_id, e.nome
      ORDER BY total DESC
      LIMIT 10`,
   );

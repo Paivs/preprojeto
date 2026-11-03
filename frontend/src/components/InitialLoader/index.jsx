@@ -24,6 +24,10 @@ export default function InitialLoader() {
 
   if (pathname !== "/" || !visivel) return null;
 
+  return <LoadingIndicator />;
+}
+
+export function LoadingIndicator() {
   return (
     <div className={styles.overlay} role="status" aria-label="Carregando o sistema Tenken">
       <div className={styles.conteudo}>

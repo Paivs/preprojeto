@@ -1,0 +1,54 @@
+.painel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: var(--surface-low, #181c1f);
+  border: 1px solid var(--border-subtle, #22272b);
+  border-radius: 4px;
+  color: var(--white-smoke, #f5f3f4);
+  font-family: "DM Sans", sans-serif;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle, #22272b);
+}
+
+.titulo {
+  color: var(--white-smoke, #f5f3f4);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.subtitulo {
+  color: var(--silver, #b1a7a6);
+  font-size: 12px;
+}
+
+.grafico {
+  display: grid;
+  place-items: center;
+  padding: 12px 0;
+}
+
+.legenda {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vazio {
+  margin: 0;
+  color: var(--silver, #b1a7a6);
+  font-size: 13px;
+  padding: 24px 0;
+  text-align: center;
+}

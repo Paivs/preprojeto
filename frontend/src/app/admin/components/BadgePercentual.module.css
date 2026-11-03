@@ -1,0 +1,5 @@
+.linha { display:flex; align-items:center; gap:10px; padding:7px 0; font-size:13px; color:var(--white-smoke); }
+.marcador { width:9px; height:9px; border-radius:3px; flex:none; }
+.rotulo { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.percentual { min-width:42px; text-align:right; color:var(--silver); }
+.quantidade { min-width:48px; text-align:right; font-weight:600; color:var(--white); }

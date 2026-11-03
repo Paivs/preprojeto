@@ -1,0 +1,122 @@
+.painel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: var(--surface-low, #181c1f);
+  border: 1px solid var(--border-subtle, #22272b);
+  border-radius: 4px;
+  color: var(--white-smoke, #f5f3f4);
+  font-family: "DM Sans", sans-serif;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle, #22272b);
+}
+
+.titulo {
+  color: var(--white-smoke, #f5f3f4);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.subtitulo {
+  color: var(--silver, #b1a7a6);
+  font-size: 12px;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.tabela th {
+  padding: 10px 8px;
+  color: var(--silver, #b1a7a6);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle, #22272b);
+}
+
+.tabela td {
+  padding: 10px 8px;
+  color: var(--white-smoke, #f5f3f4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.tabela th:last-child,
+.tabela td:last-child {
+  text-align: right;
+}
+
+.severidade {
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle, #22272b);
+}
+
+.severidade h4 {
+  margin: 0 0 12px;
+  color: var(--silver, #b1a7a6);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.barraLinha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.barraRotulo {
+  width: 100px;
+  flex: none;
+  color: var(--white-smoke, #f5f3f4);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barraFundo {
+  flex: 1;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--surface-highest, #313538);
+  overflow: hidden;
+}
+
+.barraPreenchida {
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--mahogany-red, #a4161a);
+}
+
+.barraValor {
+  width: 36px;
+  text-align: right;
+  color: var(--dust-grey, #d3d3d3);
+  font-size: 12px;
+}
+
+.vazio {
+  margin: 0;
+  color: var(--silver, #b1a7a6);
+  font-size: 13px;
+  padding: 24px 0;
+  text-align: center;
+}

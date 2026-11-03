@@ -24,6 +24,7 @@ export async function gerar({ periodo_inicio, periodo_fim } = {}) {
   ]);
   const taxaOcupacao = horasPorEquipamento.map((linha) => ({
     equipamento_id: linha.equipamento_id,
+    equipamento_nome: linha.equipamento_nome,
     horas_reservadas: Number(linha.horas_reservadas),
     taxa_ocupacao_percentual: Number(((linha.horas_reservadas / horasPeriodo) * 100).toFixed(2)),
   }));
