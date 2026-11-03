@@ -86,6 +86,17 @@ export default function AgendamentosProfessor() {
     return resultado;
   }
 
+  function executarAcaoReserva(acao) {
+    const resultado = acao === "cancelar"
+      ? cancelarAgendamento(reservaDetalhe.id)
+      : concluirAgendamento(reservaDetalhe.id);
+    if (!resultado.ok) return;
+    setDetalheId(null);
+    setMensagem(acao === "cancelar"
+      ? "Agendamento cancelado na prévia local."
+      : "Atividade concluída. Uma inspeção pós-uso foi adicionada.");
+  }
+
   return (
     <div className={styles.container}>
       <section className={styles.cabecalhoPagina} aria-labelledby="titulo-agendamentos">
@@ -176,6 +187,8 @@ export default function AgendamentosProfessor() {
             <p><span>Inspeção pré-uso</span><strong>{rotuloInspecao(preUsoDetalhe)}</strong></p>
           </div>
           <div className={styles.acoesDetalhe}>
+            {reservaDetalhe.status === "CONFIRMADO" && <button className={styles.botaoPerigo} type="button" onClick={() => executarAcaoReserva("cancelar")}>Cancelar reserva</button>}
+            {reservaDetalhe.status === "EM_ANDAMENTO" && <button className={styles.botaoAcao} type="button" onClick={() => executarAcaoReserva("concluir")}>Concluir atividade</button>}
             <button type="button" onClick={() => setDetalheId(null)}>Fechar</button>
           </div>
         </ModalProfessor>

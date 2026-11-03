@@ -60,6 +60,8 @@
 .detalhesReserva p strong { color: #e9e3e3; font-size: 10px; font-weight: 500; }
 .acoesDetalhe { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
 .acoesDetalhe button, .estadoVazio button { min-height: 34px; padding: 0 12px; border: 1px solid rgba(245,243,244,.15); background: transparent; color: #e6e0e0; font: inherit; font-size: 10px; cursor: pointer; }
+.acoesDetalhe .botaoAcao { border-color: rgba(121,182,155,.35); background: rgba(121,182,155,.1); color: #a7d2bb; }
+.acoesDetalhe .botaoPerigo { border-color: rgba(194,103,105,.32); color: #d58a8c; }
 .estadoVazio button { margin-top: 15px; border-color: rgba(164,22,26,.6); background: #a4161a; color: #fff; }
 .estadoVazio { display: grid; min-height: 230px; align-content: center; justify-items: center; padding: 24px; text-align: center; }
 .estadoVazio > span { color: #9b5558; font-size: 24px; }
