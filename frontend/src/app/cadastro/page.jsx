@@ -83,8 +83,23 @@ export default function CadastroPage() {
         },
       });
       router.replace("/login?cadastro=ok");
-    } catch {
-      setAlerta("Não foi possível criar a conta. Tente de novo.");
+    } catch (error) {
+      if (error.status === 404) {
+        setAlerta("Matrícula não encontrada");
+      } else if (error.status === 409) {
+        setAlerta("Esta matrícula já foi utilizada");
+      } else if (error.status === 400 || error.status === 422) {
+        const errosCampos = {};
+        if (Array.isArray(error.errors)) {
+          error.errors.forEach(({ field, message }) => {
+            if (["matricula", "senha", "confirmarSenha"].includes(field)) errosCampos[field] = message;
+          });
+        }
+        if (Object.keys(errosCampos).length) setErros(errosCampos);
+        else setAlerta(error.message);
+      } else {
+        setAlerta("Não foi possível criar a conta. Tente de novo.");
+      }
     } finally {
       setCriandoConta(false);
     }
