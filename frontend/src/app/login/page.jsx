@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import AuthLayout from "@/components/auth/AuthLayout";
 import styles from "@/components/auth/authForm.module.css";
 import { apiFetch } from "@/lib/api";
@@ -79,6 +80,9 @@ function LoginContent() {
         <button className={styles.button} type="submit" disabled={enviando}>
           {enviando ? "Entrando" : "Entrar"}
         </button>
+        <p className={styles.linkRow}>
+          Ainda não tem matrícula? <Link className={styles.linkStrong} href="/cadastro">Cadastre-se</Link>
+        </p>
       </form>
     </AuthLayout>
   );
