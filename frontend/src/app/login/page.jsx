@@ -11,22 +11,33 @@ export default function LoginPage() {
   const router = useRouter();
   const [matricula, setMatricula] = useState("");
   const [senha, setSenha] = useState("");
+  const [alerta, setAlerta] = useState("");
 
   async function enviarFormulario(event) {
     event.preventDefault();
+    setAlerta("");
 
-    const resultado = await apiFetch("/api/usuarios/login", {
-      method: "POST",
-      body: { matricula: matricula.trim().toUpperCase(), senha },
-    });
+    try {
+      const resultado = await apiFetch("/api/usuarios/login", {
+        method: "POST",
+        body: { matricula: matricula.trim().toUpperCase(), senha },
+      });
 
-    saveSession(resultado.token, resultado.usuario);
-    router.replace("/dashboard");
+      saveSession(resultado.token, resultado.usuario);
+      router.replace("/dashboard");
+    } catch (error) {
+      const mensagens = {
+        401: "Matrícula ou senha inválidas",
+        403: "Conta inativa. Procure a coordenação.",
+      };
+      setAlerta(mensagens[error.status] ?? "Não foi possível entrar agora. Tente de novo.");
+    }
   }
 
   return (
     <AuthLayout title="Entrar" subtitle="Acesse com sua matrícula e senha">
       <form className={styles.form} onSubmit={enviarFormulario}>
+        {alerta && <p className={styles.alert} role="alert">{alerta}</p>}
         <div className={styles.field}>
           <label className={styles.label} htmlFor="matricula">Matrícula</label>
           <input
@@ -36,7 +47,10 @@ export default function LoginPage() {
             type="text"
             placeholder="MAT-XXXXX"
             value={matricula}
-            onChange={(event) => setMatricula(event.target.value)}
+            onChange={(event) => {
+              setMatricula(event.target.value);
+              setAlerta("");
+            }}
           />
         </div>
 
@@ -48,7 +62,10 @@ export default function LoginPage() {
             name="senha"
             type="password"
             value={senha}
-            onChange={(event) => setSenha(event.target.value)}
+            onChange={(event) => {
+              setSenha(event.target.value);
+              setAlerta("");
+            }}
           />
         </div>
 
