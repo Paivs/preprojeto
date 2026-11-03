@@ -2,18 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useProfessorDemo } from "./ProfessorDemoProvider";
 import styles from "./BarraLateralProfessor.module.css";
 
 const itens = [
   { href: "/professor", label: "Visão geral", icon: "dashboard", pronto: true },
   { href: "/professor/agendamentos", label: "Agendamentos", icon: "calendar_month", pronto: true },
-  { href: "/professor/turmas", label: "Minhas turmas", icon: "groups" },
-  { href: "/professor/inspecoes", label: "Inspeções", icon: "fact_check" },
+  { href: "/professor/turmas", label: "Minhas turmas", icon: "groups", pronto: true },
+  { href: "/professor/inspecoes", label: "Inspeções", icon: "fact_check", pronto: true },
   { href: "/professor/equipamentos", label: "Equipamentos", icon: "precision_manufacturing", pronto: true },
 ];
 
 export default function BarraLateralProfessor() {
   const pathname = usePathname();
+  const { dados } = useProfessorDemo();
+  const nome = dados.professora?.nome || "Professora";
 
   return (
     <aside className={styles.sidebar}>
@@ -54,10 +57,10 @@ export default function BarraLateralProfessor() {
       </div>
 
       <div className={styles.sidebarFooter}>
-        <div className={styles.profileAvatar} aria-hidden="true">MC</div>
+        <div className={styles.profileAvatar} aria-hidden="true">{nome.split(/\s+/).map((parte) => parte[0]).slice(0, 2).join("")}</div>
         <div className={styles.profileInfo}>
-          <strong>Marina Costa</strong>
-          <span>Professora · demonstração</span>
+          <strong>{nome}</strong>
+          <span>Professora · prévia local</span>
         </div>
       </div>
     </aside>

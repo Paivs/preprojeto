@@ -2,6 +2,8 @@
 export const agendamentosDemo = [
   {
     id: 1,
+    turmaId: 1,
+    equipamentoId: 4,
     data: "2026-11-03",
     inicio: "09:00",
     fim: "10:30",
@@ -14,6 +16,8 @@ export const agendamentosDemo = [
   },
   {
     id: 2,
+    turmaId: 2,
+    equipamentoId: 10,
     data: "2026-11-03",
     inicio: "14:00",
     fim: "16:00",
@@ -26,6 +30,8 @@ export const agendamentosDemo = [
   },
   {
     id: 3,
+    turmaId: 3,
+    equipamentoId: 2,
     data: "2026-11-03",
     inicio: "16:30",
     fim: "18:00",
@@ -38,18 +44,22 @@ export const agendamentosDemo = [
   },
   {
     id: 4,
+    turmaId: 1,
+    equipamentoId: 9,
     data: "2026-11-04",
     inicio: "10:00",
     fim: "11:30",
     atividade: "Programação de robôs industriais",
     turma: "Robótica Aplicada · Turma A",
     equipamento: "Robô ABB IRB-120",
-    patrimonio: "PAT-2024-305",
+    patrimonio: "PAT-2024-201",
     status: "CONFIRMADO",
     inspecao: "NAO_INICIADO",
   },
   {
     id: 5,
+    turmaId: 2,
+    equipamentoId: 5,
     data: "2026-11-04",
     inicio: "14:00",
     fim: "16:00",
@@ -62,6 +72,8 @@ export const agendamentosDemo = [
   },
   {
     id: 6,
+    turmaId: 3,
+    equipamentoId: 11,
     data: "2026-11-05",
     inicio: "08:00",
     fim: "10:00",
