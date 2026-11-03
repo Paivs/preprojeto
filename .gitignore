@@ -29,6 +29,7 @@ Thumbs.db
 .idea/
 AGENTS.md
 skills-lock.json
+.agents/
 
 # docker/mysql local data
 mysql-data/
