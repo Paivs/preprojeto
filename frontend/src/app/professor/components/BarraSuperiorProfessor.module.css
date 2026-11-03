@@ -3,11 +3,15 @@
 .trilha span:nth-child(2), .trilha span:nth-child(4) { font-size: 15px; }
 .trilha strong { color: #ffb4ac; font-weight: 700; }
 .status { color: #958c8d; font-size: 8px; font-weight: 700; letter-spacing: .1em; }
+.conta { display: flex; align-items: center; gap: 9px; }
+.avatar { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 50%; background: #442326; color: #f5dfe0; font-size: 9px; font-weight: 700; }
+.nome { color: #ded8d8; font-size: 10px; }
 
 @media (max-width: 900px) {
   .barra { position: static; height: 48px; padding: 0 18px; border-bottom: 0; }
   .trilha { font-size: 10px; }
   .status { font-size: 7px; }
+  .nome { display: none; }
 }
 
 @media (max-width: 560px) {
