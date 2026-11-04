@@ -1,6 +1,6 @@
 header {
   background: var(--dark-bg-primary);
-  border-bottom: 1px solid var(--gray);
+  border-bottom: 1px solid ;
   display: flex;
   align-items: center;
   justify-content: space-around;
