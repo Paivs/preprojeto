@@ -21,7 +21,7 @@ export default function FormularioInspecao({ inspecao, equipamento, onSubmit, on
   }
 
   return <form className={styles.formulario} onSubmit={enviar}>
-    <p className={styles.aviso}>Prévia demonstrativa: este registro será salvo somente neste navegador.</p>
+    <p className={styles.aviso}>Os dados da inspeção serão registrados nesta área quando o fluxo estiver disponível.</p>
     <fieldset className={styles.listaItens}><legend>Checklist de {inspecao.etapa === "PRE_USO" ? "pré-uso" : "pós-uso"}</legend>
       {checklist.map((item, indice) => <div className={styles.item} key={item.id}>
         <div className={styles.enunciado}><span>{String(indice + 1).padStart(2, "0")}</span><p>{item.texto}{item.critico && <small>Item crítico</small>}</p></div>

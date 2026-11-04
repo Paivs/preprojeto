@@ -21,6 +21,13 @@ function paraISO(data) {
   return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}-${String(data.getDate()).padStart(2, "0")}`;
 }
 
+function inicioSemanaAtual() {
+  const hoje = new Date();
+  hoje.setDate(hoje.getDate() - ((hoje.getDay() + 6) % 7));
+  hoje.setHours(12, 0, 0, 0);
+  return hoje;
+}
+
 function formatarData(data, opcoes = { day: "2-digit", month: "short" }) {
   return new Intl.DateTimeFormat("pt-BR", opcoes).format(new Date(`${data}T12:00:00`));
 }
@@ -37,7 +44,7 @@ export default function AgendamentosProfessor() {
   const { dados, criarAgendamento, cancelarAgendamento, concluirAgendamento } = useProfessorDemo();
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("TODOS");
-  const [inicioSemana, setInicioSemana] = useState(() => new Date(2026, 10, 2, 12));
+  const [inicioSemana, setInicioSemana] = useState(inicioSemanaAtual);
   const [criando, setCriando] = useState(false);
   const [detalheId, setDetalheId] = useState(null);
   const [mensagem, setMensagem] = useState("");
@@ -93,7 +100,7 @@ export default function AgendamentosProfessor() {
     if (!resultado.ok) return;
     setDetalheId(null);
     setMensagem(acao === "cancelar"
-      ? "Agendamento cancelado na prévia local."
+      ? "Agendamento cancelado."
       : "Atividade concluída. Uma inspeção pós-uso foi adicionada.");
   }
 
@@ -101,7 +108,7 @@ export default function AgendamentosProfessor() {
     <div className={styles.container}>
       <section className={styles.cabecalhoPagina} aria-labelledby="titulo-agendamentos">
         <div>
-          <p className={styles.contexto}>PRÉVIA LOCAL · DADOS SALVOS NESTE NAVEGADOR</p>
+          <p className={styles.contexto}>AGENDA DO LABORATÓRIO</p>
           <h1 id="titulo-agendamentos">Agendamentos</h1>
           <p className={styles.subtitulo}>Organize as reservas das suas turmas e acompanhe as inspeções necessárias.</p>
         </div>
@@ -167,7 +174,7 @@ export default function AgendamentosProfessor() {
         ) : (
           <div className={styles.estadoVazio}><span className="material-symbols-outlined" aria-hidden="true">event_busy</span><h3>Nenhuma reserva encontrada</h3><p>Altere a semana, a busca ou o filtro de status.</p><button type="button" onClick={() => { setMensagem(""); setCriando(true); }}>Criar agendamento</button></div>
         )}
-        <p className={styles.notaDados}>As alterações desta prévia ficam salvas somente neste navegador.</p>
+        <p className={styles.notaDados}>Os agendamentos cadastrados no sistema aparecerão nesta agenda.</p>
       </section>
 
       {criando && (
@@ -177,7 +184,7 @@ export default function AgendamentosProfessor() {
       )}
 
       {reservaDetalhe && (
-        <ModalProfessor titulo={reservaDetalhe.atividade} descricao="Detalhes da reserva demonstrativa." onClose={() => setDetalheId(null)}>
+        <ModalProfessor titulo={reservaDetalhe.atividade} descricao="Detalhes do agendamento." onClose={() => setDetalheId(null)}>
           <div className={styles.detalhesReserva}>
             <p><span>Data</span><strong>{formatarData(reservaDetalhe.data, { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}</strong></p>
             <p><span>Horário</span><strong>{reservaDetalhe.inicio}–{reservaDetalhe.fim}</strong></p>

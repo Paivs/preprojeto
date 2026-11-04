@@ -50,14 +50,14 @@ export default function EquipamentosProfessor() {
     <div className={styles.container}>
       <section className={styles.cabecalhoPagina} aria-labelledby="titulo-equipamentos-professor">
         <div>
-          <p className={styles.contexto}>INVENTÁRIO DO LABORATÓRIO · PRÉVIA LOCAL</p>
+          <p className={styles.contexto}>INVENTÁRIO DO LABORATÓRIO</p>
           <h1 id="titulo-equipamentos-professor">Equipamentos</h1>
           <p className={styles.subtitulo}>Consulte a disponibilidade e a localização dos equipamentos do laboratório.</p>
         </div>
       </section>
 
       <section className={styles.resumo} aria-label="Resumo por situação">
-        <article className={styles.metrica}><span>Total cadastrado</span><strong>{dados.equipamentos.length}</strong><small>itens da prévia</small></article>
+        <article className={styles.metrica}><span>Total cadastrado</span><strong>{dados.equipamentos.length}</strong><small>itens cadastrados</small></article>
         <article className={`${styles.metrica} ${styles.metricaDisponivel}`}><span>Disponíveis</span><strong>{contagem.DISPONIVEL || 0}</strong><small>liberados para uso</small></article>
         <article className={`${styles.metrica} ${styles.metricaUso}`}><span>Em uso</span><strong>{contagem.EM_USO || 0}</strong><small>reservas em andamento</small></article>
         <article className={`${styles.metrica} ${styles.metricaManutencao}`}><span>Em manutenção</span><strong>{contagem.EM_MANUTENCAO || 0}</strong><small>indisponíveis para reserva</small></article>
@@ -78,10 +78,10 @@ export default function EquipamentosProfessor() {
             <td><button className={styles.botaoDetalhes} type="button" onClick={() => setEquipamentoId(equipamento.id)}>Detalhes</button></td>
           </tr>)}</tbody>
         </table></div> : <div className={styles.estadoVazio}><span className="material-symbols-outlined" aria-hidden="true">search_off</span><h3>Nenhum equipamento encontrado</h3><p>Altere a busca ou o filtro de situação para consultar o inventário.</p></div>}
-        <p className={styles.notaDados}>Os dados desta prévia ficam salvos somente neste navegador.</p>
+        <p className={styles.notaDados}>Os equipamentos cadastrados no sistema aparecerão nesta lista.</p>
       </section>
 
-      {equipamentoSelecionado && <ModalProfessor titulo={equipamentoSelecionado.nome} descricao="Detalhes do equipamento na prévia local." onClose={() => setEquipamentoId(null)}>
+      {equipamentoSelecionado && <ModalProfessor titulo={equipamentoSelecionado.nome} descricao="Detalhes do equipamento cadastrado." onClose={() => setEquipamentoId(null)}>
         <div className={styles.detalhes}>
           <p><span>Patrimônio</span><strong>{equipamentoSelecionado.patrimonio}</strong></p><p><span>Tipo</span><strong>{equipamentoSelecionado.tipo === "ROBO" ? "Robô" : "Bancada"}</strong></p>
           <p><span>Localização</span><strong>{equipamentoSelecionado.localizacao}</strong></p><p><span>Situação</span><strong className={styles[`texto_${equipamentoSelecionado.status}`]}>{statusLabels[equipamentoSelecionado.status]}</strong></p>
