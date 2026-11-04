@@ -1,1 +1,0 @@
-// aq vai ficar o service da parte do cliente, listando, buscando e criando e deletando

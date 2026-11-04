@@ -4,6 +4,7 @@ import helmet from "helmet";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
 import healthRoutes from "./routes/healthRoutes.js";
+import usuarioRoutes from "./routes/usuarioRoutes.js";
 
 const app = express();
 
@@ -15,13 +16,14 @@ app.use(
 );
 app.use(express.json());
 
-app.get("/", (request, response) => {
-  response.json({
+app.get("/", (req, res) => {
+  res.json({
     message: "API do projeto base",
   });
 });
 
 app.use("/api/health", healthRoutes);
+app.use("/api/usuarios", usuarioRoutes);
 
 app.use(errorHandler);
 
