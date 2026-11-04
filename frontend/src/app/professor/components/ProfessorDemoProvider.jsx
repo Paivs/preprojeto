@@ -1,27 +1,23 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { agendamentosDemo } from "../lib/agendamentosDemo";
-import { equipamentosDemo } from "../lib/equipamentosDemo";
-import { inspecoesDemo } from "../lib/inspecoesDemo";
-import { turmasDemo } from "../lib/turmasDemo";
 import { calcularResultadoInspecao, criarReservaLocal } from "../lib/professorDemoActions";
 import { obterChecklist } from "../lib/checklistDemo";
 
 const ProfessorDemoContext = createContext(null);
-const STORAGE_KEY = "tenken_professor_demo_v1";
+const STORAGE_KEY = "tenken_professor_demo_v2";
 
 function copiarDados(valor) {
   return JSON.parse(JSON.stringify(valor));
 }
 
-function criarDadosIniciais() {
+function criarDadosIniciais(professora = null) {
   return copiarDados({
-    professora: { id: "demo-professora", nome: "Marina Costa" },
-    agendamentos: agendamentosDemo,
-    equipamentos: equipamentosDemo,
-    inspecoes: inspecoesDemo,
-    turmas: turmasDemo,
+    professora: professora ?? {},
+    agendamentos: [],
+    equipamentos: [],
+    inspecoes: [],
+    turmas: [],
   });
 }
 
@@ -31,23 +27,29 @@ export function useProfessorDemo() {
   return contexto;
 }
 
-export default function ProfessorDemoProvider({ children }) {
-  const [dados, setDados] = useState(criarDadosIniciais);
+export default function ProfessorDemoProvider({ children, professora }) {
+  const [dados, setDados] = useState(() => criarDadosIniciais(professora));
   const [carregado, setCarregado] = useState(false);
 
   useEffect(() => {
+    if (professora?.nome) setDados((atual) => ({ ...atual, professora: { ...atual.professora, ...professora } }));
+  }, [professora]);
+
+  useEffect(() => {
     try {
+      window.localStorage.removeItem("tenken_professor_demo_v1");
       const salvo = window.localStorage.getItem(STORAGE_KEY);
       if (salvo) {
         const dadosSalvos = JSON.parse(salvo);
-        const iniciais = criarDadosIniciais();
+        const iniciais = criarDadosIniciais(professora);
         setDados({
           ...iniciais,
           ...dadosSalvos,
-          agendamentos: Array.isArray(dadosSalvos.agendamentos) ? dadosSalvos.agendamentos : iniciais.agendamentos,
-          equipamentos: Array.isArray(dadosSalvos.equipamentos) ? dadosSalvos.equipamentos : iniciais.equipamentos,
-          inspecoes: Array.isArray(dadosSalvos.inspecoes) ? dadosSalvos.inspecoes : iniciais.inspecoes,
-          turmas: Array.isArray(dadosSalvos.turmas) ? dadosSalvos.turmas : iniciais.turmas,
+          professora: professora?.nome ? { ...iniciais.professora, ...professora } : (dadosSalvos.professora ?? iniciais.professora),
+          agendamentos: [],
+          equipamentos: [],
+          inspecoes: [],
+          turmas: [],
         });
       }
     } catch {
@@ -78,7 +80,7 @@ export default function ProfessorDemoProvider({ children }) {
   function cancelarAgendamento(id) {
     const reserva = dados.agendamentos.find((item) => item.id === id);
     if (!reserva || reserva.status !== "CONFIRMADO") {
-      return { ok: false, message: "Somente reservas confirmadas podem ser canceladas nesta prévia." };
+      return { ok: false, message: "Somente reservas confirmadas podem ser canceladas." };
     }
 
     const outrasReservasAtivas = dados.agendamentos.some((item) => item.id !== id && item.equipamentoId === reserva.equipamentoId && !["CANCELADO", "CONCLUIDO"].includes(item.status));

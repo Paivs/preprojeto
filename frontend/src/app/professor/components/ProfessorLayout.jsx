@@ -1,15 +1,55 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import BarraLateralProfessor from "./BarraLateralProfessor";
 import BarraSuperiorProfessor from "./BarraSuperiorProfessor";
 import ProfessorDemoProvider from "./ProfessorDemoProvider";
+import { apiFetch } from "@/lib/api";
+import { clearSession, getToken, getUsuario } from "@/lib/session";
 import styles from "./ProfessorLayout.module.css";
 
 export default function ProfessorLayout({ children, titulo }) {
+  const router = useRouter();
+  const [usuario, setUsuario] = useState(null);
+  const [verificando, setVerificando] = useState(true);
+
+  useEffect(() => {
+    let ativo = true;
+    async function validarSessao() {
+      const token = getToken();
+      const usuarioSalvo = getUsuario();
+      if (!token) { router.replace("/login"); return; }
+      if (usuarioSalvo?.perfil !== "PROFESSOR") {
+        router.replace(usuarioSalvo?.perfil === "ADMIN" ? "/admin" : "/login");
+        return;
+      }
+      try {
+        const resposta = await apiFetch("/api/usuarios/me");
+        const usuarioApi = resposta?.usuario;
+        if (!ativo) return;
+        if (usuarioApi?.perfil !== "PROFESSOR") {
+          clearSession(); router.replace("/login"); return;
+        }
+        setUsuario({ ...usuarioSalvo, ...usuarioApi });
+        setVerificando(false);
+      } catch {
+        if (ativo) { clearSession(); router.replace("/login"); }
+      }
+    }
+    validarSessao();
+    return () => { ativo = false; };
+  }, [router]);
+
+  function sair() { clearSession(); router.replace("/login"); }
+  if (verificando || !usuario) return <main className={styles.loading}>Verificando acesso...</main>;
+
   return (
-    <ProfessorDemoProvider>
+    <ProfessorDemoProvider professora={usuario}>
       <div className={styles.wrapper}>
         <BarraLateralProfessor />
         <div className={styles.contentSpine}>
-          <BarraSuperiorProfessor titulo={titulo} />
+          <BarraSuperiorProfessor titulo={titulo} usuario={usuario} onSair={sair} />
           <main className={styles.mainView}>{children}</main>
         </div>
       </div>

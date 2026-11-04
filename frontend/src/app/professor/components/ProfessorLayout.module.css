@@ -20,6 +20,8 @@
   padding: 28px 32px 48px;
 }
 
+.loading { display: grid; min-height: 100vh; place-items: center; background: var(--onyx, #0b090a); color: var(--white-smoke, #f5f3f4); font-family: "DM Sans", sans-serif; }
+
 @media (max-width: 900px) {
   .wrapper { flex-direction: column; }
   .contentSpine { padding-left: 0; }

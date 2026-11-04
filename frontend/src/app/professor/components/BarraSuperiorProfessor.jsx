@@ -1,10 +1,9 @@
 "use client";
 
-import { useProfessorDemo } from "./ProfessorDemoProvider";
 import styles from "./BarraSuperiorProfessor.module.css";
 
-export default function BarraSuperiorProfessor({ titulo }) {
-  const { dados } = useProfessorDemo();
+export default function BarraSuperiorProfessor({ titulo, usuario, onSair }) {
+  const iniciais = usuario?.nome?.split(/\s+/).map((parte) => parte[0]).slice(0, 2).join("") || "PR";
 
   return (
     <header className={styles.barra}>
@@ -16,9 +15,10 @@ export default function BarraSuperiorProfessor({ titulo }) {
         <strong>{titulo}</strong>
       </nav>
       <div className={styles.conta}>
-        <span className={styles.avatar} aria-hidden="true">{dados.professora?.nome?.split(/\s+/).map((parte) => parte[0]).slice(0, 2).join("") || "PR"}</span>
-        <span className={styles.nome}>{dados.professora?.nome || "Professora"}</span>
-        <span className={styles.status}>PRÉVIA LOCAL</span>
+        <span className={styles.avatar} aria-hidden="true">{iniciais}</span>
+        <span className={styles.nome}>{usuario?.nome || "Professor"}</span>
+        <span className={styles.status}>PROFESSOR</span>
+        <button type="button" className={styles.sair} onClick={onSair}>Sair</button>
       </div>
     </header>
   );

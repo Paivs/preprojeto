@@ -1,22 +1,24 @@
 .barra { position: fixed; z-index: 40; top: 0; right: 0; left: 260px; display: flex; height: 64px; align-items: center; justify-content: space-between; padding: 0 32px; border-bottom: 1px solid var(--border-subtle, #22272b); background: rgba(11,15,18,.96); font-family: "DM Sans", sans-serif; }
-.trilha { display: flex; align-items: center; gap: 7px; color: var(--silver, #b1a7a6); font-size: 11px; font-weight: 600; letter-spacing: .04em; }
+.trilha { display: flex; align-items: center; gap: 7px; color: var(--silver, #b1a7a6); font-size: 12px; font-weight: 600; letter-spacing: .04em; }
 .trilha span:nth-child(2), .trilha span:nth-child(4) { font-size: 15px; }
 .trilha strong { color: #ffb4ac; font-weight: 700; }
-.status { color: #958c8d; font-size: 8px; font-weight: 700; letter-spacing: .1em; }
+.status { color: #958c8d; font-size: 9.5px; font-weight: 700; letter-spacing: .12em; }
 .conta { display: flex; align-items: center; gap: 9px; }
-.avatar { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 50%; background: #442326; color: #f5dfe0; font-size: 9px; font-weight: 700; }
-.nome { color: #ded8d8; font-size: 10px; }
+.avatar { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 50%; background: #442326; color: #f5dfe0; font-size: 11px; font-weight: 700; }
+.nome { color: #ded8d8; font-size: 13px; font-weight: 600; }
+.sair { padding: 8px 14px; border: 1px solid var(--border-subtle, #22272b); border-radius: 4px; background: var(--surface-high, #262a2e); color: #ded8d8; cursor: pointer; font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.sair:hover { border-color: #a4161a; color: #fff; }
 
 @media (max-width: 900px) {
   .barra { position: static; height: 48px; padding: 0 18px; border-bottom: 0; }
-  .trilha { font-size: 10px; }
-  .status { font-size: 7px; }
+  .trilha { font-size: 11px; }
+  .status { font-size: 8px; }
   .nome { display: none; }
 }
 
 @media (max-width: 560px) {
   .barra { height: 40px; padding: 0 14px; }
-  .trilha { gap: 3px; font-size: 8px; }
+  .trilha { gap: 3px; font-size: 9px; }
   .trilha span:nth-child(2), .trilha span:nth-child(4) { font-size: 12px; }
-  .status { max-width: 80px; font-size: 6px; text-align: right; }
+  .status { max-width: 80px; font-size: 7px; text-align: right; }
 }
