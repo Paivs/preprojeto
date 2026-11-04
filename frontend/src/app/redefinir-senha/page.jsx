@@ -55,6 +55,7 @@ function RedefinirSenhaContent() {
               id="senha"
               name="senha"
               type="password"
+              placeholder="Mínimo de 8 caracteres"
               value={senha}
               onChange={(event) => setSenha(event.target.value)}
               aria-invalid={Boolean(erroSenha)}
@@ -68,6 +69,7 @@ function RedefinirSenhaContent() {
               id="confirmarSenha"
               name="confirmarSenha"
               type="password"
+              placeholder="Digite a senha novamente"
               value={confirmarSenha}
               onChange={(event) => setConfirmarSenha(event.target.value)}
               aria-invalid={Boolean(erroConfirmacao)}
@@ -79,6 +81,11 @@ function RedefinirSenhaContent() {
           </button>
         </form>
       )}
+      <p className={styles.authFooter}>
+        <Link className={styles.linkStrong} href="/login">
+          Voltar para o login
+        </Link>
+      </p>
     </AuthLayout>
   );
 }

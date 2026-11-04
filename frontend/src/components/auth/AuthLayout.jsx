@@ -32,8 +32,6 @@ export default function AuthLayout({ children, title, subtitle }) {
             Tecnologia, inspeção e cuidado com equipamentos.
           </span>
         </div>
-
-        <span className={styles.videoIndex}>01 / INSPEÇÃO</span>
       </aside>
 
       <section className={styles.contentPanel}>
@@ -54,12 +52,6 @@ export default function AuthLayout({ children, title, subtitle }) {
           </div>
 
           <div className={styles.formContent}>{children}</div>
-
-          <p className={styles.footer}>
-            TENKEN <span>点検</span>
-            <span className={styles.footerDivider}>/</span>
-            Plataforma de gestão e inspeção
-          </p>
         </div>
       </section>
     </main>

@@ -9,11 +9,9 @@
 }
 
 .videoPanel {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
-  min-height: 620px;
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
   overflow: hidden;
   isolation: isolate;
   background: var(--carbon-black);
@@ -103,6 +101,7 @@
 }
 
 .contentPanel {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;

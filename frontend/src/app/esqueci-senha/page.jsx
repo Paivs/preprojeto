@@ -30,6 +30,9 @@ export default function EsqueciSenhaPage() {
 
   return (
     <AuthLayout title="Esqueci minha senha" subtitle="Informe seu e-mail para receber instruções">
+      <Link className={styles.backHome} href="/login">
+        <span aria-hidden="true">←</span> Voltar para login
+      </Link>
       {enviado ? (
         <p className={styles.success} role="status">
           Se o e-mail estiver cadastrado, você receberá as instruções
@@ -43,6 +46,7 @@ export default function EsqueciSenhaPage() {
               id="email"
               name="email"
               type="email"
+              placeholder="voce@exemplo.com"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required
@@ -53,9 +57,6 @@ export default function EsqueciSenhaPage() {
           </button>
         </form>
       )}
-      <p className={styles.linkRow}>
-        <Link className={styles.linkStrong} href="/login">Voltar para o login</Link>
-      </p>
     </AuthLayout>
   );
 }
