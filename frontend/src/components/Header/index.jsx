@@ -20,7 +20,7 @@ export default function Header() {
     return () => window.removeEventListener("scroll", verificarScroll);
   }, []);
 
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) return null;
+  if (pathname === "/admin" || pathname.startsWith("/admin/") || pathname === "/tecnico" || pathname.startsWith("/tecnico/")) return null;
 
   return (
     <header

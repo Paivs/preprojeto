@@ -112,3 +112,37 @@ export async function contarEquipamentosCriticos() {
   );
   return Number(total);
 }
+
+export async function resumoTecnico(tecnicoId) {
+  const [porStatus] = await pool.query(
+    `SELECT status, COUNT(*) AS total
+     FROM chamados_manutencao
+     WHERE tecnico_id = ?
+     GROUP BY status`,
+    [tecnicoId],
+  );
+  const [porSeveridade] = await pool.query(
+    `SELECT severidade, COUNT(*) AS total
+     FROM chamados_manutencao
+     WHERE tecnico_id = ? AND status NOT IN ('CONCLUIDO', 'CANCELADO')
+     GROUP BY severidade`,
+    [tecnicoId],
+  );
+  const [abertosPorDia] = await pool.query(
+    `SELECT DATE(aberto_em) AS dia, COUNT(*) AS total
+     FROM chamados_manutencao
+     WHERE tecnico_id = ? AND aberto_em >= CURDATE() - INTERVAL 29 DAY
+     GROUP BY DATE(aberto_em)`,
+    [tecnicoId],
+  );
+  const [concluidosPorDia] = await pool.query(
+    `SELECT DATE(concluido_em) AS dia, COUNT(*) AS total
+     FROM chamados_manutencao
+     WHERE tecnico_id = ? AND status = 'CONCLUIDO'
+       AND concluido_em >= CURDATE() - INTERVAL 29 DAY
+     GROUP BY DATE(concluido_em)`,
+    [tecnicoId],
+  );
+
+  return { porStatus, porSeveridade, abertosPorDia, concluidosPorDia };
+}
