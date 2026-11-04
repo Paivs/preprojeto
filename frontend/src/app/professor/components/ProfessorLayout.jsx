@@ -15,33 +15,53 @@ export default function ProfessorLayout({ children, titulo }) {
   const [verificando, setVerificando] = useState(true);
 
   useEffect(() => {
-    let ativo = true;
+    let montado = true;
+
     async function validarSessao() {
       const token = getToken();
       const usuarioSalvo = getUsuario();
-      if (!token) { router.replace("/login"); return; }
+
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
+
       if (usuarioSalvo?.perfil !== "PROFESSOR") {
         router.replace(usuarioSalvo?.perfil === "ADMIN" ? "/admin" : "/login");
         return;
       }
+
       try {
         const resposta = await apiFetch("/api/usuarios/me");
         const usuarioApi = resposta?.usuario;
-        if (!ativo) return;
+
+        if (!montado) return;
         if (usuarioApi?.perfil !== "PROFESSOR") {
-          clearSession(); router.replace("/login"); return;
+          clearSession();
+          router.replace("/login");
+          return;
         }
+
         setUsuario({ ...usuarioSalvo, ...usuarioApi });
         setVerificando(false);
       } catch {
-        if (ativo) { clearSession(); router.replace("/login"); }
+        if (!montado) return;
+        clearSession();
+        router.replace("/login");
       }
     }
+
     validarSessao();
-    return () => { ativo = false; };
+    return () => {
+      montado = false;
+    };
   }, [router]);
 
-  function sair() { clearSession(); router.replace("/login"); }
+  function sair() {
+    clearSession();
+    router.replace("/login");
+  }
+
   if (verificando || !usuario) return <main className={styles.loading}>Verificando acesso...</main>;
 
   return (
