@@ -529,6 +529,75 @@ a {
   }
 }
 
+@media (max-width: 380px) {
+  .titulo-destaque {
+    font-size: clamp(3.75rem, 19vw, 4.5rem);
+  }
+
+  .chamada-destaque {
+    max-width: 300px;
+    font-size: 16px;
+  }
+
+  .indicacao-rolagem {
+    font-size: 9px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .titulo-destaque {
+    font-size: clamp(7rem, 17vw, 9rem);
+  }
+
+  .chamada-destaque {
+    max-width: 420px;
+    font-size: clamp(18px, 2.1vw, 21px);
+  }
+
+  .secao-destaque>video {
+    object-position: 56% center;
+  }
+}
+
+@media (max-width: 767px) and (orientation: landscape) {
+  .secao-destaque {
+    min-height: max(520px, 100svh);
+  }
+
+  .camada-destaque {
+    padding: clamp(76px, 12svh, 96px) 7vw 20px;
+  }
+
+  .titulo-destaque {
+    font-size: clamp(4rem, 14vw, 6rem);
+  }
+
+  .chamada-destaque {
+    margin-top: 18px;
+  }
+}
+
+@media (min-width: 768px) and (max-height: 680px) {
+  .camada-destaque {
+    padding-top: clamp(86px, 12vh, 110px);
+    padding-bottom: 48px;
+  }
+
+  .titulo-destaque {
+    font-size: clamp(5rem, 14vw, 11rem);
+  }
+
+  .chamada-destaque {
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .secao-destaque>video {
+    object-position: 58% center;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
