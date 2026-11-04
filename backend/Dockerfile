@@ -1,20 +1,8 @@
-FROM node:24-alpine AS dependencies
-
+FROM node:24-alpine
 WORKDIR /app
-
 COPY package*.json ./
 RUN npm ci --omit=dev
-
-FROM node:24-alpine AS runtime
-
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY package*.json ./
-COPY src ./src
-
+COPY . .
+ENV NODE_ENV=production PORT=8080
 EXPOSE 8080
-
-CMD ["npm", "start"]
+CMD ["node", "src/server.js"]

@@ -1,29 +1,13 @@
-# Frontend
+# Front-end · PredictMaint
 
-Aplicacao Next.js do template base.
-
-## Comandos
+Next.js 16 (App Router) + React 19 + Bootstrap 5.
 
 ```bash
 npm install
-npm run dev
-npm run build
-npm start
+cp .env.example .env.local   # NEXT_PUBLIC_API_URL=http://localhost:8080/api
+npm run dev                  # http://localhost:3000
+npm run build && npm start   # produção
 npm run lint
 ```
 
-## Ambiente
-
-Copie `.env.example` para `.env.local`:
-
-```bash
-cp .env.example .env.local
-```
-
-Variavel principal:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
-```
-
-As instrucoes completas do projeto ficam no `README.md` da raiz.
+A API precisa estar no ar (veja `../backend`). As instruções completas ficam no `README.md` da raiz.
