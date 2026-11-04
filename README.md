@@ -91,6 +91,17 @@ Senha: TenkenProf123!
 
 O login da aplicação usa matrícula e senha. Este usuário é destinado somente a ambientes locais de teste.
 
+### Acesso de técnico para testes
+
+Depois de criar o banco e aplicar o esquema, execute `database/seed/tecnico_teste.sql` para criar a conta de técnico de teste:
+
+```text
+Matrícula: TEC001
+Senha: TenkenTec123!
+```
+
+O login da aplicação usa matrícula e senha. Este usuário é destinado somente a ambientes locais de teste.
+
 ### Requisitos
 
 - Node.js compatível com a versão do Next.js usada pelo projeto.
