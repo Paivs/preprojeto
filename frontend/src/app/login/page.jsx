@@ -76,9 +76,7 @@ function LoginContent() {
             }}
           />
         </div>
-        <p style={{ margin: "-12px 0 0", textAlign: "right" }}>
-          <Link href="/esqueci-senha" style={{ color: "var(--silver)" }}>Esqueci minha senha</Link>
-        </p>
+        <p className={styles.linkAuxiliary}>`n          <Link className={styles.linkStrong} href="/esqueci-senha">`n            Esqueci minha senha`n          </Link>`n        </p>
 
         <button className={styles.button} type="submit" disabled={enviando}>
           {enviando ? "Entrando" : "Entrar"}
