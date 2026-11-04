@@ -1,1 +1,0 @@
-// aqui vai ficar as rotas do cliente
