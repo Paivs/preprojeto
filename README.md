@@ -80,6 +80,17 @@ Senha: TenkenAdmin123!
 
 O login da aplicação usa matrícula e senha. Este usuário é destinado somente a ambientes locais de teste.
 
+### Acesso de professor para testes
+
+Depois de criar o banco e aplicar o esquema, execute `database/seed/professor_teste.sql` para criar a conta de professor de teste:
+
+```text
+Matrícula: PROF001
+Senha: TenkenProf123!
+```
+
+O login da aplicação usa matrícula e senha. Este usuário é destinado somente a ambientes locais de teste.
+
 ### Requisitos
 
 - Node.js compatível com a versão do Next.js usada pelo projeto.
