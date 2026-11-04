@@ -1,1 +1,0 @@
-// aqui fica as verificações de validação do cliente
