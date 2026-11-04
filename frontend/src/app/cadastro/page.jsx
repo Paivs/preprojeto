@@ -165,7 +165,7 @@ export default function CadastroPage() {
           ) : <>
           <p className={styles.linkRow}>
             Você já é matriculado?{" "}
-            <button className={styles.linkStrong} type="button" onClick={irParaEtapaMatricula} style={{ background: "none", border: 0, cursor: "pointer", font: "inherit" }}>
+            <button className={styles.linkButton} type="button" onClick={irParaEtapaMatricula}>
               Já tenho matrícula
             </button>
           </p>
