@@ -4,17 +4,37 @@ import styles from "./AuthLayout.module.css";
 export default function AuthLayout({ children, title, subtitle }) {
   return (
     <main className={styles.layout}>
-      <section className={styles.videoPanel} aria-hidden="true">
+      <aside className={styles.videoPanel} aria-hidden="true">
         <video
           className={styles.video}
           autoPlay
           loop
           muted
           playsInline
-          src="/assets/videos/braco-robotico-vermelho.webm"
-          aria-hidden="true"
+          preload="metadata"
+          src="/assets/videos/braco-robotico-vermelho.mp4"
         />
-      </section>
+
+        <div className={styles.videoOverlay} />
+
+        <div className={styles.videoCaption}>
+          <span className={styles.videoEyebrow}>
+            TENKEN <span>点検</span>
+          </span>
+
+          <p className={styles.videoTitle}>
+            Precisão em cada
+            <br />
+            detalhe.
+          </p>
+
+          <span className={styles.videoDescription}>
+            Tecnologia, inspeção e cuidado com equipamentos.
+          </span>
+        </div>
+
+        <span className={styles.videoIndex}>01 / INSPEÇÃO</span>
+      </aside>
 
       <section className={styles.contentPanel}>
         <div className={styles.content}>
@@ -26,11 +46,23 @@ export default function AuthLayout({ children, title, subtitle }) {
             height={80}
             priority
           />
-          <h1 className={styles.title}>{title}</h1>
-          <p className={styles.subtitle}>{subtitle}</p>
-          {children}
+
+          <div className={styles.heading}>
+            <span className={styles.headingEyebrow}>ÁREA DE ACESSO</span>
+            <h1 className={styles.title}>{title}</h1>
+            <p className={styles.subtitle}>{subtitle}</p>
+          </div>
+
+          <div className={styles.formContent}>{children}</div>
+
+          <p className={styles.footer}>
+            TENKEN <span>点検</span>
+            <span className={styles.footerDivider}>/</span>
+            Plataforma de gestão e inspeção
+          </p>
         </div>
       </section>
     </main>
   );
 }
+
