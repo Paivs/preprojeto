@@ -5,20 +5,15 @@ import { calcularResultadoInspecao, criarReservaLocal } from "../lib/professorDe
 import { obterChecklist } from "../lib/checklistDemo";
 
 const ProfessorDemoContext = createContext(null);
-const STORAGE_KEY = "tenken_professor_demo_v2";
-
-function copiarDados(valor) {
-  return JSON.parse(JSON.stringify(valor));
-}
 
 function criarDadosIniciais(professora = null) {
-  return copiarDados({
+  return {
     professora: professora ?? {},
     agendamentos: [],
     equipamentos: [],
     inspecoes: [],
     turmas: [],
-  });
+  };
 }
 
 export function useProfessorDemo() {
@@ -29,40 +24,10 @@ export function useProfessorDemo() {
 
 export default function ProfessorDemoProvider({ children, professora }) {
   const [dados, setDados] = useState(() => criarDadosIniciais(professora));
-  const [carregado, setCarregado] = useState(false);
 
   useEffect(() => {
     if (professora?.nome) setDados((atual) => ({ ...atual, professora: { ...atual.professora, ...professora } }));
   }, [professora]);
-
-  useEffect(() => {
-    try {
-      window.localStorage.removeItem("tenken_professor_demo_v1");
-      const salvo = window.localStorage.getItem(STORAGE_KEY);
-      if (salvo) {
-        const dadosSalvos = JSON.parse(salvo);
-        const iniciais = criarDadosIniciais(professora);
-        setDados({
-          ...iniciais,
-          ...dadosSalvos,
-          professora: professora?.nome ? { ...iniciais.professora, ...professora } : (dadosSalvos.professora ?? iniciais.professora),
-          agendamentos: [],
-          equipamentos: [],
-          inspecoes: [],
-          turmas: [],
-        });
-      }
-    } catch {
-      window.localStorage.removeItem(STORAGE_KEY);
-    } finally {
-      setCarregado(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!carregado) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
-  }, [dados, carregado]);
 
   function criarAgendamento(formulario) {
     const resultado = criarReservaLocal(dados, formulario);
@@ -149,7 +114,7 @@ export default function ProfessorDemoProvider({ children, professora }) {
   }
 
   return (
-    <ProfessorDemoContext.Provider value={{ dados, setDados, criarAgendamento, cancelarAgendamento, concluirAgendamento, registrarInspecao }}>
+    <ProfessorDemoContext.Provider value={{ dados, criarAgendamento, cancelarAgendamento, concluirAgendamento, registrarInspecao }}>
       {children}
     </ProfessorDemoContext.Provider>
   );
