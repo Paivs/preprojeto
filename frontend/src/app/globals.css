@@ -72,6 +72,7 @@ a {
   min-height: max(680px, 100svh);
   overflow: hidden;
   display: flex;
+  flex-direction: column;
   align-items: stretch;
   background: var(--onyx);
 }
@@ -133,13 +134,15 @@ a {
 
 .camada-destaque {
   position: relative;
-  top: 120px;
+  top: auto;
   z-index: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  padding: 110px 6vw 72px;
+  width: 100%;
+  padding: clamp(120px, 16vh, 175px) 6vw 72px;
 }
 
 .texto-destaque {
@@ -163,7 +166,7 @@ a {
   font-weight: 500;
   letter-spacing: .015em;
   opacity: .88;
-  transform: translateY(16px);
+  transform: none;
 }
 
 .texto-destaque__significado i {
