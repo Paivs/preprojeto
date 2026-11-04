@@ -15,6 +15,7 @@ import healthRoutes from "./routes/healthRoutes.js";
 import ocorrenciaRoutes from "./routes/ocorrenciaRoutes.js";
 import ordemServicoRoutes from "./routes/ordemServicoRoutes.js";
 import preCadastroRoutes from "./routes/preCadastroRoutes.js";
+import tecnicoDashboardRoutes from "./routes/tecnicoDashboardRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
 
 const app = express();
@@ -46,6 +47,7 @@ app.use("/api/checklist-itens", checklistItemRoutes);
 app.use("/api/ocorrencias", ocorrenciaRoutes);
 app.use("/api/admin/relatorios", adminRelatorioRoutes);
 app.use("/api/admin/dashboard", adminDashboardRoutes);
+app.use("/api/tecnico/dashboard", tecnicoDashboardRoutes);
 app.use(errorHandler);
 
 export default app;
