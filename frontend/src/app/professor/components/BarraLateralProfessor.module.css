@@ -18,44 +18,221 @@
   height: 64px;
   align-items: center;
   padding: 0 24px;
-  border-bottom: 1px solid rgba(255,255,255,.04);
+  border-bottom: 1px solid rgba(255, 255, 255, .04);
 }
 
-.brandLink { display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; }
-.brandBadge { display: grid; width: 32px; height: 32px; place-items: center; background: var(--mahogany-red, #a4161a); color: #fff; font-size: 20px; }
-.brandInfo { display: flex; flex-direction: column; gap: 3px; line-height: 1.15; }
-.brandTitle { color: var(--white-smoke, #f5f3f4); font-size: 15px; letter-spacing: .08em; }
-.brandSub { color: var(--silver, #b1a7a6); font-size: 9px; font-weight: 600; letter-spacing: .12em; }
-.sectionHeading { padding: 20px 24px 10px; color: var(--silver, #b1a7a6); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-.navMenu { display: flex; flex-direction: column; gap: 4px; padding: 0 16px; }
-.navItem { display: flex; min-height: 42px; align-items: center; gap: 12px; padding: 0 13px; border-radius: 4px; color: var(--silver, #b1a7a6); font-size: 13px; font-weight: 500; text-decoration: none; transition: background .15s ease, color .15s ease; }
-.navItem:hover { background: var(--surface-container, #1c2023); color: var(--white-smoke, #f5f3f4); }
-.navIcon { color: inherit; font-size: 19px; }
-.navItemActive { background: var(--mahogany-red, #a4161a); color: #fff; font-weight: 700; }
-.navItemPending { cursor: default; opacity: .58; }
-.navItemPending:hover { background: transparent; color: var(--silver, #b1a7a6); }
-.pendingLabel { margin-left: auto; color: #92898a; font-size: 7px; font-weight: 700; letter-spacing: .07em; }
-.sidebarFooter { display: flex; align-items: center; gap: 10px; padding: 15px 18px; border-top: 1px solid rgba(255,255,255,.05); }
-.profileAvatar { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; border-radius: 50%; background: #442326; color: #f5dfe0; font-size: 10px; font-weight: 700; }
-.profileInfo { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
-.profileInfo strong { overflow: hidden; color: var(--white-smoke, #f5f3f4); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
-.profileInfo span { color: var(--silver, #b1a7a6); font-size: 9px; }
+.brandLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brandBadge {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  background: var(--mahogany-red, #a4161a);
+  color: #fff;
+  font-size: 20px;
+}
+
+.brandInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  line-height: 1.15;
+}
+
+.brandTitle {
+  color: var(--white-smoke, #f5f3f4);
+  font-size: var(--professor-font-body);
+  letter-spacing: .08em;
+}
+
+.brandSub {
+  color: var(--silver, #b1a7a6);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .16em;
+}
+
+.sectionHeading {
+  padding: 20px 24px 10px;
+  color: var(--silver, #b1a7a6);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.navMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 16px;
+}
+
+.navItem {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  color: var(--silver, #b1a7a6);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background .15s ease, color .15s ease;
+}
+
+.navItem:hover {
+  background: var(--surface-container, #1c2023);
+  color: var(--white-smoke, #f5f3f4);
+}
+
+.navIcon {
+  color: inherit;
+  font-size: 20px;
+}
+
+.navItemActive {
+  background: var(--mahogany-red, #a4161a);
+  color: #fff;
+  font-weight: 700;
+}
+
+.navItemPending {
+  cursor: default;
+  opacity: .58;
+}
+
+.navItemPending:hover {
+  background: transparent;
+  color: var(--silver, #b1a7a6);
+}
+
+.pendingLabel {
+  margin-left: auto;
+  color: #92898a;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .07em;
+}
+
+.sidebarFooter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 18px;
+  border-top: 1px solid rgba(255, 255, 255, .05);
+}
+
+.profileAvatar {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: #442326;
+  color: #f5dfe0;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.profileInfo {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profileInfo strong {
+  overflow: hidden;
+  color: var(--white-smoke, #f5f3f4);
+  font-size: var(--professor-font-caption);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profileInfo span {
+  color: var(--silver, #b1a7a6);
+  font-size: 10px;
+}
 
 @media (max-width: 900px) {
-  .sidebar { position: static; width: 100%; height: auto; }
-  .brandHeader { height: 56px; }
-  .sectionHeading, .sidebarFooter { display: none; }
-  .navMenu { flex-direction: row; gap: 0; overflow-x: auto; padding: 5px 10px; }
-  .navItem { min-height: 38px; flex: 0 0 auto; gap: 7px; padding: 0 10px; font-size: 11px; }
-  .navIcon { font-size: 16px; }
-  .pendingLabel { display: none; }
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+
+  .brandHeader {
+    height: 56px;
+  }
+
+  .sectionHeading,
+  .sidebarFooter {
+    display: none;
+  }
+
+  .navMenu {
+    flex-direction: row;
+    gap: 0;
+    overflow-x: auto;
+    padding: 5px 10px;
+  }
+
+  .navItem {
+    min-height: 38px;
+    flex: 0 0 auto;
+    gap: 7px;
+    padding: 0 10px;
+    font-size: 14px;
+  }
+
+  .navIcon {
+    font-size: 20px;
+  }
+
+  .pendingLabel {
+    display: none;
+  }
 }
 
 @media (max-width: 560px) {
-  .brandHeader { height: 50px; padding: 0 14px; }
-  .brandBadge { width: 28px; height: 28px; font-size: 18px; }
-  .brandTitle { font-size: 13px; }
-  .brandSub { font-size: 8px; }
-  .navMenu { padding-right: 7px; padding-left: 7px; }
-  .navItem { min-height: 34px; gap: 5px; padding: 0 8px; font-size: 10px; }
+  .brandHeader {
+    height: 50px;
+    padding: 0 14px;
+  }
+
+  .brandBadge {
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+  }
+
+  .brandTitle {
+    font-size: var(--professor-font-body);
+  }
+
+  .brandSub {
+    font-size: 10px;
+  }
+
+  .navMenu {
+    padding-right: 7px;
+    padding-left: 7px;
+  }
+
+  .navItem {
+    min-height: 34px;
+    gap: 5px;
+    padding: 0 8px;
+    font-size: 14px;
+  }
 }

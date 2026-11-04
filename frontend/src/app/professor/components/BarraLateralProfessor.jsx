@@ -60,7 +60,7 @@ export default function BarraLateralProfessor() {
         <div className={styles.profileAvatar} aria-hidden="true">{nome.split(/\s+/).map((parte) => parte[0]).slice(0, 2).join("")}</div>
         <div className={styles.profileInfo}>
           <strong>{nome}</strong>
-          <span>Professora · prévia local</span>
+          <span>Área do professor</span>
         </div>
       </div>
     </aside>

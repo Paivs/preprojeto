@@ -3,9 +3,13 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { useProfessorDemo } from "./ProfessorDemoProvider";
+import { percentualEquipamentos, resumirEquipamentos } from "../lib/resumoProfessor";
 import styles from "./VisaoGeralProfessor.module.css";
 
-const HOJE_DEMO = "2026-11-03";
+function dataLocalISO() {
+  const hoje = new Date();
+  return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}-${String(hoje.getDate()).padStart(2, "0")}`;
+}
 
 function rotuloStatus(status) {
   if (status === "EM_ANDAMENTO") return "Em andamento";
@@ -15,13 +19,20 @@ function rotuloStatus(status) {
 
 export default function VisaoGeralProfessor() {
   const { dados } = useProfessorDemo();
+  const resumoEquipamentos = useMemo(
+    () => resumirEquipamentos(dados.equipamentos),
+    [dados.equipamentos],
+  );
   const primeiroNome = dados.professora?.nome?.split(" ")[0] || "professor";
-  const hora = new Date().getHours();
+  const hoje = new Date();
+  const hora = hoje.getHours();
+  const hojeISO = dataLocalISO();
+  const dataFormatada = hoje.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }).toLocaleUpperCase("pt-BR");
   const saudacao = hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
 
   const reservasHoje = useMemo(() => dados.agendamentos
-    .filter((item) => item.data === HOJE_DEMO && item.status !== "CANCELADO")
-    .sort((a, b) => a.inicio.localeCompare(b.inicio)), [dados.agendamentos]);
+    .filter((item) => item.data === hojeISO && item.status !== "CANCELADO")
+    .sort((a, b) => a.inicio.localeCompare(b.inicio)), [dados.agendamentos, hojeISO]);
   const pendencias = useMemo(() => dados.inspecoes
     .filter((item) => !item.resultado && !item.cancelada)
     .sort((a, b) => `${a.data}${a.horario}`.localeCompare(`${b.data}${b.horario}`)), [dados.inspecoes]);
@@ -29,8 +40,8 @@ export default function VisaoGeralProfessor() {
   const metricas = [
     { rotulo: "Agendamentos hoje", valor: reservasHoje.length, detalhe: `${reservasHoje.filter((item) => item.status === "CONFIRMADO").length} confirmados · ${reservasHoje.filter((item) => item.status === "EM_ANDAMENTO").length} em andamento`, icone: "calendar_month" },
     { rotulo: "Inspeções pendentes", valor: pendencias.length, detalhe: pendencias.length ? "Ação necessária" : "Tudo em dia", icone: "fact_check", alerta: pendencias.length > 0 },
-    { rotulo: "Turmas e projetos", valor: dados.turmas.length, detalhe: "Vinculados à professora", icone: "groups" },
-    { rotulo: "Equipamentos disponíveis", valor: `${dados.equipamentos.filter((item) => item.status === "DISPONIVEL").length} / ${dados.equipamentos.length}`, detalhe: `${dados.equipamentos.filter((item) => item.status === "EM_USO").length} em uso · ${dados.equipamentos.filter((item) => item.status === "EM_MANUTENCAO").length} em manutenção`, icone: "precision_manufacturing" },
+    { rotulo: "Turmas e projetos", valor: dados.turmas.length, detalhe: "Vínculos cadastrados", icone: "groups" },
+    { rotulo: "Equipamentos disponíveis", valor: `${resumoEquipamentos.disponiveis} / ${resumoEquipamentos.total}`, detalhe: `${resumoEquipamentos.emUso} em uso · ${resumoEquipamentos.emManutencao} em manutenção`, icone: "precision_manufacturing" },
   ];
 
   const primeiraPendencia = pendencias[0];
@@ -39,7 +50,7 @@ export default function VisaoGeralProfessor() {
     <div className={styles.container}>
       <section className={styles.introducao} aria-labelledby="titulo-visao-professor">
         <div>
-          <p className={styles.dataHoje}>TERÇA-FEIRA, 03 DE NOVEMBRO DE 2026 · PRÉVIA LOCAL</p>
+          <p className={styles.dataHoje}>{dataFormatada}</p>
           <h1 id="titulo-visao-professor">{saudacao}, {primeiroNome}.</h1>
           <p className={styles.subtitulo}>Resumo do laboratório para hoje.</p>
         </div>
@@ -120,12 +131,12 @@ export default function VisaoGeralProfessor() {
             <Link className={styles.linkPendente} href="/professor/turmas">Todas as turmas <span aria-hidden="true">→</span></Link>
           </div>
           <div className={styles.listaTurmas}>
-            {dados.turmas.slice(0, 4).map((turma) => (
+            {dados.turmas.length ? dados.turmas.slice(0, 4).map((turma) => (
               <div className={styles.itemTurma} key={turma.id}>
                 <span className={styles.siglaTurma}>{turma.nome.slice(0, 1)}</span>
                 <div><strong>{turma.nome}</strong><span>{turma.alunos} alunos vinculados</span></div>
               </div>
-            ))}
+            )) : <div className={styles.vazioResumo}><p>Nenhuma turma vinculada.</p></div>}
           </div>
         </section>
 
@@ -135,25 +146,26 @@ export default function VisaoGeralProfessor() {
             <Link className={styles.linkPendente} href="/professor/equipamentos">Ver todos <span aria-hidden="true">→</span></Link>
           </div>
           <div className={styles.resumoEquipamentos}>
-            <strong>{dados.equipamentos.filter((item) => item.status === "DISPONIVEL").length} <span>disponíveis de {dados.equipamentos.length}</span></strong>
+            <strong>{resumoEquipamentos.disponiveis} <span>disponíveis de {resumoEquipamentos.total}</span></strong>
             <div className={styles.barraDisponibilidade} role="img" aria-label="Disponibilidade atual dos equipamentos">
-              <span className={styles.disponivel} style={{ width: `${dados.equipamentos.length ? dados.equipamentos.filter((item) => item.status === "DISPONIVEL").length / dados.equipamentos.length * 100 : 0}%` }} />
-              <span className={styles.emUso} style={{ width: `${dados.equipamentos.length ? dados.equipamentos.filter((item) => item.status === "EM_USO").length / dados.equipamentos.length * 100 : 0}%` }} />
-              <span className={styles.manutencao} style={{ width: `${dados.equipamentos.length ? dados.equipamentos.filter((item) => item.status === "EM_MANUTENCAO").length / dados.equipamentos.length * 100 : 0}%` }} />
+              <span className={styles.disponivel} style={{ width: `${percentualEquipamentos(resumoEquipamentos.disponiveis, resumoEquipamentos.total)}%` }} />
+              <span className={styles.emUso} style={{ width: `${percentualEquipamentos(resumoEquipamentos.emUso, resumoEquipamentos.total)}%` }} />
+              <span className={styles.manutencao} style={{ width: `${percentualEquipamentos(resumoEquipamentos.emManutencao, resumoEquipamentos.total)}%` }} />
             </div>
             <div className={styles.legendaEquipamentos}>
-              <span><i className={styles.pontoDisponivel} />Disponíveis <strong>{dados.equipamentos.filter((item) => item.status === "DISPONIVEL").length}</strong></span>
-              <span><i className={styles.pontoUso} />Em uso <strong>{dados.equipamentos.filter((item) => item.status === "EM_USO").length}</strong></span>
-              <span><i className={styles.pontoManutencao} />Manutenção <strong>{dados.equipamentos.filter((item) => item.status === "EM_MANUTENCAO").length}</strong></span>
+              <span><i className={styles.pontoDisponivel} />Disponíveis <strong>{resumoEquipamentos.disponiveis}</strong></span>
+              <span><i className={styles.pontoUso} />Em uso <strong>{resumoEquipamentos.emUso}</strong></span>
+              <span><i className={styles.pontoManutencao} />Manutenção <strong>{resumoEquipamentos.emManutencao}</strong></span>
             </div>
           </div>
-          {dados.equipamentos.find((item) => item.status === "EM_USO") && (
-            <p className={styles.avisoEquipamento}><i />{dados.equipamentos.find((item) => item.status === "EM_USO").nome} está em uso.</p>
+          {resumoEquipamentos.primeiroEmUso && (
+            <p className={styles.avisoEquipamento}><i />{resumoEquipamentos.primeiroEmUso.nome} está em uso.</p>
           )}
+          {resumoEquipamentos.total === 0 && <p className={styles.avisoEquipamento}>Nenhum equipamento cadastrado.</p>}
         </section>
       </div>
 
-      <footer className={styles.rodape}>Tenken 点検 · Alterações desta prévia ficam salvas neste navegador.</footer>
+      <footer className={styles.rodape}>Tenken 点検 · Os dados serão exibidos quando cadastrados no sistema.</footer>
     </div>
   );
 }

@@ -47,7 +47,7 @@ export default function InspecoesProfessor() {
   return (
     <div className={styles.container}>
       <section className={styles.cabecalhoPagina} aria-labelledby="titulo-inspecoes"><div>
-        <p className={styles.contexto}>SEGURANÇA DE USO · PRÉVIA LOCAL</p><h1 id="titulo-inspecoes">Inspeções</h1>
+        <p className={styles.contexto}>SEGURANÇA DE USO</p><h1 id="titulo-inspecoes">Inspeções</h1>
         <p className={styles.subtitulo}>Acompanhe as vistorias pré e pós-uso relacionadas às reservas das suas turmas.</p>
       </div></section>
 
@@ -55,7 +55,7 @@ export default function InspecoesProfessor() {
 
       <section className={styles.resumo} aria-label="Resumo das inspeções">
         <article className={`${styles.metrica} ${styles.metricaPendente}`}><span>Aguardando inspeção</span><strong>{resumo.pendentes}</strong><small>etapas sem registro</small></article>
-        <article className={styles.metrica}><span>Inspeções realizadas</span><strong>{resumo.realizadas}</strong><small>registros demonstrativos</small></article>
+        <article className={styles.metrica}><span>Inspeções realizadas</span><strong>{resumo.realizadas}</strong><small>registros no sistema</small></article>
         <article className={`${styles.metrica} ${styles.metricaRessalva}`}><span>Aprovadas com ressalvas</span><strong>{resumo.ressalvas}</strong><small>verifique as observações</small></article>
       </section>
 
@@ -71,13 +71,13 @@ export default function InspecoesProfessor() {
             <td><button className={styles.botaoAcao} type="button" onClick={() => { setMensagem(""); setInspecaoId(item.id); setModo(item.resultado ? "detalhes" : "formulario"); }} aria-label={`${item.resultado ? "Ver" : "Iniciar"} inspeção de ${item.equipamento}`}>{item.resultado ? "Detalhes" : "Iniciar"}</button></td>
           </tr>)}</tbody>
         </table></div> : <div className={styles.estadoVazio}><span className="material-symbols-outlined" aria-hidden="true">fact_check</span><h3>Nenhuma inspeção nesta lista</h3><p>Quando houver registros ou etapas pendentes, eles aparecerão aqui.</p></div>}
-        <p className={styles.notaDados}>Os registros desta prévia ficam salvos somente neste navegador.</p>
+        <p className={styles.notaDados}>As inspeções registradas no sistema aparecerão nesta lista.</p>
       </section>
 
       {modo === "formulario" && inspecaoSelecionada && <ModalProfessor titulo={`${etapas[inspecaoSelecionada.etapa]} · ${inspecaoSelecionada.equipamento}`} descricao={`${inspecaoSelecionada.turma} · ${formatarData(inspecaoSelecionada.data)} às ${inspecaoSelecionada.horario}`} onClose={() => { setInspecaoId(null); setModo(null); }}><FormularioInspecao inspecao={inspecaoSelecionada} equipamento={equipamento} onSubmit={salvar} onCancel={() => { setInspecaoId(null); setModo(null); }} /></ModalProfessor>}
       {modo === "detalhes" && inspecaoSelecionada && <ModalProfessor titulo={`${etapas[inspecaoSelecionada.etapa]} · ${inspecaoSelecionada.equipamento}`} descricao={`${inspecaoSelecionada.turma} · ${formatarData(inspecaoSelecionada.data)} às ${inspecaoSelecionada.horario}`} onClose={() => { setInspecaoId(null); setModo(null); }}>
         <div className={styles.detalheInspecao}><p><span>Resultado</span><strong>{resultados[inspecaoSelecionada.resultado]}</strong></p><p><span>Equipamento</span><strong>{equipamento?.patrimonio} · {equipamento?.status === "EM_MANUTENCAO" ? "Em manutenção" : equipamento?.status === "DISPONIVEL" ? "Disponível" : equipamento?.status === "EM_USO" ? "Em uso" : "Reservado"}</strong></p></div>
-        {inspecaoSelecionada.respostas ? <div className={styles.respostas}><h3>Itens avaliados</h3>{obterChecklist(inspecaoSelecionada, equipamento).map((item) => <p key={item.id}><span>{item.texto}</span><strong className={inspecaoSelecionada.respostas[item.id] === false ? styles.respostaFalha : styles.respostaOk}>{inspecaoSelecionada.respostas[item.id] === false ? "Com falha" : "Conforme"}</strong></p>)}</div> : <p className={styles.observacoes}>Registro demonstrativo anterior sem respostas detalhadas do checklist.</p>}
+        {inspecaoSelecionada.respostas ? <div className={styles.respostas}><h3>Itens avaliados</h3>{obterChecklist(inspecaoSelecionada, equipamento).map((item) => <p key={item.id}><span>{item.texto}</span><strong className={inspecaoSelecionada.respostas[item.id] === false ? styles.respostaFalha : styles.respostaOk}>{inspecaoSelecionada.respostas[item.id] === false ? "Com falha" : "Conforme"}</strong></p>)}</div> : <p className={styles.observacoes}>Nenhuma resposta de checklist registrada.</p>}
         {inspecaoSelecionada.observacoes && <p className={styles.observacoes}><span>Observações</span>{inspecaoSelecionada.observacoes}</p>}
         <div className={styles.rodapeDetalhes}><button type="button" onClick={() => { setInspecaoId(null); setModo(null); }}>Fechar</button></div>
       </ModalProfessor>}
