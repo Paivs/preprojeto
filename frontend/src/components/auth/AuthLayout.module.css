@@ -213,3 +213,164 @@
     scroll-behavior: auto;
   }
 }
+
+@media (max-width: 767px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: visible;
+  }
+
+  .videoPanel {
+    position: relative;
+    top: auto;
+    flex: 0 0 auto;
+    width: 100%;
+    height: clamp(190px, 29svh, 250px);
+    min-height: 190px;
+  }
+
+  .video {
+    object-position: 58% 48%;
+  }
+
+  .videoOverlay {
+    background:
+      linear-gradient(
+        0deg,
+        rgba(11, 9, 10, 0.88) 0%,
+        rgba(11, 9, 10, 0.12) 75%
+      ),
+      linear-gradient(
+        90deg,
+        rgba(11, 9, 10, 0.2),
+        transparent 70%
+      );
+  }
+
+  .videoCaption {
+    right: 22px;
+    bottom: 24px;
+    left: 22px;
+    max-width: 360px;
+  }
+
+  .videoEyebrow {
+    font-size: 9px;
+  }
+
+  .videoTitle {
+    margin: 9px 0 5px;
+    font-size: clamp(25px, 7vw, 34px);
+    line-height: 1;
+  }
+
+  .videoDescription {
+    max-width: 290px;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .videoIndex {
+    top: 18px;
+    right: 20px;
+    bottom: auto;
+    font-size: 9px;
+  }
+
+  .contentPanel {
+    flex: 1 0 auto;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    min-height: 0;
+    padding: 34px 24px 28px;
+  }
+
+  .content {
+    max-width: 460px;
+  }
+
+  .logo {
+    width: 150px;
+    margin-bottom: 30px;
+  }
+
+  .heading {
+    margin-bottom: 24px;
+  }
+
+  .headingEyebrow {
+    margin-bottom: 9px;
+    font-size: 9px;
+  }
+
+  .title {
+    font-size: clamp(27px, 7vw, 34px);
+  }
+
+  .subtitle {
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .footer {
+    margin-top: 28px;
+  }
+}
+
+@media (max-width: 420px) {
+  .videoPanel {
+    height: 190px;
+    min-height: 190px;
+  }
+
+  .videoCaption {
+    right: 18px;
+    bottom: 20px;
+    left: 18px;
+  }
+
+  .contentPanel {
+    padding: 28px 20px 24px;
+  }
+
+  .logo {
+    width: 138px;
+    margin-bottom: 26px;
+  }
+
+  .heading {
+    margin-bottom: 22px;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 768px) {
+  .contentPanel {
+    align-items: flex-start;
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  .logo {
+    width: 150px;
+    margin-bottom: 26px;
+  }
+
+  .heading {
+    margin-bottom: 22px;
+  }
+
+  .footer {
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  .video {
+    /* Mantém o vídeo como mídia de fundo; não adiciona movimento via CSS. */
+    transform: none;
+  }
+}
