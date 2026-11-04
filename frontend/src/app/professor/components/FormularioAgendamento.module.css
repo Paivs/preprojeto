@@ -1,19 +1,104 @@
-.formulario { display: grid; gap: 14.3px; }
-.campo { display: grid; gap: 6.6px; color: #bbb3b4; font-size: 15px; }
-.campo input, .campo select { width: 100%; min-height: 40.7px; padding: 0 11px; border: 1px solid rgba(245,243,244,.14); border-radius: 0; outline: none; background: #101214; color: #f0ebeb; font: inherit; font-size: 16.5px; color-scheme: dark; }
-.campo input:focus, .campo select:focus { border-color: var(--mahogany-red-2, #ba181b); }
-.campo input::placeholder { color: #797273; }
-.campo option { background: #161a1d; color: #f5f3f4; }
-.horarios { display: grid; grid-template-columns: 1fr 1fr; gap: 13.2px; }
-.erro { margin: 0; padding: 9.9px 11px; border-left: 2px solid #c26769; background: rgba(194,103,105,.08); color: #e19a9c; font-size: 15px; }
-.aviso { margin: 0; color: #8f8788; font-size: 12px; }
-.acoes { display: flex; justify-content: flex-end; gap: 8.8px; margin-top: 4px; }
-.acoes button { min-height: 38.5px; padding: 0 13.2px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
-.secundario { border: 1px solid rgba(245,243,244,.15); background: transparent; color: #c6bfc0; }
-.primario { border: 1px solid var(--mahogany-red, #a4161a); background: var(--mahogany-red, #a4161a); color: #fff; }
-.primario:hover { background: var(--mahogany-red-2, #ba181b); }
+.formulario {
+  display: grid;
+  gap: 14.3px;
+}
+
+.campo {
+  display: grid;
+  gap: 6.6px;
+  color: #bbb3b4;
+  font-size: var(--professor-font-body);
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  min-height: 40.7px;
+  padding: 0 11px;
+  border: 1px solid rgba(245, 243, 244, .14);
+  border-radius: 0;
+  outline: none;
+  background: #101214;
+  color: #f0ebeb;
+  font: inherit;
+  font-size: 16.5px;
+  color-scheme: dark;
+}
+
+.campo input:focus,
+.campo select:focus {
+  border-color: var(--mahogany-red-2, #ba181b);
+}
+
+.campo input::placeholder {
+  color: #797273;
+}
+
+.campo option {
+  background: #161a1d;
+  color: #f5f3f4;
+}
+
+.horarios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13.2px;
+}
+
+.erro {
+  margin: 0;
+  padding: 9.9px 11px;
+  border-left: 2px solid #c26769;
+  background: rgba(194, 103, 105, .08);
+  color: #e19a9c;
+  font-size: var(--professor-font-body);
+}
+
+.aviso {
+  margin: 0;
+  color: #8f8788;
+  font-size: var(--professor-font-caption);
+}
+
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8.8px;
+  margin-top: 4px;
+}
+
+.acoes button {
+  min-height: 38.5px;
+  padding: 0 13.2px;
+  font: inherit;
+  font-size: var(--professor-font-body);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secundario {
+  border: 1px solid rgba(245, 243, 244, .15);
+  background: transparent;
+  color: #c6bfc0;
+}
+
+.primario {
+  border: 1px solid var(--mahogany-red, #a4161a);
+  background: var(--mahogany-red, #a4161a);
+  color: #fff;
+}
+
+.primario:hover {
+  background: var(--mahogany-red-2, #ba181b);
+}
 
 @media (max-width: 420px) {
-  .horarios { gap: 8.8px; }
-  .acoes button { flex: 1; padding: 0 8.8px; }
+  .horarios {
+    gap: 8.8px;
+  }
+
+  .acoes button {
+    flex: 1;
+    padding: 0 8.8px;
+  }
 }
