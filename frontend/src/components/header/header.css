@@ -3,7 +3,7 @@ header {
   border-bottom: 1px solid var(--gray);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   padding: 0 2.5rem;
   height: 10vh;
 }
@@ -11,46 +11,35 @@ header {
 .container-navbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .container-navbar img {
   width: 5vw;
 }
 
+.navbar-header {
+  list-style: none;
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
 .navbar .nav-item a {
   color: var(--white);
 }
 
-.navbar .nav-link {
-    position: relative;
-    display: inline-block;
-    text-decoration: none;
-}
-
-.navbar .nav-link::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--dark-bg-primary);
-    transition: width 0.3s ease;
-}
-
-.navbar .nav-link:hover::after {
-    width: 100%;
-}
-
-.nav-login a {
+.nav-login  {
   border-radius: 6px;
   background: var(--purple);
   text-decoration: none;
   color: var(--white);
   padding: 7px 15px;
+  margin-left: 4rem;
 }
 
-.nav-login a:hover {
+.nav-login:hover {
   background: var(--light-primary-hover);
 }
