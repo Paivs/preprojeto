@@ -29,7 +29,7 @@ function LoginContent() {
       });
 
       saveSession(resultado.token, resultado.usuario);
-      router.replace("/dashboard");
+      router.replace(resultado.usuario?.perfil === "TECNICO" ? "/tecnico" : "/dashboard");
     } catch (error) {
       const mensagens = {
         401: "Matrícula ou senha inválidas",
