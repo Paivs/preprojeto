@@ -4,6 +4,10 @@ export async function apiFetch(path, options = {}) {
   const { body, headers: cabecalhosOriginais, ...opcoes } = options;
   const cabecalhos = new Headers(cabecalhosOriginais);
   const token = getToken();
+  const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/$/, "");
+  const caminho = apiUrl.endsWith("/api") && path.startsWith("/api/")
+    ? path.slice(4)
+    : path;
 
   if (body !== undefined) {
     cabecalhos.set("Content-Type", "application/json");
@@ -13,7 +17,7 @@ export async function apiFetch(path, options = {}) {
     cabecalhos.set("Authorization", `Bearer ${token}`);
   }
 
-  const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
+  const resposta = await fetch(`${apiUrl}${caminho}`, {
     ...opcoes,
     headers: cabecalhos,
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
