@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import AuthLayout from "@/components/auth/AuthLayout";
 import styles from "@/components/auth/authForm.module.css";
 import { apiFetch } from "@/lib/api";
@@ -129,6 +130,7 @@ export default function CadastroPage() {
           id={nome}
           name={nome}
           type={tipo}
+          placeholder={nome === "nome" ? "Seu nome completo" : nome === "email" ? "voce@exemplo.com" : nome === "cpf" ? "000.000.000-00" : nome === "telefone" ? "(00) 00000-0000" : nome === "matricula" ? "MAT-XXXXX" : nome === "senha" ? "Digite sua senha" : "Confirme sua senha"}
           value={formulario[nome]}
           onChange={atualizarCampo}
           required={obrigatorio}
@@ -142,6 +144,9 @@ export default function CadastroPage() {
 
   return (
     <AuthLayout title="Criar conta" subtitle="Você precisa de uma matrícula para entrar">
+      <Link className={styles.backHome} href="/login">
+        <span aria-hidden="true">←</span> Voltar para login
+      </Link>
       <div className={styles.stepper}>
         <span className={etapa === 1 ? styles.stepActive : ""}>1. Gerar matrícula</span>
         <span className={etapa === 2 ? styles.stepActive : ""}>2. Criar senha</span>
@@ -150,25 +155,26 @@ export default function CadastroPage() {
       {etapa === 1 ? (
         <>
           {matriculaGerada ? (
-            <div className={styles.form}>
+            <div className={styles.generatedEnrollment}>
               <p>Matrícula gerada:</p>
-              <strong style={{ color: "var(--white)", fontSize: "2rem" }}>{matriculaGerada}</strong>
-              <p>Guarde esta matrícula: ela é o seu login</p>
-              <button className={styles.button} type="button" onClick={copiarMatricula}>
-                {copiado ? "Copiado" : "Copiar"}
-              </button>
-              <button className={styles.button} type="button" onClick={() => {
-                setFormulario((atual) => ({ ...atual, matricula: matriculaGerada }));
-                setEtapa(2);
-              }}>Continuar</button>
+              <strong className={styles.generatedNumber}>{matriculaGerada}</strong>
+              <p>Guarde esta matrícula: ela é o seu login.</p>
+              <div className={styles.buttonGroup}>
+                <button className={styles.button} type="button" onClick={copiarMatricula}>
+                  {copiado ? "Matrícula copiada" : "Copiar matrícula"}
+                </button>
+                <button className={styles.button} type="button" onClick={() => {
+                  setFormulario((atual) => ({ ...atual, matricula: matriculaGerada }));
+                  setEtapa(2);
+                }}>Continuar</button>
+                <button className={styles.linkButton} type="button" onClick={() => {
+                  setMatriculaGerada("");
+                  setCopiado(false);
+                  setEtapa(1);
+                }}>Voltar e corrigir os dados</button>
+              </div>
             </div>
           ) : <>
-          <p className={styles.linkRow}>
-            Você já é matriculado?{" "}
-            <button className={styles.linkStrong} type="button" onClick={irParaEtapaMatricula} style={{ background: "none", border: 0, cursor: "pointer", font: "inherit" }}>
-              Já tenho matrícula
-            </button>
-          </p>
           <form className={styles.form} onSubmit={enviarFormulario} noValidate>
             {campo("nome", "Nome completo", "text", true)}
             {campo("email", "E-mail", "email")}
@@ -176,7 +182,14 @@ export default function CadastroPage() {
             {campo("telefone", "Telefone (opcional)", "tel")}
             <button className={styles.button} type="submit" disabled={enviando}>{enviando ? "Gerando" : "Gerar matrícula"}</button>
           </form>
+          <p className={styles.linkRow}>
+            Você já é matriculado?{" "}
+            <button className={styles.linkButton} type="button" onClick={irParaEtapaMatricula}>
+              Já tenho matrícula
+            </button>
+          </p>
           </>}
+        </>
       ) : (
         <form className={styles.form} onSubmit={enviarCadastro} noValidate>
           {campo("matricula", "Matrícula")}

@@ -37,9 +37,9 @@ CREATE TABLE turmas_projetos (
 -- RF11: vínculo N:N entre alunos e turmas/projetos.
 -- A API valida que aluno_id tem perfil ALUNO e professor_id tem perfil PROFESSOR.
 CREATE TABLE turma_alunos (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     turma_id BIGINT UNSIGNED NOT NULL,
     aluno_id BIGINT UNSIGNED NOT NULL,
-    PRIMARY KEY (turma_id, aluno_id),
     FOREIGN KEY (turma_id) REFERENCES turmas_projetos(id) ON DELETE CASCADE,
     FOREIGN KEY (aluno_id) REFERENCES usuarios(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -71,10 +71,10 @@ CREATE TABLE componentes (
 -- TABELA: equipamento_componentes
 -- RF02: composição física de cada equipamento e quantidade de cada componente.
 CREATE TABLE equipamento_componentes (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     equipamento_id BIGINT UNSIGNED NOT NULL,
     componente_id BIGINT UNSIGNED NOT NULL,
     quantidade INT UNSIGNED NOT NULL DEFAULT 1,
-    PRIMARY KEY (equipamento_id, componente_id),
     FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id) ON DELETE CASCADE,
     FOREIGN KEY (componente_id) REFERENCES componentes(id)
 ) ENGINE=InnoDB;
@@ -159,7 +159,6 @@ CREATE TABLE inspecoes (
 -- TABELA: inspecao_respostas
 -- RN01/RF03: resultado individual de cada item da vistoria.
 -- RF04/RNF05: caminho_foto guarda o caminho da imagem no armazenamento local;
--- o arquivo é recebido/salvo pelo Multer na API, não dentro do banco.
 CREATE TABLE inspecao_respostas (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     inspecao_id BIGINT UNSIGNED NOT NULL,

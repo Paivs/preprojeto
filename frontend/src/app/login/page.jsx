@@ -44,6 +44,9 @@ function LoginContent() {
   return (
     <AuthLayout title="Entrar" subtitle="Acesse com sua matrícula e senha">
       {cadastroConcluido && <p className={styles.success}>Conta criada. Faça login.</p>}
+      <Link className={styles.backHome} href="/">
+        <span aria-hidden="true">←</span> Início
+      </Link>
       <form className={styles.form} onSubmit={enviarFormulario}>
         {alerta && <p className={styles.alert} role="alert">{alerta}</p>}
         <div className={styles.field}>
@@ -69,6 +72,7 @@ function LoginContent() {
             id="senha"
             name="senha"
             type="password"
+            placeholder="Digite sua senha"
             value={senha}
             onChange={(event) => {
               setSenha(event.target.value);
@@ -76,8 +80,10 @@ function LoginContent() {
             }}
           />
         </div>
-        <p style={{ margin: "-12px 0 0", textAlign: "right" }}>
-          <Link href="/esqueci-senha" style={{ color: "var(--silver)" }}>Esqueci minha senha</Link>
+        <p className={styles.linkAuxiliary}>
+          <Link className={styles.linkStrong} href="/esqueci-senha">
+            Esqueci minha senha
+          </Link>
         </p>
 
         <button className={styles.button} type="submit" disabled={enviando}>

@@ -1,0 +1,64 @@
+.footer {
+  color: var(--silver);
+  background: var(--onyx);
+  border-top: 1px solid rgba(177, 167, 166, .18);
+}
+
+.footer p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.descricao {
+  width: min(100%, 300px);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  text-decoration: none;
+}
+
+.marca img {
+  display: block;
+  width: clamp(150px, 19vw, 230px);
+  height: auto;
+  filter: invert(1);
+}
+
+.contato {
+  display: grid;
+  gap: 10px;
+}
+
+.contato h2 {
+  margin: 0 0 2px;
+  color: var(--white-smoke);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.linkContato {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--silver);
+  font-size: 13px;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.linkContato:hover {
+  color: var(--white);
+}
+
+.linkContato svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  fill: var(--mahogany-red-2);
+}
