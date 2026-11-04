@@ -69,6 +69,17 @@ Os módulos abaixo descrevem a visão do produto e não devem ser tratados como 
 
 ## Executar localmente
 
+### Acesso de administrador para testes
+
+Depois de criar o banco e aplicar o esquema, execute `database/seed/admin_teste.sql` para criar a conta administrativa de teste:
+
+```text
+Matrícula: ADMIN001
+Senha: TenkenAdmin123!
+```
+
+O login da aplicação usa matrícula e senha. Este usuário é destinado somente a ambientes locais de teste.
+
 ### Requisitos
 
 - Node.js compatível com a versão do Next.js usada pelo projeto.
