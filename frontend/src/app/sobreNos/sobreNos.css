@@ -2,6 +2,12 @@
     font-family: var(--font-primary);
 }
 
+.hero{
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+}
+
 .container{
     width: 70vw;
     margin: auto;
@@ -9,7 +15,6 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    min-height: 80vh;
     gap: 5rem;
 }
 
@@ -33,6 +38,7 @@
     font-size: 4rem;
     font-weight: 900;
     max-width: 740px;
+    line-height: 0.9;
 }
 
 .text p{
@@ -100,6 +106,13 @@
   background: radial-gradient(circle, var(--blue) 0%, rgba(59,130,246,0) 70%);
 }
 
+.valores{
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
 .title{
     width: 100%;
     /* background-color: aqua; */
@@ -117,5 +130,13 @@
 }
 
 .container-cardValor{
-    background-color: olive;
+    display: grid;
+}
+
+.cardValor{
+    width: 300px;
+    height: 370px;
+    background-color: var(--dark-bg-tertiary);
+    border-radius: 5px;
+    transition: ease 0.3s;
 }
