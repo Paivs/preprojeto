@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
 import CartaoMetrica from "../admin/components/CartaoMetrica";
+import ResumoChamados from "./components/ResumoChamados";
 import styles from "./page.module.css";
 
 function totalPorChave(itens, chave, valor) {
@@ -115,6 +116,11 @@ export default function PaginaTecnico() {
           />
         ))}
       </section>
+      <ResumoChamados
+        porStatus={status}
+        porPrioridade={chamados?.por_severidade_em_aberto}
+        carregando={carregando}
+      />
     </div>
   );
 }
