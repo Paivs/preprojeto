@@ -14,7 +14,7 @@ function responderErro(erro, res, next) {
 
 export async function listar(req, res, next) {
   try {
-    const resultado = await ChamadoService.listar(req.query);
+    const resultado = await ChamadoService.listar(req.query, req.usuario);
     return res.status(200).json({ sucesso: true, dados: resultado.chamados, paginacao: resultado.paginacao });
   } catch (erro) { return responderErro(erro, res, next); }
 }

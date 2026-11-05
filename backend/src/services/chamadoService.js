@@ -13,7 +13,7 @@ function validarId(idRecebido, nomeCampo = "ID") {
   return id;
 }
 
-export async function listar({ pagina = 1, limite = 10, status, severidade, equipamento_id } = {}) {
+export async function listar({ pagina = 1, limite = 10, status, severidade, equipamento_id } = {}, usuarioLogado) {
   const paginaNum = Number(pagina);
   const limiteNum = Number(limite);
 
@@ -32,6 +32,9 @@ export async function listar({ pagina = 1, limite = 10, status, severidade, equi
 
   const offset = (paginaNum - 1) * limiteNum;
   const equipamentoIdFiltro = equipamento_id !== undefined ? validarId(equipamento_id, "ID do equipamento") : undefined;
+  const tecnicoId = usuarioLogado?.perfil === "TECNICO"
+    ? validarId(usuarioLogado.id, "ID do técnico")
+    : undefined;
 
   const { chamados, total } = await ChamadoModel.listar({
     limite: limiteNum,
@@ -39,6 +42,7 @@ export async function listar({ pagina = 1, limite = 10, status, severidade, equi
     status,
     severidade,
     equipamento_id: equipamentoIdFiltro,
+    tecnicoId,
   });
 
   return {

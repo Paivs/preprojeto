@@ -1,0 +1,92 @@
+.grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.painel {
+  min-width: 0;
+  padding: 22px 24px 18px;
+  background: var(--surface-low, #181c1f);
+  border: 1px solid var(--border-subtle, #22272b);
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+}
+
+.cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-subtle, #22272b);
+}
+
+.sobretitulo {
+  margin: 0 0 5px;
+  color: var(--silver, #b1a7a6);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.titulo {
+  margin: 0;
+  color: var(--white-smoke, #f5f3f4);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.icone { color: #ffb4ac; font-size: 20px; }
+.lista { display: grid; gap: 17px; padding: 19px 0 16px; }
+.linha { display: grid; gap: 8px; }
+.estadoVazio {
+  display: grid;
+  min-height: 150px;
+  margin: 0;
+  place-items: center;
+  color: var(--silver, #b1a7a6);
+  font-size: 12px;
+  text-align: center;
+}
+
+.rotuloLinha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--dust-grey, #d3d3d3);
+  font-size: 12px;
+}
+
+.rotuloLinha strong {
+  margin-left: auto;
+  color: var(--white-smoke, #f5f3f4);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ponto { width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; }
+.trilho { height: 6px; overflow: hidden; background: var(--surface-highest, #313538); border-radius: 4px; }
+.preenchimento { display: block; height: 100%; border-radius: inherit; transition: width .3s ease; }
+.aberto { background: #ffb4ac; }
+.atendimento { background: var(--mahogany-red-2, #ba181b); }
+.pecas { background: #aa8986; }
+.concluido { background: #7c9b84; }
+.critica { background: #ff8d85; }
+.alta { background: var(--mahogany-red-2, #ba181b); }
+.media { background: #aa8986; }
+.baixa { background: #748a9b; }
+
+.rodape {
+  margin: 0;
+  padding-top: 12px;
+  color: var(--silver, #b1a7a6);
+  border-top: 1px solid var(--border-subtle, #22272b);
+  font-size: 11px;
+}
+
+@media (max-width: 760px) { .grade { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .painel { padding: 18px 16px 15px; } }
