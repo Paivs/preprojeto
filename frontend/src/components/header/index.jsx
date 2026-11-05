@@ -18,7 +18,7 @@ export default function Header() {
             </li>
 
             <li>
-              <Link className="nav-link" href="/sobre">
+              <Link className="nav-link" href="/sobreNos">
                 Sobre nós
               </Link>
             </li>

@@ -46,7 +46,7 @@
 
 .nav-link {
   position: relative;
-  color: var(--white);
+  color: var(--cor-texto);
   text-decoration: none;
   font-size: 15px;
   font-weight: 500;
@@ -62,14 +62,14 @@
   height: 2px;
   left: 0;
   bottom: -9px;
-  background: var(--purple);
+  background: var(--roxo);
   border-radius: 10px;
   transition: width 0.3s ease;
 }
 
 .nav-link:hover {
   opacity: 1;
-  color: var(--white);
+  color: var(--cor-texto);
 }
 
 .nav-link:hover::after,
@@ -87,8 +87,8 @@
   justify-content: center;
   gap: 12px;
   padding: 11px 21px;
-  background: var(--purple);
-  color: var(--white);
+  background: var(--roxo);
+  color: var(--cor-texto);
   border: 1px solid transparent;
   border-radius: 8px;
   font-size: 14px;
@@ -104,8 +104,8 @@
 
 .nav-login:hover {
   background: transparent;
-  border-color: var(--purple);
-  color: var(--white);
+  border-color: var(--roxo);
+  color: var(--cor-texto);
 
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
 }

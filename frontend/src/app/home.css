@@ -22,7 +22,7 @@
 }
 
 .hero-left h3 strong {
-    color: var(--yellow);
+    color: var(--amarelo);
 }
 
 .hero-left p {
@@ -31,7 +31,7 @@
 }
 
 .btn-hero a {
-    background: var(--purple);
+    background: var(--roxo);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -44,7 +44,7 @@
 }
 
 .btn-hero a:hover {
-    background: var(--purple-light);
+    background: var(--roxo-claro);
 }
 
 .hero-left span {
@@ -121,7 +121,7 @@
     background: linear-gradient(60deg, var(--dark-bg-primary), var(--dark-bg-secondary));
     padding: 20px 30px;
     border-radius: 12px;
-    border: 1px solid var(--purple-deep);
+    border: 1px solid var(--roxo-escuro);
     width: 650px;
 }
 
@@ -160,7 +160,7 @@
   height: 16px;               
   width: 16px;                  
   border-radius: 50%;           
-  background-color: var(--yellow);    
+  background-color: var(--amarelo);    
   margin-top: -6px;           
 }
 
@@ -168,7 +168,7 @@
   height: 16px;
   width: 16px;
   border-radius: 50%;
-  background-color: var(--yellow);
+  background-color: var(--amarelo);
   border: none;            
 }
 
@@ -206,7 +206,7 @@
     background: linear-gradient(60deg, var(--dark-bg-primary), var(--dark-bg-secondary));
     padding: 20px 30px;
     border-radius: 12px;
-    border: 1px solid var(--purple-deep);
+    border: 1px solid var(--roxo-escuro);
     width: 650px;
 }
 
@@ -282,7 +282,7 @@
 .bar-default {
   width: 100%;
   height: 70%;
-  background-color: var(--purple-deep);
+  background-color: var(--roxo-escuro);
   border-radius: 12px;
   transition: height 0.4s ease;
 }
@@ -308,7 +308,7 @@
 }
 
 .top-footer-box i {
-    color: var(--green-dark);
+    color: var(--verde-escuro);
     font-size: 2.5rem;
     margin-bottom: 1rem;
 }
@@ -330,7 +330,7 @@
 }
 
 .btn-diagnostico {
-    background: var(--purple);
+    background: var(--roxo);
     padding: 10px 20px;
     border-radius: 6px;
     color: var(--light-bg-primary);
@@ -342,5 +342,5 @@
 }
 
 .btn-diagnostico:hover {
-    background: var(--purple-dark);
+    background: var(--roxo-dark);
 }

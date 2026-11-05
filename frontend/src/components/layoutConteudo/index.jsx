@@ -1,25 +1,22 @@
-
 "use client";
 
 import { usePathname } from "next/navigation";
 import Header from "@/components/header";
 
 export default function LayoutConteudo({ children }) {
-    const pathname = usePathname();
+  const pathname = usePathname();
 
-    const esconderHeaderFooter =
-        pathname === "/adminPages" ||
-        pathname.startsWith("/adminPages/");
+  const rotasSemHeaderFooter = ["/usuariosPages", "/adminPages"];
 
-    return (
-        <>
-            {!esconderHeaderFooter && <Header />}
+  const esconderHeaderFooter = rotasSemHeaderFooter.some(
+    (rota) => pathname === rota || pathname.startsWith(`${rota}/`)
+  );
 
-            <main>
-                {children}
-            </main>
+  return (
+    <>
+      {!esconderHeaderFooter && <Header />}
 
-            {/* {!esconderHeaderFooter && <Footer />} */}
-        </>
-    );
+      <main>{children}</main>
+    </>
+  );
 }

@@ -52,9 +52,7 @@
   --verde-suave: rgba(0, 201, 149, 0.15);
   --vermelho-suave: rgba(255, 104, 117, 0.10);
 
-  /* ========================================
- TEMA ESCURO — PADRÃO
-======================================== */
+  /* TEMA ESCURO — PADRÃO */
 
   --cor-fundo: #080d16;
   --cor-sidebar: #0b111e;
@@ -71,9 +69,7 @@
 
   --sombra-painel: -12px 0 40px rgba(0, 0, 0, 0.45);
 
-  /* ========================================
- TEMA CLARO
-======================================== */
+  /* TEMA CLARO */
 
   --light-bg-primary: #ffffff;
   --light-bg-secondary: #f5f7fb;
@@ -95,9 +91,7 @@
   --light-danger: #d93645;
   --light-info: #3478db;
 
-  /* ========================================
-     TEMA ESCURO — REFERÊNCIAS
-======================================== */
+  /*   TEMA ESCURO — REFERÊNCIAS */
 
   --dark-bg-primary: #0b0f19;
   --dark-bg-secondary: #101421;
