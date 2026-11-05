@@ -13,8 +13,8 @@ const canais = [
     icone: "bi-telephone",
     titulo: "Telefone",
     descricao: "Atendimento em horário comercial",
-    link: "tel:+551140001234",
-    rotulo: "+55 (11) 4000-1234",
+    link: "tel:+5511930569806",
+    rotulo: "+55 (11) 93056-9806",
   },
   {
     icone: "bi-geo-alt",
