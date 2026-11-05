@@ -6,7 +6,8 @@ CREATE TABLE usuario (
     nome_empresa VARCHAR(150) NOT NULL,
     cnpj VARCHAR(18) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
-    senha VARCHAR(255) NOT NULL
+    senha VARCHAR(255) NOT NULL,
+    nivel_permissao ENUM('admin', 'cliente') DEFAULT 'cliente'
 );
 
 
