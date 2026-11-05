@@ -390,6 +390,39 @@
   color: var(--on-surface, #e0e3e7);
 }
 
+.paginationButtons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pageBtn {
+  display: inline-grid;
+  min-width: 2rem;
+  height: 2rem;
+  place-items: center;
+  padding: 0 0.4rem;
+  border: 0;
+  background: var(--surface-container, #1c2023);
+  color: var(--outline, #aa8986);
+  cursor: pointer;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--surface-high, #262a2e);
+  color: var(--on-surface, #e0e3e7);
+}
+
+.pageBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.pageBtnActive {
+  background: var(--primary-container, #a4161a);
+  color: var(--on-primary-container, #ffb3ac);
+}
+
 .historyPanel {
   border-color: var(--surface-high, #262a2e);
   border-radius: 0.25rem;

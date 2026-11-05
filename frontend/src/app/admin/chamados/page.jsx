@@ -14,6 +14,7 @@ const STATUS = [
 ];
 
 const SEVERIDADES = ["BAIXA", "MEDIA", "ALTA", "CRITICA"];
+const ITENS_POR_PAGINA = 5;
 
 const ROTULO_STATUS = {
   ABERTO: "Aberto",
@@ -32,6 +33,7 @@ function Conteudo({ token }) {
   const [status, setStatus] = useState("");
   const [severidade, setSeveridade] = useState("");
   const [busca, setBusca] = useState("");
+  const [pagina, setPagina] = useState(1);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
   const [aviso, setAviso] = useState("");
@@ -57,6 +59,10 @@ function Conteudo({ token }) {
   useEffect(() => {
     carregar();
   }, [carregar]);
+
+  useEffect(() => {
+    setPagina(1);
+  }, [busca, status, severidade]);
 
   async function atualizarStatus(item, value) {
     try {
@@ -127,6 +133,10 @@ function Conteudo({ token }) {
     const termo = `${item.titulo} ${item.equipamento_nome ?? ""} ${item.id}`.toLowerCase();
     return termo.includes(busca.toLowerCase());
   });
+  const totalPaginas = Math.max(1, Math.ceil(filtrados.length / ITENS_POR_PAGINA));
+  const paginaAtual = Math.min(pagina, totalPaginas);
+  const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+  const chamadosPagina = filtrados.slice(inicio, inicio + ITENS_POR_PAGINA);
 
   return (
     <div className={styles.container}>
@@ -175,7 +185,7 @@ function Conteudo({ token }) {
       </div>
 
       <div className={styles.ticketList}>
-        {filtrados.map((item) => {
+        {chamadosPagina.map((item) => {
           const severidadeAtual = String(item.severidade || "").toUpperCase();
           const severidadeClass = severidadeAtual === "CRITICA" ? styles.sevCritica : severidadeAtual === "ALTA" ? styles.sevAlta : severidadeAtual === "MEDIA" ? styles.sevMedia : styles.sevBaixa;
           const statusClass = item.status === "CONCLUIDO" ? styles.statusDone : item.status === "EM_ATENDIMENTO" ? styles.statusActive : styles.statusWaiting;
@@ -213,7 +223,16 @@ function Conteudo({ token }) {
         })}
         {loading ? <div className={styles.emptyState}>Carregando chamados...</div> : filtrados.length === 0 ? <div className={styles.emptyState}>Nenhum chamado encontrado.</div> : null}
       </div>
-      <div className={styles.listFooter}><span>Exibindo <strong>{filtrados.length}</strong> chamados</span></div>
+      <div className={styles.listFooter}>
+        <span>Exibindo <strong>{filtrados.length === 0 ? 0 : inicio + 1}–{Math.min(inicio + ITENS_POR_PAGINA, filtrados.length)}</strong> de <strong>{filtrados.length}</strong> chamados</span>
+        <nav className={styles.paginationButtons} aria-label="Paginação dos chamados">
+          <button type="button" className={styles.pageBtn} disabled={paginaAtual === 1} onClick={() => setPagina(paginaAtual - 1)} aria-label="Página anterior"><span className="material-symbols-outlined">chevron_left</span></button>
+          {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((numero) => (
+            <button key={numero} type="button" className={`${styles.pageBtn} ${numero === paginaAtual ? styles.pageBtnActive : ""}`} aria-current={numero === paginaAtual ? "page" : undefined} onClick={() => setPagina(numero)}>{numero}</button>
+          ))}
+          <button type="button" className={styles.pageBtn} disabled={paginaAtual === totalPaginas} onClick={() => setPagina(paginaAtual + 1)} aria-label="Próxima página"><span className="material-symbols-outlined">chevron_right</span></button>
+        </nav>
+      </div>
       {selecionado && (
         <div className={styles.modalOverlay} role="dialog" aria-modal="true" aria-labelledby="ticket-detail-title" onMouseDown={(e) => { if (e.target === e.currentTarget) setSelecionado(null); }}>
           <section className={styles.modalCard}>
