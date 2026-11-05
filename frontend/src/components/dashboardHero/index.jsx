@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import "./dashboardHero.css"; 
+import "./dashboardHero.css";
 
 export default function DashboardHero() {
   return (
@@ -9,7 +9,9 @@ export default function DashboardHero() {
       <div className="dash-header">
         <div className="dash-title-group">
           <div className="dash-title">
-            <span className="bolt-icon"><i className="bi bi-lightning-charge"></i></span>
+            <span className="bolt-icon">
+              <i className="bi bi-lightning-charge"></i>
+            </span>
             <h4>Visão geral de energia</h4>
           </div>
           <span className="dash-subtitle">Unidade São Paulo • Exemplo</span>
@@ -18,7 +20,9 @@ export default function DashboardHero() {
           <div className="status-live">
             <span className="status-dot"></span> Ao vivo
           </div>
-          <button type="button" className="dash-dropdown">Este mês ▾</button>
+          <button type="button" className="dash-dropdown">
+            Este mês ▾
+          </button>
         </div>
       </div>
 
@@ -45,9 +49,30 @@ export default function DashboardHero() {
 
         <div className="svg-wrapper">
           <svg viewBox="0 0 500 160" className="chart-svg">
-            <line x1="0" y1="20" x2="500" y2="20" stroke="#1f2333" strokeDasharray="3 3" />
-            <line x1="0" y1="70" x2="500" y2="70" stroke="#1f2333" strokeDasharray="3 3" />
-            <line x1="0" y1="120" x2="500" y2="120" stroke="#1f2333" strokeDasharray="3 3" />
+            <line
+              x1="0"
+              y1="20"
+              x2="500"
+              y2="20"
+              stroke="#1f2333"
+              strokeDasharray="3 3"
+            />
+            <line
+              x1="0"
+              y1="70"
+              x2="500"
+              y2="70"
+              stroke="#1f2333"
+              strokeDasharray="3 3"
+            />
+            <line
+              x1="0"
+              y1="120"
+              x2="500"
+              y2="120"
+              stroke="#1f2333"
+              strokeDasharray="3 3"
+            />
 
             <path
               d="M 0,110 Q 50,130 100,100 T 200,40 T 300,70 T 400,50 T 500,90"
@@ -85,11 +110,16 @@ export default function DashboardHero() {
       </div>
 
       <div className="ai-alert">
-        <span>IA identificou uma oportunidade de economia de 18% na climatização.</span>
+        <span>
+          IA identificou uma oportunidade de economia de 18% na climatização.
+        </span>
       </div>
 
       <div className="dash-footer">
-        <span><i className="bi bi-graph-up"></i></span> Menos desperdício. Mais resultado.
+        <span>
+          <i className="bi bi-graph-up"></i>
+        </span>{" "}
+        Menos desperdício. Mais resultado.
       </div>
     </div>
   );

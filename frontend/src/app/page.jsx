@@ -147,6 +147,57 @@ export default function Home() {
             </div>
           </div>
         </section>
+        <section id="funcionamento">
+          <div className="container-funcionamento">
+            <div className="top-funcionamento">
+              <h3>Da tomada à decisão. Sem compilação.</h3>
+              <span>
+                Três etapas para transformar a forma como sua empresa usa
+                energia.
+              </span>
+            </div>
+
+            <div className="main-funcionamento">
+              <div className="grid-main-funcionamento">
+                <div className="group-main-funcionamento">
+                  <div className="cabecalho-funcionamento">
+                    <i className="bi bi-lightning-charge"></i>
+                    <hr />
+                    <p>CONECTAR</p>
+                  </div>
+                  <h3>1. Instalação</h3>
+                  <p>
+                    Conectamos sensores e medidores compatíveis à sua operação,
+                    com acompanhamento técnico.
+                  </p>
+                </div>
+                <div className="group-main-funcionamento">
+                  <div className="cabecalho-funcionamento">
+                    <i className="bi bi-lightning-charge"></i>
+                    <hr />
+                    <p>ENTENDER</p>
+                  </div>
+                  <h3>2. Mapeamento</h3>
+                  <p>
+                    Traduzimos o consumo de cada área em um mapa claro de
+                    hábitos, picos e oportunidades.
+                  </p>
+                </div>
+                <div className="group-main-funcionamento">
+                  <div className="cabecalho-funcionamento">
+                  <i class="bi bi-graph-up" style={{background: "var(--roxo)", color: "var(--branco)"}}></i>
+                    <hr />
+                    <p>EVOLUIR</p>
+                  </div>
+                  <h3>3. Otimização e Economia</h3>
+                  <p>
+                  Você age com recomendações inteligentes e acompanha os resultados, mês após mês.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </>
   );
