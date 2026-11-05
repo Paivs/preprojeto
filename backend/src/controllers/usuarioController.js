@@ -54,6 +54,27 @@ export async function login(request, response, next) {
   }
 }
 
+export async function me(request, response, next) {
+  try {
+    const [usuarios] = await pool.execute(
+      `SELECT id, nome, perfil, matricula
+       FROM usuarios
+       WHERE id = ? AND ativo = 1
+       LIMIT 1`,
+      [request.usuario.id],
+    );
+
+    const usuario = usuarios[0];
+    if (!usuario) {
+      return response.status(401).json({ message: "Sessão inválida ou usuário inativo" });
+    }
+
+    return response.status(200).json({ usuario });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 function responderErro(erro, res, next) {
   if (erro instanceof TypeError) {
     return res.status(400).json({ sucesso: false, erro: erro.message });

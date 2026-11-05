@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import AuthLayout from "@/components/auth/AuthLayout";
 import styles from "@/components/auth/authForm.module.css";
@@ -9,7 +9,6 @@ import { apiFetch } from "@/lib/api";
 import { saveSession } from "@/lib/session";
 
 function LoginContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [matricula, setMatricula] = useState("");
   const [senha, setSenha] = useState("");
@@ -28,12 +27,24 @@ function LoginContent() {
         body: { matricula: matricula.trim().toUpperCase(), senha },
       });
 
-      saveSession(resultado.token, resultado.usuario);
       const destinosPorPerfil = {
         PROFESSOR: "/professor",
         TECNICO: "/tecnico",
       };
-      router.replace(destinosPorPerfil[resultado.usuario?.perfil] ?? "/dashboard");
+
+      if (resultado.usuario?.perfil === "ADMIN") {
+        setAlerta("Esta conta é administrativa. Acesse pelo login em /admin.");
+        return;
+      }
+
+      const destino = destinosPorPerfil[resultado.usuario?.perfil];
+      if (!destino) {
+        setAlerta("Esta conta não tem acesso ao login de usuários. Procure a coordenação.");
+        return;
+      }
+
+      saveSession(resultado.token, resultado.usuario);
+      window.location.assign(destino);
     } catch (error) {
       const mensagens = {
         401: "Matrícula ou senha inválidas",
