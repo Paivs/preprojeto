@@ -43,6 +43,15 @@
 .icone { color: #ffb4ac; font-size: 20px; }
 .lista { display: grid; gap: 17px; padding: 19px 0 16px; }
 .linha { display: grid; gap: 8px; }
+.estadoVazio {
+  display: grid;
+  min-height: 150px;
+  margin: 0;
+  place-items: center;
+  color: var(--silver, #b1a7a6);
+  font-size: 12px;
+  text-align: center;
+}
 
 .rotuloLinha {
   display: flex;

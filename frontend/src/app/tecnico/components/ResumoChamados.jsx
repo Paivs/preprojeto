@@ -33,24 +33,30 @@ export default function ResumoChamados({ porStatus, porPrioridade, carregando })
           </div>
           <span className={`material-symbols-outlined ${styles.icone}`} aria-hidden="true">monitoring</span>
         </header>
-        <div className={styles.lista}>
-          {STATUS.map((item) => {
-            const quantidade = quantidadePorChave(porStatus, "status", item.chave);
-            const percentual = totalStatus ? (quantidade / totalStatus) * 100 : 0;
-            return (
-              <div className={styles.linha} key={item.chave}>
-                <div className={styles.rotuloLinha}>
-                  <span className={`${styles.ponto} ${styles[item.tom]}`} />
-                  <span>{item.rotulo}</span>
-                  <strong>{carregando ? "—" : quantidade}</strong>
+        {totalStatus === 0 ? (
+          <p className={styles.estadoVazio}>
+            {carregando ? "Carregando distribuição…" : "Nenhum chamado no seu fluxo."}
+          </p>
+        ) : (
+          <div className={styles.lista}>
+            {STATUS.map((item) => {
+              const quantidade = quantidadePorChave(porStatus, "status", item.chave);
+              const percentual = (quantidade / totalStatus) * 100;
+              return (
+                <div className={styles.linha} key={item.chave}>
+                  <div className={styles.rotuloLinha}>
+                    <span className={`${styles.ponto} ${styles[item.tom]}`} />
+                    <span>{item.rotulo}</span>
+                    <strong>{quantidade}</strong>
+                  </div>
+                  <div className={styles.trilho} aria-label={`${item.rotulo}: ${quantidade}`}>
+                    <span className={`${styles.preenchimento} ${styles[item.tom]}`} style={{ width: `${percentual}%` }} />
+                  </div>
                 </div>
-                <div className={styles.trilho} aria-label={`${item.rotulo}: ${quantidade}`}>
-                  <span className={`${styles.preenchimento} ${styles[item.tom]}`} style={{ width: `${percentual}%` }} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
         <p className={styles.rodape}>{carregando ? "Atualizando dados" : `${totalStatus} chamados no seu fluxo`}</p>
       </article>
 
@@ -62,24 +68,30 @@ export default function ResumoChamados({ porStatus, porPrioridade, carregando })
           </div>
           <span className={`material-symbols-outlined ${styles.icone}`} aria-hidden="true">priority_high</span>
         </header>
-        <div className={styles.lista}>
-          {PRIORIDADES.map((item) => {
-            const quantidade = quantidadePorChave(porPrioridade, "severidade", item.chave);
-            const percentual = totalPrioridade ? (quantidade / totalPrioridade) * 100 : 0;
-            return (
-              <div className={styles.linha} key={item.chave}>
-                <div className={styles.rotuloLinha}>
-                  <span className={`${styles.ponto} ${styles[item.tom]}`} />
-                  <span>{item.rotulo}</span>
-                  <strong>{carregando ? "—" : quantidade}</strong>
+        {totalPrioridade === 0 ? (
+          <p className={styles.estadoVazio}>
+            {carregando ? "Carregando prioridades…" : "Nenhum chamado em aberto."}
+          </p>
+        ) : (
+          <div className={styles.lista}>
+            {PRIORIDADES.map((item) => {
+              const quantidade = quantidadePorChave(porPrioridade, "severidade", item.chave);
+              const percentual = (quantidade / totalPrioridade) * 100;
+              return (
+                <div className={styles.linha} key={item.chave}>
+                  <div className={styles.rotuloLinha}>
+                    <span className={`${styles.ponto} ${styles[item.tom]}`} />
+                    <span>{item.rotulo}</span>
+                    <strong>{quantidade}</strong>
+                  </div>
+                  <div className={styles.trilho} aria-label={`${item.rotulo}: ${quantidade}`}>
+                    <span className={`${styles.preenchimento} ${styles[item.tom]}`} style={{ width: `${percentual}%` }} />
+                  </div>
                 </div>
-                <div className={styles.trilho} aria-label={`${item.rotulo}: ${quantidade}`}>
-                  <span className={`${styles.preenchimento} ${styles[item.tom]}`} style={{ width: `${percentual}%` }} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
         <p className={styles.rodape}>{carregando ? "Atualizando dados" : `${totalPrioridade} chamados aguardam atendimento`}</p>
       </article>
     </section>
