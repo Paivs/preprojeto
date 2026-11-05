@@ -2,11 +2,12 @@
 
 import { usePathname } from "next/navigation";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 
 export default function LayoutConteudo({ children }) {
   const pathname = usePathname();
 
-  const rotasSemHeaderFooter = ["/usuariosPages", "/adminPages"];
+  const rotasSemHeaderFooter = ["/usuariosPages", "/adminPages", "/login"];
 
   const esconderHeaderFooter = rotasSemHeaderFooter.some(
     (rota) => pathname === rota || pathname.startsWith(`${rota}/`)
@@ -15,8 +16,8 @@ export default function LayoutConteudo({ children }) {
   return (
     <>
       {!esconderHeaderFooter && <Header />}
-
-      <main>{children}</main>
+      <div className="site-layout-content">{children}</div>
+      {!esconderHeaderFooter && <Footer />}
     </>
   );
 }

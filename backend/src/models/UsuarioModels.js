@@ -23,13 +23,13 @@ export async function listar({ limite, offset, busca }) {
 
 
   const [linhas] = await pool.query(
-    `SELECT id, nome, email, created_at FROM usuarios ${filtroSql} ORDER BY id LIMIT ? OFFSET ?`,
+    `SELECT id_usuario, nome_empresa, email FROM usuario ${filtroSql} ORDER BY id_usuario LIMIT ? OFFSET ?`,
     [...filtroValores, limiteNum, offsetNum]
   );
 
 
   const [[{ total }]] = await pool.query(
-    `SELECT COUNT(*) AS total FROM usuarios ${filtroSql}`,
+    `SELECT COUNT(*) AS total FROM usuario ${filtroSql}`,
     filtroValores
   );
 
@@ -44,7 +44,7 @@ export async function listar({ limite, offset, busca }) {
 // 2. Busca por ID
 export async function buscarPorId(id) {
   const [linhas] = await pool.query(
-    'SELECT id, nome, email, created_at FROM usuarios WHERE id = ?',
+    'SELECT id_usuario, nome_empresa, email FROM usuario WHERE id_usuario = ?',
     [id]
   );
   if (linhas.length === 0) return null;
@@ -55,7 +55,7 @@ export async function buscarPorId(id) {
 // 3. Busca por email (para impedir duplicados)
 export async function buscarPorEmail(email) {
   const [linhas] = await pool.query(
-    'SELECT id, nome, email, created_at FROM usuarios WHERE email = ?',
+    'SELECT id_usuario, nome_empresa, email FROM usuario WHERE email = ?',
     [email]
   );
   if (linhas.length === 0) return null;
@@ -65,7 +65,7 @@ export async function buscarPorEmail(email) {
 
 // 4. Inserção
 export async function criar(usuario) {
-  const sql = 'INSERT INTO usuarios (nome, email) VALUES (?, ?)';
+  const sql = 'INSERT INTO usuario (nome, email) VALUES (?, ?)';
   const valores = [usuario.nome, usuario.email];
   const [resultado] = await pool.query(sql, valores);
   return { ...usuario, id: resultado.insertId };
@@ -74,7 +74,7 @@ export async function criar(usuario) {
 
 // 5. Atualização completa (PUT)
 export async function atualizar(id, usuario) {
-  const sql = 'UPDATE usuarios SET nome = ?, email = ? WHERE id = ?';
+  const sql = 'UPDATE usuario SET nome_empresa = ?, email = ? WHERE id_usuario = ?';
   const valores = [usuario.nome, usuario.email, id];
   const [resultado] = await pool.query(sql, valores);
   return resultado.affectedRows > 0;
@@ -83,6 +83,6 @@ export async function atualizar(id, usuario) {
 
 // 6. Remoção (DELETE)
 export async function excluir(id) {
-  const [resultado] = await pool.query('DELETE FROM usuarios WHERE id = ?', [id]);
+  const [resultado] = await pool.query('DELETE FROM usuario WHERE id_usuario = ?', [id]);
   return resultado.affectedRows > 0;
 }
