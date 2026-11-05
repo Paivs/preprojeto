@@ -10,7 +10,7 @@ export default function SobreNos() {
 
                         <h1>
                             Energia sob controle.
-                            Economia em <span style={{color: "var(--purple-light)"}}>evolução</span>
+                            Economia em <span style={{color: "var(--roxo-claro)"}}>evolução</span>
                         </h1>
 
                         <p>
@@ -39,6 +39,13 @@ export default function SobreNos() {
                     </div>
 
                         <div className="container-cardValor">
+                            <strong></strong>
+                            <div className="cardValor">
+                                <h2>Inovação</h2>
+
+                                <p>Utilizamos tecnologia inteligente para transformar dados em soluções eficientes</p>
+                            </div>
+
                             <div className="cardValor">
 
                             </div>
