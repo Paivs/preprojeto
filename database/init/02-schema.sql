@@ -1,4 +1,4 @@
--- ESQUEMA INICIAL DO BANCO DE DADOS 
+﻿-- ESQUEMA INICIAL DO BANCO DE DADOS 
 
 
 CREATE DATABASE IF NOT EXISTS tenken_db
@@ -8,10 +8,10 @@ CREATE DATABASE IF NOT EXISTS tenken_db
 USE tenken_db;
 
 -- TABELA: usuarios
--- RF10: cadastro e perfil de acesso (Aluno, Professor, Técnico e Admin).
--- RN06: a API deve permitir gestão do Tenken e alteração de status apenas a
--- Técnico/Admin. RNF03: senha_hash deve receber somente hash bcrypt gerado na API.
--- RNF06: JWT é emitido/validado pela API; não é armazenado nesta tabela.
+-- RF10: cadastro e perfil de acesso (Aluno, Professor, TÃ©cnico e Admin).
+-- RN06: a API deve permitir gestÃ£o do Tenken e alteraÃ§Ã£o de status apenas a
+-- TÃ©cnico/Admin. RNF03: senha_hash deve receber somente hash bcrypt gerado na API.
+-- RNF06: JWT Ã© emitido/validado pela API; nÃ£o Ã© armazenado nesta tabela.
 CREATE TABLE usuarios (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE usuarios (
 ) ENGINE=InnoDB;
 
 -- TABELA: turmas_projetos
--- RF11: associa uma turma/projeto ao professor responsável.
+-- RF11: associa uma turma/projeto ao professor responsÃ¡vel.
 CREATE TABLE turmas_projetos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE turmas_projetos (
 ) ENGINE=InnoDB;
 
 -- TABELA: turma_alunos
--- RF11: vínculo N:N entre alunos e turmas/projetos.
+-- RF11: vÃ­nculo N:N entre alunos e turmas/projetos.
 -- A API valida que aluno_id tem perfil ALUNO e professor_id tem perfil PROFESSOR.
 CREATE TABLE turma_alunos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -45,10 +45,10 @@ CREATE TABLE turma_alunos (
 ) ENGINE=InnoDB;
 
 -- TABELA: equipamentos
--- RF01: cadastro do ativo, patrimônio exclusivo, localização e ID interno.
+-- RF01: cadastro do ativo, patrimÃ´nio exclusivo, localizaÃ§Ã£o e ID interno.
 -- RN05/RF13: status informa disponibilidade; a API bloqueia reserva de ativos
--- INATIVO/EM_MANUTENCAO e mantém o estado atualizado durante o uso.
--- RN06: mudanças de status são restritas à API para Técnico/Admin.
+-- INATIVO/EM_MANUTENCAO e mantÃ©m o estado atualizado durante o uso.
+-- RN06: mudanÃ§as de status sÃ£o restritas Ã  API para TÃ©cnico/Admin.
 CREATE TABLE equipamentos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     codigo_patrimonio VARCHAR(50) NOT NULL UNIQUE,
@@ -60,7 +60,7 @@ CREATE TABLE equipamentos (
 ) ENGINE=InnoDB;
 
 -- TABELA: componentes
--- RF02: catálogo de peças e quantidade total controlada.
+-- RF02: catÃ¡logo de peÃ§as e quantidade total controlada.
 CREATE TABLE componentes (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE componentes (
 ) ENGINE=InnoDB;
 
 -- TABELA: equipamento_componentes
--- RF02: composição física de cada equipamento e quantidade de cada componente.
+-- RF02: composiÃ§Ã£o fÃ­sica de cada equipamento e quantidade de cada componente.
 CREATE TABLE equipamento_componentes (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     equipamento_id BIGINT UNSIGNED NOT NULL,
@@ -80,12 +80,12 @@ CREATE TABLE equipamento_componentes (
 ) ENGINE=InnoDB;
 
 -- TABELA: agendamentos
--- RN03: responsavel_id identifica o responsável patrimonial da reserva.
--- RN05/RF06: período, ativo, estado e token único da reserva. CHECK valida a
--- ordem das datas; a API deve impedir sobreposição e verificar o estado do ativo.
--- RF09: índice por equipamento e período apoia calendário e busca de horários.
--- RF11: associa a reserva à turma/projeto.
--- RF12: cancelamento atualiza status para CANCELADO e libera o horário via API.
+-- RN03: responsavel_id identifica o responsÃ¡vel patrimonial da reserva.
+-- RN05/RF06: perÃ­odo, ativo, estado e token Ãºnico da reserva. CHECK valida a
+-- ordem das datas; a API deve impedir sobreposiÃ§Ã£o e verificar o estado do ativo.
+-- RF09: Ã­ndice por equipamento e perÃ­odo apoia calendÃ¡rio e busca de horÃ¡rios.
+-- RF11: associa a reserva Ã  turma/projeto.
+-- RF12: cancelamento atualiza status para CANCELADO e libera o horÃ¡rio via API.
 CREATE TABLE agendamentos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     responsavel_id BIGINT UNSIGNED NOT NULL,
@@ -104,7 +104,7 @@ CREATE TABLE agendamentos (
 ) ENGINE=InnoDB;
 
 -- TABELA: checkins
--- RN04/RF03: registra a presença de cada aluno na reserva validada pelo token.
+-- RN04/RF03: registra a presenÃ§a de cada aluno na reserva validada pelo token.
 -- A chave composta impede mais de um check-in do mesmo aluno na mesma reserva;
 -- a API valida token, turma e perfil do aluno.
 CREATE TABLE checkins (
@@ -117,7 +117,7 @@ CREATE TABLE checkins (
 ) ENGINE=InnoDB;
 
 -- TABELA: checklist_modelos
--- RN02/RF03: modelos de checklist por tipo de equipamento e etapa pré/pós-uso.
+-- RN02/RF03: modelos de checklist por tipo de equipamento e etapa prÃ©/pÃ³s-uso.
 CREATE TABLE checklist_modelos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(100) NOT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE checklist_modelos (
 ) ENGINE=InnoDB;
 
 -- TABELA: checklist_itens
--- RN01/RF03: itens verificáveis; critico distingue falha impeditiva de alerta.
+-- RN01/RF03: itens verificÃ¡veis; critico distingue falha impeditiva de alerta.
 CREATE TABLE checklist_itens (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     modelo_id BIGINT UNSIGNED NOT NULL,
@@ -137,10 +137,10 @@ CREATE TABLE checklist_itens (
 ) ENGINE=InnoDB;
 
 -- TABELA: inspecoes
--- RN02: registra vistoria pré e pós; UNIQUE permite uma de cada por reserva.
+-- RN02: registra vistoria prÃ© e pÃ³s; UNIQUE permite uma de cada por reserva.
 -- RN04/RF03: professor_id registra quem vistoriou. A API restringe vistoria e
--- liberação ao professor da turma e exige resposta para todos os itens ativos.
--- RN01: resultado é consolidado pela API conforme respostas e criticidade.
+-- liberaÃ§Ã£o ao professor da turma e exige resposta para todos os itens ativos.
+-- RN01: resultado Ã© consolidado pela API conforme respostas e criticidade.
 CREATE TABLE inspecoes (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     agendamento_id BIGINT UNSIGNED NOT NULL,
@@ -173,7 +173,7 @@ CREATE TABLE inspecao_respostas (
 
 -- TABELA: inspecao_componentes
 -- RF02/RN02: compara quantidades esperadas, encontradas e danificadas durante
--- a vistoria; diferença pode gerar ocorrência patrimonial conforme a API.
+-- a vistoria; diferenÃ§a pode gerar ocorrÃªncia patrimonial conforme a API.
 CREATE TABLE inspecao_componentes (
     inspecao_id BIGINT UNSIGNED NOT NULL,
     componente_id BIGINT UNSIGNED NOT NULL,
@@ -187,8 +187,8 @@ CREATE TABLE inspecao_componentes (
 ) ENGINE=InnoDB;
 
 -- TABELA: ocorrencias_patrimoniais
--- RN03: registra dano/extravio de componente vinculado à reserva; o responsável
--- é obtido por agendamentos.responsavel_id. A API valida essa associação.
+-- RN03: registra dano/extravio de componente vinculado Ã  reserva; o responsÃ¡vel
+-- Ã© obtido por agendamentos.responsavel_id. A API valida essa associaÃ§Ã£o.
 CREATE TABLE ocorrencias_patrimoniais (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     agendamento_id BIGINT UNSIGNED NOT NULL,
@@ -202,11 +202,11 @@ CREATE TABLE ocorrencias_patrimoniais (
 ) ENGINE=InnoDB;
 
 -- TABELA: chamados_manutencao
--- RN01/RF05: falha em item crítico gera chamado urgente e bloqueio do ativo;
--- falha não crítica gera chamado preventivo e mantém o uso liberado. A API
--- decide tipo/severidade/status pelas respostas e evita duplicidade por inspeção.
+-- RN01/RF05: falha em item crÃ­tico gera chamado urgente e bloqueio do ativo;
+-- falha nÃ£o crÃ­tica gera chamado preventivo e mantÃ©m o uso liberado. A API
+-- decide tipo/severidade/status pelas respostas e evita duplicidade por inspeÃ§Ã£o.
 -- RF07: inspecao_id NULL permite chamado aberto manualmente.
--- RF08/RF16: datas/status apoiam reparo e notificação aos responsáveis.
+-- RF08/RF16: datas/status apoiam reparo e notificaÃ§Ã£o aos responsÃ¡veis.
 CREATE TABLE chamados_manutencao (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     equipamento_id BIGINT UNSIGNED NOT NULL,
@@ -229,8 +229,8 @@ CREATE TABLE chamados_manutencao (
 ) ENGINE=InnoDB;
 
 -- TABELA: historico_manutencao
--- RF08: ações de reparo, técnico, peças substituídas, custo e data; registros
--- alimentam também o cálculo de MTTR do RF14.
+-- RF08: aÃ§Ãµes de reparo, tÃ©cnico, peÃ§as substituÃ­das, custo e data; registros
+-- alimentam tambÃ©m o cÃ¡lculo de MTTR do RF14.
 CREATE TABLE historico_manutencao (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     chamado_id BIGINT UNSIGNED NOT NULL,
@@ -244,8 +244,8 @@ CREATE TABLE historico_manutencao (
 ) ENGINE=InnoDB;
 
 -- TABELA: notificacoes
--- RF16: alertas associados a usuários e chamados; a API cria notificações para
--- professores e técnicos quando um chamado urgente é aberto.
+-- RF16: alertas associados a usuÃ¡rios e chamados; a API cria notificaÃ§Ãµes para
+-- professores e tÃ©cnicos quando um chamado urgente Ã© aberto.
 CREATE TABLE notificacoes (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     usuario_id BIGINT UNSIGNED NOT NULL,
@@ -258,7 +258,7 @@ CREATE TABLE notificacoes (
 ) ENGINE=InnoDB;
 
 -- TABELA: resultados_testes
--- RF15: relatório e resultado da prática vinculados à reserva e ao aluno autor.
+-- RF15: relatÃ³rio e resultado da prÃ¡tica vinculados Ã  reserva e ao aluno autor.
 CREATE TABLE resultados_testes (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     agendamento_id BIGINT UNSIGNED NOT NULL,
@@ -272,8 +272,8 @@ CREATE TABLE resultados_testes (
 
 
 -- TABELA: pre_matriculas_alunos
--- RF10/regra de matrícula: guarda os dados de quem gerou matrícula antes de criar a conta.
--- A matrícula só vira usuário quando o aluno define a senha (POST /api/alunos/cadastro).
+-- RF10/regra de matrÃ­cula: guarda os dados de quem gerou matrÃ­cula antes de criar a conta.
+-- A matrÃ­cula sÃ³ vira usuÃ¡rio quando o aluno define a senha (POST /api/alunos/cadastro).
 CREATE TABLE pre_matriculas_alunos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
@@ -284,3 +284,23 @@ CREATE TABLE pre_matriculas_alunos (
     utilizada BOOLEAN NOT NULL DEFAULT FALSE,
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
+
+-- Tabela adicional incorporada da migração de ordens de serviço.
+-- TABELA: ordens_servico
+-- Vinculada 1:1 a um chamado de manutenÃ§Ã£o.
+CREATE TABLE ordens_servico (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    chamado_id BIGINT UNSIGNED NOT NULL,
+    numero VARCHAR(20) NOT NULL UNIQUE,
+    emitida_por BIGINT UNSIGNED NOT NULL,
+    status ENUM('EMITIDA', 'EM_EXECUCAO', 'FINALIZADA', 'CANCELADA') NOT NULL DEFAULT 'EMITIDA',
+    emitida_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    finalizada_em DATETIME,
+    UNIQUE (chamado_id),
+    FOREIGN KEY (chamado_id) REFERENCES chamados_manutencao(id),
+    FOREIGN KEY (emitida_por) REFERENCES usuarios(id)
+) ENGINE=InnoDB;
+
+-- Remove tabela de cadastro de staff obsoleta, conforme migração anterior.
+DROP TABLE IF EXISTS pre_cadastros_staff;
+
