@@ -1,0 +1,250 @@
+.lista-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.lista-topo h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--dark-text-primary);
+}
+
+.lista-topo h2 small {
+    margin-left: 8px;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--cor-texto-fraco);
+}
+
+.lista-dispositivos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.lista-vazia {
+    padding: 48px 16px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--dark-text-primary);
+    border: 1px dashed var(--cor-borda);
+    border-radius: 16px;
+}
+
+.card-dispositivo {
+    display: flex;
+    flex-direction: column;
+    padding: 18px 20px;
+    border-radius: 16px;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-card);
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+.card-dispositivo:hover {
+    border-color: var(--roxo-suave);
+}
+
+.card-dispositivo-selecionado,
+.card-dispositivo-selecionado:hover {
+    border-color: var(--roxo-claro);
+}
+
+.card-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+}
+
+.icone-dispositivo {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--roxo-suave);
+    color: var(--roxo-claro);
+    display: grid;
+    place-items: center;
+}
+
+.icone-dispositivo-atencao {
+    background: var(--amarelo-suave);
+    color: var(--amarelo);
+}
+
+.card-topo-direita {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 14px;
+}
+
+.status-dispositivo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--cor-texto-secundario);
+}
+
+.status-ponto {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status-normal .status-ponto,
+.status-atencao .status-ponto,
+.status-desligado .status-ponto {
+    display: inline-block;
+}
+
+.status-normal .status-ponto {
+    background: var(--verde);
+}
+
+.status-atencao .status-ponto {
+    background: var(--amarelo);
+}
+
+.status-desligado .status-ponto {
+    background: var(--cor-texto-fraco);
+}
+
+.menu-tres-pontos {
+    position: relative;
+}
+
+.botao-pontos {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    color: var(--cor-texto-fraco);
+}
+
+.botao-pontos:hover {
+    background: var(--roxo-suave);
+    color: var(--cor-texto);
+}
+
+.menu-fundo {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+}
+
+.menu-opcoes {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    z-index: 11;
+    width: 150px;
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-card);
+    box-shadow: var(--sombra-painel);
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-opcoes button {
+    padding: 9px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    text-align: left;
+    color: var(--cor-texto-secundario);
+}
+
+.menu-opcoes button:hover {
+    background: var(--roxo-suave);
+    color: var(--cor-texto);
+}
+
+.menu-opcoes .menu-opcao-perigo {
+    color: var(--cor-vermelho);
+}
+
+.menu-opcoes .menu-opcao-perigo:hover {
+    background: var(--vermelho-suave);
+    color: var(--cor-vermelho);
+}
+
+.card-nome {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--dark-text-primary);
+}
+
+.card-local {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--cor-texto-fraco);
+}
+
+.card-divisor {
+    height: 1px;
+    background: var(--cor-borda);
+    margin: 18px 0;
+}
+
+.consumo-rotulo {
+    font-size: 10px;
+    color: var(--cor-texto-secundario);
+}
+
+.consumo-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 8px;
+}
+
+.consumo-valor {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--dark-text-primary);
+}
+
+.consumo-valor small {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--cor-texto-fraco);
+}
+
+.consumo-valor-pequeno {
+    font-size: 19px;
+}
+
+.alerta-consumo {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--amarelo);
+}
+
+.card-rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.card-conexao {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: var(--cor-texto-fraco);
+}

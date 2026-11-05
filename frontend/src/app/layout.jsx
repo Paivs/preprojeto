@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./globals.css";
-import Header from "@/components/header";
+import LayoutConteudo from "@/components/layoutConteudo";
 export const metadata = {
   title: "Projeto Base",
   description: "Template base com Next.js, Express e MySQL",
@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
       <body>
-        <Header />
+        <LayoutConteudo />
         {children}
         <script
           src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
