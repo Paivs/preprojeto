@@ -1,36 +1,158 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+
 :root {
-  --background: #f6f7f9;
-  --foreground: #172033;
+  /* =====  FONTES ===== */
+  --font-primary: "Noto Sans", sans-serif;
+  --font-secondary: "Montserrat", sans-serif;
+  --font-tertiary: "Poppins", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-nunito: "Nunito", sans-serif;
+  --font-space: "Space Grotesk", sans-serif;
+
+  /* ===== IDENTIDADE VISUAL ===== */
+
+  --amarelo: #ffdf3f;
+  --amarelo-claro: #fff0a3;
+  --amarelo-escuro: #e6bd18;
+
+  --verde: #00c995;
+  --verde-claro: #55ddb5;
+  --verde-escuro: #008f68;
+
+  --azul: #4b70fc;
+  --azul-claro: #8faaff;
+  --azul-escuro: #294bc4;
+
+  --roxo: #6c2bd9;
+  --roxo-claro: #914ff0;
+  --roxo-hover: #7c3ae8;
+  --roxo-escuro: #3b126d;
+  --roxo-profundo: #32105c;
+
+  /* ===== CORES NEUTRAS E STATUS ===== */
+
+  --preto: #070717;
+  --cinza-escuro: #30394a;
+  --cinza: #8492a6;
+  --cinza-claro: #cbd3df;
+  --cinza-muito-claro: #e8edf3;
+  --branco: #ffffff;
+
+  --cor-vermelho: #ff6875;
+  --cor-vermelho-claro: #d93645;
+
+  --cor-sucesso: #42d6a0;
+  --cor-alerta: #ffd166;
+  --cor-informacao: #6ca5ff;
+
+  /* ===== CORES TRANSPARENTES ===== */
+
+  --roxo-suave: rgba(145, 79, 240, 0.16);
+  --amarelo-suave: rgba(255, 223, 63, 0.14);
+  --verde-suave: rgba(0, 201, 149, 0.15);
+  --vermelho-suave: rgba(255, 104, 117, 0.10);
+
+  /* ========================================
+ TEMA ESCURO — PADRÃO
+======================================== */
+
+  --cor-fundo: #080d16;
+  --cor-sidebar: #0b111e;
+  --cor-card: #0e1625;
+  --cor-campo: #0a101c;
+  --cor-borda: #1f2a3d;
+
+  --cor-texto: #f5f6fa;
+  --cor-texto-secundario: #b1b9c9;
+  --cor-texto-fraco: #7d899d;
+
+  --cor-destaque: var(--roxo-claro);
+  --cor-destaque-hover: var(--roxo-hover);
+
+  --sombra-painel: -12px 0 40px rgba(0, 0, 0, 0.45);
+
+  /* ========================================
+ TEMA CLARO
+======================================== */
+
+  --light-bg-primary: #ffffff;
+  --light-bg-secondary: #f5f7fb;
+  --light-bg-tertiary: #eaeff6;
+  --light-bg-card: #ffffff;
+  --light-bg-input: #f8fafc;
+
+  --light-text-primary: #171725;
+  --light-text-secondary: #596579;
+  --light-text-tertiary: #8994a5;
+
+  --light-primary: #6c2bd9;
+  --light-primary-hover: #5520b5;
+  --light-secondary: #00a879;
+  --light-accent: #e5b900;
+
+  --light-success: #16865d;
+  --light-warning: #d99b00;
+  --light-danger: #d93645;
+  --light-info: #3478db;
+
+  /* ========================================
+     TEMA ESCURO — REFERÊNCIAS
+======================================== */
+
+  --dark-bg-primary: #0b0f19;
+  --dark-bg-secondary: #101421;
+  --dark-bg-tertiary: #191f30;
+  --dark-bg-card: #111422;
+  --dark-bg-input: #171e2d;
+
+  --dark-text-primary: #f5f6fa;
+  --dark-text-secondary: #b1b9c9;
+  --dark-text-tertiary: #8490a5;
+
+  --dark-primary: #914ff0;
+  --dark-primary-hover: #a875ff;
+  --dark-secondary: #00c995;
+  --dark-accent: #ffdf3f;
+
+  --dark-success: #42d6a0;
+  --dark-warning: #ffd166;
+  --dark-danger: #ff6875;
+  --dark-info: #6ca5ff
 }
 
-html {
-  height: 100%;
-}
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+:root[data-tema="claro"] {
+  --cor-fundo: var(--light-bg-secondary);
+  --cor-sidebar: var(--light-bg-primary);
+  --cor-card: var(--light-bg-card);
+  --cor-campo: var(--light-bg-input);
+  --cor-borda: #e1e7f0;
 
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --cor-texto: var(--light-text-primary);
+  --cor-texto-secundario: var(--light-text-secondary);
+  --cor-texto-fraco: var(--light-text-tertiary);
+
+  --cor-destaque: var(--light-primary);
+  --cor-destaque-hover: var(--light-primary-hover);
+
+  --cor-vermelho: var(--light-danger);
+  --amarelo: var(--light-warning);
+  --verde: var(--light-success);
+
+  --roxo-suave: rgba(108, 43, 217, 0.10);
+  --amarelo-suave: rgba(217, 155, 0, 0.14);
+  --verde-suave: rgba(22, 134, 93, 0.12);
+  --vermelho-suave: rgba(217, 54, 69, 0.08);
+
+  --sombra-painel: -12px 0 40px rgba(20, 30, 60, 0.12);
 }
 
 * {
-  box-sizing: border-box;
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+body {
+  background: var(--dark-bg-primary);
 }
