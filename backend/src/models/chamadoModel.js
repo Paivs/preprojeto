@@ -1,6 +1,6 @@
 import { pool } from "../config/database.js";
 
-export async function listar({ limite, offset, status, severidade, equipamento_id }) {
+export async function listar({ limite, offset, status, severidade, equipamento_id, tecnicoId }) {
   const condicoes = [];
   const valores = [];
 
@@ -15,6 +15,10 @@ export async function listar({ limite, offset, status, severidade, equipamento_i
   if (equipamento_id !== undefined) {
     condicoes.push("equipamento_id = ?");
     valores.push(equipamento_id);
+  }
+  if (tecnicoId !== undefined) {
+    condicoes.push("tecnico_id = ?");
+    valores.push(tecnicoId);
   }
 
   const where = condicoes.length ? `WHERE ${condicoes.join(" AND ")}` : "";

@@ -57,6 +57,15 @@ export default function TecnicoLayout({ children }) {
             <span className="material-symbols-outlined">monitoring</span>
             <span>Visão geral</span>
           </Link>
+          <Link
+            href="/tecnico/chamados"
+            className={`${styles.navLink} ${pathname.startsWith("/tecnico/chamados") ? styles.navLinkAtivo : ""}`}
+            aria-current={pathname.startsWith("/tecnico/chamados") ? "page" : undefined}
+            onClick={() => setMenuAberto(false)}
+          >
+            <span className="material-symbols-outlined">confirmation_number</span>
+            <span>Chamados</span>
+          </Link>
         </nav>
 
         <div className={styles.sidebarFooter}>
