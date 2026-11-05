@@ -3,46 +3,38 @@ import "./header.css";
 
 export default function Header() {
   return (
-    <header>
-      <nav className="navbar navbar-expand-lg">
+    <header className="header">
+      <nav className="navbar">
         <div className="container-navbar">
           <Link className="navbar-brand" href="/">
-            <img src="/images/logo.png" />
+            <img src="/images/logo.png" alt="Logo da empresa" />
           </Link>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle nav
-            igation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
 
           <ul className="navbar-header">
-            <li className="nav-item">
-              <Link className="nav-link" href="/">
+            <li>
+              <Link className="nav-link active" href="/">
                 Home
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link" href="#">
+
+            <li>
+              <Link className="nav-link" href="/sobre">
                 Sobre nós
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link" href="/">
+
+            <li>
+              <Link className="nav-link" href="/contato">
                 Contato
               </Link>
             </li>
           </ul>
+
+          <Link className="nav-login" href="/login">
+            <span>Entrar</span>
+            <i className="bi bi-arrow-up-right"></i>
+          </Link>
         </div>
-        <Link className="nav-login" href="/">
-          Login
-        </Link>
       </nav>
     </header>
   );

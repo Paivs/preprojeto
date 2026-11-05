@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
 
 :root {
+  /* =====  FONTES ===== */
   --font-primary: "Noto Sans", sans-serif;
   --font-secondary: "Montserrat", sans-serif;
   --font-tertiary: "Poppins", sans-serif;
@@ -8,33 +9,71 @@
   --font-nunito: "Nunito", sans-serif;
   --font-space: "Space Grotesk", sans-serif;
 
-  --yellow: #ffdf3f;
-  --yellow-light: #fff0a3;
-  --yellow-dark: #e6bd18;
+  /* ===== IDENTIDADE VISUAL ===== */
 
-  --green: #00b984;
-  --green-light: #55ddb5;
-  --green-dark: #008f68;
+  --amarelo: #ffdf3f;
+  --amarelo-claro: #fff0a3;
+  --amarelo-escuro: #e6bd18;
 
-  --blue: #4b70fc;
-  --blue-light: #8faaff;
-  --blue-dark: #294bc4;
+  --verde: #00c995;
+  --verde-claro: #55ddb5;
+  --verde-escuro: #008f68;
 
-  --purple: #6c2bd9;
-  --purple-light: #914ff0;
-  --purple-dark: #3b126d;
-  --purple-deep: #32105c;
+  --azul: #4b70fc;
+  --azul-claro: #8faaff;
+  --azul-escuro: #294bc4;
 
-  --black: #070717;
-  --gray-dark: #30394a;
-  --gray: #8492a6;
-  --gray-light: #cbd3df;
-  --gray-lighter: #e8edf3;
-  --white: #ffffff;
+  --roxo: #6c2bd9;
+  --roxo-claro: #914ff0;
+  --roxo-hover: #7c3ae8;
+  --roxo-escuro: #3b126d;
+  --roxo-profundo: #32105c;
 
-  /* =========================
-       TEMA CLARO
-    ========================= */
+  /* ===== CORES NEUTRAS E STATUS ===== */
+
+  --preto: #070717;
+  --cinza-escuro: #30394a;
+  --cinza: #8492a6;
+  --cinza-claro: #cbd3df;
+  --cinza-muito-claro: #e8edf3;
+  --branco: #ffffff;
+
+  --cor-vermelho: #ff6875;
+  --cor-vermelho-claro: #d93645;
+
+  --cor-sucesso: #42d6a0;
+  --cor-alerta: #ffd166;
+  --cor-informacao: #6ca5ff;
+
+  /* ===== CORES TRANSPARENTES ===== */
+
+  --roxo-suave: rgba(145, 79, 240, 0.16);
+  --amarelo-suave: rgba(255, 223, 63, 0.14);
+  --verde-suave: rgba(0, 201, 149, 0.15);
+  --vermelho-suave: rgba(255, 104, 117, 0.10);
+
+  /* ========================================
+ TEMA ESCURO — PADRÃO
+======================================== */
+
+  --cor-fundo: #080d16;
+  --cor-sidebar: #0b111e;
+  --cor-card: #0e1625;
+  --cor-campo: #0a101c;
+  --cor-borda: #1f2a3d;
+
+  --cor-texto: #f5f6fa;
+  --cor-texto-secundario: #b1b9c9;
+  --cor-texto-fraco: #7d899d;
+
+  --cor-destaque: var(--roxo-claro);
+  --cor-destaque-hover: var(--roxo-hover);
+
+  --sombra-painel: -12px 0 40px rgba(0, 0, 0, 0.45);
+
+  /* ========================================
+ TEMA CLARO
+======================================== */
 
   --light-bg-primary: #ffffff;
   --light-bg-secondary: #f5f7fb;
@@ -56,9 +95,9 @@
   --light-danger: #d93645;
   --light-info: #3478db;
 
-  /* =========================
-       TEMA ESCURO
-    ========================= */
+  /* ========================================
+     TEMA ESCURO — REFERÊNCIAS
+======================================== */
 
   --dark-bg-primary: #0b0f19;
   --dark-bg-secondary: #101421;
@@ -78,15 +117,42 @@
   --dark-success: #42d6a0;
   --dark-warning: #ffd166;
   --dark-danger: #ff6875;
-  --dark-info: #6ca5ff;
+  --dark-info: #6ca5ff
+}
+
+
+:root[data-tema="claro"] {
+  --cor-fundo: var(--light-bg-secondary);
+  --cor-sidebar: var(--light-bg-primary);
+  --cor-card: var(--light-bg-card);
+  --cor-campo: var(--light-bg-input);
+  --cor-borda: #e1e7f0;
+
+  --cor-texto: var(--light-text-primary);
+  --cor-texto-secundario: var(--light-text-secondary);
+  --cor-texto-fraco: var(--light-text-tertiary);
+
+  --cor-destaque: var(--light-primary);
+  --cor-destaque-hover: var(--light-primary-hover);
+
+  --cor-vermelho: var(--light-danger);
+  --amarelo: var(--light-warning);
+  --verde: var(--light-success);
+
+  --roxo-suave: rgba(108, 43, 217, 0.10);
+  --amarelo-suave: rgba(217, 155, 0, 0.14);
+  --verde-suave: rgba(22, 134, 93, 0.12);
+  --vermelho-suave: rgba(217, 54, 69, 0.08);
+
+  --sombra-painel: -12px 0 40px rgba(20, 30, 60, 0.12);
 }
 
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 body {
-    background: var(--dark-bg-primary);
+  background: var(--dark-bg-primary);
 }

@@ -1,0 +1,86 @@
+.barra-filtros {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px;
+    margin-bottom: 28px;
+    border-radius: 16px;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-card);
+}
+
+.campo-busca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-campo);
+    color: var(--cor-texto-fraco);
+}
+
+.filtros-grupo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filtros-rotulo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 4px;
+    font-size: 12px;
+    color: var(--dark-text-primary);
+}
+
+.seletor {
+    position: relative;
+    color: var(--dark-text-primary);
+}
+
+.seletor select {
+    appearance: none;
+    height: 42px;
+    padding: 0 32px 0 14px;
+    border-radius: 10px;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-campo);
+    font-size: 12px;
+    color: var(--dark-text-primary);
+}
+
+.seletor select option {
+    background: var(--cor-card);
+    color: var(--cor-texto);
+}
+
+.seletor svg {
+    position: absolute;
+    right: 11px;
+    top: 14px;
+    pointer-events: none;
+}
+
+.botao-adicionar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 42px;
+    border: none;
+    padding: 0 18px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--roxo-claro), var(--roxo));
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.botao-adicionar:hover {
+    background: var(--roxo-hover);
+}
