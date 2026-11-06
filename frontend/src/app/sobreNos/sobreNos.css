@@ -182,3 +182,37 @@
     border-radius: 5px;
     margin: 8px 0 8px 0;
 }
+
+.resultados {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.container-resultados{
+    margin: auto;
+    width: 70vw;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card-info{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.card-info span{
+    display: block;
+    width: 2px;
+    height: 100%;
+    border-radius: 5px;
+    border: 0;
+    background-color: var(--dark-text-secondary);
+}
+
+.card-info h2{
+    font-size: 1.2rem;
+}
