@@ -156,3 +156,7 @@
 .sidebar-fundo {
   display: none;
 }
+
+a {
+  text-decoration: none;
+}

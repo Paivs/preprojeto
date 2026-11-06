@@ -8,7 +8,7 @@ export default function Clientes() {
       <Sidebar />
 
       <div className="conteudo-principal">
-        <Header />
+        <Header tipoUsuario="admin" />
 
         <main className="conteudo-pagina">
           <div className="cabecalho-pagina">
@@ -105,7 +105,7 @@ export default function Clientes() {
                       <strong>12.840 kWh</strong>
                     </td>
                     <td>
-                      <span class="badge-status ativo">● Ativo</span>
+                      <span className="badge-status ativo">● Ativo</span>
                     </td>
                     <td>
                       <button type="button" className="btn-opcoes">
