@@ -52,6 +52,13 @@ const dispositivos = [
   { nome: "Iluminação", local: "Casa toda", consumo: "0,40", icone: "bi-lightbulb", estado: "Automático" },
 ];
 
+const distribuicaoEconomia = [
+  { setor: "Climatização", percentual: 38, cor: "roxo" },
+  { setor: "Equipamentos", percentual: 27, cor: "azul" },
+  { setor: "Iluminação", percentual: 21, cor: "amarelo" },
+  { setor: "Outros", percentual: 14, cor: "verde" },
+];
+
 function Indicador({ indicador }) {
   return (
     <article className="indicador-dashboard">
@@ -147,24 +154,36 @@ export default function UserDashboard() {
             </div>
 
             <div className="col-12 col-xl-4">
-              <article className="painel-dashboard painel-meta-dashboard h-100">
+              <article className="painel-dashboard painel-meta-dashboard">
                 <div className="topo-painel-dashboard">
                   <div>
-                    <h2>Meta de economia</h2>
-                    <p>Seu progresso neste mês</p>
+                    <h2>Distribuição</h2>
+                    <p>Economia por setor</p>
                   </div>
-                  <span className="meta-icone-dashboard"><i className="bi bi-bullseye" /></span>
+                  <button type="button" className="menu-grafico-dashboard" aria-label="Mais opções do gráfico">
+                    <i className="bi bi-three-dots" />
+                  </button>
                 </div>
-                <div className="meta-progresso-dashboard" role="img" aria-label="72 por cento da meta de economia concluída">
-                  <div><strong>72<small>%</small></strong><span>da meta</span></div>
+                <div className="grafico-rosca-dashboard" role="img" aria-label="Distribuição da economia: climatização 38%, equipamentos 27%, iluminação 21%, outros 14%">
+                  <div className="grafico-rosca-centro">
+                    <strong>R$ 428</strong>
+                    <span>economizados</span>
+                  </div>
                 </div>
-                <div className="meta-valores-dashboard"><strong>R$ 428,00</strong><span>de R$ 600,00</span></div>
-                <div className="progress progresso-meta-dashboard" role="progressbar" aria-label="Progresso da meta de economia" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100">
-                  <div className="progress-bar" style={{ width: "72%" }} />
+                <div className="legenda-distribuicao-dashboard">
+                  {distribuicaoEconomia.map((item) => (
+                    <div className="item-legenda-dashboard" key={item.setor}>
+                      <span className={`legenda-setor-${item.cor}`} />
+                      <span>{item.setor}</span>
+                      <strong>{item.percentual}%</strong>
+                    </div>
+                  ))}
                 </div>
-                <div className="mensagem-meta-dashboard">
-                  <i className="bi bi-stars" />
-                  <p><strong>Você está no caminho certo!</strong><br />Mantendo esse ritmo, pode superar sua meta.</p>
+                <div className="resumo-meta-dashboard">
+                  <div><span>Meta mensal</span><strong>72% <small>· R$ 600,00</small></strong></div>
+                  <div className="progress progresso-meta-dashboard" role="progressbar" aria-label="Progresso da meta de economia" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100">
+                    <div className="progress-bar" style={{ width: "72%" }} />
+                  </div>
                 </div>
               </article>
             </div>

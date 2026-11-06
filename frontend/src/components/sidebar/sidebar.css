@@ -86,6 +86,10 @@
   color: var(--cor-texto);
 }
 
+.menu-item-ativo span:first-child {
+  color: var(--amarelo);
+}
+
 .menu-aviso {
   margin-left: auto;
   min-width: 22px;

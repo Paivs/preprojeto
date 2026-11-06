@@ -120,7 +120,6 @@ export default function Header({ tipoUsuario = "usuario" }) {
         <div className="barra-pesquisa">
           <i className="bi bi-search" aria-hidden="true" />
           <input type="search" placeholder="Buscar no sistema..." aria-label="Buscar no sistema" />
-          <kbd className="atalho">Ctrl K</kbd>
         </div>
 
         <div className="topo-acoes">
