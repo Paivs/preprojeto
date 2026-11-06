@@ -161,9 +161,11 @@ export default function Home() {
               <div className="grid-main-funcionamento">
                 <div className="group-main-funcionamento">
                   <div className="cabecalho-funcionamento">
-                    <i className="bi bi-lightning-charge"></i>
-                    <hr />
-                    <p>CONECTAR</p>
+                    <div className="icon-cabecalho">
+                      <i className="bi bi-lightning-charge"></i>
+                    </div>
+                    <div className="linha-home"></div>
+                    <span>CONECTAR</span>
                   </div>
                   <h3>1. Instalação</h3>
                   <p>
@@ -173,9 +175,11 @@ export default function Home() {
                 </div>
                 <div className="group-main-funcionamento">
                   <div className="cabecalho-funcionamento">
-                    <i className="bi bi-lightning-charge"></i>
-                    <hr />
-                    <p>ENTENDER</p>
+                    <div className="icon-cabecalho">
+                      <i className="bi bi-fullscreen"></i>
+                    </div>
+                    <div className="linha-home"></div>
+                    <span>ENTENDER</span>
                   </div>
                   <h3>2. Mapeamento</h3>
                   <p>
@@ -185,16 +189,107 @@ export default function Home() {
                 </div>
                 <div className="group-main-funcionamento">
                   <div className="cabecalho-funcionamento">
-                  <i class="bi bi-graph-up" style={{background: "var(--roxo)", color: "var(--branco)"}}></i>
-                    <hr />
-                    <p>EVOLUIR</p>
+                    <div className="icon-cabecalho">
+                      <i
+                        class="bi bi-graph-up"
+                        style={{
+                          background: "var(--roxo)",
+                          color: "var(--branco)",
+                        }}
+                      ></i>
+                    </div>
+                    <div className="linha-home"></div>
+                    <span>EVOLUIR</span>
                   </div>
                   <h3>3. Otimização e Economia</h3>
                   <p>
-                  Você age com recomendações inteligentes e acompanha os resultados, mês após mês.
+                    Você age com recomendações inteligentes e acompanha os
+                    resultados, mês após mês.
                   </p>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+        <section id="eficiencia">
+          <div className="container-eficiencia">
+            <div className="top-eficiencia">
+              <h3>O impacto aparece na operação. E na fatura.</h3>
+              <span>
+                Cenários que ilustram o potencial de uma gestão de energia
+                orientada por dados.
+              </span>
+            </div>
+            <div className="main-eficiencia">
+              <div className="grid-card-eficiencia">
+                <div className="card-group">
+                  <div className="cabecalho-card-eficiencia">
+                    <div className="left-card-eficiencia">
+                      <h3>-28%</h3>
+                      <span>na fatura de energia</span>
+                    </div>
+                  </div>
+                  <div className="main-card-eficiencia">
+                    <p>
+                      “Finalmente conseguimos entender onde a energia era
+                      desperdiçada. O que antes era uma surpresa virou uma
+                      decisão de gestão.”
+                    </p>
+                  </div>
+                  <div className="divisoria-eficiencia"></div>
+                  <div className="footer-card">
+                    <p>Mariana Costa</p>
+                    <span>Diretora de Operações • Nexora</span>
+                  </div>
+                </div>
+
+                <div className="card-group">
+                  <div className="cabecalho-card-eficiencia">
+                    <div className="left-card-eficiencia">
+                      <h3>-30%</h3>
+                      <span>na fatura de energia</span>
+                    </div>
+                  </div>
+                  <div className="main-card-eficiencia">
+                    <p>
+                      “Ter uma projeção de custos trouxe previsibilidade ao
+                      orçamento. Hoje, eficiência energética faz parte da nossa
+                      estratégia.”
+                    </p>
+                  </div>
+                  <div className="divisoria-eficiencia"></div>
+                  <div className="footer-card">
+                    <p>Camila Rocha</p>
+                    <span>Diretora Financeira • Arborê</span>
+                  </div>
+                </div>
+
+                <div className="card-group">
+                  <div className="cabecalho-card-eficiencia">
+                    <div className="left-card-eficiencia">
+                      <h3>-24%</h3>
+                      <span>na fatura de energia</span>
+                    </div>
+                  </div>
+                  <div className="main-card-eficiencia">
+                    <p>
+                      “Os alertas mudaram nossa rotina. A equipe passou a agir
+                      antes do pico, sem depender de planilhas para descobrir o
+                      problema.”
+                    </p>
+                  </div>
+                  <div className="divisoria-eficiencia"></div>
+                  <div className="footer-card">
+                    <p>Rafael Nunes</p>
+                    <span>Gerente de Facilities • Prisma</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="footer-eficiencia">
+              Depoimentos, pessoas, imagens e empresas fictícios, criados para
+              demonstrar a experiência. Percentuais ilustrativos; não
+              representam resultados de clientes reais.
             </div>
           </div>
         </section>

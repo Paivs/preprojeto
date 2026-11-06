@@ -66,6 +66,26 @@ export default function SobreNos() {
                     </div>
                 </div>
             </section>
+
+            <section className="resultados">
+                <div className="container-resultados">
+                    <div className="text">
+                        <h1>Preço justo, resultado garantido</h1>
+
+                        <p>
+                            Na Volt House, transformamos dados em resultados concretos, gerando economia, eficiência e mais controle energético para sua empresa.
+                        </p>
+
+                        <div className="card-info">
+                            <h2 style={{color: "var(--roxo-claro)"}}>+2 mil clientes atendidos</h2>
+
+                            <span></span>
+
+                            <h2 style={{color: "var(--verde)"}}>R$ 10.000,00 de retorno médio</h2>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     )
 }
