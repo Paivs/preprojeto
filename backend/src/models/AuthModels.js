@@ -12,6 +12,13 @@ export async function buscarPorEmail(email) {
   return linhas[0] || null;
 }
 
+export async function atualizarSenha(id, senhaHash) {
+  await pool.query(
+    `UPDATE usuario SET senha = ? WHERE id_usuario = ?`,
+    [senhaHash, id]
+  );
+}
+
 export async function criar({ nome, cnpj, email, senhaHash, perfil = 'cliente' }) {
   const sql = `INSERT INTO usuario (nome_empresa, cnpj, email, senha, nivel_permissao)
                VALUES (?, ?, ?, ?, ?)`;
