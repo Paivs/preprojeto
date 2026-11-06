@@ -1,0 +1,56 @@
+.not-found{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    gap: 2rem;
+}
+
+.img-notFound i{
+    font-size: 15rem;
+    padding: 1rem;
+    background-color: var(--dark-bg-card);
+    color: var(--amarelo);
+    border-radius: 5px;
+}
+
+.info-notFound{
+    display: flex;
+    flex-direction: column;
+}
+
+.info-notFound h1{
+    display: inline-block;
+    width: fit-content;
+    text-align: left;
+    padding: 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 30px;
+    background-color: rgba(146, 79, 240, 0.3);
+    color: var(--roxo-claro);
+}
+
+.info-notFound h2{
+    color: var(--branco);
+}
+
+.info-notFound p {
+    /* margin-top: 1.5rem; */
+    color: var(--dark-text-tertiary);
+}
+
+.info-notFound a{
+    width: fit-content;
+    text-align: center;
+    margin-top: 1.5rem;
+    padding: 0.8rem;
+    text-decoration: none;
+    background-color: var(--roxo-claro);
+    border-radius: 5px;
+    color: var(--branco);
+    transition: ease 0.3s;
+}
+
+.info-notFound a:hover{
+    background-color: var(--roxo-hover);
+}
