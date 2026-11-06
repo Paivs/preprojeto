@@ -18,4 +18,4 @@ VALUES
 
 ('Construtora Moderna', '90.123.456/0001-78', 'contato@construtoramoderna.com.br', '123456'),
 
-('Supermercado Central', '11.234.567/0001-89', 'contato@supercentral.com.br', '123456');
+('Supermercado Central', '11.234.567/0001-89', 'contato@supercentral.com.br', '123456'),
