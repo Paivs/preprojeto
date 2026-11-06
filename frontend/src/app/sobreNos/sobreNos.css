@@ -183,8 +183,12 @@
     margin: 8px 0 8px 0;
 }
 
+.cardValor:hover{
+    border: 1px solid var(--roxo-claro);
+}
+
 .resultados {
-    min-height: 100vh;
+    min-height: 90vh;
     display: flex;
     align-items: center;
 }
@@ -195,6 +199,8 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
+    gap: 5rem;
 }
 
 .card-info{
@@ -207,7 +213,7 @@
 .card-info span{
     display: block;
     width: 2px;
-    height: 100%;
+    height: 30px;
     border-radius: 5px;
     border: 0;
     background-color: var(--dark-text-secondary);
@@ -215,4 +221,46 @@
 
 .card-info h2{
     font-size: 1.2rem;
+}
+
+.card-avaliacao {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--cinza-escuro);
+    border-radius: 5px;
+    width: 380px;
+    height: 380px;
+    padding: 2rem;
+    background-color: var(--dark-bg-tertiary);
+    transition: ease 0.3s;
+}
+
+.card-avaliacao:hover{
+    border: 1px solid var(--roxo-claro);
+}
+
+.card-avaliacao h2{
+    color: var(--branco);
+    font-size: 1.5rem;
+}
+
+.card-avaliacao strong{
+    font-weight: 500;
+    color: var(--dark-text-tertiary);
+}
+
+.card-avaliacao p{
+    /* margin-top: 25px; */
+    color: var(--branco);
+    font-size: 1.1rem;
+}
+
+.card-avaliacao hr {
+    border: 0;
+    background-color: var(--roxo-claro);
+    opacity: 1;
+    width: 100%;
+    height: 1px;
+    margin-top: 25px;
+    margin-bottom: 25px;
 }
