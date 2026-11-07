@@ -1,0 +1,36 @@
+.conteudo-principal {
+    margin-left: 245px;
+    min-height: 100vh;
+}
+
+.conteudo-pagina {
+    padding: 24px 32px 48px;
+}
+
+.cabecalho-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.cabecalho-etiqueta {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--amarelo);
+}
+
+.cabecalho-pagina h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 8px 0 6px;
+    color: var(--dark-text-primary);
+}
+
+.cabecalho-pagina p {
+    font-size: 14px;
+    color: var(--cor-texto-secundario);
+}
