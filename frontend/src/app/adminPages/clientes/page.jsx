@@ -15,7 +15,7 @@ export default function Clientes() {
             <div>
               <span className="cabecalho-etiqueta">CONTROLE DE ATIVOS</span>
 
-              <h1>Contatos</h1>
+              <h1>Clientes</h1>
 
               <p>Gerencie sua base, planos e consumo em um só lugar</p>
             </div>
