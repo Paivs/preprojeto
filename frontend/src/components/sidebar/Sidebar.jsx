@@ -71,26 +71,6 @@ export default function Sidebar({ tipoUsuario = "usuario" }) {
       </nav>
 
       <div className="sidebar-rodape">
-
-        {!isAdmin && (
-          <div className="painel-sistema">
-            <div className="painel-sistema-topo">
-              <span className="ponto-verde" />
-              <span>Sistema operacional</span>
-              <strong>98%</strong>
-            </div>
-
-            <div className="barra-progresso">
-              <div
-                className="barra-progresso-preenchida"
-                style={{ width: "98%" }}
-              />
-            </div>
-
-            <p>6 de 6 dispositivos respondendo</p>
-          </div>
-        )}
-
         <button type="button" className="menu-item menu-sair">
           <span>⇥</span>
           <span>Sair</span>

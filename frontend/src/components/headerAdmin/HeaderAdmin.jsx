@@ -9,7 +9,8 @@ const notificacoesIniciais = [
     icone: "bi-lightning-charge",
     cor: "aviso",
     titulo: "Consumo acima da média",
-    descricao: "O ar-condicionado da sala está consumindo mais energia que o habitual.",
+    descricao:
+      "O ar-condicionado da sala está consumindo mais energia que o habitual.",
     horario: "Há 10 minutos",
     lida: false,
   },
@@ -69,7 +70,9 @@ export default function Header({ tipoUsuario = "usuario" }) {
   const cargoPerfil = eAdmin ? "Administradora" : "Cliente";
   const [perfilAberto, setPerfilAberto] = useState(false);
   const [notificacoesAbertas, setNotificacoesAbertas] = useState(false);
-  const [notificacoes, setNotificacoes] = useState(() => eAdmin ? notificacoesAdmin : notificacoesIniciais);
+  const [notificacoes, setNotificacoes] = useState(() =>
+    eAdmin ? notificacoesAdmin : notificacoesIniciais,
+  );
   const notificacoesRef = useRef(null);
   const quantidadeNaoLidas = notificacoes.filter((item) => !item.lida).length;
 
@@ -84,7 +87,10 @@ export default function Header({ tipoUsuario = "usuario" }) {
     }
 
     function fecharAoClicarFora(evento) {
-      if (notificacoesRef.current && !notificacoesRef.current.contains(evento.target)) {
+      if (
+        notificacoesRef.current &&
+        !notificacoesRef.current.contains(evento.target)
+      ) {
         setNotificacoesAbertas(false);
       }
     }
@@ -103,32 +109,50 @@ export default function Header({ tipoUsuario = "usuario" }) {
   }
 
   function marcarTodasComoLidas() {
-    setNotificacoes((atuais) => atuais.map((item) => ({ ...item, lida: true })));
+    setNotificacoes((atuais) =>
+      atuais.map((item) => ({ ...item, lida: true })),
+    );
   }
 
   function marcarComoLida(id) {
-    setNotificacoes((atuais) => atuais.map((item) => item.id === id ? { ...item, lida: true } : item));
+    setNotificacoes((atuais) =>
+      atuais.map((item) => (item.id === id ? { ...item, lida: true } : item)),
+    );
   }
 
   return (
     <>
       <header className="topo">
-        <button type="button" className="botao-menu-mobile" aria-label="Abrir menu">
+        <button
+          type="button"
+          className="botao-menu-mobile"
+          aria-label="Abrir menu"
+        >
           <i className="bi bi-list" />
         </button>
 
         <div className="barra-pesquisa">
           <i className="bi bi-search" aria-hidden="true" />
-          <input type="search" placeholder="Buscar no sistema..." aria-label="Buscar no sistema" />
-          <kbd className="atalho">Ctrl K</kbd>
+          <input
+            type="search"
+            placeholder="Buscar no sistema..."
+            aria-label="Buscar no sistema"
+          />
         </div>
 
         <div className="topo-acoes">
-          <button type="button" className="botao-icone botao-tema" aria-label="Tema">
+          <button
+            type="button"
+            className="botao-icone botao-tema"
+            aria-label="Tema"
+          >
             <i className="bi bi-sun" />
           </button>
 
-          <div className="topo-menu-area topo-notificacoes" ref={notificacoesRef}>
+          <div
+            className="topo-menu-area topo-notificacoes"
+            ref={notificacoesRef}
+          >
             <button
               type="button"
               className="botao-icone botao-notificacoes"
@@ -142,14 +166,26 @@ export default function Header({ tipoUsuario = "usuario" }) {
             </button>
 
             {notificacoesAbertas && (
-              <section className="painel-notificacoes" id="painel-notificacoes" aria-label="Notificações">
+              <section
+                className="painel-notificacoes"
+                id="painel-notificacoes"
+                aria-label="Notificações"
+              >
                 <div className="painel-notificacoes-topo">
                   <div>
                     <h2>Notificações</h2>
-                    <p>{quantidadeNaoLidas ? `${quantidadeNaoLidas} avisos não lidos` : "Tudo em dia"}</p>
+                    <p>
+                      {quantidadeNaoLidas
+                        ? `${quantidadeNaoLidas} avisos não lidos`
+                        : "Tudo em dia"}
+                    </p>
                   </div>
                   {quantidadeNaoLidas > 0 && (
-                    <button type="button" className="notificacoes-marcar-lidas" onClick={marcarTodasComoLidas}>
+                    <button
+                      type="button"
+                      className="notificacoes-marcar-lidas"
+                      onClick={marcarTodasComoLidas}
+                    >
                       Marcar como lidas
                     </button>
                   )}
@@ -163,7 +199,9 @@ export default function Header({ tipoUsuario = "usuario" }) {
                       className={`notificacao-item ${notificacao.lida ? "notificacao-lida" : ""}`}
                       onClick={() => marcarComoLida(notificacao.id)}
                     >
-                      <span className={`notificacao-icone notificacao-${notificacao.cor}`}>
+                      <span
+                        className={`notificacao-icone notificacao-${notificacao.cor}`}
+                      >
                         <i className={`bi ${notificacao.icone}`} />
                       </span>
                       <span className="notificacao-conteudo">
@@ -171,7 +209,12 @@ export default function Header({ tipoUsuario = "usuario" }) {
                         <span>{notificacao.descricao}</span>
                         <small>{notificacao.horario}</small>
                       </span>
-                      {!notificacao.lida && <span className="notificacao-nao-lida" aria-label="Não lida" />}
+                      {!notificacao.lida && (
+                        <span
+                          className="notificacao-nao-lida"
+                          aria-label="Não lida"
+                        />
+                      )}
                     </button>
                   ))}
                 </div>
@@ -202,9 +245,12 @@ export default function Header({ tipoUsuario = "usuario" }) {
       </header>
 
       {perfilAberto && (
-        <div className="perfil-modal-fundo" onMouseDown={(evento) => {
-          if (evento.target === evento.currentTarget) setPerfilAberto(false);
-        }}>
+        <div
+          className="perfil-modal-fundo"
+          onMouseDown={(evento) => {
+            if (evento.target === evento.currentTarget) setPerfilAberto(false);
+          }}
+        >
           <aside
             className="perfil-painel"
             id="painel-perfil"
@@ -217,7 +263,12 @@ export default function Header({ tipoUsuario = "usuario" }) {
                 <span className="perfil-painel-etiqueta">MINHA CONTA</span>
                 <h2 id="perfil-painel-titulo">Informações do perfil</h2>
               </div>
-              <button type="button" className="perfil-painel-fechar" aria-label="Fechar perfil" onClick={() => setPerfilAberto(false)}>
+              <button
+                type="button"
+                className="perfil-painel-fechar"
+                aria-label="Fechar perfil"
+                onClick={() => setPerfilAberto(false)}
+              >
                 <i className="bi bi-x-lg" />
               </button>
             </div>
@@ -228,31 +279,49 @@ export default function Header({ tipoUsuario = "usuario" }) {
                 <h3>{nomePerfil}</h3>
                 <p>{cargoPerfil}</p>
               </div>
-              <span className="perfil-status-conta"><i /> Ativa</span>
+              <span className="perfil-status-conta">
+                <i /> Ativa
+              </span>
             </div>
 
             <section className="perfil-detalhes">
               <h3>Dados da conta</h3>
               <div className="perfil-detalhe-linha">
-                <span><i className="bi bi-envelope" /> E-mail</span>
-                <strong>{eAdmin ? "marina.vieira@volthouse.com" : "marina.vieira@email.com"}</strong>
+                <span>
+                  <i className="bi bi-envelope" /> E-mail
+                </span>
+                <strong>
+                  {eAdmin
+                    ? "marina.vieira@volthouse.com"
+                    : "marina.vieira@email.com"}
+                </strong>
               </div>
               <div className="perfil-detalhe-linha">
-                <span><i className="bi bi-telephone" /> Telefone</span>
+                <span>
+                  <i className="bi bi-telephone" /> Telefone
+                </span>
                 <strong>(11) 99999-0000</strong>
               </div>
               <div className="perfil-detalhe-linha">
-                <span><i className="bi bi-geo-alt" /> Unidade</span>
+                <span>
+                  <i className="bi bi-geo-alt" /> Unidade
+                </span>
                 <strong>{eAdmin ? "VoltHouse" : "São Paulo, SP"}</strong>
               </div>
               <div className="perfil-detalhe-linha">
-                <span><i className="bi bi-lightning" /> Plano</span>
-                <strong>{eAdmin ? "Acesso administrativo" : "Residencial"}</strong>
+                <span>
+                  <i className="bi bi-lightning" /> Plano
+                </span>
+                <strong>
+                  {eAdmin ? "Acesso administrativo" : "Residencial"}
+                </strong>
               </div>
             </section>
 
             <div className="perfil-painel-rodape">
-              <span><i className="bi bi-shield-check" /> Seus dados estão protegidos</span>
+              <span>
+                <i className="bi bi-shield-check" /> Seus dados estão protegidos
+              </span>
               <button type="button" onClick={() => setPerfilAberto(false)}>
                 <i className="bi bi-box-arrow-right" /> Fechar painel
               </button>
