@@ -6,6 +6,7 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 import adminRelatorioRoutes from "./routes/adminRelatorioRoutes.js";
 import alunoRoutes from "./routes/alunoRoutes.js";
+import agendamentoRoutes from "./routes/agendamentoRoutes.js";
 import chamadoRoutes from "./routes/chamadoRoutes.js";
 import checklistItemRoutes from "./routes/checklistItemRoutes.js";
 import checklistModeloRoutes from "./routes/checklistModeloRoutes.js";
@@ -37,6 +38,7 @@ app.get("/", (request, response) => {
 
 app.use("/api/health", healthRoutes);
 app.use("/api/alunos", alunoRoutes);
+app.use("/api/agendamentos", agendamentoRoutes);
 app.use("/api/equipamentos", equipamentoRoutes);
 app.use("/api/componentes", componenteRoutes);
 app.use("/api/usuarios", usuarioRoutes);
