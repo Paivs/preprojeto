@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useProfessorDemo } from "./ProfessorDemoProvider";
+import { useEffect, useMemo, useState } from "react";
+import { listarAgendamentos, listarEquipamentos } from "../lib/professorApi";
 import ModalProfessor from "./ModalProfessor";
 import styles from "./EquipamentosProfessor.module.css";
 
@@ -22,7 +22,8 @@ function formatarData(data) {
 }
 
 export default function EquipamentosProfessor() {
-  const { dados } = useProfessorDemo();
+  const [dados, setDados] = useState({ equipamentos: [], agendamentos: [] });
+  useEffect(() => { let active=true; Promise.all([listarEquipamentos(),listarAgendamentos()]).then(([equipamentos,agendamentos])=>{if(active)setDados({equipamentos,agendamentos});}).catch(()=>{}); return ()=>{active=false;}; }, []);
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("TODOS");
   const [equipamentoId, setEquipamentoId] = useState(null);
