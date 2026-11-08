@@ -1,6 +1,27 @@
 import * as UsuarioModel from "../models/usuarioModel.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const { PERFIS_VALIDOS } = UsuarioModel;
+
+export async function login({ matricula, senha } = {}) {
+  const matriculaLimpa = typeof matricula === "string" ? matricula.trim() : "";
+  if (!matriculaLimpa || typeof senha !== "string" || !senha) throw new TypeError("Matrícula e senha são obrigatórias.");
+  const usuario = await UsuarioModel.buscarPorMatricula(matriculaLimpa);
+  const senhaValida = usuario ? await bcrypt.compare(senha, usuario.senha_hash) : false;
+  if (!usuario || !senhaValida) { const erro = new Error("Matrícula ou senha inválidas."); erro.status = 401; throw erro; }
+  if (!usuario.ativo) { const erro = new Error("Usuário inativo."); erro.status = 403; throw erro; }
+  const token = jwt.sign({ perfil: usuario.perfil, matricula: usuario.matricula }, process.env.JWT_SECRET,
+    { subject: String(usuario.id), expiresIn: process.env.JWT_EXPIRES_IN || "8h" });
+  return { token, usuario: { id: usuario.id, nome: usuario.nome, perfil: usuario.perfil, matricula: usuario.matricula } };
+}
+
+export async function buscarSessao(idRecebido) {
+  const id = validarId(idRecebido);
+  const usuario = await UsuarioModel.buscarPorId(id);
+  if (!usuario || !usuario.ativo) { const erro = new Error("Sessão inválida ou usuário inativo."); erro.status = 401; throw erro; }
+  return usuario;
+}
 
 function validarId(idRecebido) {
   const id = Number(idRecebido);
