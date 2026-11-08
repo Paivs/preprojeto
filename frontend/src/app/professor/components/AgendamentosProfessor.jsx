@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useProfessorDemo } from "./ProfessorDemoProvider";
+import { useEffect, useMemo, useState } from "react";
+import { cancelarAgendamento, criarAgendamento, listarAgendamentos, listarEquipamentos, listarInspecoes, listarTurmas } from "../lib/professorApi";
 import FormularioAgendamento from "./FormularioAgendamento";
 import ModalProfessor from "./ModalProfessor";
 import styles from "./AgendamentosProfessor.module.css";
@@ -41,7 +41,9 @@ function rotuloInspecao(registro) {
 }
 
 export default function AgendamentosProfessor() {
-  const { dados, criarAgendamento, cancelarAgendamento, concluirAgendamento } = useProfessorDemo();
+  const [dados, setDados] = useState({ agendamentos: [], equipamentos: [], inspecoes: [], turmas: [] });
+  async function carregar(){const [agendamentos,equipamentos,inspecoes,turmas]=await Promise.all([listarAgendamentos(),listarEquipamentos(),listarInspecoes(),listarTurmas()]);setDados({agendamentos,equipamentos,inspecoes,turmas});}
+  useEffect(()=>{carregar().catch(()=>{});},[]);
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("TODOS");
   const [inicioSemana, setInicioSemana] = useState(inicioSemanaAtual);
@@ -87,21 +89,15 @@ export default function AgendamentosProfessor() {
     });
   }
 
-  function salvarReserva(formulario) {
-    const resultado = criarAgendamento(formulario);
-    if (resultado.ok) setMensagem("Agendamento criado e inspeção pré-uso adicionada.");
-    return resultado;
+  async function salvarReserva(formulario) {
+    try { await criarAgendamento(formulario); await carregar(); setMensagem("Agendamento criado."); return { ok: true }; }
+    catch (error) { return { ok: false, message: error.message }; }
   }
 
-  function executarAcaoReserva(acao) {
-    const resultado = acao === "cancelar"
-      ? cancelarAgendamento(reservaDetalhe.id)
-      : concluirAgendamento(reservaDetalhe.id);
-    if (!resultado.ok) return;
-    setDetalheId(null);
-    setMensagem(acao === "cancelar"
-      ? "Agendamento cancelado."
-      : "Atividade concluída. Uma inspeção pós-uso foi adicionada.");
+  async function executarAcaoReserva(acao) {
+    if (acao !== "cancelar") return;
+    try { await cancelarAgendamento(reservaDetalhe.id); await carregar(); setDetalheId(null); setMensagem("Agendamento cancelado."); }
+    catch (error) { setMensagem(error.message); }
   }
 
   return (

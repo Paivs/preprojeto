@@ -19,7 +19,7 @@ export default function FormularioAgendamento({ dataInicial, turmas, equipamento
     setErro("");
   }
 
-  function enviar(evento) {
+  async function enviar(evento) {
     evento.preventDefault();
     if (!form.atividade.trim() || !form.data || !form.inicio || !form.fim || !form.turmaId || !form.equipamentoId) {
       setErro("Preencha todos os campos para continuar.");
@@ -81,7 +81,6 @@ export default function FormularioAgendamento({ dataInicial, turmas, equipamento
       </div>
 
       {erro && <p className={styles.erro} role="alert">{erro}</p>}
-      <p className={styles.aviso}>Prévia local: a reserva fica salva somente neste navegador.</p>
       <div className={styles.acoes}>
         <button className={styles.secundario} type="button" onClick={onCancel}>Voltar</button>
         <button className={styles.primario} type="submit">Criar agendamento</button>
