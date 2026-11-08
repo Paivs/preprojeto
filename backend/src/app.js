@@ -13,6 +13,7 @@ import checklistModeloRoutes from "./routes/checklistModeloRoutes.js";
 import equipamentoRoutes from "./routes/equipamentoRoutes.js";
 import componenteRoutes from "./routes/componenteRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
+import inspecaoRoutes from "./routes/inspecaoRoutes.js";
 import ocorrenciaRoutes from "./routes/ocorrenciaRoutes.js";
 import ordemServicoRoutes from "./routes/ordemServicoRoutes.js";
 import preCadastroRoutes from "./routes/preCadastroRoutes.js";
@@ -37,6 +38,7 @@ app.get("/", (request, response) => {
 });
 
 app.use("/api/health", healthRoutes);
+app.use("/api/inspecoes", inspecaoRoutes);
 app.use("/api/alunos", alunoRoutes);
 app.use("/api/agendamentos", agendamentoRoutes);
 app.use("/api/equipamentos", equipamentoRoutes);
