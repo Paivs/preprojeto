@@ -10,6 +10,14 @@ export async function buscarPorId(id) {
   return linhas[0] || null;
 }
 
+export async function buscarPorTipoEtapa(tipoEquipamento, etapa) {
+  const [linhas] = await pool.query(
+    "SELECT * FROM checklist_modelos WHERE tipo_equipamento = ? AND etapa = ? AND ativo = 1 LIMIT 1",
+    [tipoEquipamento, etapa],
+  );
+  return linhas[0] || null;
+}
+
 export async function criar({ titulo, tipo_equipamento, etapa }) {
   const [resultado] = await pool.query(
     "INSERT INTO checklist_modelos (titulo, tipo_equipamento, etapa) VALUES (?, ?, ?)",
