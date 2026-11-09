@@ -73,10 +73,6 @@ export default function VisaoGeralProfessor() {
           <h1 id="titulo-visao-professor">{saudacao}, {primeiroNome}.</h1>
           <p className={styles.subtitulo}>Resumo do laboratório para hoje.</p>
         </div>
-        <Link className={styles.acaoPrincipal} href="/professor/agendamentos">
-          <span className="material-symbols-outlined" aria-hidden="true">add</span>
-          Novo agendamento
-        </Link>
       </section>
 
       <section className={styles.indicadores} aria-label="Resumo do laboratório">
