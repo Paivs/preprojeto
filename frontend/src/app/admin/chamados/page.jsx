@@ -14,7 +14,7 @@ const STATUS = [
 ];
 
 const SEVERIDADES = ["BAIXA", "MEDIA", "ALTA", "CRITICA"];
-const ITENS_POR_PAGINA = 5;
+const ITENS_POR_PAGINA = 10;
 
 const ROTULO_STATUS = {
   ABERTO: "Aberto",
