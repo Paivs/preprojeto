@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
 import CartaoMetrica from "../admin/components/CartaoMetrica";
 import ResumoChamados from "./components/ResumoChamados";
+import { getUsuario } from "@/lib/session";
+import { dataPorExtenso, saudacaoPorHorario } from "@/lib/saudacao";
 import styles from "./page.module.css";
 
 function totalPorChave(itens, chave, valor) {
@@ -20,6 +22,8 @@ export default function PaginaTecnico() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [atualizadoEm, setAtualizadoEm] = useState(null);
+  const usuario = getUsuario();
+  const primeiroNome = usuario?.nome?.split(" ")[0] || "técnico";
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -86,6 +90,8 @@ export default function PaginaTecnico() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div>
+          <p className={styles.dataHoje}>{dataPorExtenso()}</p>
+          <p className={styles.saudacao}>{saudacaoPorHorario()}, {primeiroNome}.</p>
           <p className={styles.sobretitulo}>Operação técnica</p>
           <h1 className={styles.titulo}>Visão geral</h1>
           <p className={styles.descricao}>Acompanhe os chamados atribuídos e a condição dos equipamentos.</p>

@@ -22,6 +22,21 @@
   text-transform: uppercase;
 }
 
+.dataHoje {
+  margin: 0 0 6px;
+  color: var(--silver);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+.saudacao {
+  margin: 0 0 10px;
+  color: var(--white-smoke);
+  font-size: 15px;
+  font-weight: 600;
+}
+
 .titulo {
   margin: 0;
   color: var(--white-smoke);

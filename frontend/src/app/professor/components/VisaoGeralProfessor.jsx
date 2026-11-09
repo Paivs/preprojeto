@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { listarAgendamentos, listarEquipamentos, listarInspecoes, listarTurmas } from "../lib/professorApi";
 import { getUsuario } from "@/lib/session";
+import { dataPorExtenso, saudacaoPorHorario } from "@/lib/saudacao";
 import { percentualEquipamentos, resumirEquipamentos } from "../lib/resumoProfessor";
 import styles from "./VisaoGeralProfessor.module.css";
 
@@ -33,10 +34,9 @@ export default function VisaoGeralProfessor() {
   );
   const primeiroNome = dados.professora?.nome?.split(" ")[0] || "professor";
   const hoje = new Date();
-  const hora = hoje.getHours();
   const hojeISO = dataLocalISO();
-  const dataFormatada = hoje.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }).toLocaleUpperCase("pt-BR");
-  const saudacao = hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+  const dataFormatada = dataPorExtenso(hoje);
+  const saudacao = saudacaoPorHorario(hoje);
 
   const reservasHoje = useMemo(() => dados.agendamentos
     .filter((item) => item.data === hojeISO && item.status !== "CANCELADO")
