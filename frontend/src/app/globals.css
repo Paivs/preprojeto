@@ -628,3 +628,25 @@ a {
   color: var(--white);
 }
 
+/* Entrada sutil dos cards dos dashboards */
+@keyframes tenkenEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tenken-entrada {
+  animation: tenkenEntrada 0.32s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tenken-entrada {
+    animation: none;
+  }
+}
+
