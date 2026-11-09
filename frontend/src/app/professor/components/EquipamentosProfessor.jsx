@@ -58,10 +58,10 @@ export default function EquipamentosProfessor() {
       </section>
 
       <section className={styles.resumo} aria-label="Resumo por situação">
-        <article className={styles.metrica}><span>Total cadastrado</span><strong>{dados.equipamentos.length}</strong><small>itens cadastrados</small></article>
-        <article className={`${styles.metrica} ${styles.metricaDisponivel}`}><span>Disponíveis</span><strong>{contagem.DISPONIVEL || 0}</strong><small>liberados para uso</small></article>
-        <article className={`${styles.metrica} ${styles.metricaUso}`}><span>Em uso</span><strong>{contagem.EM_USO || 0}</strong><small>reservas em andamento</small></article>
-        <article className={`${styles.metrica} ${styles.metricaManutencao}`}><span>Em manutenção</span><strong>{contagem.EM_MANUTENCAO || 0}</strong><small>indisponíveis para reserva</small></article>
+        <article className={`${styles.metrica} tenken-entrada`}><span>Total cadastrado</span><strong>{dados.equipamentos.length}</strong><small>itens cadastrados</small></article>
+        <article className={`${styles.metrica} tenken-entrada ${styles.metricaDisponivel}`}><span>Disponíveis</span><strong>{contagem.DISPONIVEL || 0}</strong><small>liberados para uso</small></article>
+        <article className={`${styles.metrica} tenken-entrada ${styles.metricaUso}`}><span>Em uso</span><strong>{contagem.EM_USO || 0}</strong><small>reservas em andamento</small></article>
+        <article className={`${styles.metrica} tenken-entrada ${styles.metricaManutencao}`}><span>Em manutenção</span><strong>{contagem.EM_MANUTENCAO || 0}</strong><small>indisponíveis para reserva</small></article>
       </section>
 
       <section className={styles.painel} aria-labelledby="titulo-inventario">

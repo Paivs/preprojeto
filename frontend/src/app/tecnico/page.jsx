@@ -108,9 +108,10 @@ export default function PaginaTecnico() {
       {erro && <p className={styles.erro} role="alert">{erro}</p>}
 
       <section className={styles.gradeIndicadores} aria-label="Indicadores do técnico">
-        {indicadores.map((indicador) => (
+        {indicadores.map((indicador, indice) => (
           <CartaoMetrica
             key={indicador.titulo}
+            estilo={{ animationDelay: `${indice * 0.05}s` }}
             icone={<span className="material-symbols-outlined">{indicador.icone}</span>}
             categoria={indicador.categoria}
             titulo={indicador.titulo}

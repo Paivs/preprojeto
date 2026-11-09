@@ -69,8 +69,12 @@ export default function VisaoGeralProfessor() {
       </section>
 
       <section className={styles.indicadores} aria-label="Resumo do laboratório">
-        {metricas.map((item) => (
-          <article className={`${styles.indicador} ${item.alerta ? styles.indicadorAlerta : ""}`} key={item.rotulo}>
+        {metricas.map((item, indice) => (
+          <article
+            className={`${styles.indicador} ${item.alerta ? styles.indicadorAlerta : ""} tenken-entrada`}
+            style={{ animationDelay: `${indice * 0.05}s` }}
+            key={item.rotulo}
+          >
             <div className={styles.indicadorTopo}>
               <h2>{item.rotulo}</h2>
               <span className={`material-symbols-outlined ${styles.indicadorIcone}`} aria-hidden="true">{item.icone}</span>

@@ -47,9 +47,9 @@ export default function TurmasProfessor() {
       </div></section>
 
       <section className={styles.resumo} aria-label="Resumo das turmas">
-        <article className={styles.metrica}><span>Turmas e projetos</span><strong>{dados.turmas.length}</strong><small>vinculados à professora</small></article>
-        <article className={styles.metrica}><span>Vínculos de alunos</span><strong>{totalAlunos}</strong><small>participações nas turmas</small></article>
-        <article className={styles.metrica}><span>Atividades agendadas</span><strong>{dados.agendamentos.filter((item) => item.status !== "CANCELADO").length}</strong><small>reservas ativas</small></article>
+        <article className={`${styles.metrica} tenken-entrada`}><span>Turmas e projetos</span><strong>{dados.turmas.length}</strong><small>vinculados à professora</small></article>
+        <article className={`${styles.metrica} tenken-entrada`}><span>Vínculos de alunos</span><strong>{totalAlunos}</strong><small>participações nas turmas</small></article>
+        <article className={`${styles.metrica} tenken-entrada`}><span>Atividades agendadas</span><strong>{dados.agendamentos.filter((item) => item.status !== "CANCELADO").length}</strong><small>reservas ativas</small></article>
       </section>
 
       <section className={styles.painel} aria-labelledby="titulo-lista-turmas">

@@ -117,10 +117,10 @@ export default function AgendamentosProfessor() {
       {mensagem && <p className={styles.mensagemSucesso} role="status">{mensagem}<button type="button" onClick={() => setMensagem("")} aria-label="Fechar aviso">×</button></p>}
 
       <section className={styles.resumo} aria-label="Resumo dos agendamentos da semana">
-        <article className={styles.metrica}><span>Reservas na semana</span><strong>{resumo.total}</strong><small>exceto canceladas</small></article>
-        <article className={styles.metrica}><span>Confirmados</span><strong>{resumo.confirmados}</strong><small>aguardando o horário reservado</small></article>
-        <article className={styles.metrica}><span>Em andamento</span><strong>{resumo.emAndamento}</strong><small>atividades acontecendo</small></article>
-        <article className={`${styles.metrica} ${styles.metricaAtencao}`}><span>Inspeções pendentes</span><strong>{resumo.inspecoesPendentes}</strong><small>na semana selecionada</small></article>
+        <article className={`${styles.metrica} tenken-entrada`}><span>Reservas na semana</span><strong>{resumo.total}</strong><small>exceto canceladas</small></article>
+        <article className={`${styles.metrica} tenken-entrada`}><span>Confirmados</span><strong>{resumo.confirmados}</strong><small>aguardando o horário reservado</small></article>
+        <article className={`${styles.metrica} tenken-entrada`}><span>Em andamento</span><strong>{resumo.emAndamento}</strong><small>atividades acontecendo</small></article>
+        <article className={`${styles.metrica} tenken-entrada ${styles.metricaAtencao}`}><span>Inspeções pendentes</span><strong>{resumo.inspecoesPendentes}</strong><small>na semana selecionada</small></article>
       </section>
 
       <section className={styles.painelAgenda} aria-labelledby="titulo-lista-agendamentos">
