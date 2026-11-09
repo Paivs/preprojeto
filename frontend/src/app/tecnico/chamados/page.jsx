@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiFetch } from "@/lib/api";
 import styles from "./page.module.css";
+import EmptyState from "@/components/EmptyState";
 
 const STATUS = [
   ["ABERTO", "Aberto"],
@@ -95,11 +96,11 @@ export default function PaginaChamadosTecnico() {
       <p className={styles.contagem}>{carregando ? "Carregando chamados…" : `${filtrados.length} chamados encontrados`}</p>
 
       {!carregando && !erro && filtrados.length === 0 && (
-        <div className={styles.vazio}>
-          <span className="material-symbols-outlined" aria-hidden="true">inbox</span>
-          <h2>{chamados.length ? "Nenhum resultado para esses filtros" : "Nenhum chamado atribuído"}</h2>
-          <p>{chamados.length ? "Tente alterar a busca ou os filtros." : "Quando houver chamados atribuídos, eles aparecerão aqui."}</p>
-        </div>
+        <EmptyState
+          icone="inbox"
+          titulo={chamados.length ? "Nenhum resultado para esses filtros" : "Nenhum chamado atribuído"}
+          mensagem={chamados.length ? "Tente alterar a busca ou os filtros." : "Quando houver chamados atribuídos, eles aparecem aqui."}
+        />
       )}
 
       <section className={styles.lista} aria-label="Lista de chamados">

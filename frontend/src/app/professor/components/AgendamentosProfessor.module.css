@@ -23,7 +23,7 @@
 .cabecalhoPagina h1 {
   margin: 0;
   color: var(--white-smoke, #f5f3f4);
-  font-size: clamp(32px, 3vw, 36px);
+  font-size: var(--admin-font-page-title);
   font-weight: 600;
   letter-spacing: -.04em;
 }
@@ -41,6 +41,7 @@
   gap: 7.7px;
   padding: 0 14.3px;
   border: 0;
+  border-radius: 6px;
   background: var(--mahogany-red, #a4161a);
   color: #fff;
   font: inherit;

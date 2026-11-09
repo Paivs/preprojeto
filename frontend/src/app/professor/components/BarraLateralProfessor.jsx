@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./BarraLateralProfessor.module.css";
 
@@ -12,20 +13,16 @@ const itens = [
   { href: "/professor/equipamentos", label: "Equipamentos", icon: "precision_manufacturing", pronto: true },
 ];
 
-export default function BarraLateralProfessor({ usuario }) {
+export default function BarraLateralProfessor({ usuario, aberta, onFechar }) {
   const pathname = usePathname();
   const nome = usuario?.nome || "Professora";
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${aberta ? styles.sidebarAberta : ""}`}>
       <div className={styles.topSection}>
         <div className={styles.brandHeader}>
           <Link href="/" className={styles.brandLink} aria-label="Tenken início">
-            <span className={`material-symbols-outlined ${styles.brandBadge}`} aria-hidden="true">precision_manufacturing</span>
-            <span className={styles.brandInfo}>
-              <strong className={styles.brandTitle}>TENKEN</strong>
-              <span className={styles.brandSub}>GESTÃO DE LABORATÓRIO</span>
-            </span>
+            <Image src="/assets/img/logo-site/logo_horizontal.svg" alt="Tenken" width={150} height={36} priority className={styles.brandLogo} />
           </Link>
         </div>
 
@@ -45,7 +42,7 @@ export default function BarraLateralProfessor({ usuario }) {
             }
 
             return (
-              <Link key={item.href} href={item.href} className={`${styles.navItem} ${ativo ? styles.navItemActive : ""}`} aria-current={ativo ? "page" : undefined}>
+              <Link key={item.href} href={item.href} className={`${styles.navItem} ${ativo ? styles.navItemActive : ""}`} aria-current={ativo ? "page" : undefined} onClick={onFechar}>
                 <span className={`material-symbols-outlined ${styles.navIcon}`} aria-hidden="true">{item.icon}</span>
                 <span>{item.label}</span>
               </Link>

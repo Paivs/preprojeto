@@ -6,10 +6,10 @@ import VisaoDashboard from "./components/VisaoDashboard";
 import { buscarDashboard } from "./lib/adminApi";
 
 export default function PaginaAdmin() {
-  return <AdminLayout>{({ token }) => <ConteudoDashboard token={token} />}</AdminLayout>;
+  return <AdminLayout>{({ token, usuario }) => <ConteudoDashboard token={token} usuario={usuario} />}</AdminLayout>;
 }
 
-function ConteudoDashboard({ token }) {
+function ConteudoDashboard({ token, usuario }) {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -23,5 +23,5 @@ function ConteudoDashboard({ token }) {
   }, [token]);
 
   useEffect(() => { carregar(); }, [carregar]);
-  return <VisaoDashboard dashboard={dashboard} loading={loading} error={error} updatedAt={updatedAt} onRefresh={carregar} />;
+  return <VisaoDashboard usuario={usuario} dashboard={dashboard} loading={loading} error={error} updatedAt={updatedAt} onRefresh={carregar} />;
 }

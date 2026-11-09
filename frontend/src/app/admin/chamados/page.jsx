@@ -14,7 +14,7 @@ const STATUS = [
 ];
 
 const SEVERIDADES = ["BAIXA", "MEDIA", "ALTA", "CRITICA"];
-const ITENS_POR_PAGINA = 5;
+const ITENS_POR_PAGINA = 10;
 
 const ROTULO_STATUS = {
   ABERTO: "Aberto",
@@ -99,7 +99,7 @@ function Conteudo({ token }) {
         method: "POST",
         body: JSON.stringify({}),
       });
-      setAviso(`Ordem de serviÃ§o ${os.numero ?? os.id} emitida com sucesso.`);
+      setAviso(`Ordem de serviço ${os.numero ?? os.id} emitida com sucesso.`);
     } catch (e) {
       setErro(e.message);
     }
@@ -115,7 +115,7 @@ function Conteudo({ token }) {
   }
 
   async function adicionarHistorico(id) {
-    const descricao = window.prompt("DescriÃ§Ã£o do registro de manutenÃ§Ã£o:");
+    const descricao = window.prompt("Descrição do registro de manutenção:");
     if (!descricao) return;
     try {
       await chamarApi(`/chamados/${id}/historico`, token, {

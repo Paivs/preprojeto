@@ -22,10 +22,25 @@
   text-transform: uppercase;
 }
 
+.dataHoje {
+  margin: 0 0 6px;
+  color: var(--silver);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+.saudacao {
+  margin: 0 0 10px;
+  color: var(--white-smoke);
+  font-size: 15px;
+  font-weight: 600;
+}
+
 .titulo {
   margin: 0;
   color: var(--white-smoke);
-  font-size: 30px;
+  font-size: var(--admin-font-page-title);
   line-height: 1.2;
 }
 
@@ -48,15 +63,17 @@
   flex: 0 0 auto;
   align-items: center;
   gap: 8px;
-  padding: 0 13px;
+  padding: 0 14px;
   color: var(--white-smoke);
   background: var(--surface-high);
   border: 1px solid var(--border-subtle);
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font: inherit;
   font-size: 12px;
   font-weight: 700;
+  letter-spacing: .03em;
+  transition: background .15s ease, border-color .15s ease;
 }
 
 .botaoAtualizar:hover:not(:disabled) { background: var(--surface-highest); }

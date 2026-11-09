@@ -1,28 +1,31 @@
 import { pool } from "../config/database.js";
 
-export async function rankingUso({ limite = 10 } = {}) {
+export async function rankingUso(inicio, fim, { limite = 10, tipo } = {}) {
   const [linhas] = await pool.query(
     `SELECT a.equipamento_id, e.nome AS equipamento_nome, COUNT(*) AS total_agendamentos
      FROM agendamentos a
      LEFT JOIN equipamentos e ON e.id = a.equipamento_id
      WHERE a.status != 'CANCELADO'
+       AND a.inicio >= ? AND a.fim < DATE_ADD(?, INTERVAL 1 DAY)
+       AND (? IS NULL OR e.tipo = ?)
      GROUP BY a.equipamento_id, e.nome
      ORDER BY total_agendamentos DESC
      LIMIT ?`,
-    [limite],
+    [inicio, fim, tipo ?? null, tipo ?? null, limite],
   );
   return linhas;
 }
 
-export async function horasReservadasPorEquipamento(inicio, fim) {
+export async function horasReservadasPorEquipamento(inicio, fim, tipo) {
   const [linhas] = await pool.query(
     `SELECT a.equipamento_id, e.nome AS equipamento_nome,
             SUM(TIMESTAMPDIFF(MINUTE, a.inicio, a.fim)) / 60 AS horas_reservadas
      FROM agendamentos a
      LEFT JOIN equipamentos e ON e.id = a.equipamento_id
-     WHERE a.status != 'CANCELADO' AND a.inicio >= ? AND a.fim <= ?
+     WHERE a.status != 'CANCELADO' AND a.inicio >= ? AND a.fim < DATE_ADD(?, INTERVAL 1 DAY)
+       AND (? IS NULL OR e.tipo = ?)
      GROUP BY a.equipamento_id, e.nome`,
-    [inicio, fim],
+    [inicio, fim, tipo ?? null, tipo ?? null],
   );
   return linhas;
 }

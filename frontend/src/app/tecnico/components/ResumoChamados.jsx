@@ -1,4 +1,5 @@
 import styles from "./ResumoChamados.module.css";
+import EmptyState from "@/components/EmptyState";
 
 const STATUS = [
   { chave: "ABERTO", rotulo: "Abertos", tom: "aberto" },
@@ -34,9 +35,11 @@ export default function ResumoChamados({ porStatus, porPrioridade, carregando })
           <span className={`material-symbols-outlined ${styles.icone}`} aria-hidden="true">monitoring</span>
         </header>
         {totalStatus === 0 ? (
-          <p className={styles.estadoVazio}>
-            {carregando ? "Carregando distribuição…" : "Nenhum chamado no seu fluxo."}
-          </p>
+          carregando ? (
+            <p className={styles.estadoVazio}>Carregando distribuição…</p>
+          ) : (
+            <EmptyState icone="inbox" titulo="Nenhum chamado no seu fluxo" mensagem="Quando houver chamados atribuídos a você, eles aparecem aqui." />
+          )
         ) : (
           <div className={styles.lista}>
             {STATUS.map((item) => {
@@ -69,9 +72,11 @@ export default function ResumoChamados({ porStatus, porPrioridade, carregando })
           <span className={`material-symbols-outlined ${styles.icone}`} aria-hidden="true">priority_high</span>
         </header>
         {totalPrioridade === 0 ? (
-          <p className={styles.estadoVazio}>
-            {carregando ? "Carregando prioridades…" : "Nenhum chamado em aberto."}
-          </p>
+          carregando ? (
+            <p className={styles.estadoVazio}>Carregando prioridades…</p>
+          ) : (
+            <EmptyState icone="task_alt" titulo="Nenhum chamado em aberto" mensagem="Não há chamados aguardando atendimento no momento." />
+          )
         ) : (
           <div className={styles.lista}>
             {PRIORIDADES.map((item) => {

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import styles from "./page.module.css";
+import modalStyles from "../equipamentos/page.module.css";
 import { chamarApi } from "../lib/adminApi";
 
 const PERFIS = [
@@ -440,6 +441,9 @@ function Conteudo({ token }) {
           <div className={styles.modalCard}>
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderTitleRow}>
+                <div className={modalStyles.modalHeaderIcon}>
+                  <span className="material-symbols-outlined" aria-hidden="true">person_add</span>
+                </div>
                 <div>
                   <h2 className={styles.modalTitle}>Adicionar usuário</h2>
                   <p className={styles.modalDescription}>Preencha os dados para criar um novo acesso ao sistema.</p>

@@ -77,9 +77,10 @@ export async function inativar(id) {
   return resultado.affectedRows > 0;
 }
 
-export async function contarPorStatus() {
+export async function contarPorStatus(tipo) {
   const [linhas] = await pool.query(
-    "SELECT status, COUNT(*) AS total FROM equipamentos GROUP BY status",
+    `SELECT status, COUNT(*) AS total FROM equipamentos ${tipo ? "WHERE tipo = ?" : ""} GROUP BY status`,
+    tipo ? [tipo] : [],
   );
   return linhas;
 }

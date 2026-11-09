@@ -14,6 +14,19 @@
   font-family: "DM Sans", sans-serif;
 }
 
+.menuButton {
+  display: none;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  color: var(--white-smoke, #f5f3f4);
+  background: var(--surface-high, #262a2e);
+  border: 1px solid var(--border-subtle, #22272b);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .trilha {
   display: flex;
   align-items: center;
@@ -84,7 +97,10 @@
   color: #fff;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+  .menuButton {
+    display: flex;
+  }
   .barra {
     position: static;
     height: 48px;
@@ -114,6 +130,10 @@
   .trilha {
     gap: 3px;
     font-size: 9px;
+  }
+
+  .trilha span:not(:last-child) {
+    display: none;
   }
 
   .trilha span:nth-child(2),

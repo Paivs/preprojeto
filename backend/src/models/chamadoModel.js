@@ -87,23 +87,29 @@ export async function contarPorStatusESeveridade() {
   return { porStatus, porSeveridade };
 }
 
-export async function rankingFalhas() {
+export async function rankingFalhas(inicio, fim, tipo) {
   const [linhas] = await pool.query(
     `SELECT c.equipamento_id, e.nome AS equipamento_nome, COUNT(*) AS total
      FROM chamados_manutencao c
      LEFT JOIN equipamentos e ON e.id = c.equipamento_id
+     WHERE c.aberto_em >= ? AND c.aberto_em < DATE_ADD(?, INTERVAL 1 DAY)
+       AND (? IS NULL OR e.tipo = ?)
      GROUP BY c.equipamento_id, e.nome
      ORDER BY total DESC
      LIMIT 10`,
+    [inicio, fim, tipo ?? null, tipo ?? null],
   );
   return linhas;
 }
 
-export async function tempoMedioReparo() {
+export async function tempoMedioReparo(inicio, fim, tipo) {
   const [[{ mttr_horas }]] = await pool.query(
-    `SELECT AVG(TIMESTAMPDIFF(HOUR, aberto_em, concluido_em)) AS mttr_horas
-     FROM chamados_manutencao
-     WHERE status = 'CONCLUIDO' AND concluido_em IS NOT NULL`,
+    `SELECT AVG(TIMESTAMPDIFF(HOUR, c.aberto_em, c.concluido_em)) AS mttr_horas
+     FROM chamados_manutencao c LEFT JOIN equipamentos e ON e.id = c.equipamento_id
+     WHERE c.status = 'CONCLUIDO' AND c.concluido_em IS NOT NULL
+       AND c.concluido_em >= ? AND c.concluido_em < DATE_ADD(?, INTERVAL 1 DAY)
+       AND (? IS NULL OR e.tipo = ?)`,
+    [inicio, fim, tipo ?? null, tipo ?? null],
   );
   return mttr_horas === null ? null : Number(mttr_horas);
 }

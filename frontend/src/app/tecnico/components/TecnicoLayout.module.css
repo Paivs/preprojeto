@@ -35,8 +35,11 @@
 .sidebarFooter { display: flex; align-items: center; gap: 9px; margin-top: auto; padding: 18px 22px; color: var(--silver); border-top: 1px solid var(--border-subtle); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .statusDot { width: 7px; height: 7px; border-radius: 50%; background: var(--mahogany-red-2); box-shadow: 0 0 8px rgba(186, 24, 27, .55); }
 .content { min-height: 100vh; padding-left: 260px; }
-.topbar { position: sticky; z-index: 30; top: 0; display: flex; height: 64px; align-items: center; justify-content: flex-end; padding: 0 30px; background: rgba(11, 15, 18, .94); border-bottom: 1px solid var(--border-subtle); backdrop-filter: blur(12px); }
+.topbar { position: sticky; z-index: 30; top: 0; display: flex; height: 64px; align-items: center; justify-content: space-between; gap: 16px; padding: 0 30px; background: rgba(11, 15, 18, .94); border-bottom: 1px solid var(--border-subtle); backdrop-filter: blur(12px); }
 .account { display: flex; align-items: center; gap: 10px; }
+.trilha { display: flex; align-items: center; gap: 7px; min-width: 0; color: var(--silver); font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+.trilha span:nth-child(2), .trilha span:nth-child(4) { font-size: 16px; }
+.trilha strong { overflow: hidden; color: #ffb4ac; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 .avatar { display: grid; width: 34px; height: 34px; place-items: center; color: var(--white); background: var(--mahogany-red); border-radius: 50%; }
 .accountInfo { display: grid; gap: 2px; min-width: 130px; }
 .accountInfo strong { overflow: hidden; color: var(--white-smoke); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
@@ -44,7 +47,7 @@
 .logoutButton, .menuButton { display: flex; align-items: center; justify-content: center; gap: 7px; color: var(--white-smoke); background: var(--surface-high); border: 1px solid var(--border-subtle); border-radius: 4px; cursor: pointer; }
 .logoutButton { min-height: 36px; padding: 0 11px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
 .logoutButton:hover, .menuButton:hover { background: var(--surface-highest); }
-.main { min-width: 0; padding: 26px 30px 44px; }
+.main { min-width: 0; padding: var(--admin-space-page-y) var(--admin-space-page-x) 44px; }
 .menuButton { display: none; width: 38px; height: 38px; }
 .backdrop { display: none; }
 
@@ -53,6 +56,8 @@
   .sidebarAberta { transform: translateX(0); }
   .content { padding-left: 0; }
   .topbar { justify-content: space-between; padding: 0 20px; }
+  .trilha { font-size: 11px; }
+  .main { padding: 20px 20px 36px; }
   .menuButton { display: flex; }
   .closeMenu { display: grid; width: 34px; height: 34px; place-items: center; color: var(--white-smoke); background: transparent; border: 1px solid var(--border-subtle); cursor: pointer; }
   .backdrop { position: fixed; z-index: 45; inset: 0; display: block; background: rgba(0, 0, 0, .6); border: 0; }
@@ -60,7 +65,8 @@
 
 @media (max-width: 560px) {
   .topbar { padding: 0 12px; }
-  .main { padding: 20px 14px 32px; }
+  .trilha span:not(:last-child) { display: none; }
+  .main { padding: 18px 14px 28px; }
   .accountInfo { min-width: 0; max-width: 120px; }
   .logoutButton { width: 36px; padding: 0; font-size: 0; }
 }

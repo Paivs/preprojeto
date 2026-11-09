@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { listarAgendamentos, listarEquipamentos, listarInspecoes, listarTurmas } from "../lib/professorApi";
 import { getUsuario } from "@/lib/session";
+import { dataPorExtenso, saudacaoPorHorario } from "@/lib/saudacao";
 import { percentualEquipamentos, resumirEquipamentos } from "../lib/resumoProfessor";
 import styles from "./VisaoGeralProfessor.module.css";
 
@@ -33,10 +34,9 @@ export default function VisaoGeralProfessor() {
   );
   const primeiroNome = dados.professora?.nome?.split(" ")[0] || "professor";
   const hoje = new Date();
-  const hora = hoje.getHours();
   const hojeISO = dataLocalISO();
-  const dataFormatada = hoje.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }).toLocaleUpperCase("pt-BR");
-  const saudacao = hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+  const dataFormatada = dataPorExtenso(hoje);
+  const saudacao = saudacaoPorHorario(hoje);
 
   const reservasHoje = useMemo(() => dados.agendamentos
     .filter((item) => item.data === hojeISO && item.status !== "CANCELADO")
@@ -69,8 +69,12 @@ export default function VisaoGeralProfessor() {
       </section>
 
       <section className={styles.indicadores} aria-label="Resumo do laboratório">
-        {metricas.map((item) => (
-          <article className={`${styles.indicador} ${item.alerta ? styles.indicadorAlerta : ""}`} key={item.rotulo}>
+        {metricas.map((item, indice) => (
+          <article
+            className={`${styles.indicador} ${item.alerta ? styles.indicadorAlerta : ""} tenken-entrada`}
+            style={{ animationDelay: `${indice * 0.05}s` }}
+            key={item.rotulo}
+          >
             <div className={styles.indicadorTopo}>
               <h2>{item.rotulo}</h2>
               <span className={`material-symbols-outlined ${styles.indicadorIcone}`} aria-hidden="true">{item.icone}</span>

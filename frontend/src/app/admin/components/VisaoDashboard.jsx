@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CartaoMetrica from "./CartaoMetrica";
-import PainelEquipamentos from "./PainelEquipamentos";
-import PainelChamados from "./PainelChamados";
 import { somarTotais, nomeItem, valorItem, formatarPercentual } from "../lib/formatadores";
+import { dataPorExtenso, saudacaoPorHorario } from "@/lib/saudacao";
 import styles from "./VisaoDashboard.module.css";
 
 const SEVERIDADES = [
@@ -18,7 +17,10 @@ function normalizar(texto) {
   return String(texto ?? "").trim().toUpperCase();
 }
 
-export default function VisaoDashboard({ dashboard, loading, error, updatedAt, onRefresh }) {
+export default function VisaoDashboard({ usuario, dashboard, loading, error, updatedAt, onRefresh }) {
+  const [dataAtual, setDataAtual] = useState(null);
+  useEffect(() => setDataAtual(new Date()), []);
+  const primeiroNome = usuario?.nome?.trim().split(/\s+/)[0] || "administrador";
   const equipamentos = dashboard?.equipamentos;
   const chamados = dashboard?.chamados;
   const semDados = loading && !dashboard;
@@ -44,16 +46,24 @@ export default function VisaoDashboard({ dashboard, loading, error, updatedAt, o
     return mapa;
   }, [chamados]);
 
-  const severidadeTotal = Array.from(severidadePorChave.values()).reduce((a, b) => a + b, 0);
+  const comprimentoCirculo = 2 * Math.PI * 60;
+  let deslocamentoSegmento = 0;
+  const segmentosSeveridade = SEVERIDADES.map((def) => {
+    const quantidade = severidadePorChave.get(def.chave) ?? 0;
+    const percentual = totalAbertos ? (quantidade / totalAbertos) * 100 : 0;
+    const comprimento = comprimentoCirculo * percentual / 100;
+    const segmento = { ...def, quantidade, percentual, comprimento, deslocamento: deslocamentoSegmento };
+    deslocamentoSegmento += comprimento;
+    return segmento;
+  });
 
   return (
     <div className={styles.container}>
       {/* Top Header Bar */}
       <div className={styles.header}>
         <div className={styles.headerLeft}>
-          <div className={styles.badgeCluster}>
-          </div>
-          <h2 className={styles.pageTitle}>Visão Geral</h2>
+          {dataAtual ? <p className={styles.dataHoje}>{dataPorExtenso(dataAtual)}</p> : null}
+          <h1 className={styles.pageTitle}>{dataAtual ? `${saudacaoPorHorario(dataAtual)}, ${primeiroNome}.` : "Visão geral"}</h1>
           <div className={styles.syncRow}>
             <span className="material-symbols-outlined" style={{ fontSize: "16px", color: "var(--silver)" }}>schedule</span>
             <span className={styles.syncLabel}>Dados atualizados:</span>
@@ -136,111 +146,71 @@ export default function VisaoDashboard({ dashboard, loading, error, updatedAt, o
         />
       </div>
 
-      {/* Chamados Abertos por Severidade */}
-      <section className={styles.severitySection}>
+      <section className={styles.severitySection} aria-labelledby="severity-title">
         <div className={styles.severityHeader}>
           <div className={styles.severityTitleBlock}>
             <div className={styles.severityTitleRow}>
-              <h3 className={styles.severityTitle}>Chamados Abertos por Severidade</h3>
+              <span className={styles.severityTitleDot} aria-hidden="true" />
+              <h2 id="severity-title" className={styles.severityTitle}>Distribuição Percentual de Severidade</h2>
             </div>
-            <p className={styles.severitySubtitle}>Veja quantos chamados abertos há em cada nível de prioridade.</p>
-          </div>
-
-          <div className={styles.activeVolumeCard}>
-            <span className={styles.volumeLabel}>Chamados abertos</span>
-            <div className={styles.volumeNumberRow}>
-              <span className={styles.volumeNumber}>{totalAbertos}</span>
-              <span className={styles.volumeUnit}>no total</span>
-            </div>
+            <p className={styles.severitySubtitle}>
+              Proporção dos {totalAbertos} chamados ativos por nível de impacto.
+            </p>
           </div>
         </div>
 
-        {/* Segmented Distribution Bar */}
-        <div className={styles.segmentedBar}>
-          {SEVERIDADES.map((def) => {
-            const valor = severidadePorChave.get(def.chave) ?? 0;
-            const pct = severidadeTotal ? (valor / severidadeTotal) * 100 : 0;
-            return (
-              <div
-                key={def.chave}
-                className={`${styles.segment} ${styles[`segment_${def.tom}`]}`}
-                style={{ width: `${pct}%` }}
-                title={`${def.rotulo}: ${valor} chamados (${pct.toFixed(1)}%)`}
-              />
-            );
-          })}
-        </div>
-
-        {/* 4 Mini Cards */}
-        <div className={styles.miniCardsGrid}>
-          {SEVERIDADES.map((def) => {
-            const valor = severidadePorChave.get(def.chave) ?? 0;
-            const pctNum = severidadeTotal ? (valor / severidadeTotal) * 100 : 0;
-            const pctText = pctNum.toFixed(1) + "%";
-            return (
-              <div key={def.chave} className={`${styles.miniCard} ${styles[`miniCard_${def.tom}`]}`}>
-                <div className={styles.miniCardTop}>
-                  <span className={`${styles.miniLabel} ${styles[`text_${def.tom}`]}`}>{def.rotulo}</span>
-                </div>
-
-                <div className={styles.miniValueRow}>
-                  <span className={`${styles.miniValue} ${styles[`text_${def.tom}`]}`}>{valor}</span>
-                  <span className={styles.miniUnit}>chamados</span>
-                </div>
-
-                <div className={styles.miniImpactBlock}>
-                  <div className={styles.miniImpactText}>{pctText} dos chamados abertos</div>
-                  <div className={styles.miniTrack}>
-                    <div
-                      className={`${styles.miniFill} ${styles[`fill_${def.tom}`]}`}
-                      style={{ width: `${pctNum}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.miniHintBox}>
-                  <span className={`material-symbols-outlined ${styles[`text_${def.tom}`]}`} style={{ fontSize: "16px" }}>
-                    {def.icone}
-                  </span>
-                  <span className={styles.miniHintText}>{def.dica}</span>
-                </div>
+        <div className={styles.severityGrid}>
+          <div className={styles.donutColumn}>
+            <div className={styles.donutWrap} role="img" aria-label={`Distribuição de severidade entre ${totalAbertos} chamados ativos`}>
+              <svg className={styles.donutSvg} viewBox="0 0 160 160" aria-hidden="true">
+                <circle className={styles.donutTrack} cx="80" cy="80" r="60" />
+                {segmentosSeveridade.map((segmento) => (
+                  <circle
+                    key={segmento.chave}
+                    className={`${styles.donutSlice} ${styles[`donut_${segmento.tom}`]}`}
+                    cx="80"
+                    cy="80"
+                    r="60"
+                    strokeDasharray={`${segmento.comprimento} ${comprimentoCirculo - segmento.comprimento}`}
+                    strokeDashoffset={-segmento.deslocamento}
+                    transform="rotate(-90 80 80)"
+                  />
+                ))}
+              </svg>
+              <div className={styles.donutCenter}>
+                <span>Chamados ativos</span>
+                <strong>{totalAbertos}</strong>
+                <span>no total</span>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Directive Footer Strip with MTTA Ticker */}
-        <div className={styles.directiveFooter}>
-          <div className={styles.directiveLeft}>
-            <div className={styles.directiveIcon}>
-              <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>rule</span>
             </div>
-            <div className={styles.directiveText}>
-              <span className={styles.directiveTitle}>Ordem de atendimento</span>
-              <span className={styles.directiveSub}>Comece pelos chamados de prioridade crítica.</span>
-            </div>
+            <span className={styles.donutCaption}>Percentual do total ativo</span>
           </div>
 
-          <div className={styles.directiveRight}>
-            <span className={styles.mttaPulse} />
-            <span className={styles.mttaText}>Acompanhe os chamados abertos e suas prioridades.</span>
+          <div className={styles.severityDetails}>
+            <div className={styles.severityCards}>
+              {segmentosSeveridade.map((segmento) => (
+                <article key={segmento.chave} className={`${styles.severityCard} ${styles[`severityCard_${segmento.tom}`]}`}>
+                  <div className={styles.severityCardInfo}>
+                    <span className={`${styles.legendDot} ${styles[`legendDot_${segmento.tom}`]}`} aria-hidden="true" />
+                    <div className={styles.severityLabels}>
+                      <strong>{segmento.rotulo}</strong>
+                      <span>{segmento.quantidade} {segmento.quantidade === 1 ? "chamado" : "chamados"}</span>
+                    </div>
+                  </div>
+                  <div className={styles.severityValues}>
+                    <strong>{segmento.percentual.toFixed(1)}%</strong>
+                    <span>{segmento.dica}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className={styles.severityNote}>
+              <span className="material-symbols-outlined" aria-hidden="true">analytics</span>
+              <span>Percentuais calculados sobre <strong>{totalAbertos}</strong> chamados ativos.</span>
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Distribution Panels */}
-      <div className={styles.panelsRow}>
-        <PainelEquipamentos
-          total={equipamentos?.total}
-          porStatus={equipamentos?.por_status}
-          carregando={semDados}
-        />
-        <PainelChamados
-          porStatus={chamados?.por_status}
-          porSeveridade={chamados?.por_severidade_em_aberto}
-          carregando={semDados}
-        />
-      </div>
     </div>
   );
 }

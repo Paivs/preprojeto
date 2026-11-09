@@ -25,6 +25,12 @@
   --status-neutral-bg: #1f2428;
   --accent-tertiary: #9ecaff;
   --accent-tertiary-bg: #003258;
+  --admin-font-caption: 12px;
+  --admin-font-supporting: 14px;
+  --admin-font-body: 15px;
+  --admin-font-page-title: 32px;
+  --admin-space-page-x: 30px;
+  --admin-space-page-y: 26px;
 }
 
 .material-symbols-outlined {
@@ -626,5 +632,27 @@ a {
 ::selection {
   background: var(--mahogany-red);
   color: var(--white);
+}
+
+/* Entrada sutil dos cards dos dashboards */
+@keyframes tenkenEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tenken-entrada {
+  animation: tenkenEntrada 0.32s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tenken-entrada {
+    animation: none;
+  }
 }
 

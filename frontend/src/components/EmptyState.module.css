@@ -1,0 +1,27 @@
+.vazio {
+  display: grid;
+  min-height: 220px;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  padding: 26px;
+  text-align: center;
+}
+
+.vazio > span {
+  color: #9b5558;
+  font-size: 28px;
+}
+
+.vazio h3 {
+  margin: 10px 0 5px;
+  color: var(--white-smoke, #f5f3f4);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.vazio p {
+  margin: 0;
+  color: var(--silver, #b1a7a6);
+  font-size: 13px;
+}

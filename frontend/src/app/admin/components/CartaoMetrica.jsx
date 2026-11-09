@@ -1,8 +1,8 @@
 import styles from "./CartaoMetrica.module.css";
 
-export default function CartaoMetrica({ icone, categoria, titulo, valor, unidade, contexto, badge, critico }) {
+export default function CartaoMetrica({ icone, categoria, titulo, valor, unidade, contexto, badge, critico, estilo }) {
   return (
-    <article className={`${styles.cartao} ${critico ? styles.cartaoCritico : ""}`}>
+    <article className={`${styles.cartao} ${critico ? styles.cartaoCritico : ""} tenken-entrada`} style={estilo}>
       <span className={`${styles.barraTopo} ${critico ? styles.barraTopoCritica : ""}`} />
 
       <div className={styles.topo}>

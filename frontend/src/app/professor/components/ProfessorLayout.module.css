@@ -1,7 +1,7 @@
 .wrapper {
-  --professor-font-caption: 12px;
-  --professor-font-supporting: 13.5px;
-  --professor-font-body: 15px;
+  --professor-font-caption: var(--admin-font-caption);
+  --professor-font-supporting: var(--admin-font-supporting);
+  --professor-font-body: var(--admin-font-body);
 
   display: flex;
   min-height: 100vh;
@@ -21,7 +21,7 @@
 .mainView {
   min-height: calc(100vh - 64px);
   margin-top: 64px;
-  padding: 28px 32px 48px;
+  padding: var(--admin-space-page-y) var(--admin-space-page-x) 48px;
 }
 
 .loading {
@@ -33,7 +33,19 @@
   font-family: "DM Sans", sans-serif;
 }
 
-@media (max-width: 900px) {
+.backdrop {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .backdrop {
+    position: fixed;
+    z-index: 45;
+    display: block;
+    inset: 0;
+    background: rgba(0, 0, 0, .6);
+    border: 0;
+  }
   .wrapper {
     flex-direction: column;
   }
@@ -45,7 +57,7 @@
   .mainView {
     min-height: auto;
     margin-top: 0;
-    padding: 22px 20px 36px;
+    padding: 20px 20px 36px;
   }
 }
 
