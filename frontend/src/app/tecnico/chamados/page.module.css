@@ -33,10 +33,6 @@
 .detalhes { display: flex; flex-wrap: wrap; gap: 8px 22px; padding-top: 10px; color: var(--silver); border-top: 1px solid var(--border-subtle); font-size: 10px; }
 .detalhes strong { margin-right: 5px; color: var(--dust-grey); font-weight: 600; }
 .erro { margin: 0 0 14px; padding: 12px 14px; color: var(--white-smoke); background: rgba(164, 22, 26, .18); border: 1px solid var(--mahogany-red-2); border-radius: 4px; font-size: 13px; }
-.vazio { display: grid; min-height: 230px; align-content: center; justify-items: center; gap: 8px; padding: 24px; color: var(--silver); text-align: center; background: var(--surface-low, #181c1f); border: 1px dashed var(--border-subtle); border-radius: 4px; }
-.vazio > span { color: var(--mahogany-red-2); font-size: 30px; }
-.vazio h2 { margin: 0; color: var(--white-smoke); font-size: 16px; }
-.vazio p { margin: 0; font-size: 12px; }
 @keyframes girar { to { transform: rotate(360deg); } }
 @media (max-width: 760px) { .filtros { grid-template-columns: 1fr 1fr; } .busca { grid-column: 1 / -1; } }
 @media (max-width: 560px) { .header { align-items: flex-start; flex-direction: column; } .filtros { grid-template-columns: 1fr; } .busca { grid-column: auto; } .cartao { padding: 15px; } .detalhes { flex-direction: column; gap: 6px; } }
