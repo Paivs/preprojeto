@@ -73,7 +73,7 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-admin-shell>
       {/* Persistent Technical Sidebar */}
       <BarraLateral statusApi={statusApi} aberta={menuAberto} onNavegar={() => setMenuAberto(false)} onFechar={() => setMenuAberto(false)} />
       {menuAberto && <button type="button" className={styles.backdrop} aria-label="Fechar menu" onClick={() => setMenuAberto(false)} />}
@@ -81,7 +81,7 @@ export default function AdminLayout({ children }) {
       {/* Main Administrative Spine */}
       <div className={styles.contentSpine}>
         {/* Fixed Technical Topbar */}
-        <header className={styles.topbar}>
+        <header className={styles.topbar} data-admin-navigation>
           <button type="button" className={styles.menuBtn} onClick={() => setMenuAberto(true)} aria-label="Abrir menu" aria-expanded={menuAberto}>
             <span className="material-symbols-outlined">menu</span>
           </button>

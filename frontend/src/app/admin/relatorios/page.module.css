@@ -675,6 +675,7 @@
 .printSummary { display: none; }
 
 @media print {
+  :global([data-admin-shell] > :first-child), :global([data-admin-navigation]) { display: none !important; }
   .container { color: #111; background: #fff; gap: 12px; padding: 0; }
   .header { padding-top: 0; }
   .exportWrapper, .filterGroup button, .alertError, .alertSuccess { display: none !important; }
