@@ -27,9 +27,11 @@ async function conferirSenha(usuario, senhaDigitada) {
 }
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const jwtSecret = process.env.JWT_SECRET || 'chave-padrao-desenvolvimento';
+function assinarToken(payload, options) {
+  return jwt.sign(payload, obterSegredo(), options);
+}
 
-export async function registrar({ nome, email, senha } = {}) {
+export async function registrar({ nome, cnpj, email, senha } = {}) {
   const nomeLimpo = typeof nome === 'string' ? nome.trim() : '';
   const emailLimpo = typeof email === 'string' ? email.trim().toLowerCase() : '';
 
@@ -58,11 +60,18 @@ export async function registrar({ nome, email, senha } = {}) {
   }
 
   const senhaHash = await bcrypt.hash(senha, 10);
+  const cnpjLimpo = typeof cnpj === 'string' ? cnpj.trim() : '';
+  if (!cnpjLimpo) {
+    throw new TypeError('Informe o CNPJ.');
+  }
+
   return await UsuarioModel.criar({
     nome: nomeLimpo,
+    cnpj: cnpjLimpo,
     email: emailLimpo,
     senhaHash,
-    perfil: 'usuario'
+    // Registro público nunca pode conceder privilégios administrativos.
+    perfil: 'cliente'
   });
 }
 
@@ -77,9 +86,8 @@ export async function login({ email, senha } = {}) {
     throw erro;
   }
 
-  const token = jwt.sign(
+  const token = assinarToken(
     { perfil: usuario.perfil },
-    jwtSecret,
     { subject: String(usuario.id_usuario), expiresIn: '2h' }
   );
 

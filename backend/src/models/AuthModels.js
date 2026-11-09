@@ -25,7 +25,7 @@ export async function criar({ nome, cnpj, email, senhaHash, perfil = 'cliente' }
   const [resultado] = await pool.query(sql, [nome, cnpj, email, senhaHash, perfil]);
   return {
     id: resultado.insertId,
-    nome,
+    nome_empresa: nome,
     cnpj,
     email,
     perfil
