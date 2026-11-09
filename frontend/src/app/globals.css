@@ -25,6 +25,12 @@
   --status-neutral-bg: #1f2428;
   --accent-tertiary: #9ecaff;
   --accent-tertiary-bg: #003258;
+  --admin-font-caption: 12px;
+  --admin-font-supporting: 14px;
+  --admin-font-body: 15px;
+  --admin-font-page-title: 32px;
+  --admin-space-page-x: 30px;
+  --admin-space-page-y: 26px;
 }
 
 .material-symbols-outlined {

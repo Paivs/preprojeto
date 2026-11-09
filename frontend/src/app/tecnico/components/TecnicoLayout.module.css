@@ -47,7 +47,7 @@
 .logoutButton, .menuButton { display: flex; align-items: center; justify-content: center; gap: 7px; color: var(--white-smoke); background: var(--surface-high); border: 1px solid var(--border-subtle); border-radius: 4px; cursor: pointer; }
 .logoutButton { min-height: 36px; padding: 0 11px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
 .logoutButton:hover, .menuButton:hover { background: var(--surface-highest); }
-.main { min-width: 0; padding: 26px 30px 44px; }
+.main { min-width: 0; padding: var(--admin-space-page-y) var(--admin-space-page-x) 44px; }
 .menuButton { display: none; width: 38px; height: 38px; }
 .backdrop { display: none; }
 
@@ -57,6 +57,7 @@
   .content { padding-left: 0; }
   .topbar { justify-content: space-between; padding: 0 20px; }
   .trilha { font-size: 11px; }
+  .main { padding: 20px 20px 36px; }
   .menuButton { display: flex; }
   .closeMenu { display: grid; width: 34px; height: 34px; place-items: center; color: var(--white-smoke); background: transparent; border: 1px solid var(--border-subtle); cursor: pointer; }
   .backdrop { position: fixed; z-index: 45; inset: 0; display: block; background: rgba(0, 0, 0, .6); border: 0; }
@@ -65,7 +66,7 @@
 @media (max-width: 560px) {
   .topbar { padding: 0 12px; }
   .trilha span:not(:last-child) { display: none; }
-  .main { padding: 20px 14px 32px; }
+  .main { padding: 18px 14px 28px; }
   .accountInfo { min-width: 0; max-width: 120px; }
   .logoutButton { width: 36px; padding: 0; font-size: 0; }
 }

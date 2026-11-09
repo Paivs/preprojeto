@@ -1,7 +1,7 @@
 .container { display: flex; width: 100%; flex-direction: column; font-family: "DM Sans", sans-serif; }
 .header { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: 22px; }
 .sobretitulo { margin: 0 0 7px; color: var(--mahogany-red-2); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.titulo { margin: 0; color: var(--white-smoke); font-size: 30px; line-height: 1.2; }
+.titulo { margin: 0; color: var(--white-smoke); font-size: var(--admin-font-page-title); line-height: 1.2; }
 .descricao { margin: 9px 0 0; color: var(--silver); font-size: 14px; line-height: 1.55; }
 .atualizar { display: inline-flex; min-height: 38px; align-items: center; gap: 8px; padding: 0 13px; color: var(--white-smoke); background: var(--surface-high); border: 1px solid var(--border-subtle); border-radius: 6px; cursor: pointer; font: inherit; font-size: 12px; font-weight: 700; letter-spacing: .03em; }
 .atualizar:disabled { cursor: wait; opacity: .7; }
