@@ -29,34 +29,12 @@
   text-decoration: none;
 }
 
-.brandBadge {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  place-items: center;
-  background: var(--mahogany-red, #a4161a);
-  color: #fff;
-  font-size: 20px;
-}
-
-.brandInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  line-height: 1.15;
-}
-
-.brandTitle {
-  color: var(--white-smoke, #f5f3f4);
-  font-size: var(--professor-font-body);
-  letter-spacing: .08em;
-}
-
-.brandSub {
-  color: var(--silver, #b1a7a6);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .16em;
+.brandLogo {
+  display: block;
+  width: 150px;
+  height: 36px;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .sectionHeading {
@@ -208,20 +186,6 @@
   .brandHeader {
     height: 50px;
     padding: 0 14px;
-  }
-
-  .brandBadge {
-    width: 28px;
-    height: 28px;
-    font-size: 20px;
-  }
-
-  .brandTitle {
-    font-size: var(--professor-font-body);
-  }
-
-  .brandSub {
-    font-size: 10px;
   }
 
   .navMenu {

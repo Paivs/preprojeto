@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./BarraLateralProfessor.module.css";
 
@@ -21,11 +22,7 @@ export default function BarraLateralProfessor({ usuario }) {
       <div className={styles.topSection}>
         <div className={styles.brandHeader}>
           <Link href="/" className={styles.brandLink} aria-label="Tenken início">
-            <span className={`material-symbols-outlined ${styles.brandBadge}`} aria-hidden="true">precision_manufacturing</span>
-            <span className={styles.brandInfo}>
-              <strong className={styles.brandTitle}>TENKEN</strong>
-              <span className={styles.brandSub}>GESTÃO DE LABORATÓRIO</span>
-            </span>
+            <Image src="/assets/img/logo-site/logo_horizontal.svg" alt="Tenken" width={150} height={36} priority className={styles.brandLogo} />
           </Link>
         </div>
 

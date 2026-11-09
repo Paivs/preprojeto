@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { clearSession, getToken, getUsuario } from "@/lib/session";
@@ -39,7 +40,7 @@ export default function TecnicoLayout({ children }) {
       <aside className={`${styles.sidebar} ${menuAberto ? styles.sidebarAberta : ""}`}>
         <div className={styles.brand}>
           <Link href="/tecnico" aria-label="Tenken — painel técnico">
-            <img src="/assets/img/logo-site/logo_horizontal.svg" alt="Tenken" />
+            <Image src="/assets/img/logo-site/logo_horizontal.svg" alt="Tenken" width={160} height={38} priority />
           </Link>
           <button type="button" className={styles.closeMenu} onClick={() => setMenuAberto(false)} aria-label="Fechar menu">
             <span className="material-symbols-outlined">close</span>
