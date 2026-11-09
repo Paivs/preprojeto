@@ -183,7 +183,7 @@ export default function CadastroPage() {
             <button className={styles.button} type="submit" disabled={enviando}>{enviando ? "Gerando" : "Gerar matrícula"}</button>
           </form>
           <p className={styles.linkRow}>
-            Já tem matrícula?{" "}
+            Você já é matriculado?{" "}
             <button className={styles.linkButton} type="button" onClick={irParaEtapaMatricula}>
               Já tenho matrícula
             </button>
