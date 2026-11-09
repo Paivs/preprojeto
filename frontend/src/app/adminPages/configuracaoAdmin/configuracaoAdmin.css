@@ -1,0 +1,118 @@
+.conteudo-principal {
+    margin-left: 245px;
+    min-height: 100vh;
+}
+
+.conteudo-pagina {
+    padding: 24px 32px 48px;
+}
+
+.cabecalho-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.cabecalho-etiqueta {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--amarelo);
+}
+
+.cabecalho-pagina h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 8px 0 6px;
+    color: var(--dark-text-primary);
+}
+
+.cabecalho-pagina p {
+    font-size: 14px;
+    color: var(--cor-texto-secundario);
+}
+
+.grid-group-config {
+    display: flex;
+    flex-direction: column;
+}
+
+.group-config {
+    border: 1px solid var(--roxo);
+    border-radius: 12px;
+    background: var(--dark-bg-card);
+    padding: 20px 30px;
+}
+
+.cabecalho-dados {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid;
+    padding: 10px 0;
+    margin-bottom: 1rem;
+}
+
+.cabecalho-dados i {
+    color: var(--light-primary);
+    background: var(--roxo-suave);
+    padding: 7px 10px;
+    border-radius: 6px;
+}
+
+.tema-dados {
+    line-height: 0;
+    margin-bottom: .5rem;
+    font-family: var(--font-primary);
+}
+
+.tema-dados h4 {
+    color: var(--branco);
+    font-size: 1.05rem;
+}
+
+.tema-dados span {
+    font-size: .7rem;
+    color: var(--dark-text-tertiary);
+}
+
+.main-dados {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.group-value {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.dados-config {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dados-config label {
+    color: var(--dark-text-primary);
+    font-family: var(--font-primary);
+    font-size: .9rem;
+}
+
+.dados-config input {
+    padding: 10px 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    background: var(--dark-bg-input);
+    color: var(--branco);
+    font-size: .8rem;
+    outline: none;
+}
+
+.dados-config input:focus {
+    border: 1px solid var(--roxo);
+}

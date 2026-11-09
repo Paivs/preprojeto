@@ -1,0 +1,63 @@
+.botao-adicionar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 42px;
+    border: none;
+    padding: 0 18px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--roxo-claro), var(--roxo));
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.botao-adicionar:hover {
+    background: var(--roxo-hover);
+}
+
+.botao-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-card);
+    color: var(--cor-texto-secundario);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.botao-secundario:hover {
+    background: var(--roxo-suave);
+}
+
+.botao-fechar {
+    margin-left: auto;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: 1px solid var(--cor-borda);
+    display: grid;
+    place-items: center;
+    color: var(--cor-texto-secundario);
+    cursor: pointer;
+}
+
+.botao-fechar:hover {
+    background: var(--roxo-suave);
+}
+
+@media (max-width: 700px) {
+    .botao-adicionar {
+        width: 100%;
+    }
+}

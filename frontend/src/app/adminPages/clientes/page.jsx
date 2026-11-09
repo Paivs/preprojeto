@@ -8,14 +8,14 @@ export default function Clientes() {
       <Sidebar />
 
       <div className="conteudo-principal">
-        <Header />
+        <Header tipoUsuario="admin" />
 
         <main className="conteudo-pagina">
           <div className="cabecalho-pagina">
             <div>
               <span className="cabecalho-etiqueta">CONTROLE DE ATIVOS</span>
 
-              <h1>Contatos</h1>
+              <h1>Clientes</h1>
 
               <p>Gerencie sua base, planos e consumo em um só lugar</p>
             </div>
@@ -105,7 +105,7 @@ export default function Clientes() {
                       <strong>12.840 kWh</strong>
                     </td>
                     <td>
-                      <span class="badge-status ativo">● Ativo</span>
+                      <span className="badge-status ativo">● Ativo</span>
                     </td>
                     <td>
                       <button type="button" className="btn-opcoes">
