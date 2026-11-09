@@ -83,7 +83,7 @@ export default function TecnicoLayout({ children }) {
           <button type="button" className={styles.menuButton} onClick={() => setMenuAberto(true)} aria-label="Abrir menu">
             <span className="material-symbols-outlined">menu</span>
           </button>
-          <nav className={styles.trilha} aria-label="LocalizaÃ§Ã£o atual">
+          <nav className={styles.trilha} aria-label="Localização atual">
             <span>TENKEN</span>
             <span className="material-symbols-outlined" aria-hidden="true">chevron_right</span>
             <span>Operação Técnica</span>
