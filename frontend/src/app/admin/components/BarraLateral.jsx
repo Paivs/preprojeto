@@ -8,6 +8,7 @@ const itens = [
   { href: "/admin", label: "Resumo", icon: "dashboard" },
   { href: "/admin/equipamentos", label: "Equipamentos", icon: "settings_input_component" },
   { href: "/admin/chamados", label: "Chamados e OS", icon: "confirmation_number" },
+  { href: "/admin/turmas", label: "Turmas", icon: "groups" },
   { href: "/admin/usuarios", label: "Usuários", icon: "manage_accounts" },
   { href: "/admin/relatorios", label: "Relatórios", icon: "analytics" },
 ];

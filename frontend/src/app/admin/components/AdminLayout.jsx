@@ -30,6 +30,7 @@ export default function AdminLayout({ children }) {
     "/admin": "Visão geral",
     "/admin/chamados": "Chamados",
     "/admin/equipamentos": "Equipamentos",
+    "/admin/turmas": "Turmas",
     "/admin/relatorios": "Relatórios",
     "/admin/usuarios": "Usuários",
   };
