@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BarraLateralProfessor from "./BarraLateralProfessor";
 import BarraSuperiorProfessor from "./BarraSuperiorProfessor";
-import ProfessorDemoProvider from "./ProfessorDemoProvider";
 import { apiFetch } from "@/lib/api";
 import { clearSession, getToken, getUsuario } from "@/lib/session";
 import styles from "./ProfessorLayout.module.css";
@@ -65,14 +64,12 @@ export default function ProfessorLayout({ children, titulo }) {
   if (verificando || !usuario) return <main className={styles.loading}>Verificando acesso...</main>;
 
   return (
-    <ProfessorDemoProvider professora={usuario}>
-      <div className={styles.wrapper}>
-        <BarraLateralProfessor />
+    <div className={styles.wrapper}>
+        <BarraLateralProfessor usuario={usuario} />
         <div className={styles.contentSpine}>
           <BarraSuperiorProfessor titulo={titulo} usuario={usuario} onSair={sair} />
           <main className={styles.mainView}>{children}</main>
         </div>
       </div>
-    </ProfessorDemoProvider>
   );
 }

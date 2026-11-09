@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useProfessorDemo } from "./ProfessorDemoProvider";
 import styles from "./BarraLateralProfessor.module.css";
 
 const itens = [
@@ -13,10 +12,9 @@ const itens = [
   { href: "/professor/equipamentos", label: "Equipamentos", icon: "precision_manufacturing", pronto: true },
 ];
 
-export default function BarraLateralProfessor() {
+export default function BarraLateralProfessor({ usuario }) {
   const pathname = usePathname();
-  const { dados } = useProfessorDemo();
-  const nome = dados.professora?.nome || "Professora";
+  const nome = usuario?.nome || "Professora";
 
   return (
     <aside className={styles.sidebar}>

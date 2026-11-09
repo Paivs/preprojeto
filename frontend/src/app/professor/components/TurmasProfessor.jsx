@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useProfessorDemo } from "./ProfessorDemoProvider";
+import { useEffect, useMemo, useState } from "react";
+import { listarAgendamentos, listarTurmas } from "../lib/professorApi";
 import ModalProfessor from "./ModalProfessor";
 import styles from "./TurmasProfessor.module.css";
 
@@ -14,7 +14,14 @@ function formatarData(data, inicio) {
 }
 
 export default function TurmasProfessor() {
-  const { dados } = useProfessorDemo();
+  const [dados, setDados] = useState({ turmas: [], agendamentos: [] });
+  useEffect(() => {
+    let ativo = true;
+    Promise.all([listarTurmas(), listarAgendamentos()]).then(([turmas, agendamentos]) => {
+      if (ativo) setDados({ turmas, agendamentos });
+    }).catch(() => {});
+    return () => { ativo = false; };
+  }, []);
   const [busca, setBusca] = useState("");
   const [turmaId, setTurmaId] = useState(null);
   const turmaSelecionada = dados.turmas.find((item) => item.id === turmaId);

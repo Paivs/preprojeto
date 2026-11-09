@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
-import { useProfessorDemo } from "./ProfessorDemoProvider";
+import { useEffect, useMemo, useState } from "react";
+import { listarAgendamentos, listarEquipamentos, listarInspecoes, listarTurmas } from "../lib/professorApi";
+import { getUsuario } from "@/lib/session";
 import { percentualEquipamentos, resumirEquipamentos } from "../lib/resumoProfessor";
 import styles from "./VisaoGeralProfessor.module.css";
 
@@ -18,7 +19,14 @@ function rotuloStatus(status) {
 }
 
 export default function VisaoGeralProfessor() {
-  const { dados } = useProfessorDemo();
+  const [dados, setDados] = useState({ professora: getUsuario(), agendamentos: [], equipamentos: [], inspecoes: [], turmas: [] });
+  useEffect(() => {
+    let ativo = true;
+    Promise.all([listarAgendamentos(), listarEquipamentos(), listarInspecoes(), listarTurmas()])
+      .then(([agendamentos, equipamentos, inspecoes, turmas]) => { if (ativo) setDados((atual) => ({ ...atual, agendamentos, equipamentos, inspecoes, turmas })); })
+      .catch(() => {});
+    return () => { ativo = false; };
+  }, []);
   const resumoEquipamentos = useMemo(
     () => resumirEquipamentos(dados.equipamentos),
     [dados.equipamentos],

@@ -39,6 +39,14 @@ export async function buscarPorId(id) {
   return linhas[0] || null;
 }
 
+export async function buscarPorMatricula(matricula) {
+  const [linhas] = await pool.query(
+    "SELECT id, nome, email, perfil, matricula, senha_hash, ativo FROM usuarios WHERE matricula = ?",
+    [matricula],
+  );
+  return linhas[0] || null;
+}
+
 export async function atualizarPerfil(id, perfil) {
   const [resultado] = await pool.query("UPDATE usuarios SET perfil = ? WHERE id = ?", [perfil, id]);
   return resultado.affectedRows > 0;

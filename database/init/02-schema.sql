@@ -91,6 +91,7 @@ CREATE TABLE agendamentos (
     responsavel_id BIGINT UNSIGNED NOT NULL,
     equipamento_id BIGINT UNSIGNED NOT NULL,
     turma_id BIGINT UNSIGNED NOT NULL,
+    atividade VARCHAR(120),
     inicio DATETIME NOT NULL,
     fim DATETIME NOT NULL,
     token_acesso VARCHAR(20) NOT NULL UNIQUE,
