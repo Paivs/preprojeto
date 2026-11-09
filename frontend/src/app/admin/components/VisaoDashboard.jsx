@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CartaoMetrica from "./CartaoMetrica";
 import PainelEquipamentos from "./PainelEquipamentos";
 import PainelChamados from "./PainelChamados";
 import { somarTotais, nomeItem, valorItem, formatarPercentual } from "../lib/formatadores";
+import { dataPorExtenso, saudacaoPorHorario } from "@/lib/saudacao";
 import styles from "./VisaoDashboard.module.css";
 
 const SEVERIDADES = [
@@ -18,7 +19,10 @@ function normalizar(texto) {
   return String(texto ?? "").trim().toUpperCase();
 }
 
-export default function VisaoDashboard({ dashboard, loading, error, updatedAt, onRefresh }) {
+export default function VisaoDashboard({ usuario, dashboard, loading, error, updatedAt, onRefresh }) {
+  const [dataAtual, setDataAtual] = useState(null);
+  useEffect(() => setDataAtual(new Date()), []);
+  const primeiroNome = usuario?.nome?.trim().split(/\s+/)[0] || "administrador";
   const equipamentos = dashboard?.equipamentos;
   const chamados = dashboard?.chamados;
   const semDados = loading && !dashboard;
@@ -51,9 +55,8 @@ export default function VisaoDashboard({ dashboard, loading, error, updatedAt, o
       {/* Top Header Bar */}
       <div className={styles.header}>
         <div className={styles.headerLeft}>
-          <div className={styles.badgeCluster}>
-          </div>
-          <h2 className={styles.pageTitle}>Visão Geral</h2>
+          {dataAtual ? <p className={styles.dataHoje}>{dataPorExtenso(dataAtual)}</p> : null}
+          <h1 className={styles.pageTitle}>{dataAtual ? `${saudacaoPorHorario(dataAtual)}, ${primeiroNome}.` : "Visão geral"}</h1>
           <div className={styles.syncRow}>
             <span className="material-symbols-outlined" style={{ fontSize: "16px", color: "var(--silver)" }}>schedule</span>
             <span className={styles.syncLabel}>Dados atualizados:</span>

@@ -56,6 +56,14 @@
   line-height: 1.15;
 }
 
+.dataHoje {
+  margin: 0 0 4px;
+  color: var(--silver, #b1a7a6);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
 .syncRow {
   display: flex;
   align-items: center;
