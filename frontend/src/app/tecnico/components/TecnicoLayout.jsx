@@ -10,6 +10,7 @@ import styles from "./TecnicoLayout.module.css";
 export default function TecnicoLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
+  const tituloPagina = pathname.startsWith("/tecnico/chamados") ? "Chamados" : "VisÃ£o geral";
   const [usuario, setUsuario] = useState(null);
   const [menuAberto, setMenuAberto] = useState(false);
 
@@ -82,6 +83,13 @@ export default function TecnicoLayout({ children }) {
           <button type="button" className={styles.menuButton} onClick={() => setMenuAberto(true)} aria-label="Abrir menu">
             <span className="material-symbols-outlined">menu</span>
           </button>
+          <nav className={styles.trilha} aria-label="LocalizaÃ§Ã£o atual">
+            <span>TENKEN</span>
+            <span className="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+            <span>OperaÃ§Ã£o tÃ©cnica</span>
+            <span className="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+            <strong>{tituloPagina}</strong>
+          </nav>
           <div className={styles.account}>
             <span className={styles.avatar}><span className="material-symbols-outlined">engineering</span></span>
             <span className={styles.accountInfo}>
