@@ -15,12 +15,12 @@ function calcularDatasPeriodo(opcao) {
 
   if (opcao === "30d") {
     const d = new Date(agora);
-    d.setDate(d.getDate() - 30);
+    d.setDate(d.getDate() - 29);
     return { inicio: dataLocal(d), fim: hojeStr };
   }
   if (opcao === "90d") {
     const d = new Date(agora);
-    d.setDate(d.getDate() - 90);
+    d.setDate(d.getDate() - 89);
     return { inicio: dataLocal(d), fim: hojeStr };
   }
   if (opcao === "year") {
