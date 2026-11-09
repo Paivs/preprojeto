@@ -32,7 +32,7 @@ function validarDados(dados = {}) {
     nome_setor: nome,
     descricao,
     consumo_geral: validarValor(dados.consumo_geral, 'Consumo geral'),
-    custo_energia: validarValor(dados.custo_energia, 'Custo de energia')
+    custo: validarValor(dados.custo, 'Custo de energia')
   };
 }
 

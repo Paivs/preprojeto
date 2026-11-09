@@ -2,7 +2,7 @@ import { pool } from '../config/database.js';
 
 export async function listarPorUsuario(idUsuario) {
   const [linhas] = await pool.query(
-    `SELECT id_setor, nome_setor, descricao, consumo_geral, custo_energia
+    `SELECT id_setor, nome_setor, descricao, consumo_geral, custo
        FROM setor
       WHERE id_usuario = ?
       ORDER BY id_setor`,
@@ -13,7 +13,7 @@ export async function listarPorUsuario(idUsuario) {
 
 export async function buscarPorId(idSetor, idUsuario) {
   const [linhas] = await pool.query(
-    `SELECT id_setor, nome_setor, descricao, consumo_geral, custo_energia
+    `SELECT id_setor, nome_setor, descricao, consumo_geral, custo
        FROM setor
       WHERE id_setor = ? AND id_usuario = ?`,
     [idSetor, idUsuario]
@@ -23,9 +23,9 @@ export async function buscarPorId(idSetor, idUsuario) {
 
 export async function criar(setor, idUsuario) {
   const [resultado] = await pool.query(
-    `INSERT INTO setor (nome_setor, descricao, consumo_geral, custo_energia, id_usuario)
+    `INSERT INTO setor (nome_setor, descricao, consumo_geral, custo, id_usuario)
      VALUES (?, ?, ?, ?, ?)`,
-    [setor.nome_setor, setor.descricao, setor.consumo_geral, setor.custo_energia, idUsuario]
+    [setor.nome_setor, setor.descricao, setor.consumo_geral, setor.custo, idUsuario]
   );
   return buscarPorId(resultado.insertId, idUsuario);
 }
@@ -33,9 +33,9 @@ export async function criar(setor, idUsuario) {
 export async function atualizar(idSetor, setor, idUsuario) {
   await pool.query(
     `UPDATE setor
-        SET nome_setor = ?, descricao = ?, consumo_geral = ?, custo_energia = ?
+        SET nome_setor = ?, descricao = ?, consumo_geral = ?, custo = ?
       WHERE id_setor = ? AND id_usuario = ?`,
-    [setor.nome_setor, setor.descricao, setor.consumo_geral, setor.custo_energia, idSetor, idUsuario]
+    [setor.nome_setor, setor.descricao, setor.consumo_geral, setor.custo, idSetor, idUsuario]
   );
   return buscarPorId(idSetor, idUsuario);
 }

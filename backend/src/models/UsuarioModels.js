@@ -4,6 +4,23 @@ import * as dbModule from '../config/database.js';
 // Suporta tanto o pool exportado diretamente quanto a fábrica criarPool()
 const pool = typeof dbModule.criarPool === 'function' ? dbModule.criarPool() : dbModule.pool;
 
+const resumoEquipamentosSql = `
+  SELECT s.id_usuario, COUNT(DISTINCT e.id_equipamento) AS qtd_equipamentos
+    FROM setor s
+    LEFT JOIN equipamento e ON e.id_setor = s.id_setor
+   GROUP BY s.id_usuario`;
+
+const resumoPagamentosSql = `
+  SELECT p.id_usuario,
+         CASE
+           WHEN SUM(CASE WHEN p.status = 'atrasado' THEN 1 ELSE 0 END) > 0 THEN 'atrasado'
+           WHEN SUM(CASE WHEN p.status = 'nao_pago' THEN 1 ELSE 0 END) > 0 THEN 'nao_pago'
+           WHEN SUM(CASE WHEN p.status = 'pago' THEN 1 ELSE 0 END) > 0 THEN 'pago'
+           ELSE 'cancelado'
+         END AS status_cliente
+    FROM pagamento p
+   GROUP BY p.id_usuario`;
+
 
 // 1. Listagem administrativa com resumo de equipamentos e consumo por empresa
 export async function listar({ limite, offset, busca }) {
@@ -25,16 +42,15 @@ export async function listar({ limite, offset, busca }) {
   const [linhas] = await pool.query(
     `SELECT u.id_usuario, u.nome_empresa, u.email,
             COALESCE(resumo.qtd_equipamentos, 0) AS qtd_equipamentos,
-            COALESCE(resumo.consumo_total_energia, 0) AS consumo_total_energia
+            COALESCE(u.consumo_total, 0) AS consumo_total_energia,
+            COALESCE(pagamentos.status_cliente, 'Sem pagamentos') AS status_cliente
        FROM usuario u
        LEFT JOIN (
-         SELECT s.id_usuario,
-                COUNT(e.id_equipamento) AS qtd_equipamentos,
-                SUM(e.consumo_atual) AS consumo_total_energia
-           FROM setor s
-           LEFT JOIN equipamento e ON e.id_setor = s.id_setor
-          GROUP BY s.id_usuario
+         ${resumoEquipamentosSql}
        ) resumo ON resumo.id_usuario = u.id_usuario
+       LEFT JOIN (
+         ${resumoPagamentosSql}
+       ) pagamentos ON pagamentos.id_usuario = u.id_usuario
        ${filtroSql}
       ORDER BY u.id_usuario
       LIMIT ? OFFSET ?`,
@@ -60,16 +76,15 @@ export async function buscarPorId(id) {
   const [linhas] = await pool.query(
     `SELECT u.id_usuario, u.nome_empresa, u.email,
             COALESCE(resumo.qtd_equipamentos, 0) AS qtd_equipamentos,
-            COALESCE(resumo.consumo_total_energia, 0) AS consumo_total_energia
+            COALESCE(u.consumo_total, 0) AS consumo_total_energia,
+            COALESCE(pagamentos.status_cliente, 'Sem pagamentos') AS status_cliente
        FROM usuario u
        LEFT JOIN (
-         SELECT s.id_usuario,
-                COUNT(e.id_equipamento) AS qtd_equipamentos,
-                SUM(e.consumo_atual) AS consumo_total_energia
-           FROM setor s
-           LEFT JOIN equipamento e ON e.id_setor = s.id_setor
-          GROUP BY s.id_usuario
+         ${resumoEquipamentosSql}
        ) resumo ON resumo.id_usuario = u.id_usuario
+       LEFT JOIN (
+         ${resumoPagamentosSql}
+       ) pagamentos ON pagamentos.id_usuario = u.id_usuario
       WHERE u.id_usuario = ?`,
     [id]
   );
