@@ -38,10 +38,11 @@
 .grid-group-config {
     display: flex;
     flex-direction: column;
+    gap: 20px;
 }
 
 .group-config {
-    border: 1px solid var(--roxo);
+    border: 1px solid var(--cor-borda);
     border-radius: 12px;
     background: var(--dark-bg-card);
     padding: 20px 30px;
@@ -101,6 +102,7 @@
     color: var(--dark-text-primary);
     font-family: var(--font-primary);
     font-size: .9rem;
+    margin-top: 1rem;
 }
 
 .dados-config input {
