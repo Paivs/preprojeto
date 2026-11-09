@@ -174,7 +174,7 @@ export default function AgendamentosProfessor() {
       </section>
 
       {criando && (
-        <ModalProfessor titulo="Novo agendamento" descricao="Informe a atividade, a turma, o equipamento e o horário." onClose={() => setCriando(false)}>
+        <ModalProfessor titulo="Novo agendamento" descricao="Informe a atividade, a turma, o equipamento e o horário." icone="event_available" onClose={() => setCriando(false)}>
           <FormularioAgendamento dataInicial={dataInicio} turmas={dados.turmas} equipamentos={dados.equipamentos} onCreate={salvarReserva} onCancel={() => setCriando(false)} />
         </ModalProfessor>
       )}

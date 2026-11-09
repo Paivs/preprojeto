@@ -462,3 +462,16 @@
     line-height: 1.5;
   }
 }
+.resultadoRessalva { border-color: rgba(214,174,107,.3); color: #d6ae6b; }
+.painel { overflow: hidden; }
+.tabela tbody tr:hover { background: rgba(245,243,244,.025); }
+.botaoAcao:focus-visible, .filtros button:focus-visible, .mensagemSucesso button:focus-visible, .rodapeDetalhes button:focus-visible { outline: 2px solid #ba181b; outline-offset: 2px; }
+@media (max-width: 720px) {
+ .filtros { overflow-x: auto; }
+ .tabela { min-width: 760px; }
+ .respostas p { align-items: flex-start; }
+}
+@media (max-width: 520px) {
+ .respostas p { flex-direction: column; gap: 5px; }
+ .mensagemSucesso { align-items: flex-start; }
+}

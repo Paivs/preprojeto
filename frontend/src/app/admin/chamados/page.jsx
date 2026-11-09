@@ -30,6 +30,7 @@ export default function PaginaChamados() {
 
 function Conteudo({ token }) {
   const [itens, setItens] = useState([]);
+  const [tiposEquipamento, setTiposEquipamento] = useState({});
   const [status, setStatus] = useState("");
   const [severidade, setSeveridade] = useState("");
   const [busca, setBusca] = useState("");
@@ -47,8 +48,12 @@ function Conteudo({ token }) {
       const q = new URLSearchParams({ pagina: "1", limite: "100" });
       if (status) q.set("status", status);
       if (severidade) q.set("severidade", severidade);
-      const data = await chamarApi(`/chamados?${q}`, token);
+      const [data, equipamentos] = await Promise.all([
+        chamarApi(`/chamados?${q}`, token),
+        chamarApi("/equipamentos?pagina=1&limite=100", token).catch(() => []),
+      ]);
       setItens(data.dados ?? data ?? []);
+      setTiposEquipamento(Object.fromEntries((equipamentos.dados ?? equipamentos ?? []).map((equipamento) => [equipamento.id, equipamento.tipo])));
     } catch (e) {
       setErro(e.message);
     } finally {
@@ -186,6 +191,8 @@ function Conteudo({ token }) {
 
       <div className={styles.ticketList}>
         {chamadosPagina.map((item) => {
+          const tipoEquipamento = tiposEquipamento[item.equipamento_id];
+          const iconeEquipamento = tipoEquipamento === "BANCADA" ? "table_restaurant" : tipoEquipamento === "ROBO" ? "smart_toy" : "precision_manufacturing";
           const severidadeAtual = String(item.severidade || "").toUpperCase();
           const severidadeClass = severidadeAtual === "CRITICA" ? styles.sevCritica : severidadeAtual === "ALTA" ? styles.sevAlta : severidadeAtual === "MEDIA" ? styles.sevMedia : styles.sevBaixa;
           const statusClass = item.status === "CONCLUIDO" ? styles.statusDone : item.status === "EM_ATENDIMENTO" ? styles.statusActive : styles.statusWaiting;
@@ -195,7 +202,7 @@ function Conteudo({ token }) {
             <article key={item.id} className={styles.ticketCard}>
               <span className={`${styles.ticketAccent} ${severidadeClass}`} />
               <div className={styles.ticketIdentity}>
-                <div className={styles.ticketIcon}><span className="material-symbols-outlined">precision_manufacturing</span></div>
+                <div className={styles.ticketIcon}><span className="material-symbols-outlined" aria-hidden="true">{iconeEquipamento}</span></div>
                 <div className={styles.ticketIdBlock}>
                   <strong className={styles.ticketCode}>#CH-{String(item.id).padStart(4, "0")}</strong>
                   <span className={styles.ticketPlace}>Equipamento #{item.equipamento_id}</span>
