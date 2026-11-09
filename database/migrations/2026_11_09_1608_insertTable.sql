@@ -17,13 +17,13 @@ VALUES
 ('Expedição', 'Setor responsável pela logística e distribuição.', 1800.00, 1440.00, 5);
 
 INSERT INTO equipamento
-(nome_equipamento, tipo, consumo_atual, consumo_minimo, consumo_maximo, status, id_setor)
+(nome_equipamento, tipo, consumo_minimo, consumo_maximo, status, id_setor)
 VALUES
-('Esteira Industrial', 'Mecânico', 1200.00, 500.00, 1500.00, 'Ativo', 1),
-('Ar-condicionado', 'Climatização', 800.00, 300.00, 1000.00, 'Ativo', 2),
-('Câmara Fria', 'Refrigeração', 1800.00, 1000.00, 2000.00, 'Ativo', 3),
-('Compressor de Ar', 'Pneumático', 2200.00, 1000.00, 2000.00, 'Alerta', 4),
-('Empilhadeira Elétrica', 'Transporte', 900.00, 400.00, 1200.00, 'Ativo', 5);
+('Esteira Industrial', 'Mecânico', 500.00, 1500.00, 'Ativo', 1),
+('Ar-condicionado', 'Climatização', 300.00, 1000.00, 'Ativo', 2),
+('Câmara Fria', 'Refrigeração', 1000.00, 2000.00, 'Ativo', 3),
+('Compressor de Ar', 'Pneumático', 1000.00, 2000.00, 'Alerta', 4),
+('Empilhadeira Elétrica', 'Transporte', 400.00, 1200.00, 'Ativo', 5);
 
 INSERT INTO pagamento
 (valor, data_vencimento, data_pagamento, status, forma_pagamento, id_usuario)
