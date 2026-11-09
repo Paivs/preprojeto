@@ -75,6 +75,6 @@ VALUES
 
 INSERT INTO usuario (nome_empresa, cnpj, email, senha, nivel_permissao) VALUES
 ('Volt House', '12.345.678/0001-90', 'admin@volthouse.com', '123456', 'admin'),
-('Comércio de Alimentos Silva S.A.', '98.765.432/0001-10', 'financeiro@alimentos-silva.com.br', '$2y$10$78K/J01z9fM2yQ6h1L7K2.uO0Y6A5bT8q0L2n1V4.x8M3Q6k9P0a', 'cliente'),
-('Logística & Transportes Rápido', '45.678.912/0001-34', 'atendimento@lograpido.com.br', '$2y$10$99X/K01z9fM2yQ6h1L7K2.uO0Y6A5bT8q0L2n1V4.x8M3Q6k9P0b', 'cliente'),
-('Boutique Moda & Estilo', '33.111.222/0001-55', 'admin@modaeestilo.com', '$2y$10$11A/K01z9fM2yQ6h1L7K2.uO0Y6A5bT8q0L2n1V4.x8M3Q6k9P0c', 'cliente');
+('Comércio de Alimentos Silva S.A.', '98.765.432/0001-10', 'financeiro@alimentos-silva.com.br', '123456', 'cliente'),
+('Logística & Transportes Rápido', '45.678.912/0001-34', 'atendimento@lograpido.com.br', '123456', 'cliente'),
+('Boutique Moda & Estilo', '33.111.222/0001-55', 'admin@modaeestilo.com', '123456', 'cliente');
