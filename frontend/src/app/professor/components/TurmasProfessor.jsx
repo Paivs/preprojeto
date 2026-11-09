@@ -15,11 +15,14 @@ function formatarData(data, inicio) {
 
 export default function TurmasProfessor() {
   const [dados, setDados] = useState({ turmas: [], agendamentos: [] });
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
   useEffect(() => {
     let ativo = true;
     Promise.all([listarTurmas(), listarAgendamentos()]).then(([turmas, agendamentos]) => {
       if (ativo) setDados({ turmas, agendamentos });
-    }).catch(() => {});
+    }).catch((error) => { if (ativo) setErro(error.message || "Não foi possível carregar as turmas."); })
+      .finally(() => { if (ativo) setCarregando(false); });
     return () => { ativo = false; };
   }, []);
   const [busca, setBusca] = useState("");
@@ -47,7 +50,7 @@ export default function TurmasProfessor() {
       </div></section>
 
       <section className={styles.resumo} aria-label="Resumo das turmas">
-        <article className={`${styles.metrica} tenken-entrada`}><span>Turmas e projetos</span><strong>{dados.turmas.length}</strong><small>vinculados à professora</small></article>
+        <article className={`${styles.metrica} tenken-entrada`}><span>Turmas e projetos</span><strong>{dados.turmas.length}</strong><small>vinculados à sua conta</small></article>
         <article className={`${styles.metrica} tenken-entrada`}><span>Vínculos de alunos</span><strong>{totalAlunos}</strong><small>participações nas turmas</small></article>
         <article className={`${styles.metrica} tenken-entrada`}><span>Atividades agendadas</span><strong>{dados.agendamentos.filter((item) => item.status !== "CANCELADO").length}</strong><small>reservas ativas</small></article>
       </section>
@@ -55,7 +58,7 @@ export default function TurmasProfessor() {
       <section className={styles.painel} aria-labelledby="titulo-lista-turmas">
         <div className={styles.cabecalhoPainel}><div><h2 id="titulo-lista-turmas">Turmas e projetos vinculados</h2><p>Turmas vinculadas à sua conta aparecerão aqui.</p></div><span className={styles.contagem}>{visiveis.length} {visiveis.length === 1 ? "grupo" : "grupos"}</span></div>
         <label className={styles.busca} htmlFor="busca-turmas"><span className="material-symbols-outlined" aria-hidden="true">search</span><input id="busca-turmas" type="search" placeholder="Buscar turma ou atividade" value={busca} onChange={(evento) => setBusca(evento.target.value)} /></label>
-        {visiveis.length > 0 ? <div className={styles.listaTurmas}>{visiveis.map((turma) => <article className={styles.itemTurma} key={turma.id}>
+        {carregando ? <div className={styles.estadoVazio} role="status"><p>Carregando turmas…</p></div> : erro ? <div className={styles.estadoVazio}><p role="alert">{erro}</p></div> : visiveis.length > 0 ? <div className={styles.listaTurmas}>{visiveis.map((turma) => <article className={styles.itemTurma} key={turma.id}>
           <div className={styles.identidadeTurma}><span className={styles.marcaTurma} aria-hidden="true">{turma.nome.slice(0, 1)}</span><div><h3>{turma.nome}</h3><span>{turma.alunos} alunos vinculados</span></div></div>
           <div className={styles.proximaAtividade}><span>PRÓXIMA ATIVIDADE</span><strong>{turma.proxima?.atividade || "Nenhuma reserva ativa"}</strong><small>{turma.proxima ? `${formatarData(turma.proxima.data, turma.proxima.inicio)} · ${turma.proxima.equipamento}` : "Sem atividade prevista"}</small></div>
           <button className={styles.botaoDetalhes} type="button" onClick={() => setTurmaId(turma.id)} aria-label={`Detalhes de ${turma.nome}`}>Detalhes <span aria-hidden="true">→</span></button>

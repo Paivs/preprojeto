@@ -21,11 +21,14 @@ function rotuloStatus(status) {
 
 export default function VisaoGeralProfessor() {
   const [dados, setDados] = useState({ professora: getUsuario(), agendamentos: [], equipamentos: [], inspecoes: [], turmas: [] });
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
   useEffect(() => {
     let ativo = true;
     Promise.all([listarAgendamentos(), listarEquipamentos(), listarInspecoes(), listarTurmas()])
       .then(([agendamentos, equipamentos, inspecoes, turmas]) => { if (ativo) setDados((atual) => ({ ...atual, agendamentos, equipamentos, inspecoes, turmas })); })
-      .catch(() => {});
+      .catch((error) => { if (ativo) setErro(error.message || "Não foi possível carregar os dados do laboratório."); })
+      .finally(() => { if (ativo) setCarregando(false); });
     return () => { ativo = false; };
   }, []);
   const resumoEquipamentos = useMemo(
@@ -53,6 +56,14 @@ export default function VisaoGeralProfessor() {
   ];
 
   const primeiraPendencia = pendencias[0];
+
+  if (carregando || erro) {
+    return <div className={styles.container}>
+      <p className={styles.subtitulo} role={carregando ? "status" : "alert"}>
+        {carregando ? "Carregando dados do laboratório…" : erro}
+      </p>
+    </div>;
+  }
 
   return (
     <div className={styles.container}>

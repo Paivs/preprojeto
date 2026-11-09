@@ -29,7 +29,9 @@ export default function BarraLateralProfessor({ usuario, aberta, onFechar }) {
         <div className={styles.sectionHeading}>Espaço do professor</div>
         <nav className={styles.navMenu} aria-label="Navegação do professor">
           {itens.map((item) => {
-            const ativo = pathname === item.href;
+            const ativo = item.href === "/professor"
+              ? pathname === item.href
+              : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             if (!item.pronto) {
               return (

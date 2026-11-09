@@ -1,21 +1,34 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./ModalProfessor.module.css";
 import modalStyles from "../../admin/equipamentos/page.module.css";
 
 export default function ModalProfessor({ titulo, descricao, onClose, children, largura = "normal", icone }) {
+  const modalRef = useRef(null);
   useEffect(() => {
+    const focoAnterior = document.activeElement;
+    const modal = modalRef.current;
+    const seletor = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    (modal?.querySelector(seletor) || modal)?.focus();
     function fecharComEscape(evento) {
       if (evento.key === "Escape") onClose();
+      if (evento.key === "Tab" && modal) {
+        const focaveis = [...modal.querySelectorAll(seletor)];
+        const primeiro = focaveis[0];
+        const ultimo = focaveis[focaveis.length - 1];
+        if (!primeiro || !ultimo) { evento.preventDefault(); modal.focus(); }
+        else if (evento.shiftKey && document.activeElement === primeiro) { evento.preventDefault(); ultimo.focus(); }
+        else if (!evento.shiftKey && document.activeElement === ultimo) { evento.preventDefault(); primeiro.focus(); }
+      }
     }
     window.addEventListener("keydown", fecharComEscape);
-    return () => window.removeEventListener("keydown", fecharComEscape);
+    return () => { window.removeEventListener("keydown", fecharComEscape); if (focoAnterior?.isConnected) focoAnterior.focus(); };
   }, [onClose]);
 
   return (
     <div className={styles.fundo} onMouseDown={(evento) => evento.target === evento.currentTarget && onClose()}>
-      <section className={`${styles.modal} ${largura === "larga" ? styles.modalLargo : ""}`} role="dialog" aria-modal="true" aria-labelledby="titulo-modal-professor">
+      <section ref={modalRef} tabIndex={-1} className={`${styles.modal} ${largura === "larga" ? styles.modalLargo : ""}`} role="dialog" aria-modal="true" aria-labelledby="titulo-modal-professor">
         <header className={styles.cabecalho}>
           <div className={styles.cabecalhoEsquerdo}>
             {icone && (
