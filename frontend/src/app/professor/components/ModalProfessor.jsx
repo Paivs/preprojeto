@@ -2,8 +2,9 @@
 
 import { useEffect } from "react";
 import styles from "./ModalProfessor.module.css";
+import modalStyles from "../../admin/equipamentos/page.module.css";
 
-export default function ModalProfessor({ titulo, descricao, onClose, children, largura = "normal" }) {
+export default function ModalProfessor({ titulo, descricao, onClose, children, largura = "normal", icone }) {
   useEffect(() => {
     function fecharComEscape(evento) {
       if (evento.key === "Escape") onClose();
@@ -16,9 +17,16 @@ export default function ModalProfessor({ titulo, descricao, onClose, children, l
     <div className={styles.fundo} onMouseDown={(evento) => evento.target === evento.currentTarget && onClose()}>
       <section className={`${styles.modal} ${largura === "larga" ? styles.modalLargo : ""}`} role="dialog" aria-modal="true" aria-labelledby="titulo-modal-professor">
         <header className={styles.cabecalho}>
-          <div>
-            <h2 id="titulo-modal-professor">{titulo}</h2>
-            {descricao && <p>{descricao}</p>}
+          <div className={styles.cabecalhoEsquerdo}>
+            {icone && (
+              <div className={modalStyles.modalHeaderIcon}>
+                <span className="material-symbols-outlined" aria-hidden="true">{icone}</span>
+              </div>
+            )}
+            <div className={styles.titulos}>
+              <h2 id="titulo-modal-professor">{titulo}</h2>
+              {descricao && <p>{descricao}</p>}
+            </div>
           </div>
           <button className={styles.fechar} type="button" onClick={onClose} aria-label="Fechar janela">
             <span className="material-symbols-outlined" aria-hidden="true">close</span>
