@@ -5,13 +5,13 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { clearSession, getToken, getUsuario } from "@/lib/session";
-import styles from "./T\u00e9cnicoLayout.module.css";
+import styles from "./TecnicoLayout.module.css";
 
-export default function T\u00e9cnicoLayout({ children }) {
+export default function TecnicoLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
-  const\u00edtuloP\u00e1gina = pathname.st\u00e9cnico/chamados") ? "Chamados" : "Visi\u00e3o geral";
-  const [usu\u00e1rio, setUsuario] = useState(null);
+  const tituloPagina = pathname.startsWith("/tecnico/chamados") ? "Chamados" : "Visão geral";
+  const [usuario, setUsuario] = useState(null);
   const [menuAberto, setMenuAberto] = useState(false);
 
   useEffect(() => {
@@ -20,13 +20,13 @@ export default function T\u00e9cnicoLayout({ children }) {
       return;
     }
 
-    const usu\u00e1rioAtual = getUsuario();
-    if (usu\u00e1rioAtual?.perfil !== "TECNICO") {
+    const usuarioAtual = getUsuario();
+    if (usuarioAtual?.perfil !== "TECNICO") {
       router.replace("/dashboard");
       return;
     }
 
-    setUsuario(usu\u00e1rioAtual);
+    setUsuario(usuarioAtual);
   }, [router]);
 
   function sair() {
@@ -34,12 +34,13 @@ export default function T\u00e9cnicoLayout({ children }) {
     router.replace("/login");
   }
 
-  if (!usu\u00e1rio) return null;
+  if (!usuario) return null;
 
   return (
     <div className={styles.shell}>
-      <aside className={`${styles.sidebar} ${menuA\u00e7\u00f5es.sidebarA\u00e7\u00f5es.brand}>
-          <Link href="/t\u00e9cnico" aria-label="Tenken — painel t\u00e9cnico">
+      <aside className={`${styles.sidebar} ${menuAberto ? styles.sidebarAberta : ""}`}>
+        <div className={styles.brand}>
+          <Link href="/tecnico" aria-label="Tenken — painel técnico">
             <Image src="/assets/img/logo-site/logo_horizontal.svg" alt="Tenken" width={160} height={38} priority />
           </Link>
           <button type="button" className={styles.closeMenu} onClick={() => setMenuAberto(false)} aria-label="Fechar menu">
@@ -47,21 +48,21 @@ export default function T\u00e9cnicoLayout({ children }) {
           </button>
         </div>
 
-        <p className={styles.sectionLabel}>Opera\u00e7\u00e3o t\u00e9cnica</p>
+        <p className={styles.sectionLabel}>Operação técnica</p>
         <nav className={styles.navigation} aria-label="Navegação técnica">
           <Link
-            href="/t\u00e9cnico"
-            className={`${styles.navLink} ${pathname === "/t\u00e9cnico" ? styles.navLinkAtivo : ""}`}
-            aria-current={pathname === "/t\u00e9cnico" ? "page" : undefined}
+            href="/tecnico"
+            className={`${styles.navLink} ${pathname === "/tecnico" ? styles.navLinkAtivo : ""}`}
+            aria-current={pathname === "/tecnico" ? "page" : undefined}
             onClick={() => setMenuAberto(false)}
           >
             <span className="material-symbols-outlined">monitoring</span>
-            <span>Visi\u00e3o geral</span>
+            <span>Visão geral</span>
           </Link>
           <Link
-            href="/t\u00e9cnico/chamados"
-            className={`${styles.navLink} ${pathname.st\u00e9cnico/chamados") ? styles.navLinkAtivo : ""}`}
-            aria-current={pathname.st\u00e9cnico/chamados") ? "page" : undefined}
+            href="/tecnico/chamados"
+            className={`${styles.navLink} ${pathname.startsWith("/tecnico/chamados") ? styles.navLinkAtivo : ""}`}
+            aria-current={pathname.startsWith("/tecnico/chamados") ? "page" : undefined}
             onClick={() => setMenuAberto(false)}
           >
             <span className="material-symbols-outlined">confirmation_number</span>
@@ -71,7 +72,7 @@ export default function T\u00e9cnicoLayout({ children }) {
 
         <div className={styles.sidebarFooter}>
           <span className={styles.statusDot} />
-          <span>Painel do t\u00e9cnico</span>
+          <span>Painel do técnico</span>
         </div>
       </aside>
 
@@ -82,17 +83,17 @@ export default function T\u00e9cnicoLayout({ children }) {
           <button type="button" className={styles.menuButton} onClick={() => setMenuAberto(true)} aria-label="Abrir menu">
             <span className="material-symbols-outlined">menu</span>
           </button>
-          <nav className={styles.trilha} aria-label="Localiza\u00e7\u00e3o atual">
+          <nav className={styles.trilha} aria-label="LocalizaÃ§Ã£o atual">
             <span>TENKEN</span>
             <span className="material-symbols-outlined" aria-hidden="true">chevron_right</span>
-            <span>Opera\u00e7\u00e3o t\u00e9cnica</span>
+            <span>Operação Técnica</span>
             <span className="material-symbols-outlined" aria-hidden="true">chevron_right</span>
-            <strong>{t\u00edtuloP\u00e1gina}</strong>
+            <strong>{tituloPagina}</strong>
           </nav>
           <div className={styles.account}>
             <span className={styles.avatar}><span className="material-symbols-outlined">engineering</span></span>
             <span className={styles.accountInfo}>
-              <strong>{usu\u00e1rio.nome || usu\u00e1rio.matricula || "T\u00e9cnico"}</strong>
+              <strong>{usuario.nome || usuario.matricula || "Técnico"}</strong>
               <small>TÉCNICO</small>
             </span>
             <button type="button" className={styles.logoutButton} onClick={sair}>
