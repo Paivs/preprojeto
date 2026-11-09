@@ -36,7 +36,7 @@ export async function listarPorProfessor(professorId) {
        a.equipamento_id AS equipamentoId, e.nome AS equipamento, e.codigo_patrimonio AS patrimonio,
        a.atividade, DATE_FORMAT(a.inicio, '%Y-%m-%d') AS data,
        DATE_FORMAT(a.inicio, '%H:%i') AS inicio, DATE_FORMAT(a.fim, '%H:%i') AS fim,
-       a.status, i.resultado AS preUsoResultado
+       a.status, a.token_acesso AS token, i.resultado AS preUsoResultado
      FROM agendamentos a JOIN turmas_projetos t ON t.id=a.turma_id
      JOIN equipamentos e ON e.id=a.equipamento_id
      LEFT JOIN inspecoes i ON i.agendamento_id=a.id AND i.etapa='PRE_USO'
@@ -50,7 +50,7 @@ export async function buscarDetalhado(id) {
        a.equipamento_id AS equipamentoId, e.nome AS equipamento, e.codigo_patrimonio AS patrimonio,
        a.atividade, DATE_FORMAT(a.inicio, '%Y-%m-%d') AS data,
        DATE_FORMAT(a.inicio, '%H:%i') AS inicio, DATE_FORMAT(a.fim, '%H:%i') AS fim,
-       a.status, i.resultado AS preUsoResultado
+       a.status, a.token_acesso AS token, i.resultado AS preUsoResultado
      FROM agendamentos a JOIN turmas_projetos t ON t.id=a.turma_id
      JOIN equipamentos e ON e.id=a.equipamento_id
      LEFT JOIN inspecoes i ON i.agendamento_id=a.id AND i.etapa='PRE_USO' WHERE a.id=?`, [id]);

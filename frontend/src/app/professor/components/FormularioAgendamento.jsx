@@ -3,16 +3,17 @@
 import { useState } from "react";
 import styles from "./FormularioAgendamento.module.css";
 
-export default function FormularioAgendamento({ dataInicial, turmas, equipamentos, onCreate, onCancel }) {
+export default function FormularioAgendamento({ dataInicial, horarioInicial = "09:00", fimInicial = "10:00", equipamentoInicial = "", turmas, equipamentos, onCreate, onCancel }) {
   const [form, setForm] = useState({
     atividade: "",
     data: dataInicial,
-    inicio: "09:00",
-    fim: "10:00",
+    inicio: horarioInicial,
+    fim: fimInicial,
     turmaId: "",
-    equipamentoId: "",
+    equipamentoId: equipamentoInicial,
   });
   const [erro, setErro] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
   function alterar(campo, valor) {
     setForm((atual) => ({ ...atual, [campo]: valor }));
@@ -30,17 +31,24 @@ export default function FormularioAgendamento({ dataInicial, turmas, equipamento
       return;
     }
 
-    const resultado = onCreate({
-      ...form,
-      turmaId: Number(form.turmaId),
-      equipamentoId: Number(form.equipamentoId),
-      atividade: form.atividade.trim(),
-    });
-    if (!resultado.ok) {
-      setErro(resultado.message);
-      return;
+    setEnviando(true);
+    try {
+      const resultado = await onCreate({
+        ...form,
+        turmaId: Number(form.turmaId),
+        equipamentoId: Number(form.equipamentoId),
+        atividade: form.atividade.trim(),
+      });
+      if (!resultado.ok) {
+        setErro(resultado.message);
+        return;
+      }
+      onCancel();
+    } catch (falha) {
+      setErro(falha.message || "Não foi possível criar o agendamento.");
+    } finally {
+      setEnviando(false);
     }
-    onCancel();
   }
 
   return (
@@ -82,8 +90,8 @@ export default function FormularioAgendamento({ dataInicial, turmas, equipamento
 
       {erro && <p className={styles.erro} role="alert">{erro}</p>}
       <div className={styles.acoes}>
-        <button className={styles.secundario} type="button" onClick={onCancel}>Voltar</button>
-        <button className={styles.primario} type="submit">Criar agendamento</button>
+        <button className={styles.secundario} type="button" onClick={onCancel} disabled={enviando}>Voltar</button>
+        <button className={styles.primario} type="submit" disabled={enviando}>{enviando ? "Salvando…" : "Criar agendamento"}</button>
       </div>
     </form>
   );
