@@ -33,7 +33,19 @@
   font-family: "DM Sans", sans-serif;
 }
 
+.backdrop {
+  display: none;
+}
+
 @media (max-width: 900px) {
+  .backdrop {
+    position: fixed;
+    z-index: 45;
+    display: block;
+    inset: 0;
+    background: rgba(0, 0, 0, .6);
+    border: 0;
+  }
   .wrapper {
     flex-direction: column;
   }

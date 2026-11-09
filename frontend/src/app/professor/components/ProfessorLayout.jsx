@@ -12,6 +12,7 @@ export default function ProfessorLayout({ children, titulo }) {
   const router = useRouter();
   const [usuario, setUsuario] = useState(null);
   const [verificando, setVerificando] = useState(true);
+  const [menuAberto, setMenuAberto] = useState(false);
 
   useEffect(() => {
     let montado = true;
@@ -65,9 +66,12 @@ export default function ProfessorLayout({ children, titulo }) {
 
   return (
     <div className={styles.wrapper}>
-        <BarraLateralProfessor usuario={usuario} />
+        <BarraLateralProfessor usuario={usuario} aberta={menuAberto} onFechar={() => setMenuAberto(false)} />
+        {menuAberto && (
+          <button type="button" className={styles.backdrop} onClick={() => setMenuAberto(false)} aria-label="Fechar menu" />
+        )}
         <div className={styles.contentSpine}>
-          <BarraSuperiorProfessor titulo={titulo} usuario={usuario} onSair={sair} />
+          <BarraSuperiorProfessor titulo={titulo} usuario={usuario} onSair={sair} onAbrirMenu={() => setMenuAberto(true)} />
           <main className={styles.mainView}>{children}</main>
         </div>
       </div>
