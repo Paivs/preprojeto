@@ -1,11 +1,11 @@
 INSERT INTO usuario 
 (nome_empresa, cnpj, email, senha, nivel_permissao, consumo_total, consumo_maximo)
 VALUES
-('Tech Solutions', '12.345.678/0001-90', 'contato@techsolutions.com', '123456', 'admin', 8500.00, 10000.00),
-('Indústria Alfa', '23.456.789/0001-01', 'contato@alfa.com', '123456', 'cliente', 12000.00, 15000.00),
-('Metalúrgica Beta', '34.567.890/0001-12', 'contato@beta.com', '123456', 'cliente', 6500.00, 8000.00),
+('Volt House', '12.345.678/0001-90', 'admin@volthouse.com', '123456', 'admin', 8500.00, 10000.00),
+('Comércio de Alimentos Silva S.A.', '98.765.432/0001-10', 'financeiro@alimentos-silva.com.br', '123456', 'cliente', 12000.00, 15000.00),
+('Logística & Transportes Rápido', '45.678.912/0001-34', 'atendimento@lograpido.com.br', '123456', 'cliente', 6500.00, 8000.00),
 ('Comercial Gama', '45.678.901/0001-23', 'contato@gama.com', '123456', 'cliente', 4200.00, 6000.00),
-('Logística Delta', '56.789.012/0001-34', 'contato@delta.com', '123456', 'cliente', 9800.00, 12000.00);
+('Boutique Moda & Estilo', '33.111.222/0001-55', 'admin@modaeestilo.com', '123456', 'cliente', 9800.00, 12000.00);
 
 INSERT INTO setor
 (nome_setor, descricao, consumo_geral, custo, id_usuario)
