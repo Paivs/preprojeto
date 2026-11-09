@@ -23,7 +23,9 @@ function formatarData(data) {
 
 export default function EquipamentosProfessor() {
   const [dados, setDados] = useState({ equipamentos: [], agendamentos: [] });
-  useEffect(() => { let active=true; Promise.all([listarEquipamentos(),listarAgendamentos()]).then(([equipamentos,agendamentos])=>{if(active)setDados({equipamentos,agendamentos});}).catch(()=>{}); return ()=>{active=false;}; }, []);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
+  useEffect(() => { let active=true; Promise.all([listarEquipamentos(),listarAgendamentos()]).then(([equipamentos,agendamentos])=>{if(active)setDados({equipamentos,agendamentos});}).catch((error)=>{if(active)setErro(error.message || "Não foi possível carregar os equipamentos.");}).finally(()=>{if(active)setCarregando(false);}); return ()=>{active=false;}; }, []);
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("TODOS");
   const [equipamentoId, setEquipamentoId] = useState(null);
@@ -71,7 +73,7 @@ export default function EquipamentosProfessor() {
           <label className={styles.filtroStatus} htmlFor="filtro-status-equipamentos"><span>Situação</span><select id="filtro-status-equipamentos" value={filtroStatus} onChange={(evento) => setFiltroStatus(evento.target.value)}><option value="TODOS">Todas</option>{Object.entries(statusLabels).map(([status, label]) => <option key={status} value={status}>{label}</option>)}</select></label>
         </div>
 
-        {visiveis.length > 0 ? <div className={styles.tabelaViewport}><table className={styles.tabela}>
+        {carregando ? <div className={styles.estadoVazio} role="status"><p>Carregando equipamentos…</p></div> : erro ? <div className={styles.estadoVazio}><p role="alert">{erro}</p></div> : visiveis.length > 0 ? <div className={styles.tabelaViewport}><table className={styles.tabela}>
           <thead><tr><th scope="col">Equipamento</th><th scope="col">Patrimônio</th><th scope="col">Tipo</th><th scope="col">Localização</th><th scope="col">Situação</th><th scope="col"><span className={styles.somenteLeitor}>Ação</span></th></tr></thead>
           <tbody>{visiveis.map((equipamento) => <tr key={equipamento.id}>
             <td><strong>{equipamento.nome}</strong></td><td className={styles.codigo}>{equipamento.patrimonio}</td><td>{equipamento.tipo === "ROBO" ? "Robô" : "Bancada"}</td><td>{equipamento.localizacao}</td>
