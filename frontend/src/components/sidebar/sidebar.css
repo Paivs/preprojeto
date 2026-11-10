@@ -1,0 +1,120 @@
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 245px;
+  background: var(--cor-sidebar);
+  border-right: 1px solid var(--cor-borda);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 16px;
+  z-index: 40;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px 28px;
+  min-height: 56px;
+}
+
+.logo-imagem {
+  max-width: 150px;
+  height: auto;
+}
+
+.logo-icone {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--roxo-claro), var(--roxo));
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+
+.logo-texto {
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: 0.06em;
+}
+
+.logo-texto small {
+  font-size: 10px;
+  color: var(--amarelo);
+  letter-spacing: 0.1em;
+}
+
+.menu-titulo {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--cor-texto-fraco);
+  padding: 0 12px 12px;
+}
+
+.menu-principal {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  background: transparent;
+}
+
+.menu-item:hover {
+  background: var(--roxo-suave);
+  color: var(--cor-texto);
+}
+
+.menu-item-ativo {
+  background: linear-gradient(90deg, var(--roxo-suave), transparent);
+  border-color: var(--roxo-suave);
+  border-left: 3px solid var(--amarelo);
+  color: var(--cor-texto);
+}
+
+.menu-aviso {
+  margin-left: auto;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 7px;
+  background: var(--amarelo);
+  color: #1a1400;
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.sidebar-rodape {
+  margin-top: auto;
+}
+
+.menu-sair {
+  margin-top: 14px;
+  border-top: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  padding-top: 18px;
+}
+
+.sidebar-fundo {
+  display: none;
+}
+
+a {
+  text-decoration: none;
+}

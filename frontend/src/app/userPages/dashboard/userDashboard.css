@@ -1,0 +1,536 @@
+.conteudo-principal {
+    min-height: 100vh;
+    margin-left: 245px;
+}
+
+.dashboard-pagina {
+    padding: 24px 32px 48px;
+}
+
+.dashboard-pagina .cabecalho-pagina {
+    align-items: flex-end;
+    margin-bottom: 24px;
+}
+
+.dashboard-pagina .cabecalho-pagina h1 {
+    margin: 8px 0 6px;
+    color: var(--dark-text-primary);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.dashboard-pagina .cabecalho-pagina p {
+    margin: 0;
+    color: var(--cor-texto-secundario);
+    font-size: 14px;
+}
+
+.botao-periodo-dashboard {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 0 13px;
+    color: var(--cor-texto-secundario);
+    background: var(--cor-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: 10px;
+    font-size: 11px;
+}
+
+.botao-periodo-dashboard:hover {
+    color: var(--cor-texto);
+    border-color: var(--roxo-claro);
+}
+
+.botao-periodo-dashboard i:first-child {
+    color: var(--roxo-claro);
+}
+
+.botao-periodo-dashboard i:last-child {
+    color: var(--cor-texto-fraco);
+    font-size: 9px;
+}
+
+.indicadores-dashboard {
+    margin-bottom: 18px;
+}
+
+.indicador-dashboard,
+.painel-dashboard,
+.dispositivo-dashboard-card {
+    color: var(--cor-texto);
+    background: var(--cor-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: 16px;
+}
+
+.indicador-dashboard {
+    display: flex;
+    flex-direction: column;
+    min-height: 170px;
+    padding: 18px 20px;
+    transition: border-color 0.15s;
+}
+
+.indicador-dashboard:hover,
+.dispositivo-dashboard-card:hover {
+    border-color: var(--roxo-suave);
+}
+
+.indicador-dashboard-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.indicador-dashboard-icone,
+.meta-icone-dashboard,
+.icone-dispositivo-dashboard,
+.dica-dashboard-icone {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 11px;
+}
+
+.indicador-dashboard-icone {
+    width: 38px;
+    height: 38px;
+    background: var(--roxo-suave);
+    color: var(--roxo-claro);
+    font-size: 16px;
+}
+
+.indicador-verde {
+    color: var(--verde);
+    background: var(--verde-suave);
+}
+
+.indicador-amarelo {
+    color: var(--amarelo);
+    background: var(--amarelo-suave);
+}
+
+.indicador-azul {
+    color: var(--azul-claro);
+    background: rgba(75, 112, 252, .13);
+}
+
+.indicador-variacao {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.indicador-variacao-alta {
+    color: var(--verde);
+}
+
+.indicador-variacao-queda {
+    color: var(--verde);
+}
+
+.indicador-dashboard-titulo {
+    margin-bottom: 6px;
+    color: var(--cor-texto-fraco);
+    font-size: 11px;
+}
+
+.indicador-dashboard-valor {
+    color: var(--dark-text-primary);
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+}
+
+.indicador-dashboard-valor small {
+    color: var(--cor-texto-fraco);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+.indicador-dashboard-descricao {
+    margin-top: auto;
+    padding-top: 8px;
+    color: var(--cor-texto-fraco);
+    font-size: 9px;
+}
+
+.dashboard-secao-graficos {
+    margin-bottom: 18px;
+}
+
+.painel-dashboard {
+    height: 100%;
+    padding: 20px;
+}
+
+.topo-painel-dashboard {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.topo-painel-dashboard h2 {
+    margin: 0;
+    color: var(--dark-text-primary);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.topo-painel-dashboard p {
+    margin: 5px 0 0;
+    color: var(--cor-texto-fraco);
+    font-size: 10px;
+}
+
+.consumo-total-dashboard {
+    color: var(--dark-text-primary);
+    font-size: 20px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.consumo-total-dashboard small {
+    color: var(--cor-texto-fraco);
+    font-size: 10px;
+    font-weight: 400;
+}
+
+.resumo-grafico-dashboard {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    color: var(--cor-texto-fraco);
+    font-size: 9px;
+}
+
+.grafico-dashboard {
+    position: relative;
+    height: 220px;
+    margin: 20px 0 0 26px;
+}
+
+.grafico-dashboard svg {
+    display: block;
+    width: 100%;
+    height: calc(100% - 20px);
+    overflow: visible;
+}
+
+.grafico-dashboard-eixo-y {
+    position: absolute;
+    inset: 0 auto 21px -26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--cor-texto-fraco);
+    font-size: 9px;
+}
+
+.grafico-dashboard-grade {
+    stroke: var(--cor-borda);
+    stroke-dasharray: 3 5;
+}
+
+.grafico-dashboard-linha {
+    fill: none;
+    stroke: var(--roxo-claro);
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.grafico-dashboard-ponto {
+    fill: var(--cor-card);
+    stroke: var(--amarelo);
+    stroke-width: 3;
+}
+
+.grafico-dashboard-eixo-x {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    color: var(--cor-texto-fraco);
+    font-size: 9px;
+}
+
+.painel-meta-dashboard {
+    display: flex;
+    flex-direction: column;
+}
+
+.meta-icone-dashboard {
+    width: 36px;
+    height: 36px;
+    color: var(--verde);
+    background: var(--verde-suave);
+    font-size: 15px;
+}
+
+.meta-progresso-dashboard {
+    display: grid;
+    width: 132px;
+    height: 132px;
+    flex-shrink: 0;
+    place-items: center;
+    align-self: center;
+    margin: 22px auto 14px;
+    background: conic-gradient(var(--verde) 0 72%, var(--cor-borda) 72% 100%);
+    border-radius: 50%;
+    position: relative;
+}
+
+.meta-progresso-dashboard::before {
+    position: absolute;
+    inset: 7px;
+    content: "";
+    background: var(--cor-card);
+    border-radius: 50%;
+}
+
+.meta-progresso-dashboard>div {
+    position: relative;
+    display: grid;
+    justify-items: center;
+}
+
+.meta-progresso-dashboard strong {
+    color: var(--dark-text-primary);
+    font-size: 29px;
+    line-height: 1.1;
+}
+
+.meta-progresso-dashboard strong small {
+    color: var(--verde);
+    font-size: 15px;
+}
+
+.meta-progresso-dashboard span {
+    color: var(--cor-texto-fraco);
+    font-size: 9px;
+}
+
+.meta-valores-dashboard {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 7px;
+}
+
+.meta-valores-dashboard strong {
+    color: var(--dark-text-primary);
+    font-size: 15px;
+}
+
+.meta-valores-dashboard span {
+    color: var(--cor-texto-fraco);
+    font-size: 10px;
+}
+
+.progresso-meta-dashboard {
+    height: 5px;
+    margin: 13px 0;
+    background: var(--cor-borda);
+    border-radius: 10px;
+}
+
+.progresso-meta-dashboard .progress-bar {
+    background: var(--verde);
+    border-radius: inherit;
+}
+
+.mensagem-meta-dashboard {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: auto;
+    padding: 10px;
+    color: var(--verde);
+    background: rgba(0, 201, 149, .07);
+    border: 1px solid rgba(0, 201, 149, .14);
+    border-radius: 10px;
+}
+
+.mensagem-meta-dashboard>i {
+    font-size: 14px;
+}
+
+.mensagem-meta-dashboard p {
+    margin: 0;
+    color: var(--cor-texto-fraco);
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+.mensagem-meta-dashboard strong {
+    color: var(--cor-texto-secundario);
+    font-weight: 600;
+}
+
+.painel-dispositivos-dashboard {
+    margin-bottom: 18px;
+}
+
+.link-painel-dashboard {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--roxo-claro);
+    font-size: 11px;
+}
+
+.link-painel-dashboard:hover {
+    color: var(--cor-texto);
+}
+
+.dispositivos-dashboard-lista {
+    margin-top: 14px;
+}
+
+.dispositivo-dashboard-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 170px;
+    padding: 15px 16px;
+    transition: border-color 0.15s;
+}
+
+.dispositivo-dashboard-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.icone-dispositivo-dashboard {
+    width: 36px;
+    height: 36px;
+    color: var(--roxo-claro);
+    background: var(--roxo-suave);
+    font-size: 15px;
+}
+
+.dispositivo-dashboard-card h3 {
+    margin: 12px 0 4px;
+    color: var(--dark-text-primary);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.dispositivo-dashboard-local {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    color: var(--cor-texto-fraco);
+    font-size: 10px;
+}
+
+.dispositivo-dashboard-card .card-divisor {
+    width: 100%;
+    margin: 12px 0 9px;
+}
+
+.dispositivo-dashboard-consumo {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.dispositivo-dashboard-consumo>span {
+    color: var(--cor-texto-fraco);
+    font-size: 9px;
+}
+
+.dispositivo-dashboard-consumo strong {
+    color: var(--dark-text-primary);
+    font-size: 15px;
+}
+
+.dispositivo-dashboard-consumo small {
+    color: var(--cor-texto-fraco);
+    font-size: 9px;
+    font-weight: 400;
+}
+
+.dica-dashboard {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 14px 17px;
+    background: linear-gradient(100deg, var(--roxo-suave), rgba(145, 79, 240, .025));
+    border: 1px solid rgba(145, 79, 240, .18);
+    border-radius: 14px;
+}
+
+.dica-dashboard-icone {
+    width: 38px;
+    height: 38px;
+    color: var(--amarelo);
+    background: var(--amarelo-suave);
+    font-size: 16px;
+}
+
+.dica-dashboard-etiqueta {
+    color: var(--roxo-claro);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .12em;
+}
+
+.dica-dashboard p {
+    margin: 4px 0 0;
+    color: var(--cor-texto-secundario);
+    font-size: 11px;
+}
+
+.dica-dashboard p strong {
+    color: var(--amarelo);
+}
+
+@media (max-width: 1100px) {
+    .dashboard-pagina {
+        padding-right: 24px;
+        padding-left: 24px;
+    }
+}
+
+@media (max-width: 900px) {
+    .conteudo-principal {
+        margin-left: 0;
+    }
+
+    .dashboard-pagina {
+        padding: 20px 16px 40px;
+    }
+}
+
+@media (max-width: 700px) {
+    .dashboard-pagina .cabecalho-pagina h1 {
+        font-size: 26px;
+    }
+
+    .botao-periodo-dashboard {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .painel-dashboard {
+        padding: 16px;
+    }
+
+    .grafico-dashboard {
+        height: 175px;
+    }
+}

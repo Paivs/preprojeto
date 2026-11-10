@@ -1,7 +1,7 @@
-export function errorHandler(error, request, response, next) {
+export function errorHandler(error, req, res, next) {
   console.error(error);
 
-  response.status(500).json({
+  res.status(500).json({
     message: "Erro interno no servidor",
   });
 }

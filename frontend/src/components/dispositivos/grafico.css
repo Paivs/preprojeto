@@ -1,0 +1,18 @@
+.grafico-consumo {
+    margin-top: 18px;
+    color: var(--cor-texto-fraco);
+}
+
+.grafico-consumo svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.grafico-eixo {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 9px;
+}
