@@ -125,4 +125,13 @@ WHERE cm.titulo = 'Devolução de robô colaborativo' AND cm.tipo_equipamento = 
       WHERE ci.modelo_id = cm.id AND ci.descricao = 'Não houve colisão, parada de emergência ou comportamento inesperado durante a atividade.'
   );
 
+INSERT INTO checklist_itens (modelo_id, descricao, critico)
+SELECT cm.id, 'A célula e a área de trabalho estão sem danos e sem objetos deixados para trás.', TRUE
+FROM checklist_modelos cm
+WHERE cm.titulo = 'Devolução de robô colaborativo' AND cm.tipo_equipamento = 'ROBO' AND cm.etapa = 'POS_USO'
+  AND NOT EXISTS (
+      SELECT 1 FROM checklist_itens ci
+      WHERE ci.modelo_id = cm.id AND ci.descricao = 'A célula e a área de trabalho estão sem danos e sem objetos deixados para trás.'
+  );
+
 COMMIT;
