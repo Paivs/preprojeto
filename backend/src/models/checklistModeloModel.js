@@ -12,10 +12,20 @@ export async function buscarPorId(id) {
 
 export async function buscarPorTipoEtapa(tipoEquipamento, etapa) {
   const [linhas] = await pool.query(
-    "SELECT * FROM checklist_modelos WHERE tipo_equipamento = ? AND etapa = ? AND ativo = 1 LIMIT 1",
+    "SELECT * FROM checklist_modelos WHERE tipo_equipamento = ? AND etapa = ? AND ativo = 1 ORDER BY id DESC LIMIT 1",
     [tipoEquipamento, etapa],
   );
   return linhas[0] || null;
+}
+
+export async function existeAtivoPorTipoEtapa(tipoEquipamento, etapa, excluirId = null) {
+  const condicaoId = excluirId === null ? "" : " AND id <> ?";
+  const valores = excluirId === null ? [tipoEquipamento, etapa] : [tipoEquipamento, etapa, excluirId];
+  const [linhas] = await pool.query(
+    `SELECT id FROM checklist_modelos WHERE tipo_equipamento = ? AND etapa = ? AND ativo = 1${condicaoId} LIMIT 1`,
+    valores,
+  );
+  return linhas.length > 0;
 }
 
 export async function criar({ titulo, tipo_equipamento, etapa }) {
