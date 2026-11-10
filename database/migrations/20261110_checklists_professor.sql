@@ -134,4 +134,13 @@ WHERE cm.titulo = 'Devolução de robô colaborativo' AND cm.tipo_equipamento = 
       WHERE ci.modelo_id = cm.id AND ci.descricao = 'A célula e a área de trabalho estão sem danos e sem objetos deixados para trás.'
   );
 
+INSERT INTO checklist_itens (modelo_id, descricao, critico)
+SELECT cm.id, 'Proteções do painel e botão de emergência estão instalados e funcionando.', TRUE
+FROM checklist_modelos cm
+WHERE cm.titulo = 'Inspeção de bancada de instrumentação' AND cm.tipo_equipamento = 'BANCADA' AND cm.etapa = 'PRE_USO'
+  AND NOT EXISTS (
+      SELECT 1 FROM checklist_itens ci
+      WHERE ci.modelo_id = cm.id AND ci.descricao = 'Proteções do painel e botão de emergência estão instalados e funcionando.'
+  );
+
 COMMIT;
