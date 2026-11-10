@@ -199,3 +199,21 @@
 .btn-entrar button:hover {
     background: var(--light-primary-hover);
 }
+
+.btn-olho {
+  background: transparent;
+  border: none;
+  color: var(--cor-texto);
+  opacity: 0.6;
+  cursor: pointer;
+  font-size: 18px;
+  position: absolute;
+  right: 12%;
+  top: 25%;
+  transition: 0.3s ease;
+}
+
+.btn-olho:hover {
+  opacity: 1;
+  color: var(--roxo);
+}
