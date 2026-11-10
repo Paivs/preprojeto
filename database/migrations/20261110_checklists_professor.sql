@@ -89,4 +89,13 @@ WHERE cm.titulo = 'Devolução de bancada elétrica' AND cm.tipo_equipamento = '
       WHERE ci.modelo_id = cm.id AND ci.descricao = 'Componentes usados foram contabilizados; itens faltantes foram registrados.'
   );
 
+INSERT INTO checklist_itens (modelo_id, descricao, critico)
+SELECT cm.id, 'Cabos, mangueiras e conexões estão sem desgaste, esmagamento ou vazamento visível.', TRUE
+FROM checklist_modelos cm
+WHERE cm.titulo = 'Inspeção de robô colaborativo — início' AND cm.tipo_equipamento = 'ROBO' AND cm.etapa = 'PRE_USO'
+  AND NOT EXISTS (
+      SELECT 1 FROM checklist_itens ci
+      WHERE ci.modelo_id = cm.id AND ci.descricao = 'Cabos, mangueiras e conexões estão sem desgaste, esmagamento ou vazamento visível.'
+  );
+
 COMMIT;
