@@ -91,7 +91,7 @@ CREATE TABLE agendamentos (
     responsavel_id BIGINT UNSIGNED NOT NULL,
     equipamento_id BIGINT UNSIGNED NOT NULL,
     turma_id BIGINT UNSIGNED NOT NULL,
-    atividade VARCHAR(120),
+    atividade VARCHAR(120) NULL,
     inicio DATETIME NOT NULL,
     fim DATETIME NOT NULL,
     token_acesso VARCHAR(20) NOT NULL UNIQUE,
@@ -302,13 +302,14 @@ CREATE TABLE ordens_servico (
     FOREIGN KEY (emitida_por) REFERENCES usuarios(id)
 ) ENGINE=InnoDB;
 
--- Remove tabela de cadastro de staff obsoleta, conforme migração anterior.
-DROP TABLE IF EXISTS pre_cadastros_staff;
-
--- Atualiza bancos existentes para armazenar o nome da atividade da reserva.
--- Execute uma única vez no banco tenken_db; o schema inicial já inclui a coluna.
-USE tenken_db;
-
-ALTER TABLE agendamentos
-    ADD COLUMN atividade VARCHAR(120) NULL AFTER turma_id;
+-- Cadastro prévio de professores e técnicos; usado pela API /api/pre-cadastros.
+CREATE TABLE pre_cadastros_staff (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    perfil ENUM('PROFESSOR', 'TECNICO') NOT NULL,
+    codigo VARCHAR(20) NOT NULL UNIQUE,
+    utilizada BOOLEAN NOT NULL DEFAULT FALSE,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 
