@@ -1,30 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import BarraLateral from "./BarraLateral";
-import FormularioLogin from "./FormularioLogin";
-import { carregarSessao, entrarComoAdmin, limparSessao, salvarSessao, verificarSaude } from "../lib/adminApi";
-import { API_URL } from "../lib/constantes";
+import { verificarSaude } from "../lib/adminApi";
+import { clearSession, getToken, getUsuario } from "@/lib/session";
 import styles from "./AdminLayout.module.css";
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
-  const [token, setToken] = useState("");
+  const router = useRouter();
+  const [token, setToken] = useState(null);
   const [usuario, setUsuario] = useState(null);
   const [statusApi, setStatusApi] = useState("checking");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [menuAberto, setMenuAberto] = useState(false);
+  const [verificado, setVerificado] = useState(false);
 
   useEffect(() => {
     verificarSaude().then(setStatusApi);
-    const sessao = carregarSessao();
-    if (sessao.token) {
-      setToken(sessao.token);
-      setUsuario(sessao.usuario);
+    const tokenSalvo = getToken();
+    const usuarioSalvo = getUsuario();
+    if (tokenSalvo && usuarioSalvo?.perfil === "ADMIN") {
+      setToken(tokenSalvo);
+      setUsuario(usuarioSalvo);
+      setVerificado(true);
+      return;
     }
-  }, []);
+    if (tokenSalvo) clearSession();
+    router.replace("/login");
+  }, [router]);
 
   const titulosPagina = {
     "/admin": "Visão geral",
@@ -36,42 +40,12 @@ export default function AdminLayout({ children }) {
   };
   const tituloPagina = titulosPagina[pathname] || "Administração";
 
-  async function entrar(matricula, senha, opcoes = {}) {
-    setLoading(true);
-    setError("");
-    try {
-      const resultado = await entrarComoAdmin(matricula, senha);
-      salvarSessao(resultado.token, resultado.usuario);
-      setToken(resultado.token);
-      setUsuario(resultado.usuario);
-      return true;
-    } catch (erro) {
-      setError(erro.message || "Confira sua matrícula e senha e tente novamente.");
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }
-
   function sair() {
-    limparSessao();
-    setToken("");
-    setUsuario(null);
+    clearSession();
+    router.replace("/login");
   }
 
-  if (!token) {
-    return (
-      <main className={styles.loginContainer}>
-        <FormularioLogin
-          loading={loading}
-          error={error}
-          statusApi={statusApi}
-          apiUrl={API_URL}
-          onEntrar={entrar}
-        />
-      </main>
-    );
-  }
+  if (!verificado || !token) return null;
 
   return (
     <div className={styles.wrapper} data-admin-shell>

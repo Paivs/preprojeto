@@ -12,6 +12,7 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const [matricula, setMatricula] = useState("");
   const [senha, setSenha] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
   const [alerta, setAlerta] = useState("");
   const [enviando, setEnviando] = useState(false);
   const cadastroConcluido = searchParams.get("cadastro") === "ok";
@@ -28,14 +29,10 @@ function LoginContent() {
       });
 
       const destinosPorPerfil = {
+        ADMIN: "/admin",
         PROFESSOR: "/professor",
         TECNICO: "/tecnico",
       };
-
-      if (resultado.usuario?.perfil === "ADMIN") {
-        setAlerta("Esta conta é administrativa. Acesse pelo login em /admin.");
-        return;
-      }
 
       const destino = destinosPorPerfil[resultado.usuario?.perfil];
       if (!destino) {
@@ -82,18 +79,32 @@ function LoginContent() {
 
         <div className={styles.field}>
           <label className={styles.label} htmlFor="senha">Senha</label>
-          <input
-            className={styles.input}
-            id="senha"
-            name="senha"
-            type="password"
-            placeholder="Digite sua senha"
-            value={senha}
-            onChange={(event) => {
-              setSenha(event.target.value);
-              setAlerta("");
-            }}
-          />
+          <div className={styles.passwordField}>
+            <input
+              className={`${styles.input} ${styles.passwordInput}`}
+              id="senha"
+              name="senha"
+              type={mostrarSenha ? "text" : "password"}
+              autoComplete="current-password"
+              placeholder="Digite sua senha"
+              value={senha}
+              onChange={(event) => {
+                setSenha(event.target.value);
+                setAlerta("");
+              }}
+            />
+            <button
+              className={styles.passwordToggle}
+              type="button"
+              onClick={() => setMostrarSenha((visivel) => !visivel)}
+              aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+              aria-pressed={mostrarSenha}
+            >
+              <span className="material-symbols-outlined" aria-hidden="true">
+                {mostrarSenha ? "visibility_off" : "visibility"}
+              </span>
+            </button>
+          </div>
         </div>
         <p className={styles.linkAuxiliary}>
           <Link className={styles.linkStrong} href="/esqueci-senha">
