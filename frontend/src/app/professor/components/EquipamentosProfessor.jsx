@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { listarAgendamentos, listarEquipamentos } from "../lib/professorApi";
 import ModalProfessor from "./ModalProfessor";
 import styles from "./EquipamentosProfessor.module.css";
+import { useModalExit } from "../../useModalExit";
 
 const statusLabels = {
   DISPONIVEL: "Disponível",
@@ -28,7 +29,7 @@ export default function EquipamentosProfessor() {
   useEffect(() => { let active=true; Promise.all([listarEquipamentos(),listarAgendamentos()]).then(([equipamentos,agendamentos])=>{if(active)setDados({equipamentos,agendamentos});}).catch((error)=>{if(active)setErro(error.message || "Não foi possível carregar os equipamentos.");}).finally(()=>{if(active)setCarregando(false);}); return ()=>{active=false;}; }, []);
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("TODOS");
-  const [equipamentoId, setEquipamentoId] = useState(null);
+  const [equipamentoId, setEquipamentoId, fechandoDetalhe, finalizarFechamentoDetalhe] = useModalExit(null);
   const equipamentoSelecionado = dados.equipamentos.find((item) => item.id === equipamentoId);
 
   const contagem = useMemo(() => dados.equipamentos.reduce((total, equipamento) => {
@@ -84,7 +85,7 @@ export default function EquipamentosProfessor() {
         <p className={styles.notaDados}>Os equipamentos cadastrados no sistema aparecerão nesta lista.</p>
       </section>
 
-      {equipamentoSelecionado && <ModalProfessor titulo={equipamentoSelecionado.nome} descricao="Detalhes do equipamento cadastrado." onClose={() => setEquipamentoId(null)}>
+      {equipamentoSelecionado && <ModalProfessor titulo={equipamentoSelecionado.nome} descricao="Detalhes do equipamento cadastrado." closing={fechandoDetalhe} onExitEnd={finalizarFechamentoDetalhe} onClose={() => setEquipamentoId(null)}>
         <div className={styles.detalhes}>
           <p><span>Patrimônio</span><strong>{equipamentoSelecionado.patrimonio}</strong></p><p><span>Tipo</span><strong>{equipamentoSelecionado.tipo === "ROBO" ? "Robô" : "Bancada"}</strong></p>
           <p><span>Localização</span><strong>{equipamentoSelecionado.localizacao}</strong></p><p><span>Situação</span><strong className={styles[`texto_${equipamentoSelecionado.status}`]}>{statusLabels[equipamentoSelecionado.status]}</strong></p>
