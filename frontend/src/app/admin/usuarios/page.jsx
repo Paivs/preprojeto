@@ -5,6 +5,7 @@ import AdminLayout from "../components/AdminLayout";
 import styles from "./page.module.css";
 import modalStyles from "../equipamentos/page.module.css";
 import { chamarApi } from "../lib/adminApi";
+import { useModalExit } from "../../useModalExit";
 
 const PERFIS = [
   { chave: "all", rotulo: "Todos", valorFiltro: "" },
@@ -35,7 +36,7 @@ function Conteudo({ token }) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
   const [aviso, setAviso] = useState("");
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalAberto, setModalAberto, fechandoModal, finalizarFechamentoModal] = useModalExit(false);
   const [dropdownAbertoId, setDropdownAbertoId] = useState(null);
 
   // Formulário de novo usuário
@@ -437,8 +438,8 @@ function Conteudo({ token }) {
 
       {/* Modal: Novo Usuário // Cadastramento */}
       {modalAberto && (
-        <div className={styles.modalOverlay} role="dialog" aria-modal="true">
-          <div className={styles.modalCard}>
+        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoModal ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true">
+          <div className={`${styles.modalCard} abrir-modal ${fechandoModal ? "fechar-modal" : ""}`} onAnimationEnd={finalizarFechamentoModal}>
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderTitleRow}>
                 <div className={modalStyles.modalHeaderIcon}>

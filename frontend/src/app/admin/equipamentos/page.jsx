@@ -5,6 +5,7 @@ import AdminLayout from "../components/AdminLayout";
 import PainelEquipamentos from "../components/PainelEquipamentos";
 import styles from "./page.module.css";
 import { chamarApi } from "../lib/adminApi";
+import { useModalExit } from "../../useModalExit";
 
 const STATUS = ["DISPONIVEL", "RESERVADO", "EM_USO", "EM_MANUTENCAO", "INATIVO"];
 const ROTULO_STATUS = {
@@ -44,7 +45,7 @@ function Conteudo({ token }) {
   const [busca, setBusca] = useState("");
   const [statusFiltro, setStatusFiltro] = useState("");
   const [pagina, setPagina] = useState(1);
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalAberto, setModalAberto, fechandoModal, finalizarFechamentoModal] = useModalExit(false);
   const [form, setForm] = useState({
     codigo_patrimonio: gerarPatrimonioInicial(),
     nome: "",
@@ -588,8 +589,8 @@ function Conteudo({ token }) {
 
       {/* CADASTRO DE EQUIPAMENTO MODAL */}
       {modalAberto && (
-        <div className={styles.modalOverlay} role="dialog" aria-modal="true">
-          <div className={styles.modalCard}>
+        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoModal ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true">
+          <div className={`${styles.modalCard} abrir-modal ${fechandoModal ? "fechar-modal" : ""}`} onAnimationEnd={finalizarFechamentoModal}>
             {/* Modal Header */}
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderLeft}>
