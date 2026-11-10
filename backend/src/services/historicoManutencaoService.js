@@ -9,12 +9,21 @@ function validarId(idRecebido, nomeCampo = "ID") {
   return id;
 }
 
-export async function listar(chamadoIdRecebido) {
+function validarAtribuicaoTecnico(chamado, usuarioLogado) {
+  if (usuarioLogado?.perfil === "TECNICO" && Number(chamado.tecnico_id) !== Number(usuarioLogado.id)) {
+    const erro = new Error("Você só pode acessar o histórico dos chamados atribuídos a você.");
+    erro.status = 403;
+    throw erro;
+  }
+}
+
+export async function listar(chamadoIdRecebido, usuarioLogado) {
   const chamadoId = validarId(chamadoIdRecebido, "ID do chamado");
   const chamado = await ChamadoModel.buscarPorId(chamadoId);
   if (!chamado) {
     throw new Error(`Chamado ${chamadoId} não encontrado.`);
   }
+  validarAtribuicaoTecnico(chamado, usuarioLogado);
   return await HistoricoManutencaoModel.listarPorChamado(chamadoId);
 }
 
@@ -24,6 +33,7 @@ export async function criar(chamadoIdRecebido, dados, usuarioLogado) {
   if (!chamado) {
     throw new Error(`Chamado ${chamadoId} não encontrado.`);
   }
+  validarAtribuicaoTecnico(chamado, usuarioLogado);
 
   if (typeof dados.descricao !== "string" || dados.descricao.trim() === "") {
     throw new TypeError("Descrição é obrigatória.");

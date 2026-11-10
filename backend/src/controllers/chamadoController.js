@@ -49,7 +49,7 @@ export async function atualizarTecnico(req, res, next) {
 
 export async function listarHistorico(req, res, next) {
   try {
-    const historico = await HistoricoManutencaoService.listar(req.params.id);
+    const historico = await HistoricoManutencaoService.listar(req.params.id, req.usuario);
     return res.status(200).json({ sucesso: true, dados: historico });
   } catch (erro) { return responderErro(erro, res, next); }
 }

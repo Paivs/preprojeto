@@ -32,6 +32,13 @@ export default function PaginaChamadosTecnico() {
   const [chamadoSelecionado, setChamadoSelecionado] = useState(null);
   const [atualizandoStatus, setAtualizandoStatus] = useState(false);
   const [aviso, setAviso] = useState("");
+  const [historico, setHistorico] = useState([]);
+  const [mostrarHistorico, setMostrarHistorico] = useState(false);
+  const [carregandoHistorico, setCarregandoHistorico] = useState(false);
+  const [salvandoRegistro, setSalvandoRegistro] = useState(false);
+  const [descricaoServico, setDescricaoServico] = useState("");
+  const [pecasTrocadas, setPecasTrocadas] = useState("");
+  const [custoServico, setCustoServico] = useState("0");
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -71,6 +78,48 @@ export default function PaginaChamadosTecnico() {
       setErro(error.message || "Não foi possível atualizar o chamado.");
     } finally {
       setAtualizandoStatus(false);
+    }
+  }
+
+  async function carregarHistorico() {
+    if (!chamadoSelecionado) return;
+    setCarregandoHistorico(true);
+    setErro("");
+    try {
+      const resposta = await apiFetch(`/api/chamados/${chamadoSelecionado.id}/historico`);
+      setHistorico(Array.isArray(resposta?.dados) ? resposta.dados : []);
+      setMostrarHistorico(true);
+    } catch (error) {
+      setErro(error.message || "Não foi possível carregar o histórico.");
+    } finally {
+      setCarregandoHistorico(false);
+    }
+  }
+
+  async function registrarServico(evento) {
+    evento.preventDefault();
+    if (!chamadoSelecionado || !descricaoServico.trim() || salvandoRegistro) return;
+    setSalvandoRegistro(true);
+    setErro("");
+    setAviso("");
+    try {
+      await apiFetch(`/api/chamados/${chamadoSelecionado.id}/historico`, {
+        method: "POST",
+        body: {
+          descricao: descricaoServico.trim(),
+          pecas_trocadas: pecasTrocadas.trim(),
+          custo: Number(custoServico),
+        },
+      });
+      setDescricaoServico("");
+      setPecasTrocadas("");
+      setCustoServico("0");
+      setAviso("Serviço registrado no histórico.");
+      await carregarHistorico();
+    } catch (error) {
+      setErro(error.message || "Não foi possível registrar o serviço.");
+    } finally {
+      setSalvandoRegistro(false);
     }
   }
 
@@ -118,8 +167,8 @@ export default function PaginaChamadosTecnico() {
         </label>
       </section>
 
-      {erro && <p className={styles.erro} role="alert">{erro}</p>}
-      {aviso && <p className={styles.aviso} role="status">{aviso}</p>}
+      {erro && !chamadoSelecionado && <p className={styles.erro} role="alert">{erro}</p>}
+      {aviso && !chamadoSelecionado && <p className={styles.aviso} role="status">{aviso}</p>}
       <p className={styles.contagem}>{carregando ? "Carregando chamados…" : `${filtrados.length} chamados encontrados`}</p>
 
       {!carregando && !erro && filtrados.length === 0 && (
@@ -180,6 +229,8 @@ export default function PaginaChamadosTecnico() {
                 <span className="material-symbols-outlined" aria-hidden="true">close</span>
               </button>
             </header>
+            {erro && <p className={styles.erro} role="alert">{erro}</p>}
+            {aviso && <p className={styles.aviso} role="status">{aviso}</p>}
             <div className={styles.modalEtiquetas}>
               <span className={`${styles.prioridade} ${styles[`prioridade_${String(chamadoSelecionado.severidade || "").toLowerCase()}`] || ""}`}>
                 {ROTULO_SEVERIDADE[chamadoSelecionado.severidade] || "Prioridade não informada"}
@@ -206,6 +257,44 @@ export default function PaginaChamadosTecnico() {
               <h3>Descrição</h3>
               <p>{chamadoSelecionado.descricao || "Sem descrição informada."}</p>
             </div>
+            <section className={styles.secaoHistorico}>
+              <div className={styles.tituloSecaoHistorico}>
+                <h3>Histórico de manutenção</h3>
+                <button type="button" className={styles.botaoSecundario} onClick={carregarHistorico} disabled={carregandoHistorico}>
+                  {carregandoHistorico ? "Carregando..." : mostrarHistorico ? "Atualizar histórico" : "Ver histórico"}
+                </button>
+              </div>
+              {mostrarHistorico && (
+                <div className={styles.listaHistorico}>
+                  {historico.length ? historico.map((registro) => (
+                    <article className={styles.itemHistorico} key={registro.id}>
+                      <p>{registro.descricao}</p>
+                      <span>{registro.registrado_em ? new Date(registro.registrado_em).toLocaleString("pt-BR") : "Data não informada"}</span>
+                      {registro.pecas_trocadas && <small>Peças: {registro.pecas_trocadas}</small>}
+                      {Number(registro.custo) > 0 && <small>Custo: {Number(registro.custo).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</small>}
+                    </article>
+                  )) : <p className={styles.historicoVazio}>Ainda não há serviços registrados.</p>}
+                </div>
+              )}
+              <form className={styles.formularioServico} onSubmit={registrarServico}>
+                <h4>Registrar serviço realizado</h4>
+                <label>
+                  Descrição do serviço
+                  <textarea value={descricaoServico} onChange={(evento) => setDescricaoServico(evento.target.value)} required rows={3} />
+                </label>
+                <label>
+                  Peças trocadas (opcional)
+                  <input value={pecasTrocadas} onChange={(evento) => setPecasTrocadas(evento.target.value)} />
+                </label>
+                <label>
+                  Custo (R$)
+                  <input type="number" min="0" step="0.01" value={custoServico} onChange={(evento) => setCustoServico(evento.target.value)} />
+                </label>
+                <button type="submit" className={styles.botaoAcao} disabled={salvandoRegistro || !descricaoServico.trim()}>
+                  {salvandoRegistro ? "Salvando..." : "Salvar registro"}
+                </button>
+              </form>
+            </section>
             {chamadoSelecionado.status === "ABERTO" && (
               <div className={styles.modalAcoes}>
                 <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("EM_ATENDIMENTO")} disabled={atualizandoStatus}>
