@@ -1,4 +1,4 @@
-﻿-- ESQUEMA INICIAL DO BANCO DE DADOS 
+-- ESQUEMA INICIAL DO BANCO DE DADOS
 
 
 CREATE DATABASE IF NOT EXISTS tenken_db
@@ -139,26 +139,32 @@ CREATE TABLE checklist_itens (
 
 -- Modelos e itens iniciais dos checklists usados na página do professor.
 INSERT INTO checklist_modelos (titulo, tipo_equipamento, etapa, ativo) VALUES
-('Inspeção de bancada elétrica — início', 'BANCADA', 'PRE_USO', TRUE),
-('Devolução de bancada elétrica', 'BANCADA', 'POS_USO', TRUE),
+('Inspeção de bancada — pré-uso', 'BANCADA', 'PRE_USO', TRUE),
+('Inspeção de bancada — pós-uso', 'BANCADA', 'POS_USO', TRUE),
 ('Inspeção de robô colaborativo — início', 'ROBO', 'PRE_USO', TRUE),
-('Devolução de robô colaborativo', 'ROBO', 'POS_USO', TRUE),
-('Inspeção de bancada de instrumentação', 'BANCADA', 'PRE_USO', TRUE),
-('Devolução de bancada de instrumentação', 'BANCADA', 'POS_USO', TRUE);
+('Devolução de robô colaborativo', 'ROBO', 'POS_USO', TRUE);
 
 INSERT INTO checklist_itens (modelo_id, descricao, critico) VALUES
-((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada elétrica — início'), 'Botão de emergência interrompe o circuito ao ser acionado', TRUE),
-((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada elétrica — início'), 'Cabos e pontas de prova sem cobre exposto', TRUE),
-((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada elétrica — início'), 'Identificação dos bornes está legível', FALSE),
-((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de bancada elétrica'), 'Bancada desligada e área organizada', TRUE),
-((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de bancada elétrica'), 'Cabos e acessórios devolvidos ao suporte', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pré-uso'), 'Botão de emergência interrompe o circuito ao ser acionado', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pré-uso'), 'Cabos e pontas de prova sem cobre exposto', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pré-uso'), 'Bornes, seletores e instrumentos estão identificados e funcionando', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pré-uso'), 'Proteções e tampas do painel estão instaladas e sem danos visíveis', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pré-uso'), 'A bancada está estável e não há peças soltas', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pós-uso'), 'Bancada, fontes e instrumentos desligados; área organizada e segura', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pós-uso'), 'Cabos e acessórios devolvidos ao suporte', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pós-uso'), 'Não houve aquecimento, cheiro ou ruído anormal durante o uso', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pós-uso'), 'Cabos, conectores e instrumentos continuam sem danos após a atividade', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pós-uso'), 'Componentes usados foram contabilizados; itens faltantes foram registrados', FALSE),
 ((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Cercamento e parada de emergência funcionando', TRUE),
 ((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Garra e ferramenta firmemente fixadas', TRUE),
 ((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Área de trabalho livre de objetos soltos', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Cabos, mangueiras e conexões estão sem desgaste, esmagamento ou vazamento visível.', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Modo de operação e velocidade estão adequados à atividade planejada.', TRUE),
 ((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'Robô estacionado e alimentação isolada', TRUE),
 ((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'Ferramentas e gabaritos guardados', FALSE),
-((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada de instrumentação'), 'Pontas do osciloscópio sem danos', TRUE),
-((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada de instrumentação'), 'Multímetro e cabos conferidos', FALSE);
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'Garra e ferramenta continuam firmes e sem danos após o uso.', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'Não houve colisão, parada de emergência ou comportamento inesperado durante a atividade.', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'A célula e a área de trabalho estão sem danos e sem objetos deixados para trás.', TRUE);
 
 -- TABELA: inspecoes
 -- RN02: registra vistoria prÃ© e pÃ³s; UNIQUE permite uma de cada por reserva.
@@ -335,94 +341,3 @@ CREATE TABLE pre_cadastros_staff (
     utilizada BOOLEAN NOT NULL DEFAULT FALSE,
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Seletores e configurações foram restaurados e a bancada ficou organizada.', FALSE
-FROM checklist_modelos
-WHERE titulo = 'Devolução de bancada de instrumentação' AND tipo_equipamento = 'BANCADA' AND etapa = 'POS_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Instrumentos e acessórios utilizados foram conferidos e guardados.', FALSE
-FROM checklist_modelos
-WHERE titulo = 'Devolução de bancada de instrumentação' AND tipo_equipamento = 'BANCADA' AND etapa = 'POS_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Não houve aquecimento, cheiro ou ruído anormal durante o uso.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Devolução de bancada de instrumentação' AND tipo_equipamento = 'BANCADA' AND etapa = 'POS_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Pontas de prova, cabos e conectores estão sem danos após a atividade.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Devolução de bancada de instrumentação' AND tipo_equipamento = 'BANCADA' AND etapa = 'POS_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Fontes e instrumentos estão desligados antes da remoção dos cabos.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Devolução de bancada de instrumentação' AND tipo_equipamento = 'BANCADA' AND etapa = 'POS_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Instrumentos, seletores e bornes estão identificados e ajustados para a atividade.', FALSE
-FROM checklist_modelos
-WHERE titulo = 'Inspeção de bancada de instrumentação' AND tipo_equipamento = 'BANCADA' AND etapa = 'PRE_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Cabos de alimentação e conexões de aterramento estão firmes e sem danos visíveis.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Inspeção de bancada de instrumentação' AND tipo_equipamento = 'BANCADA' AND etapa = 'PRE_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Proteções do painel e botão de emergência estão instalados e funcionando.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Inspeção de bancada de instrumentação' AND tipo_equipamento = 'BANCADA' AND etapa = 'PRE_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'A célula e a área de trabalho estão sem danos e sem objetos deixados para trás.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Devolução de robô colaborativo' AND tipo_equipamento = 'ROBO' AND etapa = 'POS_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Não houve colisão, parada de emergência ou comportamento inesperado durante a atividade.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Devolução de robô colaborativo' AND tipo_equipamento = 'ROBO' AND etapa = 'POS_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Garra e ferramenta continuam firmes e sem danos após o uso.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Devolução de robô colaborativo' AND tipo_equipamento = 'ROBO' AND etapa = 'POS_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Modo de operação e velocidade estão adequados à atividade planejada.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Inspeção de robô colaborativo — início' AND tipo_equipamento = 'ROBO' AND etapa = 'PRE_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Cabos, mangueiras e conexões estão sem desgaste, esmagamento ou vazamento visível.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Inspeção de robô colaborativo — início' AND tipo_equipamento = 'ROBO' AND etapa = 'PRE_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Componentes usados foram contabilizados; itens faltantes foram registrados.', FALSE
-FROM checklist_modelos
-WHERE titulo = 'Devolução de bancada elétrica' AND tipo_equipamento = 'BANCADA' AND etapa = 'POS_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Cabos, conectores e instrumentos continuam sem danos após a atividade.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Devolução de bancada elétrica' AND tipo_equipamento = 'BANCADA' AND etapa = 'POS_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Não houve aquecimento, cheiro ou ruído anormal durante o uso.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Devolução de bancada elétrica' AND tipo_equipamento = 'BANCADA' AND etapa = 'POS_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'A bancada está estável e não há peças soltas.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Inspeção de bancada elétrica — início' AND tipo_equipamento = 'BANCADA' AND etapa = 'PRE_USO';
-
-INSERT INTO checklist_itens (modelo_id, descricao, critico)
-SELECT id, 'Proteções e tampas do painel estão instaladas e sem danos visíveis.', TRUE
-FROM checklist_modelos
-WHERE titulo = 'Inspeção de bancada elétrica — início' AND tipo_equipamento = 'BANCADA' AND etapa = 'PRE_USO';
-
