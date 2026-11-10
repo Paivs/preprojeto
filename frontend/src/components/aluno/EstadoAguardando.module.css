@@ -131,3 +131,31 @@
     }
   }
 }
+
+@media (max-width: 767px) {
+  .painel {
+    padding: 22px 16px;
+  }
+
+  .titulo {
+    font-size: 24px;
+  }
+
+  .dados {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .token {
+    grid-column: auto;
+  }
+
+  .acoes {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cancelar,
+  .simular {
+    width: 100%;
+  }
+}

@@ -117,6 +117,16 @@
   outline-offset: 3px;
 }
 
+@media (max-width: 767px) {
+  .titulo {
+    font-size: 24px;
+  }
+
+  .secaoEquipamentos {
+    padding: 16px;
+  }
+}
+
 @media (min-width: 768px) {
   .grade {
     grid-template-columns: repeat(3, minmax(0, 1fr));
