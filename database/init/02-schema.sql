@@ -337,6 +337,11 @@ CREATE TABLE pre_cadastros_staff (
 ) ENGINE=InnoDB;
 
 INSERT INTO checklist_itens (modelo_id, descricao, critico)
+SELECT id, 'Seletores e configurações foram restaurados e a bancada ficou organizada.', FALSE
+FROM checklist_modelos
+WHERE titulo = 'Devolução de bancada de instrumentação' AND tipo_equipamento = 'BANCADA' AND etapa = 'POS_USO';
+
+INSERT INTO checklist_itens (modelo_id, descricao, critico)
 SELECT id, 'Instrumentos e acessórios utilizados foram conferidos e guardados.', FALSE
 FROM checklist_modelos
 WHERE titulo = 'Devolução de bancada de instrumentação' AND tipo_equipamento = 'BANCADA' AND etapa = 'POS_USO';
