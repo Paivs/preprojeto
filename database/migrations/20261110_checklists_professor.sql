@@ -71,4 +71,13 @@ WHERE cm.titulo = 'Devolução de bancada elétrica' AND cm.tipo_equipamento = '
       WHERE ci.modelo_id = cm.id AND ci.descricao = 'Não houve aquecimento, cheiro ou ruído anormal durante o uso.'
   );
 
+INSERT INTO checklist_itens (modelo_id, descricao, critico)
+SELECT cm.id, 'Cabos, conectores e instrumentos continuam sem danos após a atividade.', TRUE
+FROM checklist_modelos cm
+WHERE cm.titulo = 'Devolução de bancada elétrica' AND cm.tipo_equipamento = 'BANCADA' AND cm.etapa = 'POS_USO'
+  AND NOT EXISTS (
+      SELECT 1 FROM checklist_itens ci
+      WHERE ci.modelo_id = cm.id AND ci.descricao = 'Cabos, conectores e instrumentos continuam sem danos após a atividade.'
+  );
+
 COMMIT;
