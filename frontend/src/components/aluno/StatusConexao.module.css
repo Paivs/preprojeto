@@ -1,0 +1,52 @@
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 8px 12px;
+  border: 1px solid var(--status-borda);
+  border-radius: 999px;
+  background: rgba(22, 26, 29, 0.72);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.liberado {
+  color: var(--status-liberado);
+}
+
+.aguardando {
+  color: var(--status-aguardando);
+}
+
+.ponto {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ponto::after {
+    position: absolute;
+    inset: -3px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    content: "";
+    animation: pulso 1.8s ease-out infinite;
+  }
+
+  @keyframes pulso {
+    0% {
+      opacity: 0.7;
+      transform: scale(0.65);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(1.8);
+    }
+  }
+}
