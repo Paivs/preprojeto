@@ -49,7 +49,7 @@ export async function atualizar(req, res, next) {
 export async function excluir(req, res, next) {
   try {
     await SetorService.excluir(req.params.id, req.usuario.id);
-    return res.status(204).send();
+    return res.status(200).json({ sucesso: true, mensagem: 'Setor excluído com sucesso.' });
   } catch (erro) {
     return responderErro(erro, res, next);
   }
