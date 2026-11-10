@@ -6,16 +6,6 @@
   display: flex;
 }
 
-.loginContainer {
-  min-height: 100vh;
-  width: 100%;
-  background: var(--onyx, #0b090a);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
 .contentSpine {
   flex: 1;
   min-width: 0;

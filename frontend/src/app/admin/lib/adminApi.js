@@ -1,4 +1,4 @@
-import { API_URL, CHAVE_TOKEN, CHAVE_USUARIO } from "./constantes";
+import { API_URL } from "./constantes";
 
 async function requisitar(caminho, token) {
   const resposta = await fetch(`${API_URL}${caminho}`, {
@@ -26,22 +26,6 @@ export async function chamarApi(caminho, token, opcoes = {}) {
   return corpo.dados ?? corpo;
 }
 
-export function carregarSessao() {
-  const token = localStorage.getItem(CHAVE_TOKEN);
-  const usuarioSalvo = localStorage.getItem(CHAVE_USUARIO);
-  return { token, usuario: usuarioSalvo ? JSON.parse(usuarioSalvo) : null };
-}
-
-export function salvarSessao(token, usuario) {
-  localStorage.setItem(CHAVE_TOKEN, token);
-  localStorage.setItem(CHAVE_USUARIO, JSON.stringify(usuario));
-}
-
-export function limparSessao() {
-  localStorage.removeItem(CHAVE_TOKEN);
-  localStorage.removeItem(CHAVE_USUARIO);
-}
-
 export async function verificarSaude() {
   try {
     await requisitar("/health");
@@ -49,18 +33,6 @@ export async function verificarSaude() {
   } catch {
     return "offline";
   }
-}
-
-export async function entrarComoAdmin(matricula, senha) {
-  const resposta = await fetch(`${API_URL}/usuarios/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ matricula, senha }),
-  });
-  const corpo = await resposta.json().catch(() => ({}));
-  if (!resposta.ok) throw new Error(corpo.message || `Erro ${resposta.status}`);
-  if (corpo.usuario?.perfil !== "ADMIN") throw new Error("Esta página exige uma conta ADMIN.");
-  return corpo;
 }
 
 export async function buscarDashboard(token) {
