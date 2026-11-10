@@ -80,4 +80,13 @@ WHERE cm.titulo = 'Devolução de bancada elétrica' AND cm.tipo_equipamento = '
       WHERE ci.modelo_id = cm.id AND ci.descricao = 'Cabos, conectores e instrumentos continuam sem danos após a atividade.'
   );
 
+INSERT INTO checklist_itens (modelo_id, descricao, critico)
+SELECT cm.id, 'Componentes usados foram contabilizados; itens faltantes foram registrados.', FALSE
+FROM checklist_modelos cm
+WHERE cm.titulo = 'Devolução de bancada elétrica' AND cm.tipo_equipamento = 'BANCADA' AND cm.etapa = 'POS_USO'
+  AND NOT EXISTS (
+      SELECT 1 FROM checklist_itens ci
+      WHERE ci.modelo_id = cm.id AND ci.descricao = 'Componentes usados foram contabilizados; itens faltantes foram registrados.'
+  );
+
 COMMIT;
