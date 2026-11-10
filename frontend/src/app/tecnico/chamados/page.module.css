@@ -50,6 +50,11 @@
 .modalDescricao h3 { margin: 0 0 8px; color: var(--dust-grey); font-size: 12px; }
 .modalDescricao p { margin: 0; color: var(--silver); font-size: 13px; line-height: 1.6; white-space: pre-wrap; }
 .erro { margin: 0 0 14px; padding: 12px 14px; color: var(--white-smoke); background: rgba(164, 22, 26, .18); border: 1px solid var(--mahogany-red-2); border-radius: 4px; font-size: 13px; }
+.aviso { margin: 0 0 14px; padding: 12px 14px; color: #bdd6c4; background: rgba(124, 155, 132, .14); border: 1px solid rgba(124, 155, 132, .45); border-radius: 4px; font-size: 13px; }
+.modalAcoes { display: flex; justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+.botaoAcao { min-height: 38px; padding: 0 14px; color: var(--white-smoke); background: var(--mahogany-red); border: 1px solid var(--mahogany-red-2); border-radius: 4px; cursor: pointer; font: inherit; font-size: 12px; font-weight: 700; }
+.botaoAcao:hover:not(:disabled) { background: var(--mahogany-red-2); }
+.botaoAcao:disabled { cursor: wait; opacity: .7; }
 @keyframes girar { to { transform: rotate(360deg); } }
 @media (max-width: 760px) { .filtros { grid-template-columns: 1fr 1fr; } .busca { grid-column: 1 / -1; } }
 @media (max-width: 560px) { .header { align-items: flex-start; flex-direction: column; } .filtros { grid-template-columns: 1fr; } .busca { grid-column: auto; } .cartao { padding: 15px; } .detalhes { flex-direction: column; gap: 6px; } .modal { padding: 17px; } .modalDados { grid-template-columns: 1fr; } }

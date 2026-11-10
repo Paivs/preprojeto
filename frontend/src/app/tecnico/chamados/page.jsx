@@ -30,6 +30,8 @@ export default function PaginaChamadosTecnico() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [chamadoSelecionado, setChamadoSelecionado] = useState(null);
+  const [atualizandoStatus, setAtualizandoStatus] = useState(false);
+  const [aviso, setAviso] = useState("");
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -48,6 +50,29 @@ export default function PaginaChamadosTecnico() {
   }, [status, severidade]);
 
   useEffect(() => { carregar(); }, [carregar]);
+
+  async function atualizarStatus(novoStatus) {
+    if (!chamadoSelecionado || atualizandoStatus) return;
+    setAtualizandoStatus(true);
+    setErro("");
+    setAviso("");
+    try {
+      const resposta = await apiFetch(`/api/chamados/${chamadoSelecionado.id}/status`, {
+        method: "PATCH",
+        body: { status: novoStatus },
+      });
+      const chamadoAtualizado = resposta?.dados ?? { ...chamadoSelecionado, status: novoStatus };
+      setChamadoSelecionado(chamadoAtualizado);
+      setChamados((atuais) => atuais.map((chamado) =>
+        chamado.id === chamadoAtualizado.id ? { ...chamado, ...chamadoAtualizado } : chamado,
+      ));
+      setAviso("Status do chamado atualizado.");
+    } catch (error) {
+      setErro(error.message || "Não foi possível atualizar o chamado.");
+    } finally {
+      setAtualizandoStatus(false);
+    }
+  }
 
   const filtrados = useMemo(() => {
     const termo = busca.trim().toLocaleLowerCase("pt-BR");
@@ -94,6 +119,7 @@ export default function PaginaChamadosTecnico() {
       </section>
 
       {erro && <p className={styles.erro} role="alert">{erro}</p>}
+      {aviso && <p className={styles.aviso} role="status">{aviso}</p>}
       <p className={styles.contagem}>{carregando ? "Carregando chamados…" : `${filtrados.length} chamados encontrados`}</p>
 
       {!carregando && !erro && filtrados.length === 0 && (
@@ -180,6 +206,27 @@ export default function PaginaChamadosTecnico() {
               <h3>Descrição</h3>
               <p>{chamadoSelecionado.descricao || "Sem descrição informada."}</p>
             </div>
+            {chamadoSelecionado.status === "ABERTO" && (
+              <div className={styles.modalAcoes}>
+                <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("EM_ATENDIMENTO")} disabled={atualizandoStatus}>
+                  {atualizandoStatus ? "Atualizando..." : "Iniciar atendimento"}
+                </button>
+              </div>
+            )}
+            {chamadoSelecionado.status === "EM_ATENDIMENTO" && (
+              <div className={styles.modalAcoes}>
+                <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("AGUARDANDO_PECAS")} disabled={atualizandoStatus}>
+                  {atualizandoStatus ? "Atualizando..." : "Aguardar peças"}
+                </button>
+              </div>
+            )}
+            {chamadoSelecionado.status === "AGUARDANDO_PECAS" && (
+              <div className={styles.modalAcoes}>
+                <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("EM_ATENDIMENTO")} disabled={atualizandoStatus}>
+                  {atualizandoStatus ? "Atualizando..." : "Retomar atendimento"}
+                </button>
+              </div>
+            )}
           </section>
         </div>
       )}

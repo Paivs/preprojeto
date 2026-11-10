@@ -35,7 +35,7 @@ export async function criar(req, res, next) {
 
 export async function atualizarStatus(req, res, next) {
   try {
-    const chamado = await ChamadoService.atualizarStatus(req.params.id, req.body.status);
+    const chamado = await ChamadoService.atualizarStatus(req.params.id, req.body.status, req.usuario);
     return res.status(200).json({ sucesso: true, dados: chamado });
   } catch (erro) { return responderErro(erro, res, next); }
 }

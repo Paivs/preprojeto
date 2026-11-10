@@ -86,11 +86,21 @@ export async function criar(dados, usuarioLogado) {
   return await ChamadoModel.criar(chamadoDominio);
 }
 
-export async function atualizarStatus(idRecebido, status) {
+export async function atualizarStatus(idRecebido, status, usuarioLogado) {
   const id = validarId(idRecebido);
   if (!STATUS_VALIDOS.includes(status)) {
     throw new TypeError(`Status deve ser um de: ${STATUS_VALIDOS.join(", ")}.`);
   }
+  const chamado = await ChamadoModel.buscarPorId(id);
+  if (!chamado) {
+    throw new Error(`Chamado ${id} não encontrado.`);
+  }
+  if (usuarioLogado?.perfil === "TECNICO" && Number(chamado.tecnico_id) !== Number(usuarioLogado.id)) {
+    const erro = new Error("Você só pode atualizar chamados atribuídos a você.");
+    erro.status = 403;
+    throw erro;
+  }
+
   const atualizou = await ChamadoModel.atualizarStatus(id, status);
   if (!atualizou) {
     throw new Error(`Chamado ${id} não encontrado.`);
