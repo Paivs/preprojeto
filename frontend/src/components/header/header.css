@@ -44,6 +44,7 @@
   padding: 0;
 }
 
+
 .nav-link {
   position: relative;
   color: var(--cor-texto);
@@ -67,7 +68,8 @@
   transition: width 0.3s ease;
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link.active {
   opacity: 1;
   color: var(--cor-texto);
 }
@@ -75,10 +77,6 @@
 .nav-link:hover::after,
 .nav-link.active::after {
   width: 100%;
-}
-
-.nav-link.active {
-  opacity: 1;
 }
 
 .nav-login {
