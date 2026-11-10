@@ -29,6 +29,7 @@ export default function PaginaChamadosTecnico() {
   const [busca, setBusca] = useState("");
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
+  const [chamadoSelecionado, setChamadoSelecionado] = useState(null);
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -124,10 +125,64 @@ export default function PaginaChamadosTecnico() {
                 <span><strong>Equipamento</strong> {chamado.equipamento_nome || (chamado.equipamento_id ? `#${chamado.equipamento_id}` : "Não informado")}</span>
                 <span><strong>Aberto em</strong> {formatarData(chamado.aberto_em)}</span>
               </div>
+              <button type="button" className={styles.botaoDetalhes} onClick={() => setChamadoSelecionado(chamado)}>
+                Ver detalhes
+                <span className="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+              </button>
             </article>
           );
         })}
       </section>
+
+      {chamadoSelecionado && (
+        <div
+          className={styles.modalFundo}
+          role="presentation"
+          onMouseDown={(evento) => {
+            if (evento.target === evento.currentTarget) setChamadoSelecionado(null);
+          }}
+        >
+          <section className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="titulo-detalhes-chamado">
+            <header className={styles.modalCabecalho}>
+              <div>
+                <p className={styles.sobretitulo}>Chamado #{String(chamadoSelecionado.id).padStart(4, "0")}</p>
+                <h2 className={styles.modalTitulo} id="titulo-detalhes-chamado">
+                  {chamadoSelecionado.titulo || `Chamado #${chamadoSelecionado.id}`}
+                </h2>
+              </div>
+              <button type="button" className={styles.fecharModal} onClick={() => setChamadoSelecionado(null)} aria-label="Fechar detalhes">
+                <span className="material-symbols-outlined" aria-hidden="true">close</span>
+              </button>
+            </header>
+            <div className={styles.modalEtiquetas}>
+              <span className={`${styles.prioridade} ${styles[`prioridade_${String(chamadoSelecionado.severidade || "").toLowerCase()}`] || ""}`}>
+                {ROTULO_SEVERIDADE[chamadoSelecionado.severidade] || "Prioridade não informada"}
+              </span>
+              <span className={`${styles.status} ${styles[`status_${String(chamadoSelecionado.status || "").toLowerCase()}`] || ""}`}>
+                {ROTULO_STATUS[chamadoSelecionado.status] || chamadoSelecionado.status}
+              </span>
+            </div>
+            <dl className={styles.modalDados}>
+              <div>
+                <dt>Equipamento</dt>
+                <dd>{chamadoSelecionado.equipamento_nome || `Equipamento #${chamadoSelecionado.equipamento_id}`}</dd>
+              </div>
+              <div>
+                <dt>Tipo de manutenção</dt>
+                <dd>{chamadoSelecionado.tipo === "PREVENTIVO" ? "Preventiva" : "Corretiva"}</dd>
+              </div>
+              <div>
+                <dt>Aberto em</dt>
+                <dd>{formatarData(chamadoSelecionado.aberto_em)}</dd>
+              </div>
+            </dl>
+            <div className={styles.modalDescricao}>
+              <h3>Descrição</h3>
+              <p>{chamadoSelecionado.descricao || "Sem descrição informada."}</p>
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   );
 }
