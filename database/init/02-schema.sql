@@ -337,6 +337,11 @@ CREATE TABLE pre_cadastros_staff (
 ) ENGINE=InnoDB;
 
 INSERT INTO checklist_itens (modelo_id, descricao, critico)
+SELECT id, 'Garra e ferramenta continuam firmes e sem danos após o uso.', TRUE
+FROM checklist_modelos
+WHERE titulo = 'Devolução de robô colaborativo' AND tipo_equipamento = 'ROBO' AND etapa = 'POS_USO';
+
+INSERT INTO checklist_itens (modelo_id, descricao, critico)
 SELECT id, 'Modo de operação e velocidade estão adequados à atividade planejada.', TRUE
 FROM checklist_modelos
 WHERE titulo = 'Inspeção de robô colaborativo — início' AND tipo_equipamento = 'ROBO' AND etapa = 'PRE_USO';
