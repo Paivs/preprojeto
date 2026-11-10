@@ -44,4 +44,13 @@ JOIN checklist_modelos cm
 LEFT JOIN checklist_itens ci ON ci.modelo_id = cm.id AND ci.descricao = dados.descricao
 WHERE ci.id IS NULL;
 
+INSERT INTO checklist_itens (modelo_id, descricao, critico)
+SELECT cm.id, 'Proteções e tampas do painel estão instaladas e sem danos visíveis.', TRUE
+FROM checklist_modelos cm
+WHERE cm.titulo = 'Inspeção de bancada elétrica — início' AND cm.tipo_equipamento = 'BANCADA' AND cm.etapa = 'PRE_USO'
+  AND NOT EXISTS (
+      SELECT 1 FROM checklist_itens ci
+      WHERE ci.modelo_id = cm.id AND ci.descricao = 'Proteções e tampas do painel estão instaladas e sem danos visíveis.'
+  );
+
 COMMIT;
