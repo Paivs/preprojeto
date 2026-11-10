@@ -53,24 +53,6 @@ SELECT e.id,c.id,x.q FROM (
  SELECT 'TEN-LAB-BAN-033','Fonte chaveada 24 V / 10 A',1 UNION ALL SELECT 'TEN-LAB-BAN-033','Sensor indutivo M12',3
 ) x JOIN equipamentos e ON e.codigo_patrimonio=x.p JOIN componentes c ON c.nome=x.c;
 
-INSERT INTO checklist_modelos (titulo,tipo_equipamento,etapa,ativo) VALUES
-('Inspeção de bancada elétrica — início','BANCADA','PRE_USO',1),('Devolução de bancada elétrica','BANCADA','POS_USO',1),
-('Inspeção de robô colaborativo — início','ROBO','PRE_USO',1),('Devolução de robô colaborativo','ROBO','POS_USO',1),
-('Inspeção de bancada de instrumentação','BANCADA','PRE_USO',1);
-INSERT INTO checklist_itens (modelo_id,descricao,critico) VALUES
-((SELECT id FROM checklist_modelos WHERE titulo='Inspeção de bancada elétrica — início'),'Botão de emergência interrompe o circuito ao ser acionado',1),
-((SELECT id FROM checklist_modelos WHERE titulo='Inspeção de bancada elétrica — início'),'Cabos e pontas de prova sem cobre exposto',1),
-((SELECT id FROM checklist_modelos WHERE titulo='Inspeção de bancada elétrica — início'),'Identificação dos bornes está legível',0),
-((SELECT id FROM checklist_modelos WHERE titulo='Devolução de bancada elétrica'),'Bancada desligada e área organizada',1),
-((SELECT id FROM checklist_modelos WHERE titulo='Devolução de bancada elétrica'),'Cabos e acessórios devolvidos ao suporte',0),
-((SELECT id FROM checklist_modelos WHERE titulo='Inspeção de robô colaborativo — início'),'Cercamento e parada de emergência funcionando',1),
-((SELECT id FROM checklist_modelos WHERE titulo='Inspeção de robô colaborativo — início'),'Garra e ferramenta firmemente fixadas',1),
-((SELECT id FROM checklist_modelos WHERE titulo='Inspeção de robô colaborativo — início'),'Área de trabalho livre de objetos soltos',0),
-((SELECT id FROM checklist_modelos WHERE titulo='Devolução de robô colaborativo'),'Robô estacionado e alimentação isolada',1),
-((SELECT id FROM checklist_modelos WHERE titulo='Devolução de robô colaborativo'),'Ferramentas e gabaritos guardados',0),
-((SELECT id FROM checklist_modelos WHERE titulo='Inspeção de bancada de instrumentação'),'Pontas do osciloscópio sem danos',1),
-((SELECT id FROM checklist_modelos WHERE titulo='Inspeção de bancada de instrumentação'),'Multímetro e cabos conferidos',0);
-
 INSERT INTO agendamentos (responsavel_id,equipamento_id,turma_id,inicio,fim,token_acesso,status,criado_em) VALUES
 ((SELECT id FROM usuarios WHERE email='aluno1.seed@tenken.local'),(SELECT id FROM equipamentos WHERE codigo_patrimonio='TEN-LAB-BAN-014'),(SELECT id FROM turmas_projetos WHERE nome='Automação Industrial — Turma A'),'2026-11-03 09:00:00','2026-11-03 11:00:00','SEED-AUT-0301','CONCLUIDO','2026-10-28 16:20:00'),
 ((SELECT id FROM usuarios WHERE email='aluno2.seed@tenken.local'),(SELECT id FROM equipamentos WHERE codigo_patrimonio='TEN-LAB-BAN-021'),(SELECT id FROM turmas_projetos WHERE nome='Automação Industrial — Turma A'),'2026-11-10 13:00:00','2026-11-10 15:00:00','SEED-AUT-1002','CONFIRMADO','2026-11-01 10:15:00'),

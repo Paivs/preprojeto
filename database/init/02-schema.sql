@@ -137,6 +137,29 @@ CREATE TABLE checklist_itens (
     FOREIGN KEY (modelo_id) REFERENCES checklist_modelos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Modelos e itens iniciais dos checklists usados na página do professor.
+INSERT INTO checklist_modelos (titulo, tipo_equipamento, etapa, ativo) VALUES
+('Inspeção de bancada elétrica — início', 'BANCADA', 'PRE_USO', TRUE),
+('Devolução de bancada elétrica', 'BANCADA', 'POS_USO', TRUE),
+('Inspeção de robô colaborativo — início', 'ROBO', 'PRE_USO', TRUE),
+('Devolução de robô colaborativo', 'ROBO', 'POS_USO', TRUE),
+('Inspeção de bancada de instrumentação', 'BANCADA', 'PRE_USO', TRUE),
+('Devolução de bancada de instrumentação', 'BANCADA', 'POS_USO', TRUE);
+
+INSERT INTO checklist_itens (modelo_id, descricao, critico) VALUES
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada elétrica — início'), 'Botão de emergência interrompe o circuito ao ser acionado', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada elétrica — início'), 'Cabos e pontas de prova sem cobre exposto', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada elétrica — início'), 'Identificação dos bornes está legível', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de bancada elétrica'), 'Bancada desligada e área organizada', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de bancada elétrica'), 'Cabos e acessórios devolvidos ao suporte', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Cercamento e parada de emergência funcionando', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Garra e ferramenta firmemente fixadas', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Área de trabalho livre de objetos soltos', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'Robô estacionado e alimentação isolada', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'Ferramentas e gabaritos guardados', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada de instrumentação'), 'Pontas do osciloscópio sem danos', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada de instrumentação'), 'Multímetro e cabos conferidos', FALSE);
+
 -- TABELA: inspecoes
 -- RN02: registra vistoria prÃ© e pÃ³s; UNIQUE permite uma de cada por reserva.
 -- RN04/RF03: professor_id registra quem vistoriou. A API restringe vistoria e

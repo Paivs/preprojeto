@@ -1,0 +1,47 @@
+-- Sincroniza modelos e itens de checklist nos bancos que já existem.
+-- A migração pode ser reaplicada sem duplicar modelos ou itens.
+USE tenken_db;
+START TRANSACTION;
+
+INSERT INTO checklist_modelos (titulo, tipo_equipamento, etapa, ativo)
+SELECT dados.titulo, dados.tipo_equipamento, dados.etapa, TRUE
+FROM (
+    SELECT 'Inspeção de bancada elétrica — início' AS titulo, 'BANCADA' AS tipo_equipamento, 'PRE_USO' AS etapa
+    UNION ALL SELECT 'Devolução de bancada elétrica', 'BANCADA', 'POS_USO'
+    UNION ALL SELECT 'Inspeção de robô colaborativo — início', 'ROBO', 'PRE_USO'
+    UNION ALL SELECT 'Devolução de robô colaborativo', 'ROBO', 'POS_USO'
+    UNION ALL SELECT 'Inspeção de bancada de instrumentação', 'BANCADA', 'PRE_USO'
+    UNION ALL SELECT 'Devolução de bancada de instrumentação', 'BANCADA', 'POS_USO'
+) AS dados
+WHERE NOT EXISTS (
+    SELECT 1 FROM checklist_modelos cm
+    WHERE cm.titulo = dados.titulo
+      AND cm.tipo_equipamento = dados.tipo_equipamento
+      AND cm.etapa = dados.etapa
+);
+
+INSERT INTO checklist_itens (modelo_id, descricao, critico)
+SELECT cm.id, dados.descricao, dados.critico
+FROM (
+    SELECT 'Inspeção de bancada elétrica — início' AS titulo, 'BANCADA' AS tipo_equipamento, 'PRE_USO' AS etapa,
+           'Botão de emergência interrompe o circuito ao ser acionado' AS descricao, TRUE AS critico
+    UNION ALL SELECT 'Inspeção de bancada elétrica — início', 'BANCADA', 'PRE_USO', 'Cabos e pontas de prova sem cobre exposto', TRUE
+    UNION ALL SELECT 'Inspeção de bancada elétrica — início', 'BANCADA', 'PRE_USO', 'Identificação dos bornes está legível', FALSE
+    UNION ALL SELECT 'Devolução de bancada elétrica', 'BANCADA', 'POS_USO', 'Bancada desligada e área organizada', TRUE
+    UNION ALL SELECT 'Devolução de bancada elétrica', 'BANCADA', 'POS_USO', 'Cabos e acessórios devolvidos ao suporte', FALSE
+    UNION ALL SELECT 'Inspeção de robô colaborativo — início', 'ROBO', 'PRE_USO', 'Cercamento e parada de emergência funcionando', TRUE
+    UNION ALL SELECT 'Inspeção de robô colaborativo — início', 'ROBO', 'PRE_USO', 'Garra e ferramenta firmemente fixadas', TRUE
+    UNION ALL SELECT 'Inspeção de robô colaborativo — início', 'ROBO', 'PRE_USO', 'Área de trabalho livre de objetos soltos', FALSE
+    UNION ALL SELECT 'Devolução de robô colaborativo', 'ROBO', 'POS_USO', 'Robô estacionado e alimentação isolada', TRUE
+    UNION ALL SELECT 'Devolução de robô colaborativo', 'ROBO', 'POS_USO', 'Ferramentas e gabaritos guardados', FALSE
+    UNION ALL SELECT 'Inspeção de bancada de instrumentação', 'BANCADA', 'PRE_USO', 'Pontas do osciloscópio sem danos', TRUE
+    UNION ALL SELECT 'Inspeção de bancada de instrumentação', 'BANCADA', 'PRE_USO', 'Multímetro e cabos conferidos', FALSE
+) AS dados
+JOIN checklist_modelos cm
+  ON cm.titulo = dados.titulo
+ AND cm.tipo_equipamento = dados.tipo_equipamento
+ AND cm.etapa = dados.etapa
+LEFT JOIN checklist_itens ci ON ci.modelo_id = cm.id AND ci.descricao = dados.descricao
+WHERE ci.id IS NULL;
+
+COMMIT;
