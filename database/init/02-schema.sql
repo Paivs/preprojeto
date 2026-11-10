@@ -337,6 +337,11 @@ CREATE TABLE pre_cadastros_staff (
 ) ENGINE=InnoDB;
 
 INSERT INTO checklist_itens (modelo_id, descricao, critico)
+SELECT id, 'Não houve aquecimento, cheiro ou ruído anormal durante o uso.', TRUE
+FROM checklist_modelos
+WHERE titulo = 'Devolução de bancada elétrica' AND tipo_equipamento = 'BANCADA' AND etapa = 'POS_USO';
+
+INSERT INTO checklist_itens (modelo_id, descricao, critico)
 SELECT id, 'A bancada está estável e não há peças soltas.', TRUE
 FROM checklist_modelos
 WHERE titulo = 'Inspeção de bancada elétrica — início' AND tipo_equipamento = 'BANCADA' AND etapa = 'PRE_USO';
