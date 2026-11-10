@@ -1,0 +1,52 @@
+* {
+    font-family: var(--font-primary);
+}
+
+.conteudo{
+    margin-left: 245px;
+    min-height: 100vh;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: auto;
+    width: 80vw;
+    height: 100vh;
+    margin-top: 15vh;
+    /* background-color: aqua; */
+}
+
+.topo{
+    display: flex;
+    border: none;
+    gap: 12px;
+}
+
+.card-topo{
+    width: 320px;
+    height: 180px;
+    box-shadow: 0 0 5px rgba(0, 0, 0.2);
+    background-color: var(--dark-bg-tertiary);
+    /* border: 1px solid var(--cinza); */
+    border-radius: 5px;
+    padding: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    /* align-items: center; */
+    /* justify-content: center; */
+}
+
+.card-topo h2{
+    font-size: 2.2rem;
+    color: var(--branco);
+    font-weight: 500;
+}
+
+.card-topo i{
+    font-size: 1.3rem;
+    color: var(--roxo-claro);
+    text-align: flex-end;
+}
