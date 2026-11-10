@@ -22,6 +22,9 @@ export async function listarModelos() { return await ChecklistModeloModel.listar
 
 export async function criarModelo(dados) {
   validarModelo(dados);
+  if (await ChecklistModeloModel.existeAtivoPorTipoEtapa(dados.tipo_equipamento, dados.etapa)) {
+    throw new TypeError("Já existe um checklist ativo para este tipo de equipamento e etapa.");
+  }
   return await ChecklistModeloModel.criar({
     titulo: dados.titulo.trim(), tipo_equipamento: dados.tipo_equipamento, etapa: dados.etapa,
   });
@@ -31,6 +34,9 @@ export async function atualizarModelo(idRecebido, dados) {
   const id = validarId(idRecebido);
   validarModelo(dados);
   const ativo = dados.ativo === undefined ? true : Boolean(dados.ativo);
+  if (ativo && await ChecklistModeloModel.existeAtivoPorTipoEtapa(dados.tipo_equipamento, dados.etapa, id)) {
+    throw new TypeError("Já existe um checklist ativo para este tipo de equipamento e etapa.");
+  }
   const atualizou = await ChecklistModeloModel.atualizar(id, {
     titulo: dados.titulo.trim(), tipo_equipamento: dados.tipo_equipamento, etapa: dados.etapa, ativo,
   });
