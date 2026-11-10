@@ -170,4 +170,13 @@ WHERE cm.titulo = 'Devolução de bancada de instrumentação' AND cm.tipo_equip
       WHERE ci.modelo_id = cm.id AND ci.descricao = 'Fontes e instrumentos estão desligados antes da remoção dos cabos.'
   );
 
+INSERT INTO checklist_itens (modelo_id, descricao, critico)
+SELECT cm.id, 'Pontas de prova, cabos e conectores estão sem danos após a atividade.', TRUE
+FROM checklist_modelos cm
+WHERE cm.titulo = 'Devolução de bancada de instrumentação' AND cm.tipo_equipamento = 'BANCADA' AND cm.etapa = 'POS_USO'
+  AND NOT EXISTS (
+      SELECT 1 FROM checklist_itens ci
+      WHERE ci.modelo_id = cm.id AND ci.descricao = 'Pontas de prova, cabos e conectores estão sem danos após a atividade.'
+  );
+
 COMMIT;
