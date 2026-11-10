@@ -7,6 +7,7 @@ import { autenticar, autorizarAdmin } from "./middlewares/AuthMiddleware.js";
 import healthRoutes from "./routes/healthRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
 import setorRoutes from "./routes/setorRoutes.js";
+import equipamentoRoutes from "./routes/equipamentoRoutes.js";
 import { authRouter } from "./routes/AuthRoutes.js";
 
 const app = express();
@@ -44,6 +45,7 @@ app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRouter); // pública: login e registrar
 
 app.use("/api/setores", autenticar, setorRoutes);
+app.use("/api/equipamentos", autenticar, equipamentoRoutes);
 
 // Protegida: precisa de token E ser admin
 app.use("/api/usuarios", autenticar, autorizarAdmin, usuarioRoutes);
