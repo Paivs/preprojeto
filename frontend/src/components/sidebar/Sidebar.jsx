@@ -63,16 +63,23 @@ export default function Sidebar() {
                 pathname === "/adminPages/clientes" ? "menu-item-ativo" : ""
               }`}
             >
-              <span><i className="bi bi-person"></i></span>
+              <span>
+                <i className="bi bi-person"></i>
+              </span>
               <span>Clientes</span>
             </Link>
 
-              <Link href="/adminPages/financeiro" className={`menu-item ${
+            <Link
+              href="/adminPages/financeiro"
+              className={`menu-item ${
                 pathname === "/adminPages/financeiro" ? "menu-item-ativo" : ""
-              }`}>
-                <span><i className="bi bi-bar-chart"></i></span>
-                <span>Financeiro</span>
-              </Link>
+              }`}
+            >
+              <span>
+                <i className="bi bi-bar-chart"></i>
+              </span>
+              <span>Financeiro</span>
+            </Link>
 
             <Link
               href="/adminPages/configuracaoAdmin"
@@ -82,7 +89,9 @@ export default function Sidebar() {
                   : ""
               }`}
             >
-              <span><i className="bi bi-gear"></i></span>
+              <span>
+                <i className="bi bi-gear"></i>
+              </span>
               <span>Configurações</span>
             </Link>
           </>
@@ -95,7 +104,9 @@ export default function Sidebar() {
                 pathname === "/userPages/dashboard" ? "menu-item-ativo" : ""
               }`}
             >
-              <span><i className="bi bi-ui-checks-grid"></i></span>
+              <span>
+                <i className="bi bi-ui-checks-grid"></i>
+              </span>
               <span>Visão Geral</span>
             </Link>
 
@@ -105,7 +116,9 @@ export default function Sidebar() {
                 pathname === "/userPages/dispositivos" ? "menu-item-ativo" : ""
               }`}
             >
-              <span><i className="bi bi-inboxes"></i></span>
+              <span>
+                <i className="bi bi-inboxes"></i>
+              </span>
               <span>Dispositivos</span>
             </Link>
 
@@ -115,18 +128,21 @@ export default function Sidebar() {
                 pathname === "/userPages/relatorios" ? "menu-item-ativo" : ""
               }`}
             >
-              <span><i className="bi bi-calendar"></i></span>
+              <span>
+                <i className="bi bi-calendar"></i>
+              </span>
               <span>Relatórios de Consumo</span>
             </Link>
 
             <Link
-              href="/userPages/faturas"
+              href="/userPages/setores"
               className={`menu-item ${
-                pathname === "/userPages/faturas" ? "menu-item-ativo" : ""
-              }`}
-            >
-              <span><span><i className="bi bi-bar-chart"></i></span></span>
-              <span>Faturas</span>
+                pathname === "/userPages/seteroes" ? "menu-item-ativo" : ""
+              }`}>
+              <span>
+                <i className="bi bi-ui-checks-grid"></i>
+              </span>
+              <span>Setores</span>
             </Link>
 
             <Link
@@ -135,8 +151,10 @@ export default function Sidebar() {
                 pathname === "/userPages/configuracoes" ? "menu-item-ativo" : ""
               }`}
             >
-               <span><i className="bi bi-gear"></i></span>
-               <span>Configurações</span>
+              <span>
+                <i className="bi bi-gear"></i>
+              </span>
+              <span>Configurações</span>
             </Link>
           </>
         )}
