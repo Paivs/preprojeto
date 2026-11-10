@@ -1,0 +1,50 @@
+.pagina {
+  display: flex;
+  min-height: 100svh;
+  align-items: center;
+  padding: 48px 24px;
+  color: var(--white-smoke);
+  background: var(--onyx);
+}
+
+.conteudo {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.compacto {
+  max-width: 560px;
+}
+
+.largo {
+  max-width: 1152px;
+}
+
+.status {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+
+.formulario {
+  width: 100%;
+}
+
+.titulo {
+  margin: 0;
+  color: var(--white);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.descricao {
+  max-width: 440px;
+  margin: 12px auto 26px;
+  color: var(--silver);
+  font-size: 14px;
+  line-height: 1.65;
+  text-align: center;
+}
