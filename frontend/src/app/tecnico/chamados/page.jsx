@@ -58,6 +58,17 @@ export default function PaginaChamadosTecnico() {
 
   useEffect(() => { carregar(); }, [carregar]);
 
+  function abrirDetalhes(chamado) {
+    setChamadoSelecionado(chamado);
+    setHistorico([]);
+    setMostrarHistorico(false);
+    setErro("");
+    setAviso("");
+    setDescricaoServico("");
+    setPecasTrocadas("");
+    setCustoServico("0");
+  }
+
   async function atualizarStatus(novoStatus) {
     if (!chamadoSelecionado || atualizandoStatus) return;
     setAtualizandoStatus(true);
@@ -200,7 +211,7 @@ export default function PaginaChamadosTecnico() {
                 <span><strong>Equipamento</strong> {chamado.equipamento_nome || (chamado.equipamento_id ? `#${chamado.equipamento_id}` : "Não informado")}</span>
                 <span><strong>Aberto em</strong> {formatarData(chamado.aberto_em)}</span>
               </div>
-              <button type="button" className={styles.botaoDetalhes} onClick={() => setChamadoSelecionado(chamado)}>
+              <button type="button" className={styles.botaoDetalhes} onClick={() => abrirDetalhes(chamado)}>
                 Ver detalhes
                 <span className="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
               </button>
@@ -313,6 +324,13 @@ export default function PaginaChamadosTecnico() {
               <div className={styles.modalAcoes}>
                 <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("EM_ATENDIMENTO")} disabled={atualizandoStatus}>
                   {atualizandoStatus ? "Atualizando..." : "Retomar atendimento"}
+                </button>
+              </div>
+            )}
+            {chamadoSelecionado.status === "EM_ATENDIMENTO" && mostrarHistorico && historico.length > 0 && (
+              <div className={styles.modalAcoes}>
+                <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("CONCLUIDO")} disabled={atualizandoStatus}>
+                  {atualizandoStatus ? "Concluindo..." : "Concluir chamado"}
                 </button>
               </div>
             )}

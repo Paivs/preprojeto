@@ -6,6 +6,7 @@ function responderErro(erro, res, next) {
   if (erro instanceof TypeError) return res.status(400).json({ sucesso: false, erro: erro.message });
   if (erro.status === 403) return res.status(403).json({ sucesso: false, erro: erro.message });
   if (erro.status === 409) return res.status(409).json({ sucesso: false, erro: erro.message });
+  if (erro.status === 422) return res.status(422).json({ sucesso: false, erro: erro.message });
   if (erro.message.includes("não encontrado") || erro.message.includes("não encontrada")) {
     return res.status(404).json({ sucesso: false, erro: erro.message });
   }

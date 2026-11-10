@@ -76,6 +76,14 @@ export async function atualizarStatus(id, status) {
   return resultado.affectedRows > 0;
 }
 
+export async function contarAtivosPorEquipamento(equipamentoId) {
+  const [[{ total }]] = await pool.query(
+    "SELECT COUNT(*) AS total FROM chamados_manutencao WHERE equipamento_id = ? AND status NOT IN ('CONCLUIDO', 'CANCELADO')",
+    [equipamentoId],
+  );
+  return Number(total);
+}
+
 export async function atualizarTecnico(id, tecnicoId) {
   const [resultado] = await pool.query(
     "UPDATE chamados_manutencao SET tecnico_id = ? WHERE id = ?",
