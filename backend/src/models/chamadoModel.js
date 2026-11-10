@@ -5,30 +5,37 @@ export async function listar({ limite, offset, status, severidade, equipamento_i
   const valores = [];
 
   if (status !== undefined) {
-    condicoes.push("status = ?");
+    condicoes.push("c.status = ?");
     valores.push(status);
   }
   if (severidade !== undefined) {
-    condicoes.push("severidade = ?");
+    condicoes.push("c.severidade = ?");
     valores.push(severidade);
   }
   if (equipamento_id !== undefined) {
-    condicoes.push("equipamento_id = ?");
+    condicoes.push("c.equipamento_id = ?");
     valores.push(equipamento_id);
   }
   if (tecnicoId !== undefined) {
-    condicoes.push("tecnico_id = ?");
+    condicoes.push("c.tecnico_id = ?");
     valores.push(tecnicoId);
   }
 
   const where = condicoes.length ? `WHERE ${condicoes.join(" AND ")}` : "";
 
   const [linhas] = await pool.query(
-    `SELECT * FROM chamados_manutencao ${where} ORDER BY id DESC LIMIT ? OFFSET ?`,
+    `SELECT c.*, e.nome AS equipamento_nome
+     FROM chamados_manutencao c
+     LEFT JOIN equipamentos e ON e.id = c.equipamento_id
+     ${where}
+     ORDER BY c.id DESC LIMIT ? OFFSET ?`,
     [...valores, limite, offset],
   );
   const [[{ total }]] = await pool.query(
-    `SELECT COUNT(*) AS total FROM chamados_manutencao ${where}`,
+    `SELECT COUNT(*) AS total
+     FROM chamados_manutencao c
+     LEFT JOIN equipamentos e ON e.id = c.equipamento_id
+     ${where}`,
     valores,
   );
 

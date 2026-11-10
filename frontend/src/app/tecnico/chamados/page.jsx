@@ -62,8 +62,8 @@ export default function PaginaChamadosTecnico() {
       <header className={styles.header}>
         <div>
           <p className={styles.sobretitulo}>Atendimento técnico</p>
-          <h1 className={styles.titulo}>Chamados</h1>
-          <p className={styles.descricao}>Consulte os chamados atribuídos a você e acompanhe suas prioridades.</p>
+          <h1 className={styles.titulo}>Ordens de Serviço</h1>
+          <p className={styles.descricao}>Consulte as ordens de serviços atribuídos a você e acompanhe suas prioridades.</p>
         </div>
         <button type="button" className={styles.atualizar} onClick={carregar} disabled={carregando}>
           <span className={`material-symbols-outlined ${carregando ? styles.girando : ""}`}>sync</span>
@@ -121,7 +121,7 @@ export default function PaginaChamadosTecnico() {
               <p className={styles.resumo}>{chamado.descricao || "Sem descrição informada."}</p>
               <div className={styles.detalhes}>
                 <span><strong>Chamado</strong> #{String(chamado.id).padStart(4, "0")}</span>
-                <span><strong>Equipamento</strong> {chamado.equipamento_id ? `#${chamado.equipamento_id}` : "Não informado"}</span>
+                <span><strong>Equipamento</strong> {chamado.equipamento_nome || (chamado.equipamento_id ? `#${chamado.equipamento_id}` : "Não informado")}</span>
                 <span><strong>Aberto em</strong> {formatarData(chamado.aberto_em)}</span>
               </div>
             </article>
