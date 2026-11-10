@@ -368,57 +368,6 @@
   color: #ffb4ac;
 }
 
-/* Table Card */
-.tableCard {
-  background: var(--surface-low, #181c1f);
-  border: 1px solid var(--border-subtle, #22272b);
-  border-radius: 4px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  margin-bottom: 28px;
-}
-
-.tableResponsive {
-  overflow-x: auto;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.table thead tr {
-  background: var(--surface-lowest, #0b0f12);
-  border-bottom: 1px solid var(--border-subtle, #22272b);
-}
-
-.table th {
-  padding: 14px 20px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--silver, #b1a7a6);
-  white-space: nowrap;
-}
-
-.tableRow {
-  border-bottom: 1px solid rgba(49, 53, 56, 0.3);
-  transition: background 0.15s ease;
-}
-
-.tableRow:hover {
-  background: var(--surface-container, #1c2023);
-}
-
-.table td {
-  padding: 14px 20px;
-  font-size: 13.5px;
-  color: var(--white-smoke, #f5f3f4);
-  vertical-align: middle;
-}
-
 .codeCell code {
   color: #ffb4ac;
   font-weight: 700;
@@ -604,64 +553,6 @@
   padding: 10px 14px;
   font-size: 11.5px;
   color: var(--silver, #b1a7a6);
-}
-
-.tableEmpty {
-  padding: 32px 20px;
-  text-align: center;
-  color: var(--silver, #b1a7a6);
-  font-size: 14px;
-}
-
-/* Pagination Strip */
-.paginationStrip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 20px;
-  border-top: 1px solid var(--border-subtle, #22272b);
-  background: var(--surface-lowest, #0b0f12);
-  font-size: 12px;
-  color: var(--silver, #b1a7a6);
-}
-
-.paginationButtons {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.pageBtn {
-  min-width: 32px;
-  height: 32px;
-  border-radius: 4px;
-  background: var(--surface-container, #1c2023);
-  border: 1px solid var(--border-subtle, #22272b);
-  color: var(--silver, #b1a7a6);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 6px;
-  transition: all 0.15s ease;
-}
-
-.pageBtn:hover:not(:disabled) {
-  background: var(--surface-high, #262a2e);
-  color: var(--white-smoke, #f5f3f4);
-}
-
-.pageBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.pageBtnActive {
-  background: var(--mahogany-red, #a4161a) !important;
-  color: #ffffff !important;
-  border-color: var(--mahogany-red, #a4161a) !important;
 }
 
 /* Diagnostics Strip */
@@ -1062,7 +953,4 @@
   .searchBox { min-width: 0; width: 100%; }
   .selectWrapper { flex: 1 1 100%; }
   .tableTicker { flex-wrap: wrap; }
-  .tableResponsive { max-width: 100%; }
-  .table { min-width: 680px; }
-  .paginationStrip { gap: 10px; flex-wrap: wrap; }
 }
