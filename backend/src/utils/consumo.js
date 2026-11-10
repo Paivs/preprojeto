@@ -1,7 +1,7 @@
 function validarConsumo(valor, nome) {
   const numero = Number(valor);
   if (valor === null || valor === '' || !Number.isFinite(numero) || numero < 0) {
-    throw new TypeError(`${nome} deve ser um nÃºmero vÃ¡lido e nÃ£o negativo.`);
+    throw new TypeError(`${nome} deve ser um número válido e nãoo negativo.`);
   }
   return numero;
 }
@@ -13,7 +13,7 @@ export function converterWhParaKwh(consumoWh) {
 
 /** Calcula energia em kWh a partir da potÃªncia em watts e do tempo em horas. */
 export function calcularConsumoKwh(potenciaWatts, horasUso) {
-  const potencia = validarConsumo(potenciaWatts, 'A potÃªncia em watts');
+  const potencia = validarConsumo(potenciaWatts, 'A potência em watts');
   const horas = validarConsumo(horasUso, 'O tempo de uso em horas');
   return (potencia * horas) / 1000;
 }
