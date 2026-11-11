@@ -2,10 +2,12 @@
 .selectInput {
   min-height: 48px;
   border: 1px solid #262626;
-  border-radius: 5px;
+  border-radius: 3px;
   background: #161a1d;
   color: #f5f3f4;
 }
+
+.textInput, .selectInput { width: 100%; box-sizing: border-box; }
 
 .textInput::placeholder {
   color: #a1a1aa;
