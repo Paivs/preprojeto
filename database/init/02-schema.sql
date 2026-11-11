@@ -95,7 +95,8 @@ CREATE TABLE agendamentos (
     atividade VARCHAR(120) NULL,
     inicio DATETIME NOT NULL,
     fim DATETIME NOT NULL,
-    token_acesso VARCHAR(20) NOT NULL UNIQUE,
+    -- legado: token agora fica em turmas_projetos.
+    token_acesso VARCHAR(20) NULL,
     status ENUM('CONFIRMADO', 'EM_ANDAMENTO', 'CONCLUIDO', 'CANCELADO') NOT NULL DEFAULT 'CONFIRMADO',
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CHECK (fim > inicio),
@@ -113,6 +114,8 @@ CREATE TABLE checkins (
     agendamento_id BIGINT UNSIGNED NOT NULL,
     aluno_id BIGINT UNSIGNED NOT NULL,
     realizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    -- NULL = aguardando aprovação do professor.
+    aprovado_em DATETIME NULL,
     PRIMARY KEY (agendamento_id, aluno_id),
     FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id) ON DELETE CASCADE,
     FOREIGN KEY (aluno_id) REFERENCES usuarios(id)
