@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import "./header.css";
 
 export default function Header() {
+  const pathname = usePathname();
+
   return (
     <header className="header">
       <nav className="navbar">
@@ -12,19 +17,28 @@ export default function Header() {
 
           <ul className="navbar-header">
             <li>
-              <Link className="nav-link active" href="/">
+              <Link
+                className={`nav-link ${pathname === "/" ? "active" : ""}`}
+                href="/"
+              >
                 Home
               </Link>
             </li>
 
             <li>
-              <Link className="nav-link" href="/sobreNos">
+              <Link
+                className={`nav-link ${pathname === "/sobreNos" ? "active" : ""}`}
+                href="/sobreNos"
+              >
                 Sobre nós
               </Link>
             </li>
 
             <li>
-              <Link className="nav-link" href="/contato">
+              <Link
+                className={`nav-link ${pathname === "/contato" ? "active" : ""}`}
+                href="/contato"
+              >
                 Contato
               </Link>
             </li>

@@ -15,7 +15,7 @@ export default function Clientes() {
             <div>
               <span className="cabecalho-etiqueta">CONTROLE DE ATIVOS</span>
 
-              <h1>Contatos</h1>
+              <h1>Clientes</h1>
 
               <p>Gerencie sua base, planos e consumo em um só lugar</p>
             </div>
@@ -79,7 +79,6 @@ export default function Clientes() {
                 <thead>
                   <tr>
                     <th>EMPRESA</th>
-                    <th>PLANO</th>
                     <th>DISPOSITIVOS</th>
                     <th>CONSUMO</th>
                     <th>STATUS</th>
@@ -96,9 +95,6 @@ export default function Clientes() {
                           <p>financeiro@lumina.com</p>
                         </div>
                       </div>
-                    </td>
-                    <td>
-                      <span className="badge-plano enterprise">Enterprise</span>
                     </td>
                     <td>84</td>
                     <td>
@@ -124,9 +120,6 @@ export default function Clientes() {
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <span className="badge-plano pro">Pro</span>
-                    </td>
                     <td>42</td>
                     <td>
                       <strong>8.290 kWh</strong>
@@ -150,9 +143,6 @@ export default function Clientes() {
                           <p>admin@nortelog.com</p>
                         </div>
                       </div>
-                    </td>
-                    <td>
-                      <span className="badge-plano enterprise">Enterprise</span>
                     </td>
                     <td>126</td>
                     <td>
@@ -178,9 +168,6 @@ export default function Clientes() {
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <span className="badge-plano essencial">Essencial</span>
-                    </td>
                     <td>12</td>
                     <td>
                       <strong>2.130 kWh</strong>
@@ -204,9 +191,6 @@ export default function Clientes() {
                           <p>energia@verdecampo.com</p>
                         </div>
                       </div>
-                    </td>
-                    <td>
-                      <span className="badge-plano pro">Pro</span>
                     </td>
                     <td>38</td>
                     <td>
