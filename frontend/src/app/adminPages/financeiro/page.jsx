@@ -14,11 +14,14 @@ export default function Financeiro() {
                 <div className="container">
                     <div className="topo">
                         <div className="card-topo">
-                            <h2>
-                                R$ 29.000
-                            </h2>
+                            <div style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
+                                <strong>Total Faturado</strong>
+                                <h2>R$ 29.000</h2>
+                            </div>
 
-                            <i class="bi bi-cash-coin"></i>
+                            
+
+                            <i class="bi bi-cash-stack"></i>
                         </div>
 
                         <div className="card-topo">
