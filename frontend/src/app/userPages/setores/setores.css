@@ -53,3 +53,68 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
+
+.container-table {
+  margin-top: 2rem;
+}
+
+.container-total {
+  margin-top: 2rem;
+}
+
+.card-total {
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-card);
+  border-radius: 12px;
+  padding: 15px 20px;
+  font-family: var(--font-primary);
+}
+
+.cabecalho-total {
+  color: var(--cor-texto-secundario);
+  font-size: .6rem;
+}
+
+.main-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-total {
+  display: flex;
+  width: 900px;
+  justify-content: space-between;
+  line-height: .5;
+}
+
+.kWh-total h2,
+.custo-total h2 {
+  color: var(--branco);
+  font-size: 1.5rem;
+}
+
+.kWh-total span,
+.custo-total span {
+  color: var(--cor-texto-secundario);
+  font-size: .8rem;
+}
+
+.divisoria {
+  border-left: 1px solid var(--cor-borda);
+  height: 7vh;
+}
+
+.right-total {
+  line-height: 0.7;
+  margin-right: 2rem;
+}
+
+.right-total p {
+  color: var(--branco);
+}
+
+.right-total span {
+  color: var(--cor-texto-secundario);
+  font-size: .8rem;
+}
