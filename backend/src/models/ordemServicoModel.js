@@ -13,6 +13,33 @@ export async function buscarPorId(id) {
   return linhas[0] || null;
 }
 
+export async function listarPorTecnico(tecnicoId, { status, severidade } = {}) {
+  const condicoes = ["c.tecnico_id = ?"];
+  const valores = [tecnicoId];
+
+  if (status) {
+    condicoes.push("c.status = ?");
+    valores.push(status);
+  }
+  if (severidade) {
+    condicoes.push("c.severidade = ?");
+    valores.push(severidade);
+  }
+
+  const [linhas] = await pool.query(
+    `SELECT os.*, c.titulo, c.descricao, c.equipamento_id, c.solicitante_id,
+            c.tipo, c.severidade, c.status AS chamado_status, c.aberto_em,
+            c.concluido_em, e.nome AS equipamento_nome
+     FROM ordens_servico os
+     INNER JOIN chamados_manutencao c ON c.id = os.chamado_id
+     LEFT JOIN equipamentos e ON e.id = c.equipamento_id
+     WHERE ${condicoes.join(" AND ")}
+     ORDER BY os.emitida_em DESC, os.id DESC`,
+    valores,
+  );
+  return linhas;
+}
+
 export async function contarNoAno(ano) {
   const [[{ total }]] = await pool.query(
     "SELECT COUNT(*) AS total FROM ordens_servico WHERE YEAR(emitida_em) = ?",
