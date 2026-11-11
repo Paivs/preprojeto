@@ -16,9 +16,9 @@ export async function buscarPorId(req, res, next) {
   } catch (erro) { return responderErro(erro, res, next); }
 }
 
-export async function listarParaTecnico(req, res, next) {
+export async function listarParaTecnicos(req, res, next) {
   try {
-    const ordens = await OrdemServicoService.listarParaTecnico(req.usuario, req.query);
+    const ordens = await OrdemServicoService.listarParaTecnicos(req.usuario, req.query);
     return res.status(200).json({ sucesso: true, dados: ordens });
   } catch (erro) { return responderErro(erro, res, next); }
 }

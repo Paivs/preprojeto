@@ -64,7 +64,7 @@ export async function criarHistorico(req, res, next) {
 
 export async function emitirOrdemServico(req, res, next) {
   try {
-    const ordemServico = await OrdemServicoService.emitir(req.params.id, req.body, req.usuario);
+    const ordemServico = await OrdemServicoService.emitir(req.params.id, req.usuario);
     return res.status(201).json({ sucesso: true, dados: ordemServico });
   } catch (erro) { return responderErro(erro, res, next); }
 }

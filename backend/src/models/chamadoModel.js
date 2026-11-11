@@ -24,11 +24,9 @@ export async function listar({ limite, offset, status, severidade, equipamento_i
   const where = condicoes.length ? `WHERE ${condicoes.join(" AND ")}` : "";
 
   const [linhas] = await pool.query(
-    `SELECT c.*, e.nome AS equipamento_nome,
-            os.id AS ordem_servico_id, os.numero AS ordem_servico_numero
+    `SELECT c.*, e.nome AS equipamento_nome
      FROM chamados_manutencao c
      LEFT JOIN equipamentos e ON e.id = c.equipamento_id
-     LEFT JOIN ordens_servico os ON os.chamado_id = c.id
      ${where}
      ORDER BY c.id DESC LIMIT ? OFFSET ?`,
     [...valores, limite, offset],

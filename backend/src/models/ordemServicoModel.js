@@ -13,9 +13,9 @@ export async function buscarPorId(id) {
   return linhas[0] || null;
 }
 
-export async function listarPorTecnico(tecnicoId, { status, severidade } = {}) {
-  const condicoes = ["c.tecnico_id = ?"];
-  const valores = [tecnicoId];
+export async function listarTodas({ status, severidade } = {}) {
+  const condicoes = [];
+  const valores = [];
 
   if (status) {
     condicoes.push("c.status = ?");
@@ -33,7 +33,7 @@ export async function listarPorTecnico(tecnicoId, { status, severidade } = {}) {
      FROM ordens_servico os
      INNER JOIN chamados_manutencao c ON c.id = os.chamado_id
      LEFT JOIN equipamentos e ON e.id = c.equipamento_id
-     WHERE ${condicoes.join(" AND ")}
+     ${condicoes.length ? `WHERE ${condicoes.join(" AND ")}` : ""}
      ORDER BY os.emitida_em DESC, os.id DESC`,
     valores,
   );

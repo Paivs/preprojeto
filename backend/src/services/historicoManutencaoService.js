@@ -1,5 +1,6 @@
 import * as ChamadoModel from "../models/chamadoModel.js";
 import * as HistoricoManutencaoModel from "../models/historicoManutencaoModel.js";
+import * as OrdemServicoModel from "../models/ordemServicoModel.js";
 
 function validarId(idRecebido, nomeCampo = "ID") {
   const id = Number(idRecebido);
@@ -9,11 +10,14 @@ function validarId(idRecebido, nomeCampo = "ID") {
   return id;
 }
 
-function validarAtribuicaoTecnico(chamado, usuarioLogado) {
+async function validarAtribuicaoTecnico(chamado, usuarioLogado) {
   if (usuarioLogado?.perfil === "TECNICO" && Number(chamado.tecnico_id) !== Number(usuarioLogado.id)) {
-    const erro = new Error("Você só pode acessar o histórico dos chamados atribuídos a você.");
-    erro.status = 403;
-    throw erro;
+    const ordemServico = await OrdemServicoModel.buscarPorChamado(chamado.id);
+    if (!ordemServico) {
+      const erro = new Error("Você só pode acessar o histórico de chamados atribuídos a você ou vinculados a uma ordem de serviço.");
+      erro.status = 403;
+      throw erro;
+    }
   }
 }
 
@@ -23,7 +27,7 @@ export async function listar(chamadoIdRecebido, usuarioLogado) {
   if (!chamado) {
     throw new Error(`Chamado ${chamadoId} não encontrado.`);
   }
-  validarAtribuicaoTecnico(chamado, usuarioLogado);
+  await validarAtribuicaoTecnico(chamado, usuarioLogado);
   return await HistoricoManutencaoModel.listarPorChamado(chamadoId);
 }
 
@@ -33,7 +37,7 @@ export async function criar(chamadoIdRecebido, dados, usuarioLogado) {
   if (!chamado) {
     throw new Error(`Chamado ${chamadoId} não encontrado.`);
   }
-  validarAtribuicaoTecnico(chamado, usuarioLogado);
+  await validarAtribuicaoTecnico(chamado, usuarioLogado);
 
   if (typeof dados.descricao !== "string" || dados.descricao.trim() === "") {
     throw new TypeError("Descrição é obrigatória.");

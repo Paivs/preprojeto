@@ -98,9 +98,12 @@ export async function atualizarStatus(idRecebido, status, usuarioLogado) {
     throw new Error(`Chamado ${id} não encontrado.`);
   }
   if (usuarioLogado?.perfil === "TECNICO" && Number(chamado.tecnico_id) !== Number(usuarioLogado.id)) {
-    const erro = new Error("Você só pode atualizar chamados atribuídos a você.");
-    erro.status = 403;
-    throw erro;
+    const ordemServico = await OrdemServicoModel.buscarPorChamado(id);
+    if (!ordemServico) {
+      const erro = new Error("Você só pode atualizar chamados atribuídos a você ou vinculados a uma ordem de serviço.");
+      erro.status = 403;
+      throw erro;
+    }
   }
   if (status === "CONCLUIDO" && usuarioLogado?.perfil === "TECNICO") {
     const historico = await HistoricoManutencaoModel.listarPorChamado(id);
