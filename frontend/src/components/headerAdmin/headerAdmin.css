@@ -16,21 +16,6 @@
   place-items: center;
 }
 
-.barra-pesquisa {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 390px;
-  height: 40px;
-  padding: 0 12px;
-  border-radius: 10px;
-  border: 1px solid var(--cor-borda);
-  background: var(--cor-card);
-  color: var(--cor-texto-fraco);
-}
-
-.barra-pesquisa input,
 .campo-busca input {
   flex: 1;
   min-width: 0;
