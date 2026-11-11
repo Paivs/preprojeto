@@ -2,7 +2,6 @@ import Chamado, { SEVERIDADES_VALIDAS, STATUS_VALIDOS } from "../models/Chamado.
 import * as ChamadoModel from "../models/chamadoModel.js";
 import * as EquipamentoModel from "../models/equipamentoModel.js";
 import * as UsuarioModel from "../models/usuarioModel.js";
-import * as HistoricoManutencaoModel from "../models/historicoManutencaoModel.js";
 import * as OrdemServicoModel from "../models/ordemServicoModel.js";
 
 const PERFIS_PODEM_ABRIR_CHAMADO = ["ADMIN", "PROFESSOR", "TECNICO"];
@@ -105,15 +104,6 @@ export async function atualizarStatus(idRecebido, status, usuarioLogado) {
       throw erro;
     }
   }
-  if (status === "CONCLUIDO" && usuarioLogado?.perfil === "TECNICO") {
-    const historico = await HistoricoManutencaoModel.listarPorChamado(id);
-    if (!historico.length) {
-      const erro = new Error("Registre o serviço realizado antes de concluir o chamado.");
-      erro.status = 422;
-      throw erro;
-    }
-  }
-
   const atualizou = await ChamadoModel.atualizarStatus(id, status);
   if (!atualizou) {
     throw new Error(`Chamado ${id} não encontrado.`);

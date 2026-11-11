@@ -38,13 +38,6 @@ export default function PaginaChamadosTecnico() {
   const [chamadoSelecionado, setChamadoSelecionado] = useState(null);
   const [atualizandoStatus, setAtualizandoStatus] = useState(false);
   const [aviso, setAviso] = useState("");
-  const [historico, setHistorico] = useState([]);
-  const [mostrarHistorico, setMostrarHistorico] = useState(false);
-  const [carregandoHistorico, setCarregandoHistorico] = useState(false);
-  const [salvandoRegistro, setSalvandoRegistro] = useState(false);
-  const [descricaoServico, setDescricaoServico] = useState("");
-  const [pecasTrocadas, setPecasTrocadas] = useState("");
-  const [custoServico, setCustoServico] = useState("0");
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -55,7 +48,10 @@ export default function PaginaChamadosTecnico() {
       if (severidade) params.set("severidade", severidade);
       const resposta = await apiFetch(`/api/ordens-servico?${params}`);
       const ordens = Array.isArray(resposta?.dados) ? resposta.dados : [];
-      setChamados(ordens.map((ordem) => ({
+      const ordensExibidas = status
+        ? ordens
+        : ordens.filter((ordem) => !["CONCLUIDO", "CANCELADO"].includes(ordem.chamado_status));
+      setChamados(ordensExibidas.map((ordem) => ({
         ...ordem,
         os_id: ordem.id,
         os_numero: ordem.numero,
@@ -74,18 +70,22 @@ export default function PaginaChamadosTecnico() {
 
   useEffect(() => {
     const intervalo = window.setInterval(carregar, 30000);
-    return () => window.clearInterval(intervalo);
+    const atualizarAoVoltar = () => {
+      if (document.visibilityState === "visible") carregar();
+    };
+    window.addEventListener("focus", atualizarAoVoltar);
+    document.addEventListener("visibilitychange", atualizarAoVoltar);
+    return () => {
+      window.clearInterval(intervalo);
+      window.removeEventListener("focus", atualizarAoVoltar);
+      document.removeEventListener("visibilitychange", atualizarAoVoltar);
+    };
   }, [carregar]);
 
   function abrirDetalhes(chamado) {
     setChamadoSelecionado(chamado);
-    setHistorico([]);
-    setMostrarHistorico(false);
     setErro("");
     setAviso("");
-    setDescricaoServico("");
-    setPecasTrocadas("");
-    setCustoServico("0");
   }
 
   async function atualizarStatus(novoStatus) {
@@ -100,6 +100,12 @@ export default function PaginaChamadosTecnico() {
       });
       const chamadoAtualizado = resposta?.dados ?? { ...chamadoSelecionado, status: novoStatus };
       const statusOrdem = STATUS_ORDEM_POR_CHAMADO[novoStatus];
+      if (novoStatus === "CONCLUIDO") {
+        setChamados((atuais) => atuais.filter((chamado) => chamado.id !== chamadoAtualizado.id));
+        setChamadoSelecionado(null);
+        setAviso("Chamado concluído com sucesso.");
+        return;
+      }
       setChamadoSelecionado((atual) => ({
         ...atual,
         ...chamadoAtualizado,
@@ -115,48 +121,6 @@ export default function PaginaChamadosTecnico() {
       setErro(error.message || "Não foi possível atualizar o chamado.");
     } finally {
       setAtualizandoStatus(false);
-    }
-  }
-
-  async function carregarHistorico() {
-    if (!chamadoSelecionado) return;
-    setCarregandoHistorico(true);
-    setErro("");
-    try {
-      const resposta = await apiFetch(`/api/chamados/${chamadoSelecionado.id}/historico`);
-      setHistorico(Array.isArray(resposta?.dados) ? resposta.dados : []);
-      setMostrarHistorico(true);
-    } catch (error) {
-      setErro(error.message || "Não foi possível carregar o histórico.");
-    } finally {
-      setCarregandoHistorico(false);
-    }
-  }
-
-  async function registrarServico(evento) {
-    evento.preventDefault();
-    if (!chamadoSelecionado || !descricaoServico.trim() || salvandoRegistro) return;
-    setSalvandoRegistro(true);
-    setErro("");
-    setAviso("");
-    try {
-      await apiFetch(`/api/chamados/${chamadoSelecionado.id}/historico`, {
-        method: "POST",
-        body: {
-          descricao: descricaoServico.trim(),
-          pecas_trocadas: pecasTrocadas.trim(),
-          custo: Number(custoServico),
-        },
-      });
-      setDescricaoServico("");
-      setPecasTrocadas("");
-      setCustoServico("0");
-      setAviso("Serviço registrado no histórico.");
-      await carregarHistorico();
-    } catch (error) {
-      setErro(error.message || "Não foi possível registrar o serviço.");
-    } finally {
-      setSalvandoRegistro(false);
     }
   }
 
@@ -298,44 +262,6 @@ export default function PaginaChamadosTecnico() {
               <h3>Descrição</h3>
               <p>{chamadoSelecionado.descricao || "Sem descrição informada."}</p>
             </div>
-            <section className={styles.secaoHistorico}>
-              <div className={styles.tituloSecaoHistorico}>
-                <h3>Histórico de manutenção</h3>
-                <button type="button" className={styles.botaoSecundario} onClick={carregarHistorico} disabled={carregandoHistorico}>
-                  {carregandoHistorico ? "Carregando..." : mostrarHistorico ? "Atualizar histórico" : "Ver histórico"}
-                </button>
-              </div>
-              {mostrarHistorico && (
-                <div className={styles.listaHistorico}>
-                  {historico.length ? historico.map((registro) => (
-                    <article className={styles.itemHistorico} key={registro.id}>
-                      <p>{registro.descricao}</p>
-                      <span>{registro.registrado_em ? new Date(registro.registrado_em).toLocaleString("pt-BR") : "Data não informada"}</span>
-                      {registro.pecas_trocadas && <small>Peças: {registro.pecas_trocadas}</small>}
-                      {Number(registro.custo) > 0 && <small>Custo: {Number(registro.custo).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</small>}
-                    </article>
-                  )) : <p className={styles.historicoVazio}>Ainda não há serviços registrados.</p>}
-                </div>
-              )}
-              <form className={styles.formularioServico} onSubmit={registrarServico}>
-                <h4>Registrar serviço realizado</h4>
-                <label>
-                  Descrição do serviço
-                  <textarea value={descricaoServico} onChange={(evento) => setDescricaoServico(evento.target.value)} required rows={3} />
-                </label>
-                <label>
-                  Peças trocadas (opcional)
-                  <input value={pecasTrocadas} onChange={(evento) => setPecasTrocadas(evento.target.value)} />
-                </label>
-                <label>
-                  Custo (R$)
-                  <input type="number" min="0" step="0.01" value={custoServico} onChange={(evento) => setCustoServico(evento.target.value)} />
-                </label>
-                <button type="submit" className={styles.botaoAcao} disabled={salvandoRegistro || !descricaoServico.trim()}>
-                  {salvandoRegistro ? "Salvando..." : "Salvar registro"}
-                </button>
-              </form>
-            </section>
             {chamadoSelecionado.status === "ABERTO" && (
               <div className={styles.modalAcoes}>
                 <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("EM_ATENDIMENTO")} disabled={atualizandoStatus}>
@@ -357,7 +283,7 @@ export default function PaginaChamadosTecnico() {
                 </button>
               </div>
             )}
-            {chamadoSelecionado.status === "EM_ATENDIMENTO" && mostrarHistorico && historico.length > 0 && (
+            {chamadoSelecionado.status === "EM_ATENDIMENTO" && (
               <div className={styles.modalAcoes}>
                 <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("CONCLUIDO")} disabled={atualizandoStatus}>
                   {atualizandoStatus ? "Concluindo..." : "Concluir chamado"}

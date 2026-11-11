@@ -36,7 +36,7 @@ export async function apiFetch(path, options = {}) {
   }
 
   if (!resposta.ok) {
-    const erro = new Error(dados?.message || "Não foi possível concluir a solicitação.");
+    const erro = new Error(dados?.message || dados?.mensagem || dados?.erro || "Não foi possível concluir a solicitação.");
     erro.status = resposta.status;
     erro.errors = Array.isArray(dados?.errors)
       ? dados.errors.filter((item) => item && typeof item.field === "string" && typeof item.message === "string")
