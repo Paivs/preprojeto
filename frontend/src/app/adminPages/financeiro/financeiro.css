@@ -53,12 +53,12 @@
 }
 
 .card-topo i{
-    font-size: 2rem;
+    font-size: 1.7rem;
     background-color: rgba(146, 79, 240, 0.4);
     color: var(--roxo-claro);
-    padding: 0;
-    width: 60px;
-    height: 60px;
+    padding: 1rem;
+    /* width: 60px; */
+    /* height: 60px; */
     display: flex;
     align-items: center;
     justify-content: center;
