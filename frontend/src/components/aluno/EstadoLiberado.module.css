@@ -96,27 +96,6 @@
   letter-spacing: 0.04em;
 }
 
-.checklist {
-  display: block;
-  width: 100%;
-  min-height: 48px;
-  margin: 22px 0 0;
-  padding: 12px 18px;
-  color: var(--white);
-  background: var(--mahogany-red);
-  border: 1px solid var(--mahogany-red-2);
-  border-radius: 5px;
-  cursor: pointer;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.checklist:focus-visible {
-  outline: 2px solid var(--white-smoke);
-  outline-offset: 3px;
-}
-
 @media (max-width: 767px) {
   .titulo {
     font-size: 24px;

@@ -44,9 +44,6 @@ export default function EstadoLiberado({ sessao, equipamentos }) {
         </div>
       </section>
 
-      <button className={styles.checklist} type="button">
-        Iniciar checklist TENKEN (inspeção pré-uso)
-      </button>
     </section>
   );
 }
