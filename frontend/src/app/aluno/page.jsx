@@ -27,6 +27,13 @@ export default function PaginaAluno() {
   return (
     <AuthGuard>
       <main className={styles.pagina}>
+        <header className={styles.cabecalho}>
+          <div className={styles.marca}>
+            <span className={styles.marcaIcone} aria-hidden="true">⌘</span>
+            <span><span className={styles.marcaTexto}>TENKEN</span><small className={styles.marcaSubtexto}>STUDENT ACCESS / LAB</small></span>
+          </div>
+          <StatusConexao estado={estado} />
+        </header>
         <div className={`${styles.conteudo} ${largura}`}>
           {estado !== "formulario" && (
             <div className={styles.status}>
@@ -36,6 +43,7 @@ export default function PaginaAluno() {
 
           {estado === "formulario" && (
             <section className={styles.formulario}>
+              <p className={styles.eyebrow}>Vinculação de sessão</p>
               <h1 className={styles.titulo}>Acesso à bancada do laboratório</h1>
               <p className={styles.descricao}>
                 Insira o token compartilhado pelo professor para acessar os
@@ -61,6 +69,7 @@ export default function PaginaAluno() {
             />
           )}
         </div>
+        <footer className={styles.rodape}><span>TENKEN · Student terminal</span><span>Ambiente seguro · LAB-AUT-01</span></footer>
       </main>
     </AuthGuard>
   );
