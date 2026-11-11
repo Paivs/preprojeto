@@ -25,7 +25,8 @@ O projeto busca substituir controles dispersos por um fluxo rastreável que ajud
 <table>
   <tr>
     <td align="center" width="20%"><img src="https://img.shields.io/badge/JavaScript-ES6%2B-f7df1e?logo=javascript&logoColor=111111" alt="JavaScript" /><br /><sub>Linguagem da aplicação</sub></td>
-    <td align="center" width="20%"><img src="https://img.shields.io/badge/React-UI-61dafb?logo=react&logoColor=111111" alt="React" /><br /><sub>Componentes de interface</sub></td>
+    <td align
+    center" width="20%"><img src="https://img.shields.io/badge/React-UI-61dafb?logo=react&logoColor=111111" alt="React" /><br /><sub>Componentes de interface</sub></td>
     <td align="center" width="20%"><img src="https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs" alt="Next.js" /><br /><sub>Framework web</sub></td>
     <td align="center" width="20%"><img src="https://img.shields.io/badge/CSS3-estilos-1572b6?logo=css3&logoColor=white" alt="CSS3" /><br /><sub>Estilos e responsividade</sub></td>
     <td align="center" width="20%"><img src="https://img.shields.io/badge/Bootstrap-5.3-7952b3?logo=bootstrap&logoColor=white" alt="Bootstrap" /><br /><sub>Grid e utilitários</sub></td>
