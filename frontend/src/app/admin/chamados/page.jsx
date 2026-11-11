@@ -32,6 +32,8 @@ export default function PaginaChamados() {
 function Conteudo({ token }) {
   const [itens, setItens] = useState([]);
   const [tiposEquipamento, setTiposEquipamento] = useState({});
+  const [tecnicos, setTecnicos] = useState([]);
+  const [tecnicoSelecionado, setTecnicoSelecionado] = useState("");
   const [status, setStatus] = useState("");
   const [severidade, setSeveridade] = useState("");
   const [busca, setBusca] = useState("");
@@ -51,12 +53,14 @@ function Conteudo({ token }) {
       const q = new URLSearchParams({ pagina: "1", limite: "100" });
       if (status) q.set("status", status);
       if (severidade) q.set("severidade", severidade);
-      const [data, equipamentos] = await Promise.all([
+      const [data, equipamentos, equipe] = await Promise.all([
         chamarApi(`/chamados?${q}`, token),
         chamarApi("/equipamentos?pagina=1&limite=100", token).catch(() => []),
+        chamarApi("/usuarios?pagina=1&limite=100&perfil=TECNICO&ativo=true", token),
       ]);
       setItens(data.dados ?? data ?? []);
       setTiposEquipamento(Object.fromEntries((equipamentos.dados ?? equipamentos ?? []).map((equipamento) => [equipamento.id, equipamento.tipo])));
+      setTecnicos(equipe.dados ?? equipe ?? []);
     } catch (e) {
       setNotificacao({ tipo: "erro", mensagem: e.message });
     } finally {
@@ -87,32 +91,27 @@ function Conteudo({ token }) {
   }
 
   async function emitirOS(item) {
-    try {
-      const os = await chamarApi(`/chamados/${item.id}/ordem-servico`, token, {
-        method: "POST",
-        body: JSON.stringify({}),
-      });
-      setSelecionado(null);
-      setNotificacao({ tipo: "sucesso", mensagem: `Ordem de serviço ${os.numero ?? os.id} criada e enviada ao painel do técnico.` });
-    } catch (e) {
-      setNotificacao({ tipo: "erro", mensagem: e.message });
-    }
-  }
-
-  async function encaminhar(item) {
-    const id = window.prompt("ID do usuário com perfil TECNICO:");
-    if (!id) return;
-    const tecnicoId = Number(id);
-    if (!Number.isInteger(tecnicoId) || tecnicoId <= 0) {
-      setNotificacao({ tipo: "erro", mensagem: "Informe um ID de técnico válido." });
+    if (!tecnicoSelecionado) {
+      setNotificacao({ tipo: "erro", mensagem: "Selecione o técnico que receberá esta ordem de serviço." });
       return;
     }
     try {
-      await chamarApi(`/chamados/${item.id}/tecnico`, token, {
-        method: "PATCH",
-        body: JSON.stringify({ tecnico_id: tecnicoId }),
+      if (item.ordem_servico_id) {
+        await chamarApi(`/chamados/${item.id}/tecnico`, token, {
+          method: "PATCH",
+          body: JSON.stringify({ tecnico_id: Number(tecnicoSelecionado) }),
+        });
+        setNotificacao({ tipo: "sucesso", mensagem: `OS ${item.ordem_servico_numero} encaminhada ao técnico selecionado.` });
+        setSelecionado(null);
+        await carregar();
+        return;
+      }
+      const os = await chamarApi(`/chamados/${item.id}/ordem-servico`, token, {
+        method: "POST",
+        body: JSON.stringify({ tecnico_id: Number(tecnicoSelecionado) }),
       });
-      setNotificacao({ tipo: "sucesso", mensagem: `Chamado #${item.id} encaminhado ao técnico ID ${tecnicoId}.` });
+      setSelecionado(null);
+      setNotificacao({ tipo: "sucesso", mensagem: `Ordem de serviço ${os.numero ?? os.id} criada e enviada ao painel do técnico.` });
       await carregar();
     } catch (e) {
       setNotificacao({ tipo: "erro", mensagem: e.message });
@@ -203,7 +202,7 @@ function Conteudo({ token }) {
                   <span className={`${styles.sevBadge} ${severidadeClass}`}><span className={styles.sevDot} />{item.severidade}</span>
                   <span className={`${styles.statusBadge} ${statusClass}`}>{ROTULO_STATUS[item.status] || item.status}</span>
                 </div>
-                <button type="button" className={styles.openTicketBtn} onClick={() => setSelecionado(item)}>
+                <button type="button" className={styles.openTicketBtn} onClick={() => { setSelecionado(item); setTecnicoSelecionado(item.tecnico_id ? String(item.tecnico_id) : ""); }}>
                   Abrir <span className="material-symbols-outlined">arrow_forward</span>
                 </button>
               </div>
@@ -264,7 +263,14 @@ function Conteudo({ token }) {
                   </label>
                 </div>
                 <div className={styles.modalActions}>
-                  <button type="button" className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => emitirOS(selecionado)}><span className="material-symbols-outlined" aria-hidden="true">build_circle</span>Emitir ordem de serviço (OS)</button>
+                  <label className={styles.statusControl}>
+                    <span>Técnico responsável</span>
+                    <select aria-label="Técnico responsável pela ordem de serviço" className={styles.statusSelect} value={tecnicoSelecionado} onChange={(evento) => setTecnicoSelecionado(evento.target.value)}>
+                      <option value="">Selecione um técnico</option>
+                      {tecnicos.map((tecnico) => <option key={tecnico.id} value={tecnico.id}>{tecnico.nome} (ID {tecnico.id})</option>)}
+                    </select>
+                  </label>
+                  <button type="button" className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => emitirOS(selecionado)} disabled={!tecnicoSelecionado}><span className="material-symbols-outlined" aria-hidden="true">build_circle</span>{selecionado.ordem_servico_id ? "Encaminhar OS existente" : "Emitir e encaminhar OS"}</button>
                 </div>
               </div>
             </div>
