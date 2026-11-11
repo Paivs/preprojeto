@@ -1,5 +1,6 @@
 import * as ChamadoModel from "../models/chamadoModel.js";
 import * as OrdemServicoModel from "../models/ordemServicoModel.js";
+import * as UsuarioModel from "../models/usuarioModel.js";
 
 const STATUS_VALIDOS = ["EMITIDA", "EM_EXECUCAO", "FINALIZADA", "CANCELADA"];
 const STATUS_CHAMADO_VALIDOS = ["ABERTO", "EM_ATENDIMENTO", "AGUARDANDO_PECAS", "CONCLUIDO", "CANCELADO"];
@@ -20,7 +21,7 @@ async function gerarNumero() {
   return `OS-${ano}-${sequencial}`;
 }
 
-export async function emitir(chamadoIdRecebido, usuarioLogado) {
+export async function emitir(chamadoIdRecebido, dados, usuarioLogado) {
   const chamadoId = validarId(chamadoIdRecebido, "ID do chamado");
 
   const chamado = await ChamadoModel.buscarPorId(chamadoId);
@@ -28,11 +29,26 @@ export async function emitir(chamadoIdRecebido, usuarioLogado) {
     throw new Error(`Chamado ${chamadoId} não encontrado.`);
   }
 
+  const tecnicoId = Number(dados?.tecnico_id ?? chamado.tecnico_id);
+  if (!Number.isInteger(tecnicoId) || tecnicoId <= 0) {
+    const erro = new Error("Selecione um técnico para receber a ordem de serviço.");
+    erro.status = 422;
+    throw erro;
+  }
+  const tecnico = await UsuarioModel.buscarPorId(tecnicoId);
+  if (!tecnico || tecnico.perfil !== "TECNICO" || !tecnico.ativo) {
+    throw new TypeError("O usuário selecionado precisa ser um técnico ativo.");
+  }
+
   const existente = await OrdemServicoModel.buscarPorChamado(chamadoId);
   if (existente) {
     const erroConflito = new Error(`O chamado ${chamadoId} já possui uma ordem de serviço.`);
     erroConflito.status = 409;
     throw erroConflito;
+  }
+
+  if (Number(chamado.tecnico_id) !== tecnicoId) {
+    await ChamadoModel.atualizarTecnico(chamadoId, tecnicoId);
   }
 
   const numero = await gerarNumero();
