@@ -8,6 +8,8 @@ const mensagemTokenInvalido =
   "Token inválido. Use os 6 números informados pelo professor.";
 
 export default function FormularioVinculo({ onEnviar }) {
+  const [nome, setNome] = useState("");
+  const [turma, setTurma] = useState("");
   const [token, setToken] = useState("");
   const [erro, setErro] = useState("");
 
