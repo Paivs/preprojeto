@@ -47,8 +47,16 @@ export default function PaginaChamadosTecnico() {
       const params = new URLSearchParams({ pagina: "1", limite: "100" });
       if (status) params.set("status", status);
       if (severidade) params.set("severidade", severidade);
-      const resposta = await apiFetch(`/api/chamados?${params}`);
-      setChamados(Array.isArray(resposta?.dados) ? resposta.dados : []);
+      const resposta = await apiFetch(`/api/ordens-servico?${params}`);
+      const ordens = Array.isArray(resposta?.dados) ? resposta.dados : [];
+      setChamados(ordens.map((ordem) => ({
+        ...ordem,
+        os_id: ordem.id,
+        os_numero: ordem.numero,
+        os_status: ordem.status,
+        id: ordem.chamado_id,
+        status: ordem.chamado_status,
+      })));
     } catch (error) {
       setErro(error.message || "Não foi possível carregar os chamados.");
     } finally {
@@ -57,6 +65,11 @@ export default function PaginaChamadosTecnico() {
   }, [status, severidade]);
 
   useEffect(() => { carregar(); }, [carregar]);
+
+  useEffect(() => {
+    const intervalo = window.setInterval(carregar, 30000);
+    return () => window.clearInterval(intervalo);
+  }, [carregar]);
 
   function abrirDetalhes(chamado) {
     setChamadoSelecionado(chamado);
@@ -80,7 +93,7 @@ export default function PaginaChamadosTecnico() {
         body: { status: novoStatus },
       });
       const chamadoAtualizado = resposta?.dados ?? { ...chamadoSelecionado, status: novoStatus };
-      setChamadoSelecionado(chamadoAtualizado);
+      setChamadoSelecionado((atual) => ({ ...atual, ...chamadoAtualizado }));
       setChamados((atuais) => atuais.map((chamado) =>
         chamado.id === chamadoAtualizado.id ? { ...chamado, ...chamadoAtualizado } : chamado,
       ));
@@ -185,8 +198,8 @@ export default function PaginaChamadosTecnico() {
       {!carregando && !erro && filtrados.length === 0 && (
         <EmptyState
           icone="inbox"
-          titulo={chamados.length ? "Nenhum resultado para esses filtros" : "Nenhum chamado atribuído"}
-          mensagem={chamados.length ? "Tente alterar a busca ou os filtros." : "Quando houver chamados atribuídos, eles aparecem aqui."}
+          titulo={chamados.length ? "Nenhum resultado para esses filtros" : "Nenhuma OS recebida"}
+          mensagem={chamados.length ? "Tente alterar a busca ou os filtros." : "Ordens de serviço emitidas pelo administrador para seus chamados aparecerão aqui."}
         />
       )}
 
@@ -195,13 +208,13 @@ export default function PaginaChamadosTecnico() {
           const prioridade = String(chamado.severidade || "").toUpperCase();
           const statusAtual = String(chamado.status || "").toUpperCase();
           return (
-            <article className={styles.cartao} key={chamado.id}>
+            <article className={styles.cartao} key={chamado.os_id}>
               <div className={styles.cartaoTopo}>
                 <span className={`${styles.prioridade} ${styles[`prioridade_${prioridade.toLowerCase()}`] || ""}`}>
                   {ROTULO_SEVERIDADE[prioridade] || "Prioridade não informada"}
                 </span>
                 <span className={`${styles.status} ${styles[`status_${statusAtual.toLowerCase()}`] || ""}`}>
-                  {ROTULO_STATUS[statusAtual] || statusAtual}
+                  {chamado.os_numero || `OS #${chamado.os_id}`} · {chamado.os_status}
                 </span>
               </div>
               <h2 className={styles.tituloChamado}>{chamado.titulo || `Chamado #${chamado.id}`}</h2>
@@ -231,7 +244,7 @@ export default function PaginaChamadosTecnico() {
           <section className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="titulo-detalhes-chamado">
             <header className={styles.modalCabecalho}>
               <div>
-                <p className={styles.sobretitulo}>Chamado #{String(chamadoSelecionado.id).padStart(4, "0")}</p>
+                <p className={styles.sobretitulo}>{chamadoSelecionado.os_numero || `OS #${chamadoSelecionado.os_id}`} · Chamado #{String(chamadoSelecionado.id).padStart(4, "0")}</p>
                 <h2 className={styles.modalTitulo} id="titulo-detalhes-chamado">
                   {chamadoSelecionado.titulo || `Chamado #${chamadoSelecionado.id}`}
                 </h2>
@@ -251,6 +264,10 @@ export default function PaginaChamadosTecnico() {
               </span>
             </div>
             <dl className={styles.modalDados}>
+              <div>
+                <dt>Ordem de serviço</dt>
+                <dd>{chamadoSelecionado.os_numero || `OS #${chamadoSelecionado.os_id}`} · {chamadoSelecionado.os_status}</dd>
+              </div>
               <div>
                 <dt>Equipamento</dt>
                 <dd>{chamadoSelecionado.equipamento_nome || `Equipamento #${chamadoSelecionado.equipamento_id}`}</dd>
