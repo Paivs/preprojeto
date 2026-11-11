@@ -29,6 +29,7 @@ CREATE TABLE turmas_projetos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     professor_id BIGINT UNSIGNED NOT NULL,
+    token_acesso VARCHAR(8) NULL UNIQUE,
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (professor_id) REFERENCES usuarios(id)
 ) ENGINE=InnoDB;
