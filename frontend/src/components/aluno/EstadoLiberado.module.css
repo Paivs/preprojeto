@@ -24,9 +24,9 @@
 
 .secaoEquipamentos {
   padding: 22px;
-  background: var(--carbon-black);
-  border: 1px solid var(--dark-garnet);
-  border-radius: 10px;
+  background: linear-gradient(145deg, #161a1d, #101214);
+  border: 1px solid #2d343f;
+  box-shadow: 0 20px 60px rgb(0 0 0 / 30%), inset 0 1px rgb(255 255 255 / 3%);
 }
 
 .tituloEquipamentos {
@@ -56,10 +56,16 @@
   min-width: 0;
   flex-direction: column;
   padding: 18px;
-  background: var(--onyx);
-  border: 1px solid var(--dark-garnet);
-  border-radius: 8px;
+  background: #0b090a;
+  border: 1px solid #29292d;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }
+
+.card:hover { transform: translateY(-3px); border-color: #a4161a; background: #101214; }
+.cardCabecalho, .cardRodape { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.numeroAtivo { color: #52525b; font-family: var(--fonte-mono); font-size: 11px; }
+.badgeAtivo { display: inline-flex; align-items: center; gap: 6px; padding: 5px 7px; border: 1px solid rgb(16 185 129 / 25%); color: #6ee7b7; font-family: var(--fonte-mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+.badgeAtivo span { width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 9px #10b981; }
 
 .tipo {
   margin: 0;
@@ -88,13 +94,13 @@
 
 .id {
   margin: 16px 0 0;
-  padding-top: 12px;
-  color: var(--white-smoke);
-  border-top: 1px solid rgba(177, 167, 166, 0.16);
+  color: #e4e4e7;
   font-family: var(--fonte-mono);
   font-size: 11px;
   letter-spacing: 0.04em;
 }
+.cardRodape { margin-top: auto; padding-top: 13px; border-top: 1px solid #262626; }
+.preUso { color: #a1a1aa; font-size: 10px; }
 
 @media (max-width: 767px) {
   .titulo {

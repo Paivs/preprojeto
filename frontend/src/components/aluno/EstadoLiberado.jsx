@@ -35,10 +35,14 @@ export default function EstadoLiberado({ sessao, equipamentos }) {
         <div className={styles.grade}>
           {equipamentos.map((equipamento) => (
             <article className={styles.card} key={equipamento.id}>
+              <div className={styles.cardCabecalho}>
+                <span className={styles.numeroAtivo}>{String(equipamentos.indexOf(equipamento) + 1).padStart(2, "0")}</span>
+                <span className={styles.badgeAtivo}><span /> Atribuído</span>
+              </div>
               <p className={styles.tipo}>{equipamento.tipo}</p>
               <h3 className={styles.nome}>{equipamento.nome}</h3>
               <p className={styles.detalhe}>{equipamento.detalhe}</p>
-              <p className={styles.id}>{equipamento.id}</p>
+              <div className={styles.cardRodape}><p className={styles.id}>{equipamento.id}</p><span className={styles.preUso}>Pré-uso pendente</span></div>
             </article>
           ))}
         </div>
