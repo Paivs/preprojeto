@@ -123,9 +123,9 @@ export default function Sidebar() {
             </Link>
 
             <Link
-              href="/userPages/relatorios"
+              href="/userPages/relatorio"
               className={`menu-item ${
-                pathname === "/userPages/relatorios" ? "menu-item-ativo" : ""
+                pathname === "/userPages/relatorio" ? "menu-item-ativo" : ""
               }`}
             >
               <span>
