@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
+import TabelaAdmin from "../components/TabelaAdmin";
 import styles from "./page.module.css";
 import modalStyles from "../equipamentos/page.module.css";
 import { chamarApi } from "../lib/adminApi";
+import { useModalExit } from "../../useModalExit";
 
 const PERFIS = [
   { chave: "all", rotulo: "Todos", valorFiltro: "" },
@@ -35,8 +37,16 @@ function Conteudo({ token }) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
   const [aviso, setAviso] = useState("");
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalAberto, setModalAberto, fechandoModal, finalizarFechamentoModal] = useModalExit(false);
+  const [modalEdicaoAberto, setModalEdicaoAberto, fechandoEdicao, finalizarFechamentoEdicao] = useModalExit(false);
   const [dropdownAbertoId, setDropdownAbertoId] = useState(null);
+  const [turmas, setTurmas] = useState([]);
+  const [turmasCarregadas, setTurmasCarregadas] = useState(false);
+  const [erroTurmas, setErroTurmas] = useState("");
+  const [alunoEditado, setAlunoEditado] = useState(null);
+  const [salvandoEdicao, setSalvandoEdicao] = useState(false);
+  const [erroEdicao, setErroEdicao] = useState("");
+  const [formEdicao, setFormEdicao] = useState({ nome: "", email: "", matricula: "", turmaIds: [] });
 
   // Formulário de novo usuário
   const [novoUsuario, setNovoUsuario] = useState({
@@ -67,6 +77,13 @@ function Conteudo({ token }) {
   }, [carregarUsuarios]);
 
   useEffect(() => {
+    chamarApi("/turmas", token)
+      .then((dados) => setTurmas(dados.dados ?? dados ?? []))
+      .catch((e) => { setErroTurmas(e.message); setErro(e.message); })
+      .finally(() => setTurmasCarregadas(true));
+  }, [token]);
+
+  useEffect(() => {
     setPagina(1);
   }, [busca, filtroPerfil]);
 
@@ -95,6 +112,48 @@ function Conteudo({ token }) {
     } catch (e) {
       setErro(e.message);
     }
+  }
+
+  function abrirEdicao(aluno) {
+    setErro("");
+    setErroEdicao("");
+    setAlunoEditado(aluno);
+    setFormEdicao({
+      nome: aluno.nome ?? "",
+      email: aluno.email ?? "",
+      matricula: aluno.matricula ?? "",
+      turmaIds: (aluno.turmas ?? []).map((turma) => String(turma.id)),
+    });
+    setModalEdicaoAberto(true);
+  }
+
+  async function salvarEdicao(e) {
+    e.preventDefault();
+    if (!alunoEditado) return;
+    setSalvandoEdicao(true);
+    setErroEdicao("");
+    try {
+      await chamarApi(`/usuarios/${alunoEditado.id}`, token, {
+        method: "PUT",
+        body: JSON.stringify({ ...formEdicao, turmaIds: formEdicao.turmaIds }),
+      });
+      setAviso(`Dados de ${formEdicao.nome} atualizados.`);
+      setModalEdicaoAberto(false);
+      await carregarUsuarios();
+    } catch (e) {
+      setErroEdicao(e.message);
+    } finally {
+      setSalvandoEdicao(false);
+    }
+  }
+
+  function alternarTurma(turmaId) {
+    setFormEdicao((form) => ({
+      ...form,
+      turmaIds: form.turmaIds.includes(String(turmaId))
+        ? form.turmaIds.filter((id) => id !== String(turmaId))
+        : [...form.turmaIds, String(turmaId)],
+    }));
   }
 
   async function criarUsuario(e) {
@@ -248,26 +307,22 @@ function Conteudo({ token }) {
       </div>
 
       {/* Telemetry Table Frame */}
-      <div className={styles.tableCard}>
-        <div className={styles.tableResponsive}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Usuário &amp; Identificação</th>
-                <th>E-mail Institucional</th>
-                <th>Matrícula</th>
-                <th>Perfil de Acesso</th>
-                <th>Situação</th>
-                <th>Data Cadastro</th>
-                <th style={{ textAlign: "right" }}>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan={7} className={styles.tableEmpty}>Carregando usuários...</td></tr>
-          ) : filtrados.length === 0 ? (
-                <tr><td colSpan={7} className={styles.tableEmpty}>Nenhum usuário encontrado.</td></tr>
-          ) : usuariosPagina.map((u) => {
+      <TabelaAdmin
+        columns={["Usuário & Identificação", "E-mail Institucional", "Matrícula", "Turma(s)", "Perfil de Acesso", "Situação", "Data Cadastro", { label: "Ações", align: "right" }]}
+        minWidth="74rem"
+        loading={loading}
+        loadingMessage="Carregando usuários..."
+        empty={!loading && filtrados.length === 0}
+        emptyMessage="Nenhum usuário encontrado."
+        pagination={{
+          page: paginaAtual,
+          totalPages: totalPaginas,
+          onChange: setPagina,
+          info: `Mostrando ${filtrados.length ? inicio + 1 : 0} - ${Math.min(inicio + ITENS_POR_PAGINA, filtrados.length)} de ${filtrados.length} contas`,
+        }}
+        tableClassName={styles.table}
+      >
+              {usuariosPagina.map((u) => {
                 const iniciais = extrairIniciais(u.nome);
                 const isAdmin = u.perfil === "ADMIN";
                 const isProfessor = u.perfil === "PROFESSOR";
@@ -279,7 +334,7 @@ function Conteudo({ token }) {
                 else if (isTecnico) roleColorClass = styles.roleTecnico;
 
                 return (
-                  <tr key={u.id} className={styles.tableRow}>
+                  <tr key={u.id}>
                     {/* User Identity with Avatar */}
                     <td>
                       <div className={styles.userCell}>
@@ -303,6 +358,14 @@ function Conteudo({ token }) {
                       <span className={styles.matriculaBadge}>
                         {u.matricula ?? "—"}
                       </span>
+                    </td>
+
+                    <td>
+                      {u.turmas?.length ? (
+                        <div className={styles.turmaList}>
+                          {u.turmas.map((turma) => <span key={turma.id} className={styles.turmaBadge}>{turma.nome}</span>)}
+                        </div>
+                      ) : <span className={styles.noTurma}>Sem turma</span>}
                     </td>
 
                     {/* Perfil Dropdown */}
@@ -337,19 +400,11 @@ function Conteudo({ token }) {
                       </div>
                     </td>
 
-                    {/* Situação Toggle + Badge */}
+                    {/* Situação */}
                     <td>
                       <div className={styles.statusCell}>
-                        <label className={styles.switchLabel}>
-                          <input
-                            type="checkbox"
-                            checked={Boolean(u.ativo)}
-                            onChange={(e) => alterarAtivo(u, e.target.checked)}
-                            className={styles.switchInput}
-                          />
-                          <span className={styles.switchSlider} />
-                        </label>
                         <span className={`${styles.statusBadge} ${u.ativo ? styles.statusActive : styles.statusInactive}`}>
+                          <span className={styles.statusDot} />
                           {u.ativo ? "Ativo" : "Inativo"}
                         </span>
                       </div>
@@ -363,82 +418,34 @@ function Conteudo({ token }) {
                     {/* Ações */}
                     <td style={{ textAlign: "right" }}>
                       <div className={styles.actionsCell}>
+                        {u.perfil === "ALUNO" && (
+                          <button type="button" className={styles.actionBtn} onClick={() => abrirEdicao(u)} disabled={!turmasCarregadas} title="Editar aluno">
+                            <span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: "15px" }}>edit_note</span>
+                            <span>Editar</span>
+                          </button>
+                        )}
                         <button
                           type="button"
-                          className={styles.actionIconBtn}
-                          onClick={() => setAviso(`Perfil de ${u.nome} selecionado para edição.`)}
-                          title="Editar Perfil"
+                          className={`${styles.actionBtn} ${u.ativo ? styles.actionBtnDanger : styles.actionBtnSuccess}`}
+                          onClick={() => alterarAtivo(u, !u.ativo)}
+                          title={`${u.ativo ? "Inativar" : "Reativar"} usuário`}
                         >
-                          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
-                            edit_note
+                          <span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: "15px" }}>
+                            {u.ativo ? "power_settings_new" : "restart_alt"}
                           </span>
-                        </button>
-
-                        <button
-                          type="button"
-                          className={styles.actionIconBtn}
-                          onClick={() => setAviso(`Redefinição de credencial enviada para ${u.email}.`)}
-                          title="Redefinir Credencial"
-                        >
-                          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
-                            lock_reset
-                          </span>
+                          <span>{u.ativo ? "Inativar" : "Reativar"}</span>
                         </button>
                       </div>
                     </td>
                   </tr>
                 );
               })}
-            </tbody>
-          </table>
-
-        </div>
-
-        {/* Pagination */}
-        <div className={styles.paginationStrip}>
-          <span className={styles.paginationInfo}>
-            Mostrando {inicio + 1} - {Math.min(inicio + ITENS_POR_PAGINA, filtrados.length)} de {filtrados.length} contas
-          </span>
-
-          <div className={styles.paginationButtons}>
-            <button
-              type="button"
-              disabled={paginaAtual === 1}
-              onClick={() => setPagina(paginaAtual - 1)}
-              className={styles.pageBtn}
-              aria-label="Página anterior"
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>chevron_left</span>
-            </button>
-
-            {Array.from({ length: totalPaginas }, (_, i) => i + 1).slice(0, 7).map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setPagina(n)}
-                className={`${styles.pageBtn} ${n === paginaAtual ? styles.pageBtnActive : ""}`}
-              >
-                {n}
-              </button>
-            ))}
-
-            <button
-              type="button"
-              disabled={paginaAtual === totalPaginas}
-              onClick={() => setPagina(paginaAtual + 1)}
-              className={styles.pageBtn}
-              aria-label="Próxima página"
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>chevron_right</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      </TabelaAdmin>
 
       {/* Modal: Novo Usuário // Cadastramento */}
       {modalAberto && (
-        <div className={styles.modalOverlay} role="dialog" aria-modal="true">
-          <div className={styles.modalCard}>
+        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoModal ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true">
+          <div className={`${styles.modalCard} abrir-modal ${fechandoModal ? "fechar-modal" : ""}`} onAnimationEnd={finalizarFechamentoModal}>
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderTitleRow}>
                 <div className={modalStyles.modalHeaderIcon}>
@@ -520,6 +527,60 @@ function Conteudo({ token }) {
                 <button type="submit" className={styles.saveBtn}>
                   <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>save</span>
                   <span>Criar acesso</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {modalEdicaoAberto && alunoEditado && (
+        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoEdicao ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true" aria-labelledby="editar-aluno-titulo">
+          <div className={`${styles.modalCard} abrir-modal ${fechandoEdicao ? "fechar-modal" : ""}`} onAnimationEnd={finalizarFechamentoEdicao}>
+            <div className={styles.modalHeader}>
+              <div className={styles.modalHeaderTitleRow}>
+                <div className={modalStyles.modalHeaderIcon}><span className="material-symbols-outlined" aria-hidden="true">edit</span></div>
+                <div>
+                  <h2 id="editar-aluno-titulo" className={styles.modalTitle}>Editar aluno</h2>
+                  <p className={styles.modalDescription}>Atualize os dados e as turmas vinculadas.</p>
+                </div>
+              </div>
+              <button type="button" className={styles.modalCloseBtn} onClick={() => setModalEdicaoAberto(false)} aria-label="Fechar edição">
+                <span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: "20px" }}>close</span>
+              </button>
+            </div>
+            <form onSubmit={salvarEdicao} className={styles.modalForm}>
+              {erroEdicao && <div className={styles.alertError} role="alert">{erroEdicao}</div>}
+              <div className={styles.modalField}>
+                <label htmlFor="aluno-nome" className={styles.modalLabel}>Nome</label>
+                <input id="aluno-nome" required value={formEdicao.nome} onChange={(e) => setFormEdicao({ ...formEdicao, nome: e.target.value })} className={styles.modalInput} />
+              </div>
+              <div className={styles.modalField}>
+                <label htmlFor="aluno-email" className={styles.modalLabel}>E-mail</label>
+                <input id="aluno-email" type="email" required value={formEdicao.email} onChange={(e) => setFormEdicao({ ...formEdicao, email: e.target.value })} className={styles.modalInput} />
+              </div>
+              <div className={styles.modalField}>
+                <label htmlFor="aluno-matricula" className={styles.modalLabel}>Matrícula</label>
+                <input id="aluno-matricula" value={formEdicao.matricula} onChange={(e) => setFormEdicao({ ...formEdicao, matricula: e.target.value })} className={styles.modalInput} />
+              </div>
+              <fieldset className={styles.turmaFieldset} disabled={!turmasCarregadas}>
+                <legend className={styles.modalLabel}>Turmas</legend>
+                {erroTurmas ? <p className={styles.noTurma} role="alert">Não foi possível carregar as turmas: {erroTurmas}</p> : !turmasCarregadas ? <p className={styles.noTurma}>Carregando turmas...</p> : turmas.length ? (
+                  <div className={styles.turmaOptions}>
+                    {turmas.map((turma) => (
+                      <label key={turma.id} className={styles.turmaOption}>
+                        <input type="checkbox" checked={formEdicao.turmaIds.includes(String(turma.id))} onChange={() => alternarTurma(turma.id)} />
+                        <span>{turma.nome}</span>
+                      </label>
+                    ))}
+                  </div>
+                ) : <p className={styles.noTurma}>Nenhuma turma cadastrada.</p>}
+              </fieldset>
+              <div className={styles.modalActions}>
+                <button type="button" className={styles.cancelBtn} onClick={() => setModalEdicaoAberto(false)} disabled={salvandoEdicao}>Cancelar</button>
+                <button type="submit" className={styles.saveBtn} disabled={salvandoEdicao || !turmasCarregadas || Boolean(erroTurmas)}>
+                  <span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: "18px" }}>{salvandoEdicao ? "hourglass_top" : "save"}</span>
+                  <span>{salvandoEdicao ? "Salvando..." : "Salvar alterações"}</span>
                 </button>
               </div>
             </form>

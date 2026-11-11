@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
+import TabelaAdmin from "../components/TabelaAdmin";
 import PainelEquipamentos from "../components/PainelEquipamentos";
 import styles from "./page.module.css";
 import { chamarApi } from "../lib/adminApi";
+import { useModalExit } from "../../useModalExit";
 
 const STATUS = ["DISPONIVEL", "RESERVADO", "EM_USO", "EM_MANUTENCAO", "INATIVO"];
 const ROTULO_STATUS = {
@@ -44,7 +46,7 @@ function Conteudo({ token }) {
   const [busca, setBusca] = useState("");
   const [statusFiltro, setStatusFiltro] = useState("");
   const [pagina, setPagina] = useState(1);
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalAberto, setModalAberto, fechandoModal, finalizarFechamentoModal] = useModalExit(false);
   const [form, setForm] = useState({
     codigo_patrimonio: gerarPatrimonioInicial(),
     nome: "",
@@ -366,27 +368,28 @@ function Conteudo({ token }) {
       </div>
 
       {/* Main Technical Table */}
-      <div className={styles.tableCard}>
-        <div className={styles.tableResponsive}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Nome do Equipamento</th>
-                <th>Tipo</th>
-                <th>Localização</th>
-                <th>Status</th>
-                <th style={{ textAlign: "right" }}>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
+      <TabelaAdmin
+        columns={["Código", "Nome do Equipamento", "Tipo", "Localização", "Status", { label: "Ações", align: "right" }]}
+        tableClassName={styles.table}
+        minWidth="680px"
+        loading={loading}
+        loadingMessage="Carregando equipamentos..."
+        empty={!loading && visiveis.length === 0}
+        emptyMessage="Nenhum equipamento encontrado."
+        pagination={{
+          page: paginaAtual,
+          totalPages: totalPaginas,
+          onChange: setPagina,
+          info: `Página ${paginaAtual} de ${totalPaginas} (${visiveis.length} registros)`,
+        }}
+      >
               {paginados.map((item) => {
                 const tom = TOM_STATUS[item.status] || "neutro";
                 const rotuloStatus = ROTULO_STATUS[item.status] || item.status;
                 const isRobo = item.tipo === "ROBO";
 
                 return (
-                  <tr key={item.id} className={styles.tableRow}>
+                  <tr key={item.id}>
                     <td className={styles.codeCell}>
                       <code>{item.codigo_patrimonio}</code>
                     </td>
@@ -489,56 +492,7 @@ function Conteudo({ token }) {
                   </tr>
                 );
               })}
-            </tbody>
-          </table>
-
-          {loading ? (
-            <div className={styles.tableEmpty}>Carregando equipamentos...</div>
-          ) : visiveis.length === 0 ? (
-            <div className={styles.tableEmpty}>Nenhum equipamento encontrado.</div>
-          ) : null}
-        </div>
-
-        {/* Pagination Strip */}
-        <div className={styles.paginationStrip}>
-          <span className={styles.paginationInfo}>
-            Página {paginaAtual} de {totalPaginas} ({visiveis.length} registros)
-          </span>
-
-          <div className={styles.paginationButtons}>
-            <button
-              type="button"
-              disabled={paginaAtual === 1}
-              onClick={() => setPagina(paginaAtual - 1)}
-              className={styles.pageBtn}
-              aria-label="Página anterior"
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>chevron_left</span>
-            </button>
-
-            {Array.from({ length: totalPaginas }, (_, i) => i + 1).slice(0, 7).map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setPagina(n)}
-                className={`${styles.pageBtn} ${n === paginaAtual ? styles.pageBtnActive : ""}`}
-              >
-                {n}
-              </button>
-            ))}
-
-            <button
-              type="button"
-              disabled={paginaAtual === totalPaginas}
-              onClick={() => setPagina(paginaAtual + 1)}
-              className={styles.pageBtn}
-              aria-label="Próxima página"
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>chevron_right</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      </TabelaAdmin>
 
       {/* Operational Diagnostics & Telemetry Strip */}
       <div className={styles.diagnosticsStrip}>
@@ -588,8 +542,8 @@ function Conteudo({ token }) {
 
       {/* CADASTRO DE EQUIPAMENTO MODAL */}
       {modalAberto && (
-        <div className={styles.modalOverlay} role="dialog" aria-modal="true">
-          <div className={styles.modalCard}>
+        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoModal ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true">
+          <div className={`${styles.modalCard} abrir-modal ${fechandoModal ? "fechar-modal" : ""}`} onAnimationEnd={finalizarFechamentoModal}>
             {/* Modal Header */}
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderLeft}>

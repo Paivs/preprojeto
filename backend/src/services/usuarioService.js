@@ -88,3 +88,34 @@ export async function atualizarAtivo(idRecebido, ativo) {
   }
   return await UsuarioModel.buscarPorId(id);
 }
+
+export async function atualizarDados(idRecebido, { nome, email, matricula, turmaIds } = {}) {
+  const id = validarId(idRecebido);
+  const nomeLimpo = typeof nome === "string" ? nome.trim() : "";
+  const emailLimpo = typeof email === "string" ? email.trim() : "";
+  const matriculaLimpa = typeof matricula === "string" ? matricula.trim() : "";
+
+  if (!nomeLimpo) throw new TypeError("Nome é obrigatório.");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpo)) throw new TypeError("Informe um e-mail válido.");
+  if (!Array.isArray(turmaIds) || turmaIds.some((turmaId) => !Number.isInteger(Number(turmaId)) || Number(turmaId) <= 0)) {
+    throw new TypeError("Selecione turmas válidas.");
+  }
+
+  const usuarioAtual = await UsuarioModel.buscarPorId(id);
+  if (!usuarioAtual || usuarioAtual.perfil !== "ALUNO") {
+    const erro = new Error(`Aluno ${id} não encontrado.`);
+    erro.status = 404;
+    throw erro;
+  }
+
+  await UsuarioModel.atualizarDados(id, {
+    nome: nomeLimpo,
+    email: emailLimpo,
+    matricula: matriculaLimpa || null,
+    turmaIds: [...new Set(turmaIds.map(Number))],
+  });
+
+  const atualizado = await UsuarioModel.buscarPorId(id);
+  atualizado.turmas = await UsuarioModel.listarTurmasDoAluno(id);
+  return atualizado;
+}

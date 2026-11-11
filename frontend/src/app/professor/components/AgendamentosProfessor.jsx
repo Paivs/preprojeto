@@ -5,6 +5,7 @@ import { cancelarAgendamento, criarAgendamento, listarAgendamentos, listarEquipa
 import FormularioAgendamento from "./FormularioAgendamento";
 import ModalProfessor from "./ModalProfessor";
 import styles from "./AgendamentosProfessor.module.css";
+import { useModalExit } from "../../useModalExit";
 
 const HORAS = ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"];
 const MINUTOS_INICIO = 8 * 60;
@@ -70,12 +71,12 @@ export default function AgendamentosProfessor() {
   const [equipamentoFiltro, setEquipamentoFiltro] = useState("TODOS");
   const [visualizacao, setVisualizacao] = useState("SEMANA");
   const [dataFoco, setDataFoco] = useState(() => new Date());
-  const [criando, setCriando] = useState(false);
+  const [criando, setCriando, fechandoCriacao, finalizarFechamentoCriacao] = useModalExit(false);
   const [formularioInicial, setFormularioInicial] = useState(null);
-  const [reservaCriada, setReservaCriada] = useState(null);
+  const [reservaCriada, setReservaCriada, fechandoConfirmacao, finalizarFechamentoConfirmacao] = useModalExit(null);
   const [tokenCopiado, setTokenCopiado] = useState(false);
   const [erroToken, setErroToken] = useState("");
-  const [detalheId, setDetalheId] = useState(null);
+  const [detalheId, setDetalheId, fechandoDetalhe, finalizarFechamentoDetalhe] = useModalExit(null);
   const [mensagem, setMensagem] = useState("");
 
   const carregar = useCallback(async (mostrarCarregando = false) => {
@@ -332,11 +333,11 @@ export default function AgendamentosProfessor() {
         <p className={styles.notaDados}>Selecione um horário livre para iniciar uma reserva. As inspeções pré-uso são obrigatórias antes da atividade.</p>
       </section>
 
-      {criando && formularioInicial && <ModalProfessor titulo="Novo agendamento" descricao="Informe a atividade, a turma, o equipamento e o horário." icone="event_available" onClose={() => setCriando(false)}>
+      {criando && formularioInicial && <ModalProfessor titulo="Novo agendamento" descricao="Informe a atividade, a turma, o equipamento e o horário." icone="event_available" closing={fechandoCriacao} onExitEnd={finalizarFechamentoCriacao} onClose={() => setCriando(false)}>
         <FormularioAgendamento dataInicial={formularioInicial.data} horarioInicial={formularioInicial.inicio} fimInicial={formularioInicial.fim} equipamentoInicial={formularioInicial.equipamentoId} turmas={dados.turmas} equipamentos={dados.equipamentos} onCreate={salvarReserva} onCancel={() => setCriando(false)} />
       </ModalProfessor>}
 
-      {reservaCriada && <ModalProfessor titulo="Reserva confirmada" descricao="Compartilhe o token com os alunos da turma." icone="task_alt" onClose={() => setReservaCriada(null)}>
+      {reservaCriada && <ModalProfessor titulo="Reserva confirmada" descricao="Compartilhe o token com os alunos da turma." icone="task_alt" closing={fechandoConfirmacao} onExitEnd={finalizarFechamentoConfirmacao} onClose={() => setReservaCriada(null)}>
         <div className={styles.confirmacaoReserva}>
           <p><span>Equipamento</span><strong>{reservaCriada.equipamento} · {reservaCriada.patrimonio}</strong></p>
           <p><span>Turma / atividade</span><strong>{reservaCriada.turma} · {reservaCriada.atividade}</strong></p>
@@ -354,7 +355,7 @@ export default function AgendamentosProfessor() {
         </div>
       </ModalProfessor>}
 
-      {reservaDetalhe && <ModalProfessor titulo={reservaDetalhe.atividade} descricao="Detalhes do agendamento." onClose={() => setDetalheId(null)}>
+      {reservaDetalhe && <ModalProfessor titulo={reservaDetalhe.atividade} descricao="Detalhes do agendamento." closing={fechandoDetalhe} onExitEnd={finalizarFechamentoDetalhe} onClose={() => setDetalheId(null)}>
         <div className={styles.detalhesReserva}>
           <p><span>Data</span><strong>{formatarData(reservaDetalhe.data, { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}</strong></p>
           <p><span>Horário</span><strong>{reservaDetalhe.inicio}–{reservaDetalhe.fim}</strong></p>

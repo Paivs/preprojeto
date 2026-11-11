@@ -5,6 +5,7 @@ import AdminLayout from "../components/AdminLayout";
 import styles from "../usuarios/page.module.css";
 import modalStyles from "../equipamentos/page.module.css";
 import { chamarApi } from "../lib/adminApi";
+import { useModalExit } from "../../useModalExit";
 
 export default function PaginaTurmas() {
   return <AdminLayout>{({ token }) => <Conteudo token={token} />}</AdminLayout>;
@@ -15,7 +16,7 @@ function Conteudo({ token }) {
   const [professores, setProfessores] = useState([]);
   const [nome, setNome] = useState("");
   const [professorId, setProfessorId] = useState("");
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalAberto, setModalAberto, fechandoModal, finalizarFechamentoModal] = useModalExit(false);
   const [loading, setLoading] = useState(true);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
@@ -111,8 +112,8 @@ function Conteudo({ token }) {
       </section>
 
       {modalAberto && (
-        <div className={styles.modalOverlay} role="presentation" onMouseDown={(e) => { if (e.target === e.currentTarget) setModalAberto(false); }}>
-          <section className={styles.modalCard} role="dialog" aria-modal="true" aria-labelledby="titulo-criar-turma">
+        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoModal ? "fechar-modal-fundo" : ""}`} role="presentation" onMouseDown={(e) => { if (e.target === e.currentTarget) setModalAberto(false); }}>
+          <section className={`${styles.modalCard} abrir-modal ${fechandoModal ? "fechar-modal" : ""}`} onAnimationEnd={finalizarFechamentoModal} role="dialog" aria-modal="true" aria-labelledby="titulo-criar-turma">
             <header className={styles.modalHeader}>
               <div className={styles.modalHeaderTitleRow}>
                 <div className={modalStyles.modalHeaderIcon}>

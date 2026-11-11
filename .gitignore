@@ -30,6 +30,10 @@ Thumbs.db
 AGENTS.md
 skills-lock.json
 .agents/
+.agent/
+.codex/
+.gemini/
+skills/
 
 # docker/mysql local data
 mysql-data/

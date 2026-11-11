@@ -49,6 +49,19 @@ export async function atualizarPerfil(req, res, next) {
   }
 }
 
+export async function atualizarDados(req, res, next) {
+  try {
+    const usuario = await UsuarioService.atualizarDados(req.params.id, req.body);
+    return res.status(200).json({ sucesso: true, dados: usuario });
+  } catch (erro) {
+    if (erro.code === "ER_DUP_ENTRY") {
+      erro.status = 409;
+      erro.message = "E-mail ou matrícula já cadastrados.";
+    }
+    return responderErro(erro, res, next);
+  }
+}
+
 export async function atualizarAtivo(req, res, next) {
   try {
     const usuario = await UsuarioService.atualizarAtivo(req.params.id, req.body.ativo);
