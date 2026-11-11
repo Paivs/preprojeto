@@ -34,8 +34,9 @@
     padding: 1.5rem;
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     gap: 1rem;
-    /* align-items: center; */
+    align-items: center;
     /* justify-content: center; */
 }
 
@@ -45,8 +46,22 @@
     font-weight: 500;
 }
 
+.card-topo strong{
+    color: var(--cinza);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
 .card-topo i{
-    font-size: 1.3rem;
+    font-size: 2rem;
+    background-color: rgba(146, 79, 240, 0.4);
     color: var(--roxo-claro);
-    text-align: flex-end;
+    padding: 0;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    /* text-align: flex-end; */
 }
