@@ -15,6 +15,12 @@ const STATUS = [
 const SEVERIDADES = [["CRITICA", "Crítica"], ["ALTA", "Alta"], ["MEDIA", "Média"], ["BAIXA", "Baixa"]];
 const ROTULO_STATUS = Object.fromEntries(STATUS);
 const ROTULO_SEVERIDADE = Object.fromEntries(SEVERIDADES);
+const STATUS_ORDEM_POR_CHAMADO = {
+  ABERTO: "EMITIDA",
+  EM_ATENDIMENTO: "EM_EXECUCAO",
+  CONCLUIDO: "FINALIZADA",
+  CANCELADO: "CANCELADA",
+};
 
 function formatarData(valor) {
   if (!valor) return "Data não informada";
@@ -93,9 +99,16 @@ export default function PaginaChamadosTecnico() {
         body: { status: novoStatus },
       });
       const chamadoAtualizado = resposta?.dados ?? { ...chamadoSelecionado, status: novoStatus };
-      setChamadoSelecionado((atual) => ({ ...atual, ...chamadoAtualizado }));
+      const statusOrdem = STATUS_ORDEM_POR_CHAMADO[novoStatus];
+      setChamadoSelecionado((atual) => ({
+        ...atual,
+        ...chamadoAtualizado,
+        ...(statusOrdem ? { os_status: statusOrdem } : {}),
+      }));
       setChamados((atuais) => atuais.map((chamado) =>
-        chamado.id === chamadoAtualizado.id ? { ...chamado, ...chamadoAtualizado } : chamado,
+        chamado.id === chamadoAtualizado.id
+          ? { ...chamado, ...chamadoAtualizado, ...(statusOrdem ? { os_status: statusOrdem } : {}) }
+          : chamado,
       ));
       setAviso("Status do chamado atualizado.");
     } catch (error) {
@@ -151,7 +164,7 @@ export default function PaginaChamadosTecnico() {
     const termo = busca.trim().toLocaleLowerCase("pt-BR");
     if (!termo) return chamados;
     return chamados.filter((chamado) =>
-      [chamado.id, chamado.titulo, chamado.descricao, chamado.equipamento_id, chamado.tipo]
+      [chamado.os_numero, chamado.id, chamado.titulo, chamado.descricao, chamado.equipamento_id, chamado.tipo]
         .some((valor) => String(valor ?? "").toLocaleLowerCase("pt-BR").includes(termo)),
     );
   }, [busca, chamados]);

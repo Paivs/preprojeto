@@ -64,3 +64,11 @@ export async function atualizarStatus(id, status) {
   );
   return resultado.affectedRows > 0;
 }
+
+export async function atualizarStatusPorChamado(chamadoId, status) {
+  const finalizadaEm = status === "FINALIZADA" ? "NOW()" : "NULL";
+  await pool.query(
+    `UPDATE ordens_servico SET status = ?, finalizada_em = ${finalizadaEm} WHERE chamado_id = ?`,
+    [status, chamadoId],
+  );
+}
