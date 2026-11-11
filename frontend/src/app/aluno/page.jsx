@@ -11,16 +11,16 @@ import styles from "./aluno.module.css";
 
 export default function PaginaAluno() {
   const [estado, setEstado] = useState("formulario");
-  const [token, setToken] = useState("");
+  const [solicitacao, setSolicitacao] = useState(null);
   const largura = estado === "liberado" ? styles.largo : styles.compacto;
 
-  function enviarToken(tokenEnviado) {
-    setToken(tokenEnviado);
+  function enviarToken(dadosFormulario) {
+    setSolicitacao(dadosFormulario);
     setEstado("aguardando");
   }
 
   function cancelarSolicitacao() {
-    setToken("");
+    setSolicitacao(null);
     setEstado("formulario");
   }
 
@@ -47,8 +47,8 @@ export default function PaginaAluno() {
 
           {estado === "aguardando" && (
             <EstadoAguardando
-              sessao={sessaoAluno}
-              token={token}
+              sessao={{ nome: solicitacao.nome, turma: solicitacao.turma }}
+              token={solicitacao.token}
               onCancelar={cancelarSolicitacao}
               onSimularAprovacao={() => setEstado("liberado")}
             />
@@ -56,7 +56,7 @@ export default function PaginaAluno() {
 
           {estado === "liberado" && (
             <EstadoLiberado
-              sessao={sessaoAluno}
+              sessao={{ nome: solicitacao?.nome || sessaoAluno.nome, turma: solicitacao?.turma || sessaoAluno.turma }}
               equipamentos={equipamentosSessao}
             />
           )}

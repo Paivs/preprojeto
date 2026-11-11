@@ -32,7 +32,7 @@ export default function FormularioVinculo({ onEnviar }) {
     }
 
     setErro("");
-    onEnviar(token);
+    onEnviar({ nome: nome.trim(), turma, token });
   }
 
   function editar(evento) {
