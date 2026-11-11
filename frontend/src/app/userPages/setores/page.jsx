@@ -1,6 +1,6 @@
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
-import "./seteroes.css";
+import "./setores.css";
 import KpiSetores from "@/components/kpis";
 
 export default function Setores() {
