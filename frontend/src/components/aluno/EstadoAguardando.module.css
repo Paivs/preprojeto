@@ -1,9 +1,10 @@
 .painel {
-  padding: 32px;
+  position: relative;
+  padding: clamp(24px, 4vw, 42px);
   color: var(--white-smoke);
-  background: var(--carbon-black);
-  border: 1px solid var(--status-borda);
-  border-radius: 12px;
+  background: linear-gradient(145deg, #161a1d, #101214);
+  border: 1px solid #2d343f;
+  box-shadow: 0 24px 80px rgb(0 0 0 / 38%), inset 0 1px rgb(255 255 255 / 3%);
 }
 
 .badge {
@@ -11,7 +12,7 @@
   align-items: center;
   gap: 9px;
   margin: 0;
-  color: var(--status-aguardando);
+  color: #ffb703;
   font-size: 13px;
   font-weight: 600;
   line-height: 1.5;
@@ -48,15 +49,14 @@
   gap: 1px;
   margin: 24px 0 0;
   overflow: hidden;
-  background: rgba(177, 167, 166, 0.18);
-  border: 1px solid rgba(177, 167, 166, 0.18);
-  border-radius: 8px;
+  background: #29292d;
+  border: 1px solid #29292d;
 }
 
 .item {
   min-width: 0;
   padding: 16px;
-  background: var(--carbon-black);
+  background: #161a1d;
 }
 
 .token {
@@ -103,8 +103,8 @@
 
 .cancelar {
   color: var(--white-smoke);
-  background: var(--dark-garnet);
-  border: 1px solid var(--dark-garnet);
+  background: #a4161a;
+  border: 1px solid #ba181b;
 }
 
 .simular {
@@ -112,6 +112,9 @@
   background: transparent;
   border: 1px solid rgba(177, 167, 166, 0.35);
 }
+
+.cancelar:hover { background: #ba181b; }
+.simular:hover { border-color: #71717a; background: rgb(255 255 255 / 4%); }
 
 .cancelar:focus-visible,
 .simular:focus-visible {
