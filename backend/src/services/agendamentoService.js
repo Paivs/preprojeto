@@ -1,6 +1,7 @@
 import * as AgendamentoModel from "../models/agendamentoModel.js";
 import * as EquipamentoModel from "../models/equipamentoModel.js";
 import * as TurmaModel from "../models/turmaModel.js";
+import { gerarTokenTurma } from "../utils/token.js";
 
 function idValido(v) {
   const n = Number(v);
@@ -21,6 +22,21 @@ export async function criar(dados, usuario) {
   const turma = await TurmaModel.buscarPorId(turmaId);
   if (!turma || Number(turma.professor_id) !== Number(usuario.id))
     throw new TypeError("A turma não está vinculada a este professor.");
+  if (!turma.token_acesso) {
+    for (let tentativa = 0; tentativa < 5; tentativa += 1) {
+      try {
+        await TurmaModel.definirTokenTurma(turmaId, gerarTokenTurma());
+        const turmaAtualizada = await TurmaModel.buscarPorId(turmaId);
+        if (turmaAtualizada?.token_acesso) {
+          turma.token_acesso = turmaAtualizada.token_acesso;
+          break;
+        }
+      } catch (error) {
+        if (error.code !== "ER_DUP_ENTRY" || tentativa === 4) throw error;
+      }
+    }
+    if (!turma.token_acesso) throw new Error("Nao foi possivel definir token unico para turma.");
+  }
   const equipamento = await EquipamentoModel.buscarPorId(equipamentoId);
   if (!equipamento || ["EM_MANUTENCAO", "INATIVO"].includes(equipamento.status))
     throw new TypeError("Equipamento indisponível para reserva.");
@@ -28,10 +44,6 @@ export async function criar(dados, usuario) {
     fimData = `${data} ${fim}:00`;
   if (await AgendamentoModel.verificarConflito(equipamentoId, ini, fimData))
     throw new TypeError("Equipamento já reservado nesse horário.");
-  const token =
-    `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`
-      .toUpperCase()
-      .slice(-20);
   const agendamentoId = await AgendamentoModel.criar({
     responsavel_id: Number(usuario.id),
     equipamento_id: equipamentoId,
@@ -39,7 +51,7 @@ export async function criar(dados, usuario) {
     atividade,
     inicio: ini,
     fim: fimData,
-    token_acesso: token,
+    token_acesso: null,
   });
   return AgendamentoModel.buscarDetalhado(agendamentoId);
 }
