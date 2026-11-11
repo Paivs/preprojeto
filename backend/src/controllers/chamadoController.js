@@ -6,6 +6,7 @@ function responderErro(erro, res, next) {
   if (erro instanceof TypeError) return res.status(400).json({ sucesso: false, erro: erro.message });
   if (erro.status === 403) return res.status(403).json({ sucesso: false, erro: erro.message });
   if (erro.status === 409) return res.status(409).json({ sucesso: false, erro: erro.message });
+  if (erro.status === 422) return res.status(422).json({ sucesso: false, erro: erro.message });
   if (erro.message.includes("não encontrado") || erro.message.includes("não encontrada")) {
     return res.status(404).json({ sucesso: false, erro: erro.message });
   }
@@ -35,7 +36,7 @@ export async function criar(req, res, next) {
 
 export async function atualizarStatus(req, res, next) {
   try {
-    const chamado = await ChamadoService.atualizarStatus(req.params.id, req.body.status);
+    const chamado = await ChamadoService.atualizarStatus(req.params.id, req.body.status, req.usuario);
     return res.status(200).json({ sucesso: true, dados: chamado });
   } catch (erro) { return responderErro(erro, res, next); }
 }
@@ -49,7 +50,7 @@ export async function atualizarTecnico(req, res, next) {
 
 export async function listarHistorico(req, res, next) {
   try {
-    const historico = await HistoricoManutencaoService.listar(req.params.id);
+    const historico = await HistoricoManutencaoService.listar(req.params.id, req.usuario);
     return res.status(200).json({ sucesso: true, dados: historico });
   } catch (erro) { return responderErro(erro, res, next); }
 }

@@ -2,6 +2,7 @@ import Chamado, { SEVERIDADES_VALIDAS, STATUS_VALIDOS } from "../models/Chamado.
 import * as ChamadoModel from "../models/chamadoModel.js";
 import * as EquipamentoModel from "../models/equipamentoModel.js";
 import * as UsuarioModel from "../models/usuarioModel.js";
+import * as HistoricoManutencaoModel from "../models/historicoManutencaoModel.js";
 
 const PERFIS_PODEM_ABRIR_CHAMADO = ["ADMIN", "PROFESSOR", "TECNICO"];
 
@@ -86,15 +87,43 @@ export async function criar(dados, usuarioLogado) {
   return await ChamadoModel.criar(chamadoDominio);
 }
 
-export async function atualizarStatus(idRecebido, status) {
+export async function atualizarStatus(idRecebido, status, usuarioLogado) {
   const id = validarId(idRecebido);
   if (!STATUS_VALIDOS.includes(status)) {
     throw new TypeError(`Status deve ser um de: ${STATUS_VALIDOS.join(", ")}.`);
   }
+  const chamado = await ChamadoModel.buscarPorId(id);
+  if (!chamado) {
+    throw new Error(`Chamado ${id} não encontrado.`);
+  }
+  if (usuarioLogado?.perfil === "TECNICO" && Number(chamado.tecnico_id) !== Number(usuarioLogado.id)) {
+    const erro = new Error("Você só pode atualizar chamados atribuídos a você.");
+    erro.status = 403;
+    throw erro;
+  }
+  if (status === "CONCLUIDO" && usuarioLogado?.perfil === "TECNICO") {
+    const historico = await HistoricoManutencaoModel.listarPorChamado(id);
+    if (!historico.length) {
+      const erro = new Error("Registre o serviço realizado antes de concluir o chamado.");
+      erro.status = 422;
+      throw erro;
+    }
+  }
+
   const atualizou = await ChamadoModel.atualizarStatus(id, status);
   if (!atualizou) {
     throw new Error(`Chamado ${id} não encontrado.`);
   }
+  if (status === "CONCLUIDO") {
+    const chamadosAtivos = await ChamadoModel.contarAtivosPorEquipamento(chamado.equipamento_id);
+    if (chamadosAtivos === 0) {
+      const equipamento = await EquipamentoModel.buscarPorId(chamado.equipamento_id);
+      if (equipamento?.status === "EM_MANUTENCAO") {
+        await EquipamentoModel.atualizarStatus(chamado.equipamento_id, "DISPONIVEL");
+      }
+    }
+  }
+
   return await ChamadoModel.buscarPorId(id);
 }
 
