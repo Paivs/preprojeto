@@ -2,6 +2,8 @@ import * as ChamadoModel from "../models/chamadoModel.js";
 import * as OrdemServicoModel from "../models/ordemServicoModel.js";
 
 const STATUS_VALIDOS = ["EMITIDA", "EM_EXECUCAO", "FINALIZADA", "CANCELADA"];
+const STATUS_CHAMADO_VALIDOS = ["ABERTO", "EM_ATENDIMENTO", "AGUARDANDO_PECAS", "CONCLUIDO", "CANCELADO"];
+const SEVERIDADES_VALIDAS = ["BAIXA", "MEDIA", "ALTA", "CRITICA"];
 
 function validarId(idRecebido, nomeCampo = "ID") {
   const id = Number(idRecebido);
@@ -39,6 +41,24 @@ export async function emitir(chamadoIdRecebido, usuarioLogado) {
     numero,
     emitida_por: Number(usuarioLogado.id),
   });
+}
+
+export async function listarParaTecnico(usuarioLogado, filtros = {}) {
+  if (usuarioLogado?.perfil !== "TECNICO") {
+    const erro = new Error("Apenas técnicos podem listar suas ordens de serviço.");
+    erro.status = 403;
+    throw erro;
+  }
+  const tecnicoId = validarId(usuarioLogado.id, "ID do técnico");
+  const status = filtros.status;
+  if (status !== undefined && !STATUS_CHAMADO_VALIDOS.includes(status)) {
+    throw new TypeError(`Status deve ser um de: ${STATUS_CHAMADO_VALIDOS.join(", ")}.`);
+  }
+  const severidade = filtros.severidade;
+  if (severidade !== undefined && !SEVERIDADES_VALIDAS.includes(severidade)) {
+    throw new TypeError(`Severidade deve ser uma de: ${SEVERIDADES_VALIDAS.join(", ")}.`);
+  }
+  return await OrdemServicoModel.listarPorTecnico(tecnicoId, { status, severidade });
 }
 
 export async function buscarPorId(idRecebido) {
