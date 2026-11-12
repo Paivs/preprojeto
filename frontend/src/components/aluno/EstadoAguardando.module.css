@@ -1,0 +1,161 @@
+.painel {
+  padding: 32px;
+  color: var(--white-smoke);
+  background: var(--carbon-black);
+  border: 1px solid var(--status-borda);
+  border-radius: 12px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: var(--status-aguardando);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.ponto {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.titulo {
+  margin: 24px 0 0;
+  color: var(--white);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.descricao {
+  max-width: 470px;
+  margin: 12px 0 0;
+  color: var(--silver);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.dados {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 24px 0 0;
+  overflow: hidden;
+  background: rgba(177, 167, 166, 0.18);
+  border: 1px solid rgba(177, 167, 166, 0.18);
+  border-radius: 8px;
+}
+
+.item {
+  min-width: 0;
+  padding: 16px;
+  background: var(--carbon-black);
+}
+
+.token {
+  grid-column: 1 / -1;
+}
+
+.item dt {
+  color: var(--silver);
+  font-family: var(--fonte-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.item dd {
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--white-smoke);
+  font-size: 14px;
+}
+
+.token dd {
+  font-family: var(--fonte-mono);
+  letter-spacing: 0.12em;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.cancelar,
+.simular {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cancelar {
+  color: var(--white-smoke);
+  background: var(--dark-garnet);
+  border: 1px solid var(--dark-garnet);
+}
+
+.simular {
+  color: var(--white-smoke);
+  background: transparent;
+  border: 1px solid rgba(177, 167, 166, 0.35);
+}
+
+.cancelar:focus-visible,
+.simular:focus-visible {
+  outline: 2px solid var(--mahogany-red-2);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .badge .ponto {
+    animation: pulsoAguardando 1.8s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulsoAguardando {
+    to {
+      opacity: 0.45;
+      transform: scale(0.78);
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .painel {
+    padding: 22px 16px;
+  }
+
+  .titulo {
+    font-size: 24px;
+  }
+
+  .dados {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .token {
+    grid-column: auto;
+  }
+
+  .acoes {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cancelar,
+  .simular {
+    width: 100%;
+  }
+}
