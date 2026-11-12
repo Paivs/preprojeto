@@ -1,0 +1,134 @@
+.conteudo {
+  width: 100%;
+}
+
+.introducao {
+  margin-bottom: 28px;
+}
+
+.titulo {
+  margin: 0;
+  color: var(--white);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.turma {
+  margin: 9px 0 0;
+  color: var(--silver);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.secaoEquipamentos {
+  padding: 22px;
+  background: var(--carbon-black);
+  border: 1px solid var(--dark-garnet);
+  border-radius: 10px;
+}
+
+.tituloEquipamentos {
+  margin: 0;
+  color: var(--white-smoke);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.descricaoEquipamentos {
+  margin: 6px 0 0;
+  color: var(--silver);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 18px;
+  background: var(--onyx);
+  border: 1px solid var(--dark-garnet);
+  border-radius: 8px;
+}
+
+.tipo {
+  margin: 0;
+  color: var(--silver);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+.nome {
+  margin: 10px 0 0;
+  color: var(--white-smoke);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.detalhe {
+  margin: 8px 0 0;
+  color: var(--silver);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.id {
+  margin: 16px 0 0;
+  padding-top: 12px;
+  color: var(--white-smoke);
+  border-top: 1px solid rgba(177, 167, 166, 0.16);
+  font-family: var(--fonte-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.checklist {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  margin: 22px 0 0;
+  padding: 12px 18px;
+  color: var(--white);
+  background: var(--mahogany-red);
+  border: 1px solid var(--mahogany-red-2);
+  border-radius: 5px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.checklist:focus-visible {
+  outline: 2px solid var(--white-smoke);
+  outline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+  .titulo {
+    font-size: 24px;
+  }
+
+  .secaoEquipamentos {
+    padding: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .grade {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

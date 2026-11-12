@@ -23,6 +23,10 @@
   --status-critical-bg: #7f1d1d;
   --status-neutral: #6b7280;
   --status-neutral-bg: #1f2428;
+  --status-liberado: var(--white);
+  --status-aguardando: var(--mahogany-red-2);
+  --status-borda: var(--dark-garnet);
+  --fonte-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --accent-tertiary: #9ecaff;
   --accent-tertiary-bg: #003258;
   --admin-font-caption: 12px;
