@@ -38,7 +38,8 @@ export default function Clientes() {
               </div>
               <div className="footer-kpi">
                 <span>
-                  <i className="bi bi-chevron-compact-up"></i>48 novos este mês
+                  <i className="bi bi-chevron-compact-up"></i>
+                  48 novos este mês
                 </span>
               </div>
             </div>
@@ -46,14 +47,15 @@ export default function Clientes() {
             <div className="kpi-group">
               <div className="cabecalho-kpi">
                 <span>Novas adesões</span>
-                <i className="bi bi-people"></i>
+                <i className="bi bi-person-plus"></i>
               </div>
               <div className="main-kpi">
                 <h3>124</h3>
               </div>
               <div className="footer-kpi">
                 <span>
-                  <i className="bi bi-chevron-compact-up"></i>18,2% vs. mês
+                  <i className="bi bi-chevron-compact-up"></i>
+                  18,2% vs. mês
                   anterio
                 </span>
               </div>
