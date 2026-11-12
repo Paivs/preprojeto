@@ -462,6 +462,151 @@
     line-height: 1.5;
   }
 }
+
+.cabecalhoPagina h1 {
+  font-weight: 700;
+}
+
+.contexto,
+.subtitulo,
+.metrica > small,
+.cabecalhoPainel p,
+.contagem,
+.notaDados {
+  color: #c0b7b8;
+}
+
+.metrica {
+  border: 2px solid rgba(245, 243, 244, .12);
+  border-radius: 15px;
+  background: linear-gradient(145deg, rgba(245, 243, 244, .035), transparent 58%), #161a1d;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .035), 0 9px 22px rgba(0, 0, 0, .14);
+}
+
+.metrica > span {
+  color: #d0c7c8;
+  font-weight: 600;
+}
+
+.metrica > strong {
+  font-weight: 700;
+}
+
+.painel {
+  overflow: hidden;
+  border: 2px solid rgba(245, 243, 244, .14);
+  border-radius: 17px;
+  background: linear-gradient(145deg, rgba(245, 243, 244, .025), transparent 45%), #141719;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .035), 0 13px 30px rgba(0, 0, 0, .15);
+}
+
+.cabecalhoPainel {
+  border-bottom-color: rgba(245, 243, 244, .11);
+}
+
+.cabecalhoPainel h2 {
+  color: #f5f1f1;
+  font-weight: 700;
+}
+
+.filtros button {
+  border-color: rgba(245, 243, 244, .16);
+  border-radius: 999px;
+  color: #c8bfc0;
+  transition: border-color .18s ease, background .18s ease, color .18s ease;
+}
+
+.filtros button:hover,
+.filtros button.filtroAtivo {
+  border-color: rgba(164, 22, 26, .72);
+  border-radius: 999px;
+  background: linear-gradient(110deg, rgba(164, 22, 26, .19), rgba(164, 22, 26, .07));
+  color: #fff;
+}
+
+.filtros button:focus-visible,
+.botaoAcao:focus-visible,
+.rodapeDetalhes button:focus-visible,
+.mensagemSucesso button:focus-visible {
+  outline: 2px solid #ba181b;
+  outline-offset: 3px;
+}
+
+.tabelaViewport {
+  border-radius: 0 0 14px 14px;
+}
+
+.tabela thead th {
+  border-bottom-color: rgba(245, 243, 244, .13);
+  color: #c6bdbd;
+  font-weight: 700;
+}
+
+.tabela tbody td {
+  border-bottom-color: rgba(245, 243, 244, .09);
+  color: #d0c8c8;
+}
+
+.tabela tbody td strong,
+.tabela tbody td:first-child span {
+  color: #f0ebeb;
+  font-weight: 600;
+}
+
+.etapa,
+.resultado {
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.botaoAcao,
+.rodapeDetalhes button {
+  border-radius: 10px;
+  font-weight: 600;
+  transition: border-color .18s ease, background .18s ease, color .18s ease;
+}
+
+.botaoAcao:hover,
+.rodapeDetalhes button:hover {
+  background: rgba(164, 22, 26, .09);
+}
+
+.estadoVazio {
+  color: #c0b7b8;
+}
+
+.estadoVazio h3 {
+  color: #f0ebeb;
+  font-weight: 700;
+}
+
+.mensagemSucesso {
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .14);
+}
+
+.detalheInspecao p,
+.observacoes {
+  border-color: rgba(245, 243, 244, .12);
+  border-radius: 11px;
+  background: rgba(245, 243, 244, .02);
+}
+
+.detalheInspecao p span,
+.observacoes span,
+.respostas p {
+  color: #c0b7b8;
+}
+
+.detalheInspecao p strong {
+  color: #f0ebeb;
+  font-weight: 600;
+}
+
+.respostas h3 {
+  color: #f0ebeb;
+  font-weight: 700;
+}
 .resultadoRessalva { border-color: rgba(214,174,107,.3); color: #d6ae6b; }
 .painel { overflow: hidden; }
 .tabela tbody tr:hover { background: rgba(245,243,244,.025); }

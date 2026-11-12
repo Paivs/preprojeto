@@ -807,3 +807,144 @@
     padding-left: 11px;
   }
 }
+
+/* Estilo aprovado para servir de referência ao restante da área do professor. */
+.introducao {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
+  padding: 22px 24px;
+  border: 2px solid rgba(245, 243, 244, .16);
+  border-radius: 18px;
+  background: radial-gradient(ellipse at 92% 0%, rgba(164, 22, 26, .18), transparent 38%), linear-gradient(135deg, rgba(245, 243, 244, .025), transparent 58%), #141719;
+  box-shadow: inset 0 1px 0 rgba(245, 243, 244, .045), 0 14px 34px rgba(0, 0, 0, .18);
+}
+
+.introducao::after {
+  position: absolute;
+  top: -108px;
+  right: -44px;
+  width: 190px;
+  height: 190px;
+  border: 1px solid rgba(164, 22, 26, .2);
+  border-radius: 50%;
+  box-shadow: 0 0 0 16px rgba(164, 22, 26, .035), 0 0 0 34px rgba(164, 22, 26, .025);
+  content: "";
+  pointer-events: none;
+}
+
+.introducao > div { position: relative; z-index: 1; }
+.dataHoje { display: inline-flex; min-height: 27px; align-items: center; margin-bottom: 10px; padding: 0 11px; border: 1px solid rgba(164, 22, 26, .3); border-radius: 999px; background: rgba(164, 22, 26, .1); color: #d8b5b6; font-size: 11px; letter-spacing: .12em; }
+.introducao h1 { font-size: clamp(29px, 3vw, 39px); font-weight: 700; letter-spacing: -.045em; text-shadow: 0 5px 26px rgba(164, 22, 26, .18); }
+.subtitulo { color: #c4bdbd; font-size: 15px; font-weight: 500; }
+
+.indicador {
+  overflow: hidden;
+  border: 2px solid rgba(245, 243, 244, .17);
+  border-radius: 15px;
+  background: linear-gradient(145deg, rgba(245, 243, 244, .035), transparent 60%), #161a1d;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .04), 0 10px 25px rgba(0, 0, 0, .16);
+}
+
+.indicadorAlerta { border-left: 3px solid #c99d59; background: radial-gradient(ellipse at 0% 100%, rgba(214, 174, 107, .08), transparent 55%), linear-gradient(145deg, rgba(245, 243, 244, .035), transparent 60%), #161a1d; }
+.indicadorTopo h2 { color: #d0c9c9; font-weight: 700; }
+
+.indicadorIcone {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding-top: 6px;
+  border: 1px solid rgba(164, 22, 26, .28);
+  border-radius: 12px;
+  background: rgba(164, 22, 26, .1);
+  filter: drop-shadow(0 0 9px rgba(164, 22, 26, .2));
+  font-size: 22px;
+  line-height: 1;
+  text-align: center;
+}
+
+.indicadorValor { font-size: 35px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.indicador:nth-child(4) .indicadorValor { font-size: 29px; }
+.indicador p { color: #b2aaab; font-weight: 500; }
+
+.painel,
+.painelAtencao {
+  overflow: hidden;
+  border: 2px solid rgba(245, 243, 244, .16);
+  border-radius: 17px;
+  background: linear-gradient(150deg, rgba(245, 243, 244, .025), transparent 45%), #141719;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .035), 0 13px 30px rgba(0, 0, 0, .16);
+}
+
+.painelAtencao { border-color: rgba(214, 174, 107, .36); background: radial-gradient(ellipse at 100% 0%, rgba(214, 174, 107, .07), transparent 42%), linear-gradient(150deg, rgba(245, 243, 244, .025), transparent 45%), #141719; }
+.cabecalhoPainel h2 { color: #f5f1f1; font-size: 22px; font-weight: 700; letter-spacing: -.025em; }
+.rotuloSecao { color: #b2a7a8; font-weight: 700; }
+
+.linkPendente {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #c5bdbd;
+  text-decoration: none;
+  transition: color .18s ease;
+}
+
+.linkPendente:hover { color: #fff; text-decoration: none; }
+.detalhesAgenda { align-self: start; min-height: 72px; padding: 10px 13px; border: 1px solid rgba(245, 243, 244, .08); border-radius: 12px; background: rgba(245, 243, 244, .018); }
+.itemAgenda:last-child .detalhesAgenda { border-bottom: 1px solid rgba(245, 243, 244, .08); }
+.linhaTituloAgenda h3 { color: #f0ebeb; font-weight: 650; }
+.detalhesAgenda > p { color: #b5acad; }
+.estado { border-radius: 999px; background: rgba(131, 168, 200, .08); color: #b2c8dc; font-weight: 700; }
+.estadoAtual { background: rgba(121, 182, 155, .09); color: #a6d4bb; }
+.contadorAtencao, .linhaAtencao span { width: 36px; height: 36px; border-radius: 50%; font-weight: 700; }
+.cartaoAtencao { border: 2px solid rgba(214, 174, 107, .3); border-radius: 14px; background: linear-gradient(145deg, rgba(214, 174, 107, .075), transparent 72%), rgba(214, 174, 107, .035); }
+.cartaoAtencao h3 { color: #f5eeee; font-weight: 700; }
+.cartaoAtencao p { color: #d0c7c7; }
+.cartaoAtencao small, .dicaAtencao { color: #b2a8a9; }
+
+.semPendencias {
+  display: flex;
+  min-height: 165px;
+  align-items: center;
+  gap: 11px;
+  padding: 0 18px;
+  border-radius: 13px;
+  background: rgba(121, 182, 155, .035);
+}
+
+.semPendencias span {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  padding-top: 2px;
+  border: 1px solid rgba(121, 182, 155, .24);
+  border-radius: 50%;
+  background: rgba(121, 182, 155, .07);
+  font-size: 23px;
+  line-height: 1;
+}
+
+.semPendencias p { color: #c0b7b8; }
+.itemTurma { padding: 0 7px; border-radius: 10px; }
+.siglaTurma { border-radius: 10px; }
+.itemTurma > div strong { color: #eee8e8; font-weight: 650; }
+.itemTurma > div span, .resumoEquipamentos > strong span { color: #b2a8a9; }
+.barraDisponibilidade { height: 9px; border: 1px solid rgba(245, 243, 244, .1); border-radius: 999px; background: #101214; }
+.barraDisponibilidade span { border-radius: 999px; }
+.legendaEquipamentos span { color: #b7adae; }
+.avisoEquipamento { color: #c2b9ba; }
+.rodape { color: #aaa1a2; }
+
+@media (max-width: 560px) {
+  .introducao { padding: 18px 16px; border-radius: 15px; }
+  .indicador, .painel, .painelAtencao { border-radius: 14px; }
+  .detalhesAgenda { padding: 9px 10px; }
+  .semPendencias { padding: 0 14px; }
+}
