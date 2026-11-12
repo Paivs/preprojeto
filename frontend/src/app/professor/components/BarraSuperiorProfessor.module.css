@@ -192,3 +192,12 @@
   border-color: rgba(164, 22, 26, .7);
   background: linear-gradient(145deg, rgba(164, 22, 26, .14), transparent), var(--surface-high, #262a2e);
 }
+
+.menuButton > :global(.material-symbols-outlined),
+.trilha :global(.material-symbols-outlined) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transform: translateY(1px);
+}

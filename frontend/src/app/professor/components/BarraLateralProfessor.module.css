@@ -216,10 +216,12 @@
   height: 28px;
   align-items: center;
   justify-content: center;
+  padding-top: 2px;
   border: 1px solid rgba(245, 243, 244, .08);
   border-radius: 9px;
   font-size: 19px;
   line-height: 1;
+  text-align: center;
 }
 
 .navItemActive {

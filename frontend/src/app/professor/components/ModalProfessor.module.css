@@ -106,6 +106,28 @@
   }
 }
 
+.cabecalhoEsquerdo > div:first-child:not(:only-child) {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  place-items: center;
+  border: 1px solid rgba(164, 22, 26, .3);
+  border-radius: 11px;
+  background: rgba(164, 22, 26, .1);
+}
+
+.cabecalhoEsquerdo > div:first-child:not(:only-child) span,
+.fechar span {
+  display: block;
+  line-height: 1;
+  transform: translateY(1px);
+}
+
+.fechar span {
+  font-size: 20px;
+}
+
 .fundo {
   background: rgba(0, 0, 0, .78);
   backdrop-filter: blur(12px);
