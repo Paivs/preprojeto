@@ -5,5 +5,6 @@ export async function listarAgendamentos(){return (await apiFetch("/api/agendame
 export async function criarAgendamento(formulario){return (await apiFetch("/api/agendamentos",{method:"POST",body:formulario}))?.dados;}
 export async function cancelarAgendamento(id){return apiFetch(`/api/agendamentos/${id}/cancelar`,{method:"PATCH"});}
 export async function listarInspecoes(){return (await apiFetch("/api/inspecoes"))?.dados??[];}
+export async function listarChamadosProfessor(situacao){const query=situacao?`?situacao=${encodeURIComponent(situacao)}`:"";return (await apiFetch(`/api/chamados/professor${query}`))?.dados??[];}
 export async function buscarRespostasInspecao(id){return (await apiFetch(`/api/inspecoes/${id}/respostas`))?.dados??[];}
 export async function registrarInspecao(dados){return (await apiFetch("/api/inspecoes",{method:"POST",body:dados}))?.dados;}
