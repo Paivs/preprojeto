@@ -1,4 +1,4 @@
-.container {
+﻿.container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -1096,4 +1096,19 @@
   .searchBox { min-width: 0; width: 100%; }
   .selectWrapper { flex: 1 1 100%; }
   .tableTicker { flex-wrap: wrap; }
+}
+
+/* Ajustes de composição alinhados às telas de Equipamentos do Stitch. */
+.container { max-width: 100%; min-width: 0; }
+.inventorySection { min-width: 0; }
+.inventorySection :global(section[class*="card"]) { max-width: 100%; }
+.table { width: 100%; }
+.emptyState { min-height: clamp(24rem, 42vw, 32rem); }
+.modalCard { max-height: min(90vh, 52rem); overflow-y: auto; }
+
+@media (max-width: 760px) {
+  .emptyState { min-height: 22rem; padding: 1.5rem 1rem; }
+  .modalOverlay { align-items: flex-start; overflow-y: auto; padding: 1rem; }
+  .modalCard { width: 100%; max-height: none; }
+  .typeCardsGrid { grid-template-columns: 1fr; }
 }
