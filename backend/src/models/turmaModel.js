@@ -32,6 +32,22 @@ export async function criar({ nome, professor_id }) {
 }
 
 export async function buscarPorId(id) {
-  const [linhas] = await pool.query("SELECT id, nome, professor_id FROM turmas_projetos WHERE id = ?", [id]);
+  const [linhas] = await pool.query("SELECT id, nome, professor_id, token_acesso FROM turmas_projetos WHERE id = ?", [id]);
   return linhas[0] || null;
+}
+
+export async function buscarTurmaPorToken(token) {
+  const [linhas] = await pool.query(
+    "SELECT id, nome, professor_id, token_acesso FROM turmas_projetos WHERE token_acesso = ?",
+    [token],
+  );
+  return linhas[0] || null;
+}
+
+export async function definirTokenTurma(turmaId, token) {
+  const [resultado] = await pool.query(
+    "UPDATE turmas_projetos SET token_acesso = ? WHERE id = ? AND token_acesso IS NULL",
+    [token, turmaId],
+  );
+  return resultado.affectedRows > 0;
 }

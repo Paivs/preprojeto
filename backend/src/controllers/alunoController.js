@@ -1,7 +1,65 @@
 import { pool } from "../config/database.js";
 import bcrypt from "bcrypt";
+import * as TurmaModel from "../models/turmaModel.js";
+import { validarTokenTurma } from "../utils/token.js";
 
 const MAX_INSERT_ATTEMPTS = 5;
+
+export async function solicitarAcesso(request, response, next) {
+  const { token } = request.body ?? {};
+
+  if (!validarTokenTurma(token)) {
+    return response.status(400).json({ message: "Token invalido" });
+  }
+
+  try {
+    const turma = await TurmaModel.buscarTurmaPorToken(token);
+    if (!turma) {
+      return response.status(404).json({ message: "Token nao encontrado" });
+    }
+
+    const [agendamentos] = await pool.execute(
+      `SELECT id FROM agendamentos
+       WHERE turma_id = ?
+         AND inicio <= NOW() AND fim >= NOW()
+         AND status IN ('CONFIRMADO', 'EM_ANDAMENTO')
+       ORDER BY inicio DESC
+       LIMIT 1`,
+      [turma.id],
+    );
+    const agendamento = agendamentos[0];
+    if (!agendamento) {
+      return response.status(422).json({ message: "Nao ha aula ativa para esta turma agora" });
+    }
+
+    const [vinculos] = await pool.execute(
+      "SELECT 1 FROM turma_alunos WHERE turma_id = ? AND aluno_id = ? LIMIT 1",
+      [turma.id, request.usuario.id],
+    );
+    if (!vinculos.length) {
+      return response.status(403).json({ message: "Aluno nao pertence a esta turma" });
+    }
+
+    try {
+      await pool.execute(
+        "INSERT INTO checkins (agendamento_id, aluno_id, aprovado_em) VALUES (?, ?, NULL)",
+        [agendamento.id, request.usuario.id],
+      );
+    } catch (error) {
+      if (error.code === "ER_DUP_ENTRY") {
+        return response.status(409).json({ message: "Solicitacao ja registrada" });
+      }
+      throw error;
+    }
+
+    return response.status(201).json({
+      status: "AGUARDANDO_APROVACAO",
+      turma: { id: turma.id, nome: turma.nome },
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
 
 function validationErrors(body) {
   const errors = [];
