@@ -34,9 +34,11 @@
 .roleBadgeBtn { border-radius: 0; background: color-mix(in srgb, var(--primary-container, #a4161a) 20%, transparent); font-weight: 700; letter-spacing: 0.04em; }
 .roleAdmin { color: var(--primary, #ffb4ac); }
 .roleProfessor { color: var(--tertiary, #9ecaff); }
-.roleTecnico { color: var(--outline, #aa8986); }
-.roleAluno { color: var(--outline-variant, #5a403e); }
+.roleTecnico { color: #fcd34d; background: rgb(245 158 11 / 16%); }
+.roleAluno { color: #a7f3d0; background: rgb(16 185 129 / 18%); }
 .roleDot { border-radius: 0; }
+.roleDot.roleTecnico { background: var(--status-warning, #f59e0b); }
+.roleDot.roleAluno { background: var(--status-ok, #10b981); }
 .roleMenu { border-color: var(--surface-high, #262a2e); border-radius: 0; background: var(--surface-highest, #313538); box-shadow: 0 0.75rem 1.5rem #0009; }
 .roleMenuItem { border-radius: 0; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; }
 .roleMenuItem:hover, .roleMenuItemSelected { background: var(--surface-container, #1c2023); color: var(--primary, #ffb4ac); }

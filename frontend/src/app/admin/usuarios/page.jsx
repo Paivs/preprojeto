@@ -376,7 +376,7 @@ function Conteudo({ token }) {
                           className={`${styles.roleBadgeBtn} ${roleColorClass}`}
                           onClick={() => setDropdownAbertoId(dropdownAbertoId === u.id ? null : u.id)}
                         >
-                          <span className={styles.roleDot} />
+                          <span className={`${styles.roleDot} ${roleColorClass}`} />
                           <span>{u.perfil}</span>
                           <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>
                             arrow_drop_down
