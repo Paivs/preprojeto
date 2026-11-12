@@ -45,7 +45,7 @@ export default function PaginaTecnico() {
 
   const chamados = dashboard?.chamados;
   const status = chamados?.por_status;
-  const ativos = somarStatus(status, ["ABERTO", "EM_ATENDIMENTO", "AGUARDANDO_PECAS"]);
+  const ativos = somarStatus(status, ["ABERTO", "EM_ATENDIMENTO"]);
   const criticos = totalPorChave(chamados?.por_severidade_em_aberto, "severidade", "CRITICA");
   const concluidos = totalPorChave(status, "status", "CONCLUIDO");
   const equipamentosEmManutencao = Number(dashboard?.equipamentos?.em_manutencao ?? 0);
@@ -57,7 +57,7 @@ export default function PaginaTecnico() {
       valor: ativos,
       unidade: "atribuídos a você",
       icone: "confirmation_number",
-      contexto: { texto: "Abertos, em atendimento ou aguardando peças" },
+      contexto: { texto: "Abertos ou em atendimento" },
     },
     {
       categoria: "Prioridade",

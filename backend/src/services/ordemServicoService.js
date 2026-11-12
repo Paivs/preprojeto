@@ -1,5 +1,7 @@
 import * as ChamadoModel from "../models/chamadoModel.js";
 import * as OrdemServicoModel from "../models/ordemServicoModel.js";
+import * as HistoricoManutencaoService from "./historicoManutencaoService.js";
+import * as ChamadoService from "./chamadoService.js";
 
 const STATUS_VALIDOS = ["EMITIDA", "EM_EXECUCAO", "FINALIZADA", "CANCELADA"];
 const STATUS_CHAMADO_VALIDOS = ["ABERTO", "EM_ATENDIMENTO", "AGUARDANDO_PECAS", "CONCLUIDO", "CANCELADO"];
@@ -78,5 +80,30 @@ export async function atualizarStatus(idRecebido, status) {
   if (!atualizou) {
     throw new Error(`Ordem de serviço ${id} não encontrada.`);
   }
+  return await OrdemServicoModel.buscarPorId(id);
+}
+
+export async function concluir(idRecebido, descricao, usuarioLogado) {
+  const id = validarId(idRecebido);
+  if (typeof descricao !== "string" || descricao.trim() === "") {
+    throw new TypeError("Descreva o serviço realizado para concluir a ordem.");
+  }
+  const ordemServico = await OrdemServicoModel.buscarPorId(id);
+  if (!ordemServico) {
+    throw new Error(`Ordem de serviço ${id} não encontrada.`);
+  }
+  if (usuarioLogado?.perfil !== "TECNICO") {
+    const erro = new Error("Apenas técnicos podem concluir ordens de serviço.");
+    erro.status = 403;
+    throw erro;
+  }
+  if (ordemServico.status === "FINALIZADA") {
+    const erro = new Error("Esta ordem de serviço já foi concluída.");
+    erro.status = 409;
+    throw erro;
+  }
+
+  await HistoricoManutencaoService.criar(ordemServico.chamado_id, { descricao }, usuarioLogado);
+  await ChamadoService.atualizarStatus(ordemServico.chamado_id, "CONCLUIDO", usuarioLogado);
   return await OrdemServicoModel.buscarPorId(id);
 }

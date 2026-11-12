@@ -10,7 +10,7 @@ import styles from "./TecnicoLayout.module.css";
 export default function TecnicoLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
-  const tituloPagina = pathname.startsWith("/tecnico/chamados") ? "Chamados" : "Visão geral";
+  const tituloPagina = pathname.startsWith("/tecnico/chamados") ? "Ordens de serviço" : "Visão geral";
   const [usuario, setUsuario] = useState(null);
   const [menuAberto, setMenuAberto] = useState(false);
 
@@ -66,7 +66,7 @@ export default function TecnicoLayout({ children }) {
             onClick={() => setMenuAberto(false)}
           >
             <span className="material-symbols-outlined">confirmation_number</span>
-            <span>Chamados</span>
+            <span>Ordens de serviço</span>
           </Link>
         </nav>
 

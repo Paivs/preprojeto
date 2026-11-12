@@ -8,9 +8,6 @@ import EmptyState from "@/components/EmptyState";
 const STATUS = [
   ["ABERTO", "Aberto"],
   ["EM_ATENDIMENTO", "Em atendimento"],
-  ["AGUARDANDO_PECAS", "Aguardando peças"],
-  ["CONCLUIDO", "Concluído"],
-  ["CANCELADO", "Cancelado"],
 ];
 const SEVERIDADES = [["CRITICA", "Crítica"], ["ALTA", "Alta"], ["MEDIA", "Média"], ["BAIXA", "Baixa"]];
 const ROTULO_STATUS = Object.fromEntries(STATUS);
@@ -18,7 +15,6 @@ const ROTULO_SEVERIDADE = Object.fromEntries(SEVERIDADES);
 const STATUS_ORDEM_POR_CHAMADO = {
   ABERTO: "EMITIDA",
   EM_ATENDIMENTO: "EM_EXECUCAO",
-  CONCLUIDO: "FINALIZADA",
   CANCELADO: "CANCELADA",
 };
 
@@ -37,6 +33,7 @@ export default function PaginaChamadosTecnico() {
   const [erro, setErro] = useState("");
   const [chamadoSelecionado, setChamadoSelecionado] = useState(null);
   const [atualizandoStatus, setAtualizandoStatus] = useState(false);
+  const [descricaoServico, setDescricaoServico] = useState("");
   const [aviso, setAviso] = useState("");
 
   const carregar = useCallback(async () => {
@@ -48,9 +45,7 @@ export default function PaginaChamadosTecnico() {
       if (severidade) params.set("severidade", severidade);
       const resposta = await apiFetch(`/api/ordens-servico?${params}`);
       const ordens = Array.isArray(resposta?.dados) ? resposta.dados : [];
-      const ordensExibidas = status
-        ? ordens
-        : ordens.filter((ordem) => !["CONCLUIDO", "CANCELADO"].includes(ordem.chamado_status));
+      const ordensExibidas = ordens.filter((ordem) => !["CONCLUIDO", "CANCELADO"].includes(ordem.chamado_status));
       setChamados(ordensExibidas.map((ordem) => ({
         ...ordem,
         os_id: ordem.id,
@@ -84,6 +79,7 @@ export default function PaginaChamadosTecnico() {
 
   function abrirDetalhes(chamado) {
     setChamadoSelecionado(chamado);
+    setDescricaoServico("");
     setErro("");
     setAviso("");
   }
@@ -100,12 +96,6 @@ export default function PaginaChamadosTecnico() {
       });
       const chamadoAtualizado = resposta?.dados ?? { ...chamadoSelecionado, status: novoStatus };
       const statusOrdem = STATUS_ORDEM_POR_CHAMADO[novoStatus];
-      if (novoStatus === "CONCLUIDO") {
-        setChamados((atuais) => atuais.filter((chamado) => chamado.id !== chamadoAtualizado.id));
-        setChamadoSelecionado(null);
-        setAviso("Chamado concluído com sucesso.");
-        return;
-      }
       setChamadoSelecionado((atual) => ({
         ...atual,
         ...chamadoAtualizado,
@@ -119,6 +109,27 @@ export default function PaginaChamadosTecnico() {
       setAviso("Status do chamado atualizado.");
     } catch (error) {
       setErro(error.message || "Não foi possível atualizar o chamado.");
+    } finally {
+      setAtualizandoStatus(false);
+    }
+  }
+
+  async function concluirOrdem() {
+    if (!chamadoSelecionado || atualizandoStatus) return;
+    setAtualizandoStatus(true);
+    setErro("");
+    setAviso("");
+    try {
+      await apiFetch(`/api/ordens-servico/${chamadoSelecionado.os_id}/concluir`, {
+        method: "POST",
+        body: { descricao: descricaoServico },
+      });
+      setChamados((atuais) => atuais.filter((chamado) => chamado.os_id !== chamadoSelecionado.os_id));
+      setChamadoSelecionado(null);
+      setDescricaoServico("");
+      setAviso("Ordem de serviço concluída com sucesso.");
+    } catch (error) {
+      setErro(error.message || "Não foi possível concluir a ordem de serviço.");
     } finally {
       setAtualizandoStatus(false);
     }
@@ -170,7 +181,7 @@ export default function PaginaChamadosTecnico() {
 
       {erro && !chamadoSelecionado && <p className={styles.erro} role="alert">{erro}</p>}
       {aviso && !chamadoSelecionado && <p className={styles.aviso} role="status">{aviso}</p>}
-      <p className={styles.contagem}>{carregando ? "Carregando chamados…" : `${filtrados.length} chamados encontrados`}</p>
+      <p className={styles.contagem}>{carregando ? "Carregando ordens de serviço…" : `${filtrados.length} ordens de serviço encontradas`}</p>
 
       {!carregando && !erro && filtrados.length === 0 && (
         <EmptyState
@@ -202,7 +213,7 @@ export default function PaginaChamadosTecnico() {
                 <span><strong>Aberto em</strong> {formatarData(chamado.aberto_em)}</span>
               </div>
               <button type="button" className={styles.botaoDetalhes} onClick={() => abrirDetalhes(chamado)}>
-                Ver detalhes
+                Resolver OS
                 <span className="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
               </button>
             </article>
@@ -221,7 +232,7 @@ export default function PaginaChamadosTecnico() {
           <section className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="titulo-detalhes-chamado">
             <header className={styles.modalCabecalho}>
               <div>
-                <p className={styles.sobretitulo}>{chamadoSelecionado.os_numero || `OS #${chamadoSelecionado.os_id}`} · Chamado #{String(chamadoSelecionado.id).padStart(4, "0")}</p>
+                <p className={styles.sobretitulo}>Resolução da ordem de serviço</p>
                 <h2 className={styles.modalTitulo} id="titulo-detalhes-chamado">
                   {chamadoSelecionado.titulo || `Chamado #${chamadoSelecionado.id}`}
                 </h2>
@@ -237,14 +248,10 @@ export default function PaginaChamadosTecnico() {
                 {ROTULO_SEVERIDADE[chamadoSelecionado.severidade] || "Prioridade não informada"}
               </span>
               <span className={`${styles.status} ${styles[`status_${String(chamadoSelecionado.status || "").toLowerCase()}`] || ""}`}>
-                {ROTULO_STATUS[chamadoSelecionado.status] || chamadoSelecionado.status}
+            {chamadoSelecionado.status === "AGUARDANDO_PECAS" ? "Em atendimento" : ROTULO_STATUS[chamadoSelecionado.status] || chamadoSelecionado.status}
               </span>
             </div>
             <dl className={styles.modalDados}>
-              <div>
-                <dt>Ordem de serviço</dt>
-                <dd>{chamadoSelecionado.os_numero || `OS #${chamadoSelecionado.os_id}`} · {chamadoSelecionado.os_status}</dd>
-              </div>
               <div>
                 <dt>Equipamento</dt>
                 <dd>{chamadoSelecionado.equipamento_nome || `Equipamento #${chamadoSelecionado.equipamento_id}`}</dd>
@@ -269,24 +276,14 @@ export default function PaginaChamadosTecnico() {
                 </button>
               </div>
             )}
-            {chamadoSelecionado.status === "EM_ATENDIMENTO" && (
+            {["EM_ATENDIMENTO", "AGUARDANDO_PECAS"].includes(chamadoSelecionado.status) && (
               <div className={styles.modalAcoes}>
-                <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("AGUARDANDO_PECAS")} disabled={atualizandoStatus}>
-                  {atualizandoStatus ? "Atualizando..." : "Aguardar peças"}
-                </button>
-              </div>
-            )}
-            {chamadoSelecionado.status === "AGUARDANDO_PECAS" && (
-              <div className={styles.modalAcoes}>
-                <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("EM_ATENDIMENTO")} disabled={atualizandoStatus}>
-                  {atualizandoStatus ? "Atualizando..." : "Retomar atendimento"}
-                </button>
-              </div>
-            )}
-            {chamadoSelecionado.status === "EM_ATENDIMENTO" && (
-              <div className={styles.modalAcoes}>
-                <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("CONCLUIDO")} disabled={atualizandoStatus}>
-                  {atualizandoStatus ? "Concluindo..." : "Concluir chamado"}
+                <label className={styles.campoDescricaoServico}>
+                  <span>Descrição do serviço realizado</span>
+                  <textarea value={descricaoServico} onChange={(evento) => setDescricaoServico(evento.target.value)} rows={5} placeholder="Descreva o serviço realizado" required />
+                </label>
+                <button type="button" className={styles.botaoAcao} onClick={concluirOrdem} disabled={atualizandoStatus || !descricaoServico.trim()}>
+                  {atualizandoStatus ? "Concluindo..." : "Concluir ordem de serviço"}
                 </button>
               </div>
             )}

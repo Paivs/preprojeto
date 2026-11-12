@@ -4,7 +4,6 @@ import EmptyState from "@/components/EmptyState";
 const STATUS = [
   { chave: "ABERTO", rotulo: "Abertos", tom: "aberto" },
   { chave: "EM_ATENDIMENTO", rotulo: "Em atendimento", tom: "atendimento" },
-  { chave: "AGUARDANDO_PECAS", rotulo: "Aguardando peças", tom: "pecas" },
   { chave: "CONCLUIDO", rotulo: "Concluídos", tom: "concluido" },
 ];
 
