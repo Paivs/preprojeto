@@ -1,4 +1,5 @@
 import * as SetorModel from '../models/SetorModels.js';
+import { validarTermoBusca } from '../utils/busca.js';
 
 function validarId(valor, campo) {
   const id = Number(valor);
@@ -36,9 +37,10 @@ function validarDados(dados = {}) {
   };
 }
 
-export async function listar(idUsuarioRecebido) {
+export async function listar(idUsuarioRecebido, buscaRecebida) {
   const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
-  return SetorModel.listarPorUsuario(idUsuario);
+  const busca = validarTermoBusca(buscaRecebida);
+  return SetorModel.listarPorUsuario(idUsuario, busca);
 }
 
 export async function buscarPorId(idSetorRecebido, idUsuarioRecebido) {

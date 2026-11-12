@@ -12,7 +12,7 @@ function responderErro(erro, res, next) {
 
 export async function listar(req, res, next) {
   try {
-    const setores = await SetorService.listar(req.usuario.id);
+    const setores = await SetorService.listar(req.usuario.id, req.query.busca);
     return res.status(200).json({ sucesso: true, dados: setores });
   } catch (erro) {
     return responderErro(erro, res, next);
