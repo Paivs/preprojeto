@@ -55,6 +55,34 @@ export async function buscarPorInspecao(inspecaoId, db = pool) {
   return linhas[0] || null;
 }
 
+export async function listarDoProfessor(professorId, situacao) {
+  const filtros = {
+    EM_ANDAMENTO: "AND c.status IN ('ABERTO', 'EM_ATENDIMENTO', 'AGUARDANDO_PECAS')",
+    CONCLUIDO: "AND c.status IN ('CONCLUIDO', 'CANCELADO')",
+  };
+  const filtroSituacao = situacao ? filtros[situacao] : "";
+  const [linhas] = await pool.query(
+    `SELECT c.id AS chamado_id, c.titulo, c.descricao AS chamado_descricao,
+            c.tipo, c.severidade, c.status AS chamado_status,
+            c.aberto_em, c.concluido_em,
+            e.id AS equipamento_id, e.nome AS equipamento_nome,
+            e.codigo_patrimonio AS equipamento_patrimonio,
+            i.id AS inspecao_id, i.etapa AS inspecao_etapa,
+            i.resultado AS inspecao_resultado,
+            i.observacoes AS inspecao_observacoes,
+            i.realizada_em AS inspecao_realizada_em,
+            u.nome AS professor_nome
+     FROM chamados_manutencao c
+     JOIN equipamentos e ON e.id = c.equipamento_id
+     LEFT JOIN inspecoes i ON i.id = c.inspecao_id
+     LEFT JOIN usuarios u ON u.id = c.solicitante_id
+     WHERE c.solicitante_id = ? ${filtroSituacao}
+     ORDER BY c.aberto_em DESC, c.id DESC`,
+    [professorId],
+  );
+  return linhas;
+}
+
 export async function criar(chamado) {
   const sql = `
     INSERT INTO chamados_manutencao
