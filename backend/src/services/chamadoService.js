@@ -2,7 +2,7 @@ import Chamado, { SEVERIDADES_VALIDAS, STATUS_VALIDOS } from "../models/Chamado.
 import * as ChamadoModel from "../models/chamadoModel.js";
 import * as EquipamentoModel from "../models/equipamentoModel.js";
 import * as UsuarioModel from "../models/usuarioModel.js";
-import * as HistoricoManutencaoModel from "../models/historicoManutencaoModel.js";
+import * as OrdemServicoModel from "../models/ordemServicoModel.js";
 
 const PERFIS_PODEM_ABRIR_CHAMADO = ["ADMIN", "PROFESSOR", "TECNICO"];
 
@@ -109,22 +109,25 @@ export async function atualizarStatus(idRecebido, status, usuarioLogado) {
     throw new Error(`Chamado ${id} não encontrado.`);
   }
   if (usuarioLogado?.perfil === "TECNICO" && Number(chamado.tecnico_id) !== Number(usuarioLogado.id)) {
-    const erro = new Error("Você só pode atualizar chamados atribuídos a você.");
-    erro.status = 403;
-    throw erro;
-  }
-  if (status === "CONCLUIDO" && usuarioLogado?.perfil === "TECNICO") {
-    const historico = await HistoricoManutencaoModel.listarPorChamado(id);
-    if (!historico.length) {
-      const erro = new Error("Registre o serviço realizado antes de concluir o chamado.");
-      erro.status = 422;
+    const ordemServico = await OrdemServicoModel.buscarPorChamado(id);
+    if (!ordemServico) {
+      const erro = new Error("Você só pode atualizar chamados atribuídos a você ou vinculados a uma ordem de serviço.");
+      erro.status = 403;
       throw erro;
     }
   }
-
   const atualizou = await ChamadoModel.atualizarStatus(id, status);
   if (!atualizou) {
     throw new Error(`Chamado ${id} não encontrado.`);
+  }
+  const statusOrdemPorChamado = {
+    ABERTO: "EMITIDA",
+    EM_ATENDIMENTO: "EM_EXECUCAO",
+    CONCLUIDO: "FINALIZADA",
+    CANCELADO: "CANCELADA",
+  };
+  if (statusOrdemPorChamado[status]) {
+    await OrdemServicoModel.atualizarStatusPorChamado(id, statusOrdemPorChamado[status]);
   }
   if (status === "CONCLUIDO") {
     const chamadosAtivos = await ChamadoModel.contarAtivosPorEquipamento(chamado.equipamento_id);

@@ -94,25 +94,6 @@ function Conteudo({ token }) {
       });
       setSelecionado(null);
       setNotificacao({ tipo: "sucesso", mensagem: `Ordem de serviço ${os.numero ?? os.id} criada e enviada ao painel do técnico.` });
-    } catch (e) {
-      setNotificacao({ tipo: "erro", mensagem: e.message });
-    }
-  }
-
-  async function encaminhar(item) {
-    const id = window.prompt("ID do usuário com perfil TECNICO:");
-    if (!id) return;
-    const tecnicoId = Number(id);
-    if (!Number.isInteger(tecnicoId) || tecnicoId <= 0) {
-      setNotificacao({ tipo: "erro", mensagem: "Informe um ID de técnico válido." });
-      return;
-    }
-    try {
-      await chamarApi(`/chamados/${item.id}/tecnico`, token, {
-        method: "PATCH",
-        body: JSON.stringify({ tecnico_id: tecnicoId }),
-      });
-      setNotificacao({ tipo: "sucesso", mensagem: `Chamado #${item.id} encaminhado ao técnico ID ${tecnicoId}.` });
       await carregar();
     } catch (e) {
       setNotificacao({ tipo: "erro", mensagem: e.message });

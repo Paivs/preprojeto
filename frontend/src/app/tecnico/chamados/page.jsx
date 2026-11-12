@@ -15,6 +15,12 @@ const STATUS = [
 const SEVERIDADES = [["CRITICA", "Crítica"], ["ALTA", "Alta"], ["MEDIA", "Média"], ["BAIXA", "Baixa"]];
 const ROTULO_STATUS = Object.fromEntries(STATUS);
 const ROTULO_SEVERIDADE = Object.fromEntries(SEVERIDADES);
+const STATUS_ORDEM_POR_CHAMADO = {
+  ABERTO: "EMITIDA",
+  EM_ATENDIMENTO: "EM_EXECUCAO",
+  CONCLUIDO: "FINALIZADA",
+  CANCELADO: "CANCELADA",
+};
 
 function formatarData(valor) {
   if (!valor) return "Data não informada";
@@ -32,13 +38,6 @@ export default function PaginaChamadosTecnico() {
   const [chamadoSelecionado, setChamadoSelecionado] = useState(null);
   const [atualizandoStatus, setAtualizandoStatus] = useState(false);
   const [aviso, setAviso] = useState("");
-  const [historico, setHistorico] = useState([]);
-  const [mostrarHistorico, setMostrarHistorico] = useState(false);
-  const [carregandoHistorico, setCarregandoHistorico] = useState(false);
-  const [salvandoRegistro, setSalvandoRegistro] = useState(false);
-  const [descricaoServico, setDescricaoServico] = useState("");
-  const [pecasTrocadas, setPecasTrocadas] = useState("");
-  const [custoServico, setCustoServico] = useState("0");
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -47,8 +46,19 @@ export default function PaginaChamadosTecnico() {
       const params = new URLSearchParams({ pagina: "1", limite: "100" });
       if (status) params.set("status", status);
       if (severidade) params.set("severidade", severidade);
-      const resposta = await apiFetch(`/api/chamados?${params}`);
-      setChamados(Array.isArray(resposta?.dados) ? resposta.dados : []);
+      const resposta = await apiFetch(`/api/ordens-servico?${params}`);
+      const ordens = Array.isArray(resposta?.dados) ? resposta.dados : [];
+      const ordensExibidas = status
+        ? ordens
+        : ordens.filter((ordem) => !["CONCLUIDO", "CANCELADO"].includes(ordem.chamado_status));
+      setChamados(ordensExibidas.map((ordem) => ({
+        ...ordem,
+        os_id: ordem.id,
+        os_numero: ordem.numero,
+        os_status: ordem.status,
+        id: ordem.chamado_id,
+        status: ordem.chamado_status,
+      })));
     } catch (error) {
       setErro(error.message || "Não foi possível carregar os chamados.");
     } finally {
@@ -58,15 +68,24 @@ export default function PaginaChamadosTecnico() {
 
   useEffect(() => { carregar(); }, [carregar]);
 
+  useEffect(() => {
+    const intervalo = window.setInterval(carregar, 30000);
+    const atualizarAoVoltar = () => {
+      if (document.visibilityState === "visible") carregar();
+    };
+    window.addEventListener("focus", atualizarAoVoltar);
+    document.addEventListener("visibilitychange", atualizarAoVoltar);
+    return () => {
+      window.clearInterval(intervalo);
+      window.removeEventListener("focus", atualizarAoVoltar);
+      document.removeEventListener("visibilitychange", atualizarAoVoltar);
+    };
+  }, [carregar]);
+
   function abrirDetalhes(chamado) {
     setChamadoSelecionado(chamado);
-    setHistorico([]);
-    setMostrarHistorico(false);
     setErro("");
     setAviso("");
-    setDescricaoServico("");
-    setPecasTrocadas("");
-    setCustoServico("0");
   }
 
   async function atualizarStatus(novoStatus) {
@@ -80,9 +99,22 @@ export default function PaginaChamadosTecnico() {
         body: { status: novoStatus },
       });
       const chamadoAtualizado = resposta?.dados ?? { ...chamadoSelecionado, status: novoStatus };
-      setChamadoSelecionado(chamadoAtualizado);
+      const statusOrdem = STATUS_ORDEM_POR_CHAMADO[novoStatus];
+      if (novoStatus === "CONCLUIDO") {
+        setChamados((atuais) => atuais.filter((chamado) => chamado.id !== chamadoAtualizado.id));
+        setChamadoSelecionado(null);
+        setAviso("Chamado concluído com sucesso.");
+        return;
+      }
+      setChamadoSelecionado((atual) => ({
+        ...atual,
+        ...chamadoAtualizado,
+        ...(statusOrdem ? { os_status: statusOrdem } : {}),
+      }));
       setChamados((atuais) => atuais.map((chamado) =>
-        chamado.id === chamadoAtualizado.id ? { ...chamado, ...chamadoAtualizado } : chamado,
+        chamado.id === chamadoAtualizado.id
+          ? { ...chamado, ...chamadoAtualizado, ...(statusOrdem ? { os_status: statusOrdem } : {}) }
+          : chamado,
       ));
       setAviso("Status do chamado atualizado.");
     } catch (error) {
@@ -92,53 +124,11 @@ export default function PaginaChamadosTecnico() {
     }
   }
 
-  async function carregarHistorico() {
-    if (!chamadoSelecionado) return;
-    setCarregandoHistorico(true);
-    setErro("");
-    try {
-      const resposta = await apiFetch(`/api/chamados/${chamadoSelecionado.id}/historico`);
-      setHistorico(Array.isArray(resposta?.dados) ? resposta.dados : []);
-      setMostrarHistorico(true);
-    } catch (error) {
-      setErro(error.message || "Não foi possível carregar o histórico.");
-    } finally {
-      setCarregandoHistorico(false);
-    }
-  }
-
-  async function registrarServico(evento) {
-    evento.preventDefault();
-    if (!chamadoSelecionado || !descricaoServico.trim() || salvandoRegistro) return;
-    setSalvandoRegistro(true);
-    setErro("");
-    setAviso("");
-    try {
-      await apiFetch(`/api/chamados/${chamadoSelecionado.id}/historico`, {
-        method: "POST",
-        body: {
-          descricao: descricaoServico.trim(),
-          pecas_trocadas: pecasTrocadas.trim(),
-          custo: Number(custoServico),
-        },
-      });
-      setDescricaoServico("");
-      setPecasTrocadas("");
-      setCustoServico("0");
-      setAviso("Serviço registrado no histórico.");
-      await carregarHistorico();
-    } catch (error) {
-      setErro(error.message || "Não foi possível registrar o serviço.");
-    } finally {
-      setSalvandoRegistro(false);
-    }
-  }
-
   const filtrados = useMemo(() => {
     const termo = busca.trim().toLocaleLowerCase("pt-BR");
     if (!termo) return chamados;
     return chamados.filter((chamado) =>
-      [chamado.id, chamado.titulo, chamado.descricao, chamado.equipamento_id, chamado.tipo]
+      [chamado.os_numero, chamado.id, chamado.titulo, chamado.descricao, chamado.equipamento_id, chamado.tipo]
         .some((valor) => String(valor ?? "").toLocaleLowerCase("pt-BR").includes(termo)),
     );
   }, [busca, chamados]);
@@ -185,8 +175,8 @@ export default function PaginaChamadosTecnico() {
       {!carregando && !erro && filtrados.length === 0 && (
         <EmptyState
           icone="inbox"
-          titulo={chamados.length ? "Nenhum resultado para esses filtros" : "Nenhum chamado atribuído"}
-          mensagem={chamados.length ? "Tente alterar a busca ou os filtros." : "Quando houver chamados atribuídos, eles aparecem aqui."}
+          titulo={chamados.length ? "Nenhum resultado para esses filtros" : "Nenhuma OS recebida"}
+          mensagem={chamados.length ? "Tente alterar a busca ou os filtros." : "Ordens de serviço emitidas pelo administrador para seus chamados aparecerão aqui."}
         />
       )}
 
@@ -195,13 +185,13 @@ export default function PaginaChamadosTecnico() {
           const prioridade = String(chamado.severidade || "").toUpperCase();
           const statusAtual = String(chamado.status || "").toUpperCase();
           return (
-            <article className={styles.cartao} key={chamado.id}>
+            <article className={styles.cartao} key={chamado.os_id}>
               <div className={styles.cartaoTopo}>
                 <span className={`${styles.prioridade} ${styles[`prioridade_${prioridade.toLowerCase()}`] || ""}`}>
                   {ROTULO_SEVERIDADE[prioridade] || "Prioridade não informada"}
                 </span>
                 <span className={`${styles.status} ${styles[`status_${statusAtual.toLowerCase()}`] || ""}`}>
-                  {ROTULO_STATUS[statusAtual] || statusAtual}
+                  {chamado.os_numero || `OS #${chamado.os_id}`} · {chamado.os_status}
                 </span>
               </div>
               <h2 className={styles.tituloChamado}>{chamado.titulo || `Chamado #${chamado.id}`}</h2>
@@ -231,7 +221,7 @@ export default function PaginaChamadosTecnico() {
           <section className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="titulo-detalhes-chamado">
             <header className={styles.modalCabecalho}>
               <div>
-                <p className={styles.sobretitulo}>Chamado #{String(chamadoSelecionado.id).padStart(4, "0")}</p>
+                <p className={styles.sobretitulo}>{chamadoSelecionado.os_numero || `OS #${chamadoSelecionado.os_id}`} · Chamado #{String(chamadoSelecionado.id).padStart(4, "0")}</p>
                 <h2 className={styles.modalTitulo} id="titulo-detalhes-chamado">
                   {chamadoSelecionado.titulo || `Chamado #${chamadoSelecionado.id}`}
                 </h2>
@@ -252,6 +242,10 @@ export default function PaginaChamadosTecnico() {
             </div>
             <dl className={styles.modalDados}>
               <div>
+                <dt>Ordem de serviço</dt>
+                <dd>{chamadoSelecionado.os_numero || `OS #${chamadoSelecionado.os_id}`} · {chamadoSelecionado.os_status}</dd>
+              </div>
+              <div>
                 <dt>Equipamento</dt>
                 <dd>{chamadoSelecionado.equipamento_nome || `Equipamento #${chamadoSelecionado.equipamento_id}`}</dd>
               </div>
@@ -268,44 +262,6 @@ export default function PaginaChamadosTecnico() {
               <h3>Descrição</h3>
               <p>{chamadoSelecionado.descricao || "Sem descrição informada."}</p>
             </div>
-            <section className={styles.secaoHistorico}>
-              <div className={styles.tituloSecaoHistorico}>
-                <h3>Histórico de manutenção</h3>
-                <button type="button" className={styles.botaoSecundario} onClick={carregarHistorico} disabled={carregandoHistorico}>
-                  {carregandoHistorico ? "Carregando..." : mostrarHistorico ? "Atualizar histórico" : "Ver histórico"}
-                </button>
-              </div>
-              {mostrarHistorico && (
-                <div className={styles.listaHistorico}>
-                  {historico.length ? historico.map((registro) => (
-                    <article className={styles.itemHistorico} key={registro.id}>
-                      <p>{registro.descricao}</p>
-                      <span>{registro.registrado_em ? new Date(registro.registrado_em).toLocaleString("pt-BR") : "Data não informada"}</span>
-                      {registro.pecas_trocadas && <small>Peças: {registro.pecas_trocadas}</small>}
-                      {Number(registro.custo) > 0 && <small>Custo: {Number(registro.custo).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</small>}
-                    </article>
-                  )) : <p className={styles.historicoVazio}>Ainda não há serviços registrados.</p>}
-                </div>
-              )}
-              <form className={styles.formularioServico} onSubmit={registrarServico}>
-                <h4>Registrar serviço realizado</h4>
-                <label>
-                  Descrição do serviço
-                  <textarea value={descricaoServico} onChange={(evento) => setDescricaoServico(evento.target.value)} required rows={3} />
-                </label>
-                <label>
-                  Peças trocadas (opcional)
-                  <input value={pecasTrocadas} onChange={(evento) => setPecasTrocadas(evento.target.value)} />
-                </label>
-                <label>
-                  Custo (R$)
-                  <input type="number" min="0" step="0.01" value={custoServico} onChange={(evento) => setCustoServico(evento.target.value)} />
-                </label>
-                <button type="submit" className={styles.botaoAcao} disabled={salvandoRegistro || !descricaoServico.trim()}>
-                  {salvandoRegistro ? "Salvando..." : "Salvar registro"}
-                </button>
-              </form>
-            </section>
             {chamadoSelecionado.status === "ABERTO" && (
               <div className={styles.modalAcoes}>
                 <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("EM_ATENDIMENTO")} disabled={atualizandoStatus}>
@@ -327,7 +283,7 @@ export default function PaginaChamadosTecnico() {
                 </button>
               </div>
             )}
-            {chamadoSelecionado.status === "EM_ATENDIMENTO" && mostrarHistorico && historico.length > 0 && (
+            {chamadoSelecionado.status === "EM_ATENDIMENTO" && (
               <div className={styles.modalAcoes}>
                 <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("CONCLUIDO")} disabled={atualizandoStatus}>
                   {atualizandoStatus ? "Concluindo..." : "Concluir chamado"}
