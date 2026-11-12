@@ -47,6 +47,14 @@ export async function buscarPorId(id) {
   return linhas[0] || null;
 }
 
+export async function buscarPorInspecao(inspecaoId, db = pool) {
+  const [linhas] = await db.query(
+    "SELECT * FROM chamados_manutencao WHERE inspecao_id = ? LIMIT 1",
+    [inspecaoId],
+  );
+  return linhas[0] || null;
+}
+
 export async function criar(chamado) {
   const sql = `
     INSERT INTO chamados_manutencao
