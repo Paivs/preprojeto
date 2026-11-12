@@ -146,6 +146,13 @@
   background: var(--status-liberado-verde);
 }
 
+.rodape {
+  margin-top: 24px;
+  color: var(--text-muted, var(--silver));
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 @media (max-width: 480px) {
   .itemEquipamento { gap: 10px; padding-right: 4px; padding-left: 4px; }
   .idEquipamento { flex-basis: 74px; font-size: 11px; }

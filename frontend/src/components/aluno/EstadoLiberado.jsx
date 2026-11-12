@@ -49,6 +49,9 @@ export default function EstadoLiberado({ sessao, equipamentos, onVoltar }) {
           ))}
         </ul>
       </section>
+      <footer className={styles.rodape}>
+        Antes de usar: inspecione, use, devolva e faça o pós-uso. Você responde por danos ou perdas nos equipamentos desta sessão.
+      </footer>
     </section>
   );
 }
