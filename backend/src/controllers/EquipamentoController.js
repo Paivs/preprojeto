@@ -12,7 +12,7 @@ function responderErro(erro, res, next) {
 
 export async function listar(req, res, next) {
   try {
-    const equipamentos = await EquipamentoService.listar(req.usuario.id);
+    const equipamentos = await EquipamentoService.listar(req.usuario.id, req.query.busca);
     return res.status(200).json({ sucesso: true, dados: equipamentos });
   } catch (erro) {
     return responderErro(erro, res, next);
@@ -21,7 +21,11 @@ export async function listar(req, res, next) {
 
 export async function listarPorSetor(req, res, next) {
   try {
-    const equipamentos = await EquipamentoService.listarPorSetor(req.params.id, req.usuario.id);
+    const equipamentos = await EquipamentoService.listarPorSetor(
+      req.params.id,
+      req.usuario.id,
+      req.query.busca
+    );
     return res.status(200).json({ sucesso: true, dados: equipamentos });
   } catch (erro) {
     return responderErro(erro, res, next);

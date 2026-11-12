@@ -1,4 +1,5 @@
 import { pool } from '../config/database.js';
+import { criarCondicaoBusca } from '../utils/busca.js';
 
 const camposEquipamento = `
   e.id_equipamento,
@@ -10,26 +11,32 @@ const camposEquipamento = `
   e.id_setor,
   s.nome_setor`;
 
-export async function listarPorUsuario(idUsuario) {
+export async function listarPorUsuario(idUsuario, busca = '') {
+  const filtroBusca = criarCondicaoBusca(busca, [
+    'e.nome_equipamento', 'e.tipo', 'e.status', 's.nome_setor'
+  ]);
   const [linhas] = await pool.query(
     `SELECT ${camposEquipamento}
        FROM equipamento e
        INNER JOIN setor s ON s.id_setor = e.id_setor
-      WHERE s.id_usuario = ?
+      WHERE s.id_usuario = ? ${filtroBusca.sql ? `AND ${filtroBusca.sql}` : ''}
       ORDER BY e.id_equipamento`,
-    [idUsuario]
+    [idUsuario, ...filtroBusca.valores]
   );
   return linhas;
 }
 
-export async function listarPorSetor(idSetor, idUsuario) {
+export async function listarPorSetor(idSetor, idUsuario, busca = '') {
+  const filtroBusca = criarCondicaoBusca(busca, [
+    'e.nome_equipamento', 'e.tipo', 'e.status'
+  ]);
   const [linhas] = await pool.query(
     `SELECT ${camposEquipamento}
        FROM equipamento e
        INNER JOIN setor s ON s.id_setor = e.id_setor
-      WHERE s.id_setor = ? AND s.id_usuario = ?
+      WHERE s.id_setor = ? AND s.id_usuario = ? ${filtroBusca.sql ? `AND ${filtroBusca.sql}` : ''}
       ORDER BY e.id_equipamento`,
-    [idSetor, idUsuario]
+    [idSetor, idUsuario, ...filtroBusca.valores]
   );
   return linhas;
 }

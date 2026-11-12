@@ -1,4 +1,5 @@
 import * as EquipamentoModel from '../models/EquipamentoModels.js';
+import { validarTermoBusca } from '../utils/busca.js';
 
 function validarId(valor, campo) {
   const id = Number(valor);
@@ -56,17 +57,19 @@ function erroNaoEncontrado(mensagem) {
   return erro;
 }
 
-export async function listar(idUsuarioRecebido) {
+export async function listar(idUsuarioRecebido, buscaRecebida) {
   const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
-  return EquipamentoModel.listarPorUsuario(idUsuario);
+  const busca = validarTermoBusca(buscaRecebida);
+  return EquipamentoModel.listarPorUsuario(idUsuario, busca);
 }
 
-export async function listarPorSetor(idSetorRecebido, idUsuarioRecebido) {
+export async function listarPorSetor(idSetorRecebido, idUsuarioRecebido, buscaRecebida) {
   const idSetor = validarId(idSetorRecebido, 'ID do setor');
   const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const busca = validarTermoBusca(buscaRecebida);
   const setorValido = await EquipamentoModel.setorPertenceAoUsuario(idSetor, idUsuario);
   if (!setorValido) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
-  return EquipamentoModel.listarPorSetor(idSetor, idUsuario);
+  return EquipamentoModel.listarPorSetor(idSetor, idUsuario, busca);
 }
 
 export async function buscarPorId(idEquipamentoRecebido, idUsuarioRecebido) {
