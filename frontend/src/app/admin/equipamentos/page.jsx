@@ -381,11 +381,10 @@ function Conteudo({ token }) {
             <span className={"material-symbols-outlined " + styles.emptyIcon}>precision_manufacturing</span>
             <h2>{itens.length === 0 ? "Nenhum equipamento cadastrado" : "Nenhum equipamento encontrado"}</h2>
             <p>{itens.length === 0 ? "Cadastre o primeiro equipamento para iniciar o monitoramento do inventário." : "Nenhum item corresponde aos filtros selecionados. Ajuste a busca ou limpe os filtros para ver todos os equipamentos."}</p>
-            {itens.length === 0 ? (
-              <button type="button" className={styles.emptyPrimaryBtn} onClick={abrirModalCadastro}><span className="material-symbols-outlined">add_circle</span>Cadastrar primeiro equipamento</button>
-            ) : (
-              <button type="button" className={styles.secondaryEmptyBtn} onClick={limparFiltros}><span className="material-symbols-outlined">filter_alt_off</span>Limpar filtros de busca</button>
-            )}
+            <div className={styles.emptyActions}>
+              {itens.length === 0 && <button type="button" className={styles.emptyPrimaryBtn} onClick={abrirModalCadastro}><span className="material-symbols-outlined">add_circle</span>Cadastrar primeiro equipamento</button>}
+              {(itens.length === 0 || busca || statusFiltro || tipoFiltro) && <button type="button" className={styles.secondaryEmptyBtn} onClick={limparFiltros}><span className="material-symbols-outlined">filter_alt_off</span>Limpar filtros de busca</button>}
+            </div>
           </div>
         ) : <TabelaAdmin
         columns={["Código", "Nome do Equipamento", "Tipo", "Localização", "Status", { label: "Ações", align: "right" }]}
