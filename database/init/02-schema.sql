@@ -259,7 +259,8 @@ CREATE TABLE chamados_manutencao (
     FOREIGN KEY (inspecao_id) REFERENCES inspecoes(id),
     FOREIGN KEY (solicitante_id) REFERENCES usuarios(id),
     FOREIGN KEY (tecnico_id) REFERENCES usuarios(id),
-    INDEX idx_chamado_equipamento_status (equipamento_id, status)
+    INDEX idx_chamado_equipamento_status (equipamento_id, status),
+    INDEX idx_chamados_professor_status_aberto (solicitante_id, status, aberto_em)
 ) ENGINE=InnoDB;
 
 -- TABELA: historico_manutencao
