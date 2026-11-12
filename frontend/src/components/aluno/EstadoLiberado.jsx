@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import styles from "./EstadoLiberado.module.css";
 
-export default function EstadoLiberado({ sessao, onVoltar }) {
+export default function EstadoLiberado({ sessao, equipamentos, onVoltar }) {
   const [saudacao, setSaudacao] = useState(`Olá, ${sessao.nome}`);
 
   useEffect(() => {
@@ -29,6 +29,26 @@ export default function EstadoLiberado({ sessao, onVoltar }) {
       <p className={styles.contexto}>
         Laboratório LAB-AUT-01, professor Carlos Mendes. A aula termina em 1h12.
       </p>
+      <section className={styles.secaoEquipamentos} aria-labelledby="titulo-equipamentos">
+        <header className={styles.cabecalhoLista}>
+          <h2 className={styles.tituloLista} id="titulo-equipamentos">Equipamentos desta aula</h2>
+          <p className={styles.instrucaoLista}>Toque para ver detalhes</p>
+        </header>
+        <ul className={styles.listaEquipamentos}>
+          {equipamentos.map((equipamento) => (
+            <li className={styles.itemEquipamento} key={equipamento.id}>
+              <span className={styles.idEquipamento}>{equipamento.id}</span>
+              <span className={styles.dadosEquipamento}>
+                <span className={styles.nomeEquipamento}>{equipamento.nome}</span>
+                <span className={styles.detalhesEquipamento}>
+                  {equipamento.tipo} · {equipamento.detalhe}
+                </span>
+              </span>
+              <span className={styles.estadoEquipamento} aria-label="Atribuído" />
+            </li>
+          ))}
+        </ul>
+      </section>
     </section>
   );
 }
