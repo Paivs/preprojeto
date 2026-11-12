@@ -600,6 +600,26 @@
   font-weight: 700;
 }
 
+.busca > span,
+.estadoVazio > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transform: translateY(1px);
+}
+
+.busca > span {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+}
+
+.estadoVazio > span {
+  width: 42px;
+  height: 42px;
+}
+
 @media (max-width: 1050px) {
   .resumo {
     grid-template-columns: repeat(2, minmax(0, 1fr));

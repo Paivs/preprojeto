@@ -1002,3 +1002,28 @@
   border-radius: 10px;
   color: #c0b7b8;
 }
+
+.botaoPrimario span,
+.navegacaoPeriodo button span,
+.busca > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transform: translateY(1px);
+}
+
+.busca > span {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+
+.estadoLista > span {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  line-height: 1;
+  transform: translateY(1px);
+}
