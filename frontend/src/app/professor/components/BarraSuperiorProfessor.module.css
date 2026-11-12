@@ -147,3 +147,48 @@
     text-align: right;
   }
 }
+
+.barra {
+  border-bottom-color: rgba(245, 243, 244, .1);
+  background: linear-gradient(90deg, rgba(164, 22, 26, .035), transparent 40%), rgba(11, 15, 18, .97);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+  backdrop-filter: blur(14px);
+}
+
+.menuButton {
+  border-radius: 11px;
+  background: linear-gradient(145deg, rgba(245, 243, 244, .06), transparent), var(--surface-high, #262a2e);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .06);
+}
+
+.trilha {
+  color: #c5bdbd;
+}
+
+.trilha strong {
+  color: #ffb4ac;
+}
+
+.status {
+  color: #b1a7a6;
+}
+
+.avatar {
+  box-shadow: 0 0 0 3px rgba(164, 22, 26, .12), inset 0 1px rgba(255, 255, 255, .08);
+}
+
+.nome {
+  color: #f0ebeb;
+  font-weight: 700;
+}
+
+.sair {
+  border-radius: 11px;
+  background: linear-gradient(145deg, rgba(245, 243, 244, .06), transparent), var(--surface-high, #262a2e);
+  transition: border-color .18s ease, background .18s ease, transform .18s ease;
+}
+
+.sair:hover {
+  border-color: rgba(164, 22, 26, .7);
+  background: linear-gradient(145deg, rgba(164, 22, 26, .14), transparent), var(--surface-high, #262a2e);
+}
