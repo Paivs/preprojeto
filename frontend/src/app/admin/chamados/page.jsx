@@ -5,6 +5,7 @@ import AdminLayout from "../components/AdminLayout";
 import styles from "./page.module.css";
 import { chamarApi } from "../lib/adminApi";
 import { useModalExit } from "../../useModalExit";
+import FeedbackModal from "../components/FeedbackModal";
 
 const STATUS = [
   "ABERTO",
@@ -38,12 +39,7 @@ function Conteudo({ token }) {
   const [pagina, setPagina] = useState(1);
   const [loading, setLoading] = useState(true);
   const [notificacao, setNotificacao] = useState(null);
-  const [fechandoNotificacao, setFechandoNotificacao] = useState(false);
   const [selecionado, setSelecionado, fechandoDetalhes, finalizarFechamentoDetalhes] = useModalExit(null);
-
-  function fecharNotificacao() {
-    setFechandoNotificacao(true);
-  }
 
   const carregar = useCallback(async () => {
     setLoading(true);
@@ -251,42 +247,7 @@ function Conteudo({ token }) {
           </section>
         </div>
       )}
-      {notificacao && (
-        <div className={`${styles.noticeOverlay} ${fechandoNotificacao ? "fechar-modal-fundo" : ""}`}>
-          <section
-            className={`${styles.noticeDialog} ${notificacao.tipo === "erro" ? styles.noticeError : styles.noticeSuccess} ${fechandoNotificacao ? "fechar-modal" : ""}`}
-            role="alertdialog"
-            aria-modal="true"
-            aria-labelledby="notice-title"
-            aria-describedby="notice-message"
-            onKeyDown={(event) => {
-              if (event.key === "Escape") fecharNotificacao();
-              if (event.key === "Tab") event.preventDefault();
-            }}
-            onAnimationEnd={(event) => {
-              if (fechandoNotificacao && event.target === event.currentTarget) {
-                setNotificacao(null);
-                setFechandoNotificacao(false);
-              }
-            }}
-          >
-            <span className={styles.noticeIcon} aria-hidden="true">
-              {notificacao.tipo === "erro" ? (
-                <span className="material-symbols-outlined">close</span>
-              ) : (
-                <svg className={styles.noticeCheck} viewBox="0 0 24 24" fill="none">
-                  <path className={styles.noticeCheckPath} d="m4.5 12.5 5 5 10-10" />
-                </svg>
-              )}
-            </span>
-            <h2 id="notice-title">{notificacao.tipo === "erro" ? "Não foi possível concluir" : "Ação concluída"}</h2>
-            <p id="notice-message">{notificacao.mensagem}</p>
-            <button type="button" className={styles.noticeButton} autoFocus onClick={fecharNotificacao}>
-              Entendi
-            </button>
-          </section>
-        </div>
-      )}
+      <FeedbackModal feedback={notificacao} onClose={() => setNotificacao(null)} />
     </div>
   );
 }

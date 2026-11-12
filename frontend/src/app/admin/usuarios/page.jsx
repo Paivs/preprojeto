@@ -7,6 +7,7 @@ import styles from "./page.module.css";
 import modalStyles from "../equipamentos/page.module.css";
 import { chamarApi } from "../lib/adminApi";
 import { useModalExit } from "../../useModalExit";
+import FeedbackModal from "../components/FeedbackModal";
 
 const PERFIS = [
   { chave: "all", rotulo: "Todos", valorFiltro: "" },
@@ -37,6 +38,7 @@ function Conteudo({ token }) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
   const [aviso, setAviso] = useState("");
+  const [feedback, setFeedback] = useState(null);
   const [modalAberto, setModalAberto, fechandoModal, finalizarFechamentoModal] = useModalExit(false);
   const [modalEdicaoAberto, setModalEdicaoAberto, fechandoEdicao, finalizarFechamentoEdicao] = useModalExit(false);
   const [dropdownAbertoId, setDropdownAbertoId] = useState(null);
@@ -170,10 +172,8 @@ function Conteudo({ token }) {
             perfil: novoUsuario.perfil,
           }),
         });
-        setAviso(`Usuário ${novoUsuario.nome} cadastrado com sucesso.`);
-      } else {
-        setAviso(`Usuário ${novoUsuario.nome} cadastrado com sucesso.`);
       }
+      setFeedback({ type: "success", message: `Usuário ${novoUsuario.nome} cadastrado com sucesso.` });
 
       setModalAberto(false);
       setNovoUsuario({
@@ -185,7 +185,7 @@ function Conteudo({ token }) {
       });
       await carregarUsuarios();
     } catch (err) {
-      setErro(err.message);
+      setFeedback({ type: "error", message: err.message });
     }
   }
 
@@ -587,6 +587,7 @@ function Conteudo({ token }) {
           </div>
         </div>
       )}
+      <FeedbackModal feedback={feedback} onClose={() => setFeedback(null)} />
     </div>
   );
 }
