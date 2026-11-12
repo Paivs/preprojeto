@@ -246,3 +246,15 @@
 .profileInfo span {
   color: #b1a7a6;
 }
+
+.navItemActive:hover {
+  border-color: rgba(255, 180, 172, .3);
+  background: linear-gradient(110deg, #a4161a, #8f1318);
+  color: #fff;
+}
+
+.navItemPending:hover {
+  border-color: transparent;
+  background: transparent;
+  color: var(--silver, #b1a7a6);
+}
