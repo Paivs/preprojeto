@@ -50,11 +50,12 @@ export async function buscarPorId(id) {
 export async function criar(chamado) {
   const sql = `
     INSERT INTO chamados_manutencao
-      (equipamento_id, solicitante_id, titulo, descricao, tipo, severidade, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+      (equipamento_id, inspecao_id, solicitante_id, titulo, descricao, tipo, severidade, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
   const valores = [
     chamado.equipamento_id,
+    chamado.inspecao_id,
     chamado.solicitante_id,
     chamado.titulo,
     chamado.descricao,
@@ -64,7 +65,7 @@ export async function criar(chamado) {
   ];
   const [resultado] = await pool.query(sql, valores);
 
-  return { id: resultado.insertId, ...chamado };
+  return { ...chamado, id: resultado.insertId };
 }
 
 export async function atualizarStatus(id, status) {
