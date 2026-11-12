@@ -191,7 +191,7 @@ export default function Home() {
                   <div className="cabecalho-funcionamento">
                     <div className="icon-cabecalho">
                       <i
-                        class="bi bi-graph-up"
+                        className="bi bi-graph-up"
                         style={{
                           background: "var(--roxo)",
                           color: "var(--branco)",

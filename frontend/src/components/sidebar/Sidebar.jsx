@@ -137,8 +137,9 @@ export default function Sidebar() {
             <Link
               href="/userPages/setores"
               className={`menu-item ${
-                pathname === "/userPages/seteroes" ? "menu-item-ativo" : ""
-              }`}>
+                pathname === "/userPages/setores" ? "menu-item-ativo" : ""
+              }`}
+            >
               <span>
                 <i className="bi bi-ui-checks-grid"></i>
               </span>
