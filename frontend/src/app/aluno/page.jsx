@@ -5,71 +5,55 @@ import AuthGuard from "@/components/auth/AuthGuard";
 import EstadoAguardando from "@/components/aluno/EstadoAguardando";
 import EstadoLiberado from "@/components/aluno/EstadoLiberado";
 import FormularioVinculo from "@/components/aluno/FormularioVinculo";
-import StatusConexao from "@/components/aluno/StatusConexao";
-import { equipamentosSessao, sessaoAluno } from "@/mocks/aluno";
+import { equipamentosSessao } from "@/mocks/aluno";
 import styles from "./aluno.module.css";
 
 export default function PaginaAluno() {
-  const [estado, setEstado] = useState("formulario");
+  const [step, setStep] = useState("FORM");
   const [solicitacao, setSolicitacao] = useState(null);
-  const largura = estado === "liberado" ? styles.largo : styles.compacto;
+  const compacto = step !== "APPROVED";
 
-  function enviarToken(dadosFormulario) {
-    setSolicitacao(dadosFormulario);
-    setEstado("aguardando");
+  function enviarSolicitacao(dados) {
+    setSolicitacao(dados);
+    setStep("WAITING");
   }
 
   function cancelarSolicitacao() {
     setSolicitacao(null);
-    setEstado("formulario");
+    setStep("FORM");
   }
 
   return (
     <AuthGuard>
       <main className={styles.pagina}>
-        <header className={styles.cabecalho}>
-          <div className={styles.marca}>
-            <span className={styles.marcaIcone} aria-hidden="true">⌘</span>
-            <span><span className={styles.marcaTexto}>TENKEN</span><small className={styles.marcaSubtexto}>STUDENT ACCESS / LAB</small></span>
-          </div>
-          <StatusConexao estado={estado} />
-        </header>
-        <div className={`${styles.conteudo} ${largura}`}>
-          {estado !== "formulario" && (
-            <div className={styles.status}>
-              <StatusConexao estado={estado} />
-            </div>
-          )}
-
-          {estado === "formulario" && (
+        <div className={`${styles.conteudo} ${compacto ? styles.compacto : styles.largo}`}>
+          {step === "FORM" && (
             <section className={styles.formulario}>
               <p className={styles.eyebrow}>Vinculação de sessão</p>
               <h1 className={styles.titulo}>Acesso à bancada do laboratório</h1>
               <p className={styles.descricao}>
-                Insira o token compartilhado pelo professor para acessar os
-                ativos da aula
+                Insira seu nome, turma e o token compartilhado pelo professor para solicitar acesso aos ativos da aula.
               </p>
-              <FormularioVinculo onEnviar={enviarToken} />
+              <FormularioVinculo onEnviar={enviarSolicitacao} />
             </section>
           )}
 
-          {estado === "aguardando" && (
+          {step === "WAITING" && solicitacao && (
             <EstadoAguardando
               sessao={{ nome: solicitacao.nome, turma: solicitacao.turma }}
               token={solicitacao.token}
               onCancelar={cancelarSolicitacao}
-              onSimularAprovacao={() => setEstado("liberado")}
+              onSimularAprovacao={() => setStep("APPROVED")}
             />
           )}
 
-          {estado === "liberado" && (
+          {step === "APPROVED" && solicitacao && (
             <EstadoLiberado
-              sessao={{ nome: solicitacao?.nome || sessaoAluno.nome, turma: solicitacao?.turma || sessaoAluno.turma }}
+              sessao={{ nome: solicitacao.nome, turma: solicitacao.turma }}
               equipamentos={equipamentosSessao}
             />
           )}
         </div>
-        <footer className={styles.rodape}><span>TENKEN · Student terminal</span><span>Ambiente seguro · LAB-AUT-01</span></footer>
       </main>
     </AuthGuard>
   );

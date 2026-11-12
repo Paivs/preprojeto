@@ -6,6 +6,22 @@
   margin-bottom: 28px;
 }
 
+.badgeLiberado {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 7px 10px;
+  border: 1px solid rgb(46 196 182 / 35%);
+  color: #2ec4b6;
+  font-family: var(--fonte-mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.badgeLiberado span { width: 7px; height: 7px; border-radius: 50%; background: #2ec4b6; box-shadow: 0 0 10px #2ec4b6; }
+
 .titulo {
   margin: 0;
   color: var(--white);

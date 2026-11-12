@@ -18,6 +18,7 @@ export default function EstadoLiberado({ sessao, equipamentos }) {
   return (
     <section className={styles.conteudo} aria-labelledby="titulo-aluno">
       <div className={styles.introducao}>
+        <p className={styles.badgeLiberado} role="status"><span aria-hidden="true" /> Bancada liberada</p>
         <h1 className={styles.titulo} id="titulo-aluno">
           {saudacao || `Olá, ${sessao.nome}!`}
         </h1>
