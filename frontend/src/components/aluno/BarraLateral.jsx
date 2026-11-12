@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { IconeCasa, IconeEquipamento } from "./IconesNavegacao";
 import styles from "./BarraLateral.module.css";
 
 export default function BarraLateral({ itemAtivo }) {
@@ -21,7 +22,9 @@ export default function BarraLateral({ itemAtivo }) {
           href="/aluno/bem-vindo"
           aria-current={itemAtual === "bem-vindo" ? "page" : undefined}
         >
-          <span className={`ti ti-home ${styles.icone} ${itemAtual === "bem-vindo" ? styles.iconeAtivo : ""}`} aria-hidden="true" />
+          <span className={`${styles.caixaIcone} ${itemAtual === "bem-vindo" ? styles.caixaIconeAtiva : ""}`}>
+            <IconeCasa className={`${styles.icone} ${itemAtual === "bem-vindo" ? styles.iconeAtivo : ""}`} />
+          </span>
           <span>Bem-vindo</span>
         </Link>
         <Link
@@ -29,7 +32,9 @@ export default function BarraLateral({ itemAtivo }) {
           href="/aluno/equipamentos"
           aria-current={itemAtual === "equipamentos" ? "page" : undefined}
         >
-          <span className={`ti ti-cpu ${styles.icone} ${itemAtual === "equipamentos" ? styles.iconeAtivo : ""}`} aria-hidden="true" />
+          <span className={`${styles.caixaIcone} ${itemAtual === "equipamentos" ? styles.caixaIconeAtiva : ""}`}>
+            <IconeEquipamento className={`${styles.icone} ${itemAtual === "equipamentos" ? styles.iconeAtivo : ""}`} />
+          </span>
           <span>Equipamentos</span>
         </Link>
       </nav>
