@@ -62,7 +62,7 @@ export default function ChamadosProfessor() {
         {chamados.map((chamado) => <article className={styles.cartao} id={`chamado-${chamado.chamado_id}`} key={chamado.chamado_id}>
           <header className={styles.cabecalhoCartao}>
             <div><p className={styles.identificador}>CHAMADO #{chamado.chamado_id}</p><h3>{chamado.equipamento_nome || chamado.titulo}</h3>{chamado.equipamento_patrimonio && <span className={styles.patrimonio}>Patrimônio {chamado.equipamento_patrimonio}</span>}</div>
-            <span className={`${styles.status} ${styles[`status_${chamado.chamado_status}`]}`}><i />{statusLabel[chamado.chamado_status] || chamado.chamado_status}</span>
+            <span className={`${styles.status} ${styles[`status_${chamado.chamado_status}`] || ""}`}><i />{statusLabel[chamado.chamado_status] || chamado.chamado_status}</span>
           </header>
           <div className={styles.metadados}><p><span>Aberto em</span><strong>{formatarData(chamado.aberto_em)}</strong></p><p><span>Prioridade</span><strong>{prioridadeLabel[chamado.severidade] || chamado.severidade}</strong></p><p><span>Solicitante</span><strong>{chamado.professor_nome || "Você"}</strong></p></div>
           <section className={styles.descricao}><h4>Descrição do problema</h4><p>{chamado.chamado_descricao}</p></section>
