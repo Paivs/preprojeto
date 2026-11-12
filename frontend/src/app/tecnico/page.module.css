@@ -13,35 +13,21 @@
   padding-bottom: 24px;
 }
 
-.sobretitulo {
-  margin: 0 0 8px;
-  color: var(--mahogany-red-2);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
-
 .dataHoje {
-  margin: 0 0 6px;
-  color: var(--silver);
-  font-size: 11px;
+  margin: 0 0 4px;
+  color: var(--silver, #b1a7a6);
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: .04em;
 }
 
-.saudacao {
-  margin: 0 0 10px;
-  color: var(--white-smoke);
-  font-size: 15px;
-  font-weight: 600;
-}
-
 .titulo {
   margin: 0;
-  color: var(--white-smoke);
-  font-size: var(--admin-font-page-title);
-  line-height: 1.2;
+  color: var(--white-smoke, #f5f3f4);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
 }
 
 .descricao {
@@ -52,10 +38,16 @@
 }
 
 .atualizacao {
-  margin: 9px 0 0;
-  color: var(--silver);
-  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 0;
+  color: var(--silver, #b1a7a6);
+  font-size: 13px;
 }
+
+.atualizacao span:first-child { font-size: 16px; }
+.atualizacao strong { color: var(--white-smoke, #f5f3f4); font-weight: 600; }
 
 .botaoAtualizar {
   display: inline-flex;
@@ -70,9 +62,9 @@
   border-radius: 6px;
   cursor: pointer;
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: .03em;
+  letter-spacing: 0;
   transition: background .15s ease, border-color .15s ease;
 }
 

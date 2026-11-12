@@ -10,7 +10,13 @@ import styles from "./page.module.css";
 
 function totalPorChave(itens, chave, valor) {
   if (!Array.isArray(itens)) return 0;
-  return Number(itens.find((item) => item[chave] === valor)?.total ?? 0);
+  const normalizar = (texto) => String(texto ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toUpperCase();
+  const item = itens.find((linha) => normalizar(linha[chave]) === normalizar(valor));
+  return Number(item?.total ?? item?.quantidade ?? item?.count ?? 0);
 }
 
 function somarStatus(itens, statusDesejados) {
@@ -22,8 +28,9 @@ export default function PaginaTecnico() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [atualizadoEm, setAtualizadoEm] = useState(null);
+  const [dataAtual, setDataAtual] = useState(null);
   const usuario = getUsuario();
-  const primeiroNome = usuario?.nome?.split(" ")[0] || "técnico";
+  const primeiroNome = usuario?.nome?.trim().split(/\s+/)[0] || "técnico";
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -40,12 +47,13 @@ export default function PaginaTecnico() {
   }, []);
 
   useEffect(() => {
+    setDataAtual(new Date());
     carregar();
   }, [carregar]);
 
   const chamados = dashboard?.chamados;
   const status = chamados?.por_status;
-  const ativos = somarStatus(status, ["ABERTO", "EM_ATENDIMENTO"]);
+  const ativos = somarStatus(status, ["ABERTO", "EM_ATENDIMENTO", "AGUARDANDO_PECAS"]);
   const criticos = totalPorChave(chamados?.por_severidade_em_aberto, "severidade", "CRITICA");
   const concluidos = totalPorChave(status, "status", "CONCLUIDO");
   const equipamentosEmManutencao = Number(dashboard?.equipamentos?.em_manutencao ?? 0);
@@ -57,7 +65,7 @@ export default function PaginaTecnico() {
       valor: ativos,
       unidade: "atribuídos a você",
       icone: "confirmation_number",
-      contexto: { texto: "Abertos ou em atendimento" },
+      contexto: { texto: "Abertos, em atendimento ou aguardando peças" },
     },
     {
       categoria: "Prioridade",
@@ -90,18 +98,18 @@ export default function PaginaTecnico() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div>
-          <p className={styles.dataHoje}>{dataPorExtenso()}</p>
-          <p className={styles.saudacao}>{saudacaoPorHorario()}, {primeiroNome}.</p>
-          <p className={styles.sobretitulo}>Operação técnica</p>
-          <h1 className={styles.titulo}>Visão geral</h1>
-          <p className={styles.descricao}>Acompanhe os chamados atribuídos e a condição dos equipamentos.</p>
+          {dataAtual ? <p className={styles.dataHoje}>{dataPorExtenso(dataAtual)}</p> : null}
+          <h1 className={styles.titulo}>{dataAtual ? `${saudacaoPorHorario(dataAtual)}, ${primeiroNome}.` : "Visão geral"}</h1>
           <p className={styles.atualizacao}>
-            {atualizadoEm ? `Atualizado às ${atualizadoEm.toLocaleTimeString("pt-BR")}` : "Aguardando dados da API"}
+            <span className="material-symbols-outlined" aria-hidden="true">schedule</span>
+            <span>Dados atualizados:</span>
+            <strong>{atualizadoEm ? atualizadoEm.toLocaleTimeString("pt-BR") : "Aguardando dados"}</strong>
           </p>
+          <p className={styles.descricao}>Acompanhe os chamados atribuídos e a condição dos equipamentos.</p>
         </div>
         <button type="button" className={styles.botaoAtualizar} onClick={carregar} disabled={carregando}>
           <span className={`material-symbols-outlined ${carregando ? styles.girando : ""}`}>sync</span>
-          {carregando ? "Atualizando" : "Atualizar"}
+          {carregando ? "Atualizando..." : "Atualizar resumo"}
         </button>
       </header>
 

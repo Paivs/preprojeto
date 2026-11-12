@@ -4,7 +4,9 @@ import EmptyState from "@/components/EmptyState";
 const STATUS = [
   { chave: "ABERTO", rotulo: "Abertos", tom: "aberto" },
   { chave: "EM_ATENDIMENTO", rotulo: "Em atendimento", tom: "atendimento" },
+  { chave: "AGUARDANDO_PECAS", rotulo: "Aguardando peças", tom: "pecas" },
   { chave: "CONCLUIDO", rotulo: "Concluídos", tom: "concluido" },
+  { chave: "CANCELADO", rotulo: "Cancelados", tom: "cancelado" },
 ];
 
 const PRIORIDADES = [
@@ -16,7 +18,13 @@ const PRIORIDADES = [
 
 function quantidadePorChave(itens, chave, valor) {
   if (!Array.isArray(itens)) return 0;
-  return Number(itens.find((item) => item[chave] === valor)?.total ?? 0);
+  const normalizar = (texto) => String(texto ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toUpperCase();
+  const item = itens.find((linha) => normalizar(linha[chave]) === normalizar(valor));
+  return Number(item?.total ?? item?.quantidade ?? item?.count ?? 0);
 }
 
 export default function ResumoChamados({ porStatus, porPrioridade, carregando }) {
@@ -96,7 +104,7 @@ export default function ResumoChamados({ porStatus, porPrioridade, carregando })
             })}
           </div>
         )}
-        <p className={styles.rodape}>{carregando ? "Atualizando dados" : `${totalPrioridade} chamados aguardam atendimento`}</p>
+        <p className={styles.rodape}>{carregando ? "Atualizando dados" : `${totalPrioridade} chamados em aberto`}</p>
       </article>
     </section>
   );

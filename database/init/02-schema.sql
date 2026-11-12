@@ -320,7 +320,7 @@ CREATE TABLE pre_matriculas_alunos (
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- Tabela adicional incorporada da migração de ordens de serviço.
+-- Estrutura consolidada da antiga migration 20261111_ordens_servico.sql.
 -- TABELA: ordens_servico
 -- Vinculada 1:1 a um chamado de manutenÃ§Ã£o.
 CREATE TABLE ordens_servico (

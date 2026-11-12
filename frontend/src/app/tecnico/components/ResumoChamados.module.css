@@ -75,6 +75,7 @@
 .atendimento { background: var(--mahogany-red-2, #ba181b); }
 .pecas { background: #aa8986; }
 .concluido { background: #7c9b84; }
+.cancelado { background: #697177; }
 .critica { background: #ff8d85; }
 .alta { background: var(--mahogany-red-2, #ba181b); }
 .media { background: #aa8986; }
