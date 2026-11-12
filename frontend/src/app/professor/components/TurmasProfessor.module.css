@@ -429,3 +429,176 @@
     grid-template-columns: 1fr;
   }
 }
+
+.cabecalhoPagina h1 {
+  font-weight: 700;
+}
+
+.contexto,
+.subtitulo,
+.metrica > small,
+.cabecalhoPainel p,
+.contagem,
+.identidadeTurma > div > span,
+.proximaAtividade > span,
+.proximaAtividade small,
+.notaDados {
+  color: #c0b7b8;
+}
+
+.metrica {
+  border: 2px solid rgba(245, 243, 244, .12);
+  border-radius: 15px;
+  background: linear-gradient(145deg, rgba(245, 243, 244, .035), transparent 58%), #161a1d;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .035), 0 9px 22px rgba(0, 0, 0, .14);
+}
+
+.metrica > span {
+  color: #d0c7c8;
+  font-weight: 600;
+}
+
+.metrica > strong {
+  font-weight: 700;
+}
+
+.painel {
+  overflow: hidden;
+  border: 2px solid rgba(245, 243, 244, .14);
+  border-radius: 17px;
+  background: linear-gradient(145deg, rgba(245, 243, 244, .025), transparent 45%), #141719;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .035), 0 13px 30px rgba(0, 0, 0, .15);
+}
+
+.cabecalhoPainel {
+  border-bottom-color: rgba(245, 243, 244, .11);
+}
+
+.cabecalhoPainel h2 {
+  color: #f5f1f1;
+  font-weight: 700;
+}
+
+.busca {
+  border-color: rgba(245, 243, 244, .17);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(245, 243, 244, .025), transparent), #101214;
+  color: #c0b7b8;
+}
+
+.busca input::placeholder {
+  color: #aaa1a2;
+}
+
+.busca:focus-within {
+  outline: 2px solid rgba(186, 24, 27, .38);
+  outline-offset: 2px;
+}
+
+.listaTurmas {
+  display: grid;
+  gap: 9px;
+  padding: 14px 18px;
+}
+
+.itemTurma {
+  min-height: 75px;
+  padding: 11px 13px;
+  border: 1px solid rgba(245, 243, 244, .12);
+  border-radius: 12px;
+  background: linear-gradient(110deg, rgba(245, 243, 244, .03), transparent 72%), rgba(16, 18, 20, .55);
+  transition: border-color .18s ease, background .18s ease;
+}
+
+.itemTurma:hover {
+  border-color: rgba(164, 22, 26, .36);
+  background: linear-gradient(110deg, rgba(164, 22, 26, .065), rgba(245, 243, 244, .015));
+}
+
+.marcaTurma {
+  width: 36px;
+  height: 36px;
+  flex-basis: 36px;
+  border: 1px solid rgba(164, 22, 26, .22);
+  border-radius: 11px;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .05);
+}
+
+.identidadeTurma h3 {
+  color: #f0ebeb;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.proximaAtividade strong {
+  color: #e7e0e0;
+  font-weight: 600;
+}
+
+.botaoDetalhes,
+.rodapeDetalhes button {
+  border-radius: 9px;
+  color: #e4dddd;
+  font-weight: 600;
+  transition: border-color .18s ease, background .18s ease, color .18s ease;
+}
+
+.botaoDetalhes:hover,
+.rodapeDetalhes button:hover {
+  border-color: rgba(164, 22, 26, .5);
+  background: rgba(164, 22, 26, .08);
+  color: #fff;
+}
+
+.botaoDetalhes:focus-visible,
+.rodapeDetalhes button:focus-visible {
+  outline: 2px solid #ba181b;
+  outline-offset: 3px;
+}
+
+.estadoVazio h3 {
+  color: #f0ebeb;
+  font-weight: 700;
+}
+
+.estadoVazio p,
+.listaAtividades .semAtividade {
+  color: #c0b7b8;
+}
+
+.detalhesTurma p {
+  border-color: rgba(245, 243, 244, .12);
+  border-radius: 11px;
+  background: rgba(245, 243, 244, .02);
+}
+
+.detalhesTurma p span,
+.listaAtividades p span {
+  color: #c0b7b8;
+}
+
+.detalhesTurma p strong,
+.listaAtividades p strong {
+  color: #f0ebeb;
+  font-weight: 600;
+}
+
+.busca > span,
+.estadoVazio > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transform: translateY(1px);
+}
+
+.busca > span {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+}
+
+.estadoVazio > span {
+  width: 42px;
+  height: 42px;
+}
