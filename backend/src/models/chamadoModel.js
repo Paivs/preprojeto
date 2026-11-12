@@ -83,7 +83,7 @@ export async function listarDoProfessor(professorId, situacao) {
   return linhas;
 }
 
-export async function criar(chamado) {
+export async function criar(chamado, db = pool) {
   const sql = `
     INSERT INTO chamados_manutencao
       (equipamento_id, inspecao_id, solicitante_id, titulo, descricao, tipo, severidade, status)
@@ -99,7 +99,7 @@ export async function criar(chamado) {
     chamado.severidade,
     chamado.status,
   ];
-  const [resultado] = await pool.query(sql, valores);
+  const [resultado] = await db.query(sql, valores);
 
   return { ...chamado, id: resultado.insertId };
 }
