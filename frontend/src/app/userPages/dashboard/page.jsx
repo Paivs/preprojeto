@@ -216,11 +216,20 @@ export default function UserDashboard() {
             </div>
 
             <div className="col-12 col-xl-4">
-              <article className="painel-dashboard painel-meta-dashboard h-100">
+              <article className="painel-dashboard painel-meta-dashboard">
                 <div className="topo-painel-dashboard">
                   <div>
-                    <h2>Meta de economia</h2>
-                    <p>Seu progresso neste mês</p>
+                    <h2>Distribuição</h2>
+                    <p>Economia por setor</p>
+                  </div>
+                  <button type="button" className="menu-grafico-dashboard" aria-label="Mais opções do gráfico">
+                    <i className="bi bi-three-dots" />
+                  </button>
+                </div>
+                <div className="grafico-rosca-dashboard" role="img" aria-label="Distribuição da economia: climatização 38%, equipamentos 27%, iluminação 21%, outros 14%">
+                  <div className="grafico-rosca-centro">
+                    <strong>R$ 428</strong>
+                    <span>economizados</span>
                   </div>
                   <span className="meta-icone-dashboard">
                     <i className="bi bi-bullseye" />
