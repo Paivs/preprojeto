@@ -1,9 +1,10 @@
 import * as SetorModel from '../models/SetorModels.js';
+import { validarTermoBusca } from '../utils/busca.js';
 
 function validarId(valor, campo) {
   const id = Number(valor);
   if (!Number.isInteger(id) || id <= 0) {
-    throw new TypeError(`${campo} deve ser um nÃºmero inteiro positivo.`);
+    throw new TypeError(`${campo} deve ser um número inteiro positivo.`);
   }
   return id;
 }
@@ -20,7 +21,7 @@ function validarValor(valor, campo, padrao = 0) {
 function validarDados(dados = {}) {
   const nome = typeof dados.nome_setor === 'string' ? dados.nome_setor.trim() : '';
   if (!nome) throw new TypeError('Informe o nome do setor.');
-  if (nome.length > 100) throw new TypeError('O nome do setor deve ter no maximo 100 caracteres.');
+  if (nome.length > 100) throw new TypeError('O nome do setor deve ter no máximo 100 caracteres.');
 
   let descricao = dados.descricao ?? null;
   if (descricao !== null && typeof descricao !== 'string') {
@@ -36,9 +37,10 @@ function validarDados(dados = {}) {
   };
 }
 
-export async function listar(idUsuarioRecebido) {
+export async function listar(idUsuarioRecebido, buscaRecebida) {
   const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
-  return SetorModel.listarPorUsuario(idUsuario);
+  const busca = validarTermoBusca(buscaRecebida);
+  return SetorModel.listarPorUsuario(idUsuario, busca);
 }
 
 export async function buscarPorId(idSetorRecebido, idUsuarioRecebido) {

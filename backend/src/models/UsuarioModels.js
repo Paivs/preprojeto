@@ -1,4 +1,5 @@
 import * as dbModule from '../config/database.js';
+import { criarCondicaoBusca } from '../utils/busca.js';
 
 
 // Suporta tanto o pool exportado diretamente quanto a fábrica criarPool()
@@ -30,13 +31,8 @@ export async function listar({ limite, offset, busca }) {
 
   // Monta o filtro de busca (opcional). Escapa os curingas do LIKE (% e _)
   // para que o usuário busque esses caracteres literalmente.
-  let filtroSql = '';
-  const filtroValores = [];
-  if (busca) {
-    const termo = `%${busca.replace(/[%_\\]/g, '\\$&')}%`;
-    filtroSql = 'WHERE u.nome_empresa LIKE ? OR u.email LIKE ?';
-    filtroValores.push(termo, termo);
-  }
+  const filtroBusca = criarCondicaoBusca(busca, ['u.nome_empresa', 'u.email', 'u.cnpj']);
+  const filtroSql = filtroBusca.sql ? `WHERE ${filtroBusca.sql}` : '';
 
 
   const [linhas] = await pool.query(
@@ -54,13 +50,13 @@ export async function listar({ limite, offset, busca }) {
        ${filtroSql}
       ORDER BY u.id_usuario
       LIMIT ? OFFSET ?`,
-    [...filtroValores, limiteNum, offsetNum]
+    [...filtroBusca.valores, limiteNum, offsetNum]
   );
 
 
   const [[{ total }]] = await pool.query(
     `SELECT COUNT(*) AS total FROM usuario u ${filtroSql}`,
-    filtroValores
+    filtroBusca.valores
   );
 
 

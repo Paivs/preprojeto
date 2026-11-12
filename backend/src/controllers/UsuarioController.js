@@ -62,7 +62,7 @@ export async function atualizar(req, res, next) {
 export async function excluir(req, res, next) {
   try {
     await UsuarioService.excluir(req.params.id);
-    return res.status(204).send();
+    return res.status(200).json({sucesso: true, mensagem: 'Usuário excluído com sucesso.'});
   } catch (erro) {
     return responderErro(erro, res, next);
   }

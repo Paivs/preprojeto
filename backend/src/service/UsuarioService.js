@@ -1,5 +1,6 @@
 import Usuario from '../models/Usuario.js';
 import * as UsuarioModel from '../models/UsuarioModels.js';
+import { validarTermoBusca } from '../utils/busca.js';
 
 
 function validarId(idRecebido) {
@@ -25,7 +26,7 @@ export async function listar({ pagina = 1, limite = 10, busca } = {}) {
 
 
   // Termo da barra de pesquisa; vazio ou só espaços = sem filtro
-  const termoBusca = typeof busca === 'string' ? busca.trim() : '';
+  const termoBusca = validarTermoBusca(busca);
 
 
   const offset = (paginaNum - 1) * limiteNum;
