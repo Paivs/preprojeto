@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo, useState } from "react";
@@ -40,13 +39,13 @@ const setoresIniciais = [
 ];
 
 const formatarMoeda = (valor) =>
-  valor.toLocaleString("pt-BR", {
+  Number(valor).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
 
 const formatarConsumo = (valor) =>
-  `${valor.toLocaleString("pt-BR")} kWh`;
+  `${Number(valor).toLocaleString("pt-BR")} kWh`;
 
 export default function TabelaSetores({
   setores = setoresIniciais,
@@ -58,27 +57,41 @@ export default function TabelaSetores({
 
   const itensPorPagina = 7;
 
+  // Filtrar setores pelo usuário e pela busca
   const setoresFiltrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
 
-    return setores.filter(
-      (setor) =>
-        setor.nome.toLowerCase().includes(termo) ||
-        setor.descricao.toLowerCase().includes(termo) ||
-        setor.usuario.toLowerCase().includes(termo)
-    );
-  }, [setores, busca]);
+    return setores.filter((setor) => {
+      const pertenceAoUsuario = String(setor.usuario) === String(idUsuario);
 
+      const correspondeBusca =
+        String(setor.nome || "")
+          .toLowerCase()
+          .includes(termo) ||
+        String(setor.descricao || "")
+          .toLowerCase()
+          .includes(termo);
+
+      return pertenceAoUsuario && correspondeBusca;
+    });
+  }, [setores, busca, idUsuario]);
+
+  // Calcular quantidade de páginas
   const totalPaginas = Math.max(
     1,
     Math.ceil(setoresFiltrados.length / itensPorPagina)
   );
 
+  // Garantir que a página atual continue válida
+  const paginaAtual = Math.min(pagina, totalPaginas);
+
+  // Selecionar setores da página atual
   const setoresExibidos = setoresFiltrados.slice(
-    (pagina - 1) * itensPorPagina,
-    pagina * itensPorPagina
+    (paginaAtual - 1) * itensPorPagina,
+    paginaAtual * itensPorPagina
   );
 
+  // Atualizar busca
   function atualizarBusca(valor) {
     setBusca(valor);
     setPagina(1);
@@ -89,8 +102,10 @@ export default function TabelaSetores({
       <header className="tabela-setores__topo">
         <div className="tabela-setores__titulo">
           <h2>Seus setores</h2>
+
           <p>
-            {setores.length} setores vinculados ao id_usuario: {idUsuario}
+            {setoresFiltrados.length} setores vinculados ao id_usuario:{" "}
+            {idUsuario}
           </p>
         </div>
 
@@ -123,10 +138,15 @@ export default function TabelaSetores({
               setoresExibidos.map((setor) => (
                 <tr key={setor.id}>
                   <td className="setor-nome">{setor.nome}</td>
+
                   <td className="setor-descricao">{setor.descricao}</td>
+
                   <td>{formatarConsumo(setor.consumo)}</td>
+
                   <td>{formatarMoeda(setor.custo)}</td>
+
                   <td>{setor.usuario}</td>
+
                   <td className="coluna-acoes">
                     <button
                       type="button"
@@ -151,26 +171,31 @@ export default function TabelaSetores({
 
       <footer className="tabela-setores__rodape">
         <span>
-          Mostrando {setoresExibidos.length} de {setoresFiltrados.length} setores
+          Mostrando {setoresExibidos.length} de {setoresFiltrados.length}{" "}
+          setores
         </span>
 
         <nav className="setor-paginacao" aria-label="Paginação dos setores">
           <button
             type="button"
             aria-label="Página anterior"
-            disabled={pagina === 1}
-            onClick={() => setPagina((atual) => atual - 1)}
+            disabled={paginaAtual === 1}
+            onClick={() => setPagina((atual) => Math.max(1, atual - 1))}
           >
             ‹
           </button>
 
-          <span>{pagina}</span>
+          <span>
+            {paginaAtual} / {totalPaginas}
+          </span>
 
           <button
             type="button"
             aria-label="Próxima página"
-            disabled={pagina >= totalPaginas}
-            onClick={() => setPagina((atual) => atual + 1)}
+            disabled={paginaAtual >= totalPaginas}
+            onClick={() =>
+              setPagina((atual) => Math.min(totalPaginas, atual + 1))
+            }
           >
             ›
           </button>
