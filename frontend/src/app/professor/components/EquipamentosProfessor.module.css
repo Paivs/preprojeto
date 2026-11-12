@@ -435,6 +435,171 @@
   white-space: nowrap;
 }
 
+.cabecalhoPagina h1 {
+  font-weight: 700;
+}
+
+.contexto,
+.subtitulo,
+.totalVisivel,
+.metrica > small,
+.cabecalhoPainel p,
+.notaDados {
+  color: #c0b7b8;
+}
+
+.metrica {
+  border: 2px solid rgba(245, 243, 244, .12);
+  border-radius: 15px;
+  background: linear-gradient(145deg, rgba(245, 243, 244, .035), transparent 58%), #161a1d;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .035), 0 9px 22px rgba(0, 0, 0, .14);
+}
+
+.metrica > span {
+  color: #d0c7c8;
+  font-weight: 600;
+}
+
+.metrica > strong {
+  font-weight: 700;
+}
+
+.painel {
+  overflow: hidden;
+  border: 2px solid rgba(245, 243, 244, .14);
+  border-radius: 17px;
+  background: linear-gradient(145deg, rgba(245, 243, 244, .025), transparent 45%), #141719;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .035), 0 13px 30px rgba(0, 0, 0, .15);
+}
+
+.cabecalhoPainel {
+  border-bottom-color: rgba(245, 243, 244, .11);
+}
+
+.cabecalhoPainel h2 {
+  color: #f5f1f1;
+  font-weight: 700;
+}
+
+.filtros {
+  gap: 11px;
+}
+
+.busca,
+.filtroStatus select {
+  border-color: rgba(245, 243, 244, .17);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(245, 243, 244, .025), transparent), #101214;
+}
+
+.busca {
+  color: #c0b7b8;
+}
+
+.busca input::placeholder {
+  color: #aaa1a2;
+}
+
+.busca:focus-within,
+.filtroStatus select:focus-visible {
+  outline: 2px solid rgba(186, 24, 27, .38);
+  outline-offset: 2px;
+}
+
+.filtroStatus {
+  color: #d0c7c8;
+  font-weight: 600;
+}
+
+.tabelaViewport {
+  overflow: auto;
+  border-radius: 0 0 14px 14px;
+}
+
+.tabela thead th {
+  border-bottom-color: rgba(245, 243, 244, .13);
+  color: #c6bdbd;
+  font-weight: 700;
+}
+
+.tabela tbody td {
+  border-bottom-color: rgba(245, 243, 244, .09);
+  color: #d0c8c8;
+}
+
+.tabela tbody tr:hover {
+  background: linear-gradient(90deg, rgba(164, 22, 26, .055), rgba(245, 243, 244, .018));
+}
+
+.tabela tbody td strong {
+  color: #f0ebeb;
+  font-weight: 700;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.status i {
+  flex: 0 0 auto;
+}
+
+.botaoDetalhes,
+.acoesDetalhe button {
+  border-radius: 9px;
+  color: #e4dddd;
+  font-weight: 600;
+  transition: border-color .18s ease, background .18s ease, color .18s ease;
+}
+
+.botaoDetalhes:hover,
+.acoesDetalhe button:hover {
+  border-color: rgba(164, 22, 26, .55);
+  background: rgba(164, 22, 26, .08);
+  color: #fff;
+}
+
+.botaoDetalhes:focus-visible,
+.acoesDetalhe button:focus-visible {
+  outline: 2px solid #ba181b;
+  outline-offset: 3px;
+}
+
+.estadoVazio {
+  color: #c0b7b8;
+}
+
+.estadoVazio h3 {
+  color: #f0ebeb;
+  font-weight: 700;
+}
+
+.detalhes p {
+  border: 1px solid rgba(245, 243, 244, .11);
+  border-radius: 11px;
+  background: rgba(245, 243, 244, .02);
+}
+
+.detalhes p span,
+.reservasRelacionadas p span {
+  color: #c0b7b8;
+}
+
+.detalhes p strong,
+.reservasRelacionadas p strong {
+  color: #f0ebeb;
+  font-weight: 600;
+}
+
+.reservasRelacionadas h3 {
+  color: #f0ebeb;
+  font-weight: 700;
+}
+
 @media (max-width: 1050px) {
   .resumo {
     grid-template-columns: repeat(2, minmax(0, 1fr));
