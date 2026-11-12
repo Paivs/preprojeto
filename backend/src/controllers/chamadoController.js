@@ -20,6 +20,13 @@ export async function listar(req, res, next) {
   } catch (erro) { return responderErro(erro, res, next); }
 }
 
+export async function listarDoProfessor(req, res, next) {
+  try {
+    const chamados = await ChamadoService.listarDoProfessor(req.query.situacao, req.usuario);
+    return res.status(200).json({ sucesso: true, dados: chamados });
+  } catch (erro) { return responderErro(erro, res, next); }
+}
+
 export async function buscarPorId(req, res, next) {
   try {
     const chamado = await ChamadoService.buscarPorId(req.params.id);
