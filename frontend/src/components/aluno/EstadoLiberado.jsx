@@ -25,6 +25,10 @@ export default function EstadoLiberado({ sessao, onVoltar }) {
         </span>
       </header>
       <h1 className={styles.titulo} id="titulo-aluno">{saudacao}</h1>
+      <p className={styles.turma}>{sessao.turma}</p>
+      <p className={styles.contexto}>
+        Laboratório LAB-AUT-01, professor Carlos Mendes. A aula termina em 1h12.
+      </p>
     </section>
   );
 }

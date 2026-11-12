@@ -45,3 +45,17 @@
   font-weight: 500;
   line-height: 1.4;
 }
+
+.turma {
+  margin: 8px 0 0;
+  color: var(--text-secondary, var(--silver));
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.contexto {
+  margin: 4px 0 0;
+  color: var(--text-muted, var(--silver));
+  font-size: 12px;
+  line-height: 1.5;
+}
