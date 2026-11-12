@@ -102,6 +102,9 @@
 .roleBadgeBtn { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.5rem; border: 0; cursor: pointer; font-size: 0.6875rem; text-transform: uppercase; }
 .roleDot { width: 0.4rem; height: 0.4rem; }
 .roleMenu { position: absolute; z-index: 30; top: calc(100% + 0.25rem); left: 0; display: flex; min-width: 9rem; flex-direction: column; padding: 0.25rem 0; }
+.roleMenu { right: 0; left: auto; min-width: 11rem; border: 1px solid var(--surface-high, #363d44); }
+.table tbody tr:has(.roleMenu) { position: relative; z-index: 5; }
+.table tbody tr:nth-last-child(-n + 2) .roleMenu { top: auto; bottom: calc(100% + 0.25rem); }
 .roleMenuItem { width: 100%; padding: 0.45rem 0.75rem; border: 0; background: transparent; color: var(--on-surface, #e0e3e7); cursor: pointer; text-align: left; }
 .statusCell { display: flex; align-items: center; white-space: nowrap; }
 .switchLabel { position: relative; display: inline-flex; cursor: pointer; }
