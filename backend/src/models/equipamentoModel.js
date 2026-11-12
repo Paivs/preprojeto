@@ -59,8 +59,8 @@ export async function atualizar(id, equipamento) {
   return resultado.affectedRows > 0;
 }
 
-export async function atualizarStatus(id, status) {
-  const [resultado] = await pool.query(
+export async function atualizarStatus(id, status, db = pool) {
+  const [resultado] = await db.query(
     "UPDATE equipamentos SET status = ? WHERE id = ?",
     [status, id],
   );
