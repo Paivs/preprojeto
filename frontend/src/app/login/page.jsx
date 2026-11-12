@@ -29,6 +29,7 @@ function LoginContent() {
       });
 
       const destinosPorPerfil = {
+        ALUNO: "/aluno",
         ADMIN: "/admin",
         PROFESSOR: "/professor",
         TECNICO: "/tecnico",

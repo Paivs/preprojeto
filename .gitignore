@@ -37,3 +37,6 @@ skills/
 
 # docker/mysql local data
 mysql-data/
+
+# Local visual references (never commit)
+/referencia_alunos/
