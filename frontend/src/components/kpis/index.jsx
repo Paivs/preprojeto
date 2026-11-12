@@ -18,7 +18,7 @@ export default function KpiSetores() {
         </div>
         <p className="preco">R$ 3.744,00</p>
         <div className="barra-container">
-          <div className="barra-preenchimento" style={{width: "70%;", background: "var(--azul)"}}>
+          <div className="barra-preenchimento-1">
           </div>
         </div>
       </div>
@@ -38,7 +38,7 @@ export default function KpiSetores() {
         </div>
         <p className="preco">R$ 3.744,00</p>
         <div className="barra-container">
-          <div className="barra-preenchimento" style={{width: "50%;", background: "var(--roxo)"}}>
+          <div className="barra-preenchimento-2">
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@ export default function KpiSetores() {
         </div>
         <p className="preco">R$ 3.744,00</p>
         <div className="barra-container">
-          <div className="barra-preenchimento" style={{width: "80%;", background: "var(--verde)"}}>
+          <div className="barra-preenchimento-3">
           </div>
         </div>
       </div>
@@ -78,7 +78,7 @@ export default function KpiSetores() {
         </div>
         <p className="preco">R$ 3.744,00</p>
         <div className="barra-container">
-          <div className="barra-preenchimento" style={{width: "40%;", background: "var(--amarelo)"}}>
+          <div className="barra-preenchimento-4">
           </div>
         </div>
       </div>
