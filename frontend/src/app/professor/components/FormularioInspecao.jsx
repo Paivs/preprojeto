@@ -6,20 +6,29 @@ import styles from "./FormularioInspecao.module.css";
 export default function FormularioInspecao({ etapa, checklist = [], onSubmit, onCancel, salvando: salvandoPai = false }) {
   const [answers, setAnswers] = useState({});
   const [observacoes, setObs] = useState("");
+  const [chamadoDescricao, setChamadoDescricao] = useState("");
+  const [chamadoSeveridade, setChamadoSeveridade] = useState("ALTA");
   const [erro, setErro] = useState("");
   const [busy, setBusy] = useState(false);
   const respondidos = checklist.filter((i) => typeof answers[i.id] === "boolean").length;
   const progresso = checklist.length ? Math.round((respondidos / checklist.length) * 100) : 0;
   const salvando = busy || salvandoPai;
+  const reprovada = checklist.some((item) => item.critico && answers[item.id] === false);
 
   async function enviar(e) {
     e.preventDefault();
     setErro("");
     if (!checklist.length) { setErro("Este checklist não possui itens para responder."); return; }
     if (checklist.some((i) => typeof answers[i.id] !== "boolean")) { setErro("Responda todos os itens antes de concluir."); return; }
+    if (reprovada && !chamadoDescricao.trim()) { setErro("Descreva o problema para abrir o chamado."); return; }
     setBusy(true);
     try {
-      const resposta = await onSubmit({ respostas: checklist.map((i) => ({ itemId: i.id, conforme: answers[i.id] })), observacoes: observacoes.trim() });
+      const resposta = await onSubmit({
+        respostas: checklist.map((i) => ({ itemId: i.id, conforme: answers[i.id] })),
+        observacoes: observacoes.trim(),
+        chamadoDescricao: chamadoDescricao.trim(),
+        chamadoSeveridade,
+      });
       if (!resposta?.ok) setErro(resposta?.message || "Não foi possível salvar a inspeção.");
     } catch (e) { setErro(e.message || "Não foi possível salvar a inspeção."); }
     finally { setBusy(false); }
@@ -40,7 +49,12 @@ export default function FormularioInspecao({ etapa, checklist = [], onSubmit, on
       </article>;
     })}</fieldset>
     <label className={styles.campoObservacao}><span>Observações gerais <small>OPCIONAL</small></span><textarea rows={4} value={observacoes} onChange={(e) => setObs(e.target.value)} placeholder="Registre informações adicionais desta inspeção." /></label>
+    {reprovada && <section className={styles.painelChamado} aria-labelledby="titulo-chamado-inspecao">
+      <div><p className={styles.chamadoEyebrow}>INSPEÇÃO REPROVADA</p><h2 id="titulo-chamado-inspecao">Abrir chamado</h2><p>O equipamento e os dados desta inspeção serão vinculados automaticamente. Será criado um único chamado para esta inspeção.</p></div>
+      <label className={styles.campoObservacao}><span>Descrição do problema <small>OBRIGATÓRIA</small></span><textarea rows={4} required maxLength={5000} value={chamadoDescricao} onChange={(e) => setChamadoDescricao(e.target.value)} placeholder="Descreva o problema identificado e o que precisa de atenção." /></label>
+      <label className={styles.campoPrioridade}><span>Prioridade</span><select value={chamadoSeveridade} onChange={(e) => setChamadoSeveridade(e.target.value)}><option value="BAIXA">Baixa</option><option value="MEDIA">Média</option><option value="ALTA">Alta</option><option value="CRITICA">Crítica</option></select></label>
+    </section>}
     {erro && <p className={styles.erro} role="alert">{erro}</p>}
-    <div className={styles.acoes}><p>Ao concluir, o resultado será registrado e aplicado ao equipamento.</p><div><button type="button" onClick={onCancel} disabled={salvando}>Cancelar</button><button className={styles.salvar} type="submit" disabled={salvando || !checklist.length}>{salvando ? "Salvando…" : "Concluir inspeção →"}</button></div></div>
+    <div className={styles.acoes}><p>Ao concluir, o resultado será registrado e aplicado ao equipamento.</p><div><button type="button" onClick={onCancel} disabled={salvando}>Cancelar</button><button className={styles.salvar} type="submit" disabled={salvando || !checklist.length}>{salvando ? "Salvando…" : reprovada ? "Abrir chamado e concluir" : "Concluir inspeção →"}</button></div></div>
   </form>;
 }
