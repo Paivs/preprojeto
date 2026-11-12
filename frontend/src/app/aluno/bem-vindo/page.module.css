@@ -1,6 +1,6 @@
 .pagina {
   display: flex;
-  width: min(100%, 920px);
+  width: 100%;
   min-height: calc(100vh - 44px);
   flex-direction: column;
   margin: 0 auto;
@@ -13,7 +13,7 @@
 .titulo {
   margin: 0;
   color: var(--text-primary, var(--white-smoke));
-  font-size: 22px;
+  font-size: 28px;
   font-weight: 500;
   line-height: 1.3;
 }
@@ -21,7 +21,7 @@
 .subtitulo {
   margin: 6px 0 0;
   color: var(--text-secondary, var(--silver));
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.5;
 }
 
@@ -40,6 +40,14 @@
   flex-direction: column;
   gap: 7px;
   padding: 13px 14px;
+}
+
+.dadoTelemetria {
+  padding: 20px 22px;
+}
+
+.dadoPessoal {
+  padding: 18px 22px;
 }
 
 .dadoTelemetria + .dadoTelemetria,
@@ -61,7 +69,7 @@
 .valor {
   overflow-wrap: anywhere;
   color: var(--text-primary, var(--white-smoke));
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.45;
 }
 
@@ -72,19 +80,20 @@
 .cronometro {
   color: var(--status-liberado-verde);
   font-family: var(--font-mono, var(--fonte-mono));
+  font-size: 22px;
   font-variant-numeric: tabular-nums;
 }
 
 .faixaPessoal {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 12px;
+  margin-top: 16px;
   border: 0.5px solid var(--border, var(--border-subtle));
   border-radius: 8px;
 }
 
 .progresso {
-  margin-top: 22px;
+  margin-top: 32px;
 }
 
 .linhaProgresso {
@@ -103,7 +112,7 @@
 
 .textoProgresso {
   color: var(--text-secondary, var(--silver));
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .barrasProgresso {
@@ -130,17 +139,17 @@
 .detalhesAula {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-top: 24px;
+  margin-top: 32px;
 }
 
 .blocoAula {
   min-width: 0;
-  padding: 14px 16px 14px 0;
+  padding: 20px 24px 20px 0;
   border-top: 0.5px solid var(--border, var(--border-subtle));
 }
 
 .blocoAula + .blocoAula {
-  padding-left: 16px;
+  padding-left: 24px;
 }
 
 .rotuloBloco {
@@ -150,7 +159,7 @@
 .valorBloco {
   margin: 8px 0 0;
   color: var(--text-primary, var(--white-smoke));
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
 }
 
@@ -164,20 +173,20 @@
 }
 
 .tagEpi {
-  padding: 4px 10px;
+  padding: 6px 12px;
   border: 0.5px solid rgb(224 71 76 / 42%);
   border-radius: 4px;
   color: var(--text-primary, var(--white-smoke));
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.4;
 }
 
 .rodape {
   margin-top: auto;
-  padding-top: 14px;
+  padding-top: 20px;
   border-top: 0.5px solid var(--border, var(--border-subtle));
   color: var(--text-muted, var(--silver));
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.55;
 }
 
