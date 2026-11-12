@@ -1,17 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import AuthGuard from "@/components/auth/AuthGuard";
 import EstadoAguardando from "@/components/aluno/EstadoAguardando";
-import EstadoLiberado from "@/components/aluno/EstadoLiberado";
 import FormularioVinculo from "@/components/aluno/FormularioVinculo";
-import { equipamentosSessao } from "@/mocks/aluno";
 import styles from "./aluno.module.css";
 
 export default function PaginaAluno() {
+  const router = useRouter();
   const [step, setStep] = useState("FORM");
   const [solicitacao, setSolicitacao] = useState(null);
   const compacto = step !== "APPROVED";
+
+  useEffect(() => {
+    if (step === "APPROVED") router.replace("/aluno/bem-vindo");
+  }, [step, router]);
 
   function enviarSolicitacao(dados) {
     setSolicitacao(dados);
@@ -47,12 +51,6 @@ export default function PaginaAluno() {
             />
           )}
 
-          {step === "APPROVED" && solicitacao && (
-            <EstadoLiberado
-              sessao={{ nome: solicitacao.nome, turma: solicitacao.turma }}
-              equipamentos={equipamentosSessao}
-            />
-          )}
         </div>
       </main>
     </AuthGuard>
