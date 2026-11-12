@@ -139,7 +139,7 @@ function Conteudo({ token }) {
 
         {loading ? (
           <div className={styles.skeletonList} aria-label="Carregando turmas" aria-busy="true">
-            {Array.from({ length: 4 }, (_, index) => <SkeletonRow key={index} />)}
+            {Array.from({ length: 5 }, (_, index) => <SkeletonRow key={index} />)}
           </div>
         ) : erro ? (
           <div className={styles.filteredEmpty}>
@@ -153,10 +153,16 @@ function Conteudo({ token }) {
             <div className={styles.emptyIcon} aria-hidden="true"><span className="material-symbols-outlined">groups</span></div>
             <h2>Nenhuma turma cadastrada</h2>
             <p>Crie a primeira turma para começar a organizar alunos e professores do laboratório.</p>
-            <button type="button" className={styles.primaryButton} onClick={() => { setErro(""); setModalAberto(true); }}>
-              <span className="material-symbols-outlined" aria-hidden="true">add</span>
-              Criar primeira turma
-            </button>
+            <div className={styles.emptyActions}>
+              <button type="button" className={styles.primaryButton} onClick={() => { setErro(""); setModalAberto(true); }}>
+                <span className="material-symbols-outlined" aria-hidden="true">add</span>
+                Criar primeira turma
+              </button>
+              <button type="button" className={styles.textButton} onClick={() => { setBusca(""); setFiltro("todas"); }}>
+                <span className="material-symbols-outlined" aria-hidden="true">restart_alt</span>
+                Limpar filtros de busca
+              </button>
+            </div>
           </div>
         ) : turmasFiltradas.length === 0 ? (
           <div className={styles.filteredEmpty}>

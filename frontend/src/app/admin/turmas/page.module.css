@@ -243,3 +243,63 @@
   .skeleton { animation: none; }
   .primaryButton, .table tbody tr { transition: none; }
 }
+
+/* Composição e superfícies da referência local do Stitch. */
+.container { gap: 1rem; color: var(--on-surface, #e0e3e7); }
+.pageHeader { align-items: flex-end; padding: 1.25rem 0 0.75rem; }
+.title { color: var(--on-surface, #e0e3e7); font-size: 2rem; letter-spacing: -0.015em; }
+.subtitle { margin-top: 0.35rem; color: var(--outline, #aa8986); }
+.primaryButton { border: 0; border-radius: 0; background: var(--primary-container, #a4161a); color: var(--on-primary-container, #ffb3ac); box-shadow: none; }
+.primaryButton:hover:not(:disabled) { border-color: transparent; background: var(--secondary-container, #89231e); }
+.metrics { border: 1px solid var(--border-subtle, #22272b); border-radius: 0; background: var(--surface-lowest, #0b0f12); }
+.metric { gap: 0.75rem; padding: 1rem; }
+.metric + .metric { border-color: var(--border-subtle, #22272b); }
+.metricIcon { border-radius: 0; background: var(--surface-container, #1c2023); color: var(--outline, #aa8986); }
+.metricCopy strong { font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+.metricCopy > span:last-child { color: var(--outline, #aa8986); }
+.listSection { border-color: var(--border-subtle, #22272b); border-radius: 0; background: var(--surface-lowest, #0b0f12); }
+.toolbar { flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem; border-color: var(--border-subtle, #22272b); }
+.searchBox { max-width: 21rem; border: 0; border-radius: 0; background: var(--surface-low, #181c1f); box-shadow: inset 0 1px 3px #0008; }
+.searchBox:focus-within { border-color: transparent; box-shadow: inset 0 0 0 1px var(--primary-container, #a4161a); }
+.filterGroup { border: 0; border-radius: 0; background: var(--surface-low, #181c1f); }
+.filterButton { border-radius: 0; color: var(--outline, #aa8986); }
+.filterButtonActive { background: var(--surface-container, #1c2023); color: var(--on-surface, #e0e3e7); }
+.resultCount { color: var(--outline, #aa8986); }
+.resultCount > span { color: var(--primary, #ffb4ac); }
+.table thead { background: var(--surface-lowest, #0b0f12); }
+.table th { color: var(--outline, #aa8986); }
+.table td { border-color: var(--border-subtle, #22272b); color: var(--on-surface, #e0e3e7); }
+.table tbody tr:hover { background: #1c2126; box-shadow: inset 2px 0 var(--primary-container, #a4161a); }
+.classIcon { border: 0; border-radius: 0; background: var(--surface-container, #1c2023); color: var(--primary, #ffb4ac); }
+.professorAvatar { border-radius: 0; background: var(--surface-container-high, #262a2e); color: var(--on-surface, #e0e3e7); }
+.studentCount, .studentCountEmpty { border-radius: 0; }
+.emptyState, .filteredEmpty { min-height: 33rem; padding: 4rem 1.5rem; }
+.emptyState, .filteredEmpty { border-top: 1px solid var(--border-subtle, #22272b); }
+.emptyIcon { border: 1px solid var(--border-subtle, #22272b); border-radius: 0; background: var(--surface-low, #181c1f); color: var(--outline, #aa8986); }
+.emptyState h2, .filteredEmpty h2 { color: var(--on-surface, #e0e3e7); font-size: 1.35rem; }
+.emptyState p, .filteredEmpty p { color: var(--outline, #aa8986); }
+.emptyActions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.75rem; }
+.emptyActions .textButton { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--outline, #aa8986); text-decoration: none; }
+.textButton:hover { color: var(--on-surface, #e0e3e7); }
+.skeletonList { gap: 0.75rem; padding: 0.75rem; }
+.skeletonRow { border: 1px solid var(--border-subtle, #22272b); border-radius: 0; background: var(--surface-low, #181c1f); }
+.skeleton { border-radius: 0; background: var(--surface-container-high, #262a2e); }
+.alertError, .alertSuccess { border-radius: 0; }
+.modalOverlay { background: rgb(0 0 0 / 80%); backdrop-filter: blur(4px); }
+.modalCard { border-color: var(--surface-high, #363d44); border-radius: 0.25rem; background: var(--surface-low, #181c1f); box-shadow: 0 0 0 1px #363d44, 0 16px 32px -8px rgb(0 0 0 / 85%); }
+.modalIcon { border-radius: 0; background: var(--primary-container, #a4161a); color: #fff; }
+.modalInput, .modalSelect { border-color: var(--surface-high, #262a2e); border-radius: 0; }
+.modalInput:focus, .modalSelect:focus { border-color: var(--primary-container, #a4161a); box-shadow: inset 0 0 0 1px var(--primary-container, #a4161a); }
+.cancelButton { border-radius: 0; }
+
+@media (max-width: 640px) {
+  .pageHeader { padding-top: 0.75rem; }
+  .metrics { grid-template-columns: 1fr; }
+  .metric + .metric { border-top: 1px solid var(--border-subtle, #22272b); border-left: 0; }
+  .toolbar { padding: 0.65rem; }
+  .emptyState, .filteredEmpty { min-height: 26rem; padding: 2.5rem 1rem; }
+  .emptyActions { width: 100%; flex-direction: column; }
+  .emptyActions > * { width: 100%; }
+  .emptyActions .textButton { justify-content: center; }
+  .modalCard { border-radius: 0.25rem; }
+}
