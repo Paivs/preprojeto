@@ -38,6 +38,66 @@ export async function buscarRespostas(id, professorId) {
   return InspecaoModel.buscarRespostas(Number(id));
 }
 
+export async function abrirChamadoDeInspecao(idRecebido, dados, usuario) {
+  const inspecaoId = Number(idRecebido);
+  const descricao = typeof dados?.descricao === "string" ? dados.descricao.trim() : "";
+  const severidade = dados?.severidade || "ALTA";
+  if (!Number.isInteger(inspecaoId) || inspecaoId <= 0) {
+    throw new TypeError("ID da inspeção deve ser um inteiro positivo.");
+  }
+  if (!descricao) throw new TypeError("Descreva o problema para abrir o chamado.");
+  if (!SEVERIDADES_VALIDAS.includes(severidade)) {
+    throw new TypeError(`Prioridade deve ser uma de: ${SEVERIDADES_VALIDAS.join(", ")}.`);
+  }
+
+  const inspecao = await InspecaoModel.buscarComAgendamento(inspecaoId);
+  if (!inspecao) throw new Error("Inspecao nao encontrada.");
+  if (Number(inspecao.responsavel_id) !== Number(usuario.id)) {
+    const erro = new Error("Acesso negado.");
+    erro.status = 403;
+    throw erro;
+  }
+  if (inspecao.resultado !== "REPROVADO") {
+    throw new TypeError("Só é possível abrir chamado para uma inspeção reprovada.");
+  }
+
+  const existente = await ChamadoModel.buscarPorInspecao(inspecaoId);
+  if (existente) return existente;
+
+  const conexao = await pool.getConnection();
+  try {
+    await conexao.beginTransaction();
+    const chamadoExistente = await ChamadoModel.buscarPorInspecao(inspecaoId, conexao);
+    if (chamadoExistente) {
+      await conexao.commit();
+      return chamadoExistente;
+    }
+
+    const chamado = await ChamadoModel.criar(new Chamado({
+      id: 1,
+      equipamento_id: Number(inspecao.equipamento_id),
+      inspecao_id: inspecaoId,
+      solicitante_id: Number(usuario.id),
+      titulo: `Falha na inspeção — ${inspecao.equipamento_nome}`.slice(0, 150),
+      descricao,
+      tipo: "CORRETIVO",
+      severidade,
+    }), conexao);
+    await EquipamentoModel.atualizarStatus(inspecao.equipamento_id, "EM_MANUTENCAO", conexao);
+    await conexao.commit();
+    return chamado;
+  } catch (erro) {
+    await conexao.rollback();
+    if (erro.code === "ER_DUP_ENTRY") {
+      const chamadoExistente = await ChamadoModel.buscarPorInspecao(inspecaoId);
+      if (chamadoExistente) return chamadoExistente;
+    }
+    throw erro;
+  } finally {
+    conexao.release();
+  }
+}
+
 export async function registrar(dados, usuario) {
   const agendamentoId = Number(dados.agendamentoId);
   const { etapa } = dados;
