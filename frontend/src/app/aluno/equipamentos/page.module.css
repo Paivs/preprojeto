@@ -1,0 +1,169 @@
+.pagina {
+  width: min(100%, 920px);
+  margin: 0 auto;
+}
+
+.cabecalho {
+  margin-bottom: 24px;
+}
+
+.titulo {
+  margin: 0;
+  color: var(--text-primary, var(--white-smoke));
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.subtitulo {
+  margin: 5px 0 0;
+  color: var(--text-secondary, var(--silver));
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.lista {
+  margin: 0;
+  padding: 0;
+  border-top: 0.5px solid var(--border, var(--border-subtle));
+  list-style: none;
+}
+
+.item {
+  border-bottom: 0.5px solid var(--border, var(--border-subtle));
+}
+
+.linha {
+  display: grid;
+  width: 100%;
+  min-height: 70px;
+  grid-template-columns: minmax(74px, auto) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.linha:focus-visible {
+  outline: 1px solid #e0474c;
+  outline-offset: -1px;
+}
+
+.idEquipamento {
+  color: #e0474c;
+  font-family: var(--font-mono, var(--fonte-mono));
+  font-size: 12px;
+}
+
+.dadosEquipamento {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nomeEquipamento {
+  overflow: hidden;
+  color: var(--text-primary, var(--white-smoke));
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.descricaoEquipamento {
+  overflow: hidden;
+  color: var(--text-secondary, var(--silver));
+  font-size: 12px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.acoesLinha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.badge {
+  padding: 3px 8px;
+  border: 0.5px solid rgb(52 211 153 / 35%);
+  border-radius: 4px;
+  color: var(--status-liberado-verde);
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.seta {
+  color: var(--text-secondary, var(--silver));
+  font-size: 15px;
+}
+
+.painel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 8px 12px 96px;
+  padding: 12px 14px;
+  border: 0.5px solid var(--border, var(--border-subtle));
+  border-radius: 6px;
+  background: var(--carbon-black);
+}
+
+.linhaDetalhe {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.linhaDetalhe span:first-child {
+  color: var(--text-secondary, var(--silver));
+}
+
+.linhaDetalhe span:last-child {
+  color: var(--text-primary, var(--white-smoke));
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .linha {
+    grid-template-columns: 74px minmax(0, 1fr) auto;
+    gap: 8px;
+    padding-right: 2px;
+    padding-left: 2px;
+  }
+
+  .acoesLinha {
+    gap: 7px;
+  }
+
+  .badge {
+    padding: 3px 5px;
+    font-size: 9px;
+  }
+
+  .painel {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  .linhaDetalhe {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .linhaDetalhe span:last-child {
+    text-align: left;
+  }
+}
