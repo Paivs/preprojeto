@@ -72,7 +72,7 @@ export async function criar({ responsavel_id, equipamento_id, turma_id, atividad
   return resultado.insertId;
 }
 
-export async function atualizarStatus(id, status) {
-  const [resultado] = await pool.query("UPDATE agendamentos SET status=? WHERE id=?", [status,id]);
+export async function atualizarStatus(id, status, db = pool) {
+  const [resultado] = await db.query("UPDATE agendamentos SET status=? WHERE id=?", [status,id]);
   return resultado.affectedRows > 0;
 }

@@ -8,6 +8,7 @@ import {
   criarHistorico,
   emitirOrdemServico,
   listar,
+  listarDoProfessor,
   listarHistorico,
 } from "../controllers/chamadoController.js";
 import { authMiddleware, requirePerfil } from "../middlewares/authMiddleware.js";
@@ -15,6 +16,7 @@ import { authMiddleware, requirePerfil } from "../middlewares/authMiddleware.js"
 const router = Router();
 
 router.get("/", authMiddleware, requirePerfil("ADMIN", "TECNICO"), listar);
+router.get("/professor", authMiddleware, requirePerfil("PROFESSOR"), listarDoProfessor);
 router.post("/", authMiddleware, requirePerfil("ADMIN", "PROFESSOR", "TECNICO"), criar);
 router.get("/:id", authMiddleware, requirePerfil("ADMIN", "TECNICO"), buscarPorId);
 router.patch("/:id/status", authMiddleware, requirePerfil("ADMIN", "TECNICO"), atualizarStatus);

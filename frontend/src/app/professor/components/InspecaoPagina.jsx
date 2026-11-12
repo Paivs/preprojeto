@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { buscarRespostasInspecao, listarInspecoes, registrarInspecao } from "../lib/professorApi";
+import { abrirChamadoInspecao, buscarRespostasInspecao, listarInspecoes, registrarInspecao } from "../lib/professorApi";
 import FormularioInspecao from "./FormularioInspecao";
 import styles from "./InspecaoPagina.module.css";
 
 const etapaLabel = { PRE_USO: "Pré-uso", POS_USO: "Pós-uso" };
 const resultadoLabel = { APROVADO: "Aprovada", APROVADO_COM_RESSALVAS: "Aprovada com ressalvas", REPROVADO: "Reprovada" };
+const statusChamadoLabel = { ABERTO: "Em andamento", EM_ATENDIMENTO: "Em andamento", AGUARDANDO_PECAS: "Em andamento", CONCLUIDO: "Concluído", CANCELADO: "Cancelado" };
 
 function Contexto({ item, children, subtitulo }) {
   return <div className={styles.pagina}>
@@ -68,6 +69,11 @@ export function RegistroInspecaoPagina() {
   const { id } = useParams();
   const [data, setData] = useState(null);
   const [erro, setErro] = useState("");
+  const [abrindoChamado, setAbrindoChamado] = useState(false);
+  const [descricaoChamado, setDescricaoChamado] = useState("");
+  const [severidadeChamado, setSeveridadeChamado] = useState("ALTA");
+  const [salvandoChamado, setSalvandoChamado] = useState(false);
+  const [erroChamado, setErroChamado] = useState("");
 
   useEffect(() => {
     let ativo = true;
@@ -77,6 +83,31 @@ export function RegistroInspecaoPagina() {
     }).catch((e) => { if (ativo) setErro(e.message || "Não foi possível carregar o registro."); });
     return () => { ativo = false; };
   }, [id]);
+
+  async function salvarChamado(evento) {
+    evento.preventDefault();
+    if (!descricaoChamado.trim()) {
+      setErroChamado("Descreva o problema para abrir o chamado.");
+      return;
+    }
+    setSalvandoChamado(true);
+    setErroChamado("");
+    try {
+      const chamado = await abrirChamadoInspecao(item.id, {
+        descricao: descricaoChamado.trim(),
+        severidade: severidadeChamado,
+      });
+      setData((atual) => ({
+        ...atual,
+        item: { ...atual.item, chamadoId: chamado.id, chamadoStatus: chamado.status, chamadoSeveridade: chamado.severidade },
+      }));
+      setAbrindoChamado(false);
+    } catch (e) {
+      setErroChamado(e.message || "Não foi possível abrir o chamado.");
+    } finally {
+      setSalvandoChamado(false);
+    }
+  }
 
   if (erro) return <div className={styles.pagina}><a className={styles.voltar} href="/professor/inspecoes">← Voltar às inspeções</a><p className={styles.erro} role="alert">{erro}</p></div>;
   if (!data) return <div className={styles.pagina}><p className={styles.carregando}>Carregando registro…</p></div>;
@@ -89,6 +120,22 @@ export function RegistroInspecaoPagina() {
       <div><p>RESULTADO DA INSPEÇÃO</p><h2>{resultadoLabel[item.resultado] || item.resultado}</h2></div>
       <span>{aprovadas} de {respostas.length} itens conformes</span>
     </section>
+    {item.resultado === "REPROVADO" && <section className={styles.chamadoInspecao}>
+      <div><p className={styles.categoria}>CHAMADO DE MANUTENÇÃO</p><h2>{item.chamadoId ? `Chamado #${item.chamadoId}` : "Abrir chamado"}</h2>
+        {item.chamadoId && <p>Situação: <strong>{statusChamadoLabel[item.chamadoStatus] || "Em andamento"}</strong></p>}
+        {!item.chamadoId && <p>O equipamento e o histórico desta inspeção serão vinculados ao chamado.</p>}
+      </div>
+      {item.chamadoId
+        ? <a className={styles.abrirChamado} href={`/professor/chamados#chamado-${item.chamadoId}`}>Abrir chamado</a>
+        : !abrindoChamado
+          ? <button className={styles.abrirChamado} type="button" onClick={() => setAbrindoChamado(true)}>Abrir chamado</button>
+          : <form className={styles.formularioChamado} onSubmit={salvarChamado}>
+            <label><span>Descrição do problema <small>OBRIGATÓRIA</small></span><textarea required rows={4} maxLength={5000} value={descricaoChamado} onChange={(evento) => setDescricaoChamado(evento.target.value)} /></label>
+            <label><span>Prioridade</span><select value={severidadeChamado} onChange={(evento) => setSeveridadeChamado(evento.target.value)}><option value="BAIXA">Baixa</option><option value="MEDIA">Média</option><option value="ALTA">Alta</option><option value="CRITICA">Crítica</option></select></label>
+            {erroChamado && <p role="alert" className={styles.erro}>{erroChamado}</p>}
+            <div className={styles.acoesChamado}><button type="button" onClick={() => setAbrindoChamado(false)} disabled={salvandoChamado}>Cancelar</button><button type="submit" disabled={salvandoChamado}>{salvandoChamado ? "Abrindo…" : "Confirmar abertura"}</button></div>
+          </form>}
+    </section>}
     {item.observacoes && <section className={styles.observacoes}><h2>Observações</h2><p>{item.observacoes}</p></section>}
     <section className={styles.listaResposta}>
       <div className={styles.tituloSecao}><h2>Itens avaliados</h2><span>{respostas.length} itens</span></div>

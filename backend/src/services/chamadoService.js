@@ -52,6 +52,18 @@ export async function listar({ pagina = 1, limite = 10, status, severidade, equi
   };
 }
 
+export async function listarDoProfessor(situacao, usuarioLogado) {
+  if (usuarioLogado?.perfil !== "PROFESSOR") {
+    const erro = new Error("Acesso não autorizado.");
+    erro.status = 403;
+    throw erro;
+  }
+  if (situacao !== undefined && !["EM_ANDAMENTO", "CONCLUIDO"].includes(situacao)) {
+    throw new TypeError("Situação deve ser EM_ANDAMENTO ou CONCLUIDO.");
+  }
+  return ChamadoModel.listarDoProfessor(validarId(usuarioLogado.id, "ID do professor"), situacao);
+}
+
 export async function buscarPorId(idRecebido) {
   const id = validarId(idRecebido);
   const chamado = await ChamadoModel.buscarPorId(id);

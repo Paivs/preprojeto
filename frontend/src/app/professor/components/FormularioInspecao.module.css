@@ -126,6 +126,51 @@
     color: #81797a;
 }
 
+.painelChamado {
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid rgba(194, 103, 105, .48);
+    background: rgba(164, 22, 26, .07);
+}
+
+.painelChamado h2 {
+    margin: 0 0 6px;
+    color: #f0c7c8;
+    font-size: 18px;
+}
+
+.painelChamado p {
+    margin: 0;
+    color: #b9adae;
+    font-size: var(--professor-font-supporting);
+    line-height: 1.5;
+}
+
+.painelChamado .chamadoEyebrow {
+    margin-bottom: 6px;
+    color: #d58a8c;
+    font: 9px ui-monospace, monospace;
+    letter-spacing: .14em;
+}
+
+.campoPrioridade {
+    display: grid;
+    max-width: 260px;
+    gap: 7px;
+    color: #e5dfdf;
+    font-size: var(--professor-font-supporting);
+}
+
+.campoPrioridade select {
+    min-height: 40px;
+    padding: 0 10px;
+    border: 1px solid rgba(245, 243, 244, .15);
+    background: #101214;
+    color: #f5f3f4;
+    font: inherit;
+}
+
 .erro {
     margin: 0;
     color: #e08b8d;

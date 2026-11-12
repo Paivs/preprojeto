@@ -1,28 +1,200 @@
-import Chamado from "../models/Chamado.js";
+import Chamado, { SEVERIDADES_VALIDAS } from "../models/Chamado.js";
 import * as AgendamentoModel from "../models/agendamentoModel.js";
 import * as ChamadoModel from "../models/chamadoModel.js";
 import * as ChecklistItemModel from "../models/checklistItemModel.js";
 import * as ChecklistModeloModel from "../models/checklistModeloModel.js";
 import * as EquipamentoModel from "../models/equipamentoModel.js";
 import * as InspecaoModel from "../models/inspecaoModel.js";
+import { pool } from "../config/database.js";
 
 export async function listar(professorId) {
- const pend=await InspecaoModel.listarPendentes(professorId), done=await InspecaoModel.listarRealizadasPorProfessor(professorId);
- for(const p of pend){const m=await ChecklistModeloModel.buscarPorTipoEtapa(p.tipoEquipamento,p.etapa);const its=m?await ChecklistItemModel.listarPorModelo(m.id):[];p.modelo=m?.titulo||"";p.checklist=its.map(i=>({id:i.id,texto:i.descricao,critico:Boolean(i.critico)}));p.resultado=null;}
- return [...pend,...done].sort((a,b)=>`${b.data}${b.horario}`.localeCompare(`${a.data}${a.horario}`));
+  const pendentes = await InspecaoModel.listarPendentes(professorId);
+  const realizadas = await InspecaoModel.listarRealizadasPorProfessor(professorId);
+
+  for (const item of pendentes) {
+    const modelo = await ChecklistModeloModel.buscarPorTipoEtapa(item.tipoEquipamento, item.etapa);
+    const itens = modelo ? await ChecklistItemModel.listarPorModelo(modelo.id) : [];
+    item.modelo = modelo?.titulo || "";
+    item.checklist = itens.map((checklistItem) => ({
+      id: checklistItem.id,
+      texto: checklistItem.descricao,
+      critico: Boolean(checklistItem.critico),
+    }));
+    item.resultado = null;
+  }
+
+  return [...pendentes, ...realizadas]
+    .sort((a, b) => `${b.data}${b.horario}`.localeCompare(`${a.data}${a.horario}`));
 }
-export async function buscarRespostas(id,professorId){const i=await InspecaoModel.buscarComAgendamento(Number(id));if(!i)throw new Error("Inspecao nao encontrada.");if(Number(i.responsavel_id)!==Number(professorId)){const e=new Error("Acesso negado.");e.status=403;throw e;}return InspecaoModel.buscarRespostas(Number(id));}
-export async function registrar(dados,user){
- const aid=Number(dados.agendamentoId), etapa=dados.etapa;if(!Number.isInteger(aid)||aid<=0||!['PRE_USO','POS_USO'].includes(etapa))throw new TypeError("Agendamento ou etapa inválidos.");
- const a=await AgendamentoModel.buscarPorId(aid);if(!a)throw new Error("Agendamento nao encontrado.");if(Number(a.responsavel_id)!==Number(user.id)){const e=new Error("Acesso negado.");e.status=403;throw e;}
- if((etapa==='PRE_USO'&&a.status!=='CONFIRMADO')||(etapa==='POS_USO'&&a.status!=='EM_ANDAMENTO'))throw new TypeError("Etapa não permitida para o status atual.");
- const eq=await EquipamentoModel.buscarPorId(a.equipamento_id), modelo=await ChecklistModeloModel.buscarPorTipoEtapa(eq.tipo,etapa), itens=modelo?await ChecklistItemModel.listarPorModelo(modelo.id):[];
- const answers=new Map((Array.isArray(dados.respostas)?dados.respostas:[]).map(r=>[Number(r.itemId),r]));if(!itens.length||itens.some(i=>typeof answers.get(i.id)?.conforme!=='boolean'))throw new TypeError("Responda todos os itens do checklist.");
- const fail=itens.some(i=>i.critico&&!answers.get(i.id).conforme), bad=itens.some(i=>!answers.get(i.id).conforme), result=fail?'REPROVADO':bad?'APROVADO_COM_RESSALVAS':'APROVADO';
- const id=await InspecaoModel.criar({agendamento_id:aid,modelo_id:modelo.id,professor_id:Number(user.id),etapa,resultado:result,observacoes:dados.observacoes||''});
- await InspecaoModel.criarRespostas(id,itens.map(i=>({item_id:i.id,conforme:answers.get(i.id).conforme,observacao:answers.get(i.id).observacao||null})));
- await EquipamentoModel.atualizarStatus(eq.id,fail?'EM_MANUTENCAO':etapa==='PRE_USO'?'EM_USO':'DISPONIVEL');
- if(etapa==='PRE_USO'&&!fail)await AgendamentoModel.atualizarStatus(aid,'EM_ANDAMENTO');if(etapa==='POS_USO')await AgendamentoModel.atualizarStatus(aid,'CONCLUIDO');
- if(fail){const c=new Chamado({id:1,equipamento_id:eq.id,solicitante_id:Number(user.id),titulo:`Falha na inspeção — ${eq.nome}`,descricao:'Item crítico reprovado no checklist de inspeção.',tipo:'CORRETIVO',severidade:'ALTA'});await ChamadoModel.criar(c);}
- return {id,resultado:result,equipamento:eq.nome};
+
+export async function buscarRespostas(id, professorId) {
+  const inspecao = await InspecaoModel.buscarComAgendamento(Number(id));
+  if (!inspecao) throw new Error("Inspecao nao encontrada.");
+  if (Number(inspecao.responsavel_id) !== Number(professorId)) {
+    const erro = new Error("Acesso negado.");
+    erro.status = 403;
+    throw erro;
+  }
+  return InspecaoModel.buscarRespostas(Number(id));
+}
+
+export async function abrirChamadoDeInspecao(idRecebido, dados, usuario) {
+  const inspecaoId = Number(idRecebido);
+  const descricao = typeof dados?.descricao === "string" ? dados.descricao.trim() : "";
+  const severidade = dados?.severidade || "ALTA";
+  if (!Number.isInteger(inspecaoId) || inspecaoId <= 0) {
+    throw new TypeError("ID da inspeção deve ser um inteiro positivo.");
+  }
+  if (!descricao) throw new TypeError("Descreva o problema para abrir o chamado.");
+  if (!SEVERIDADES_VALIDAS.includes(severidade)) {
+    throw new TypeError(`Prioridade deve ser uma de: ${SEVERIDADES_VALIDAS.join(", ")}.`);
+  }
+
+  const inspecao = await InspecaoModel.buscarComAgendamento(inspecaoId);
+  if (!inspecao) throw new Error("Inspecao nao encontrada.");
+  if (Number(inspecao.responsavel_id) !== Number(usuario.id)) {
+    const erro = new Error("Acesso negado.");
+    erro.status = 403;
+    throw erro;
+  }
+  if (inspecao.resultado !== "REPROVADO") {
+    throw new TypeError("Só é possível abrir chamado para uma inspeção reprovada.");
+  }
+
+  const existente = await ChamadoModel.buscarPorInspecao(inspecaoId);
+  if (existente) return existente;
+
+  const conexao = await pool.getConnection();
+  try {
+    await conexao.beginTransaction();
+    const chamadoExistente = await ChamadoModel.buscarPorInspecao(inspecaoId, conexao);
+    if (chamadoExistente) {
+      await conexao.commit();
+      return chamadoExistente;
+    }
+
+    const chamado = await ChamadoModel.criar(new Chamado({
+      id: 1,
+      equipamento_id: Number(inspecao.equipamento_id),
+      inspecao_id: inspecaoId,
+      solicitante_id: Number(usuario.id),
+      titulo: `Falha na inspeção — ${inspecao.equipamento_nome}`.slice(0, 150),
+      descricao,
+      tipo: "CORRETIVO",
+      severidade,
+    }), conexao);
+    await EquipamentoModel.atualizarStatus(inspecao.equipamento_id, "EM_MANUTENCAO", conexao);
+    await conexao.commit();
+    return chamado;
+  } catch (erro) {
+    await conexao.rollback();
+    if (erro.code === "ER_DUP_ENTRY") {
+      const chamadoExistente = await ChamadoModel.buscarPorInspecao(inspecaoId);
+      if (chamadoExistente) return chamadoExistente;
+    }
+    throw erro;
+  } finally {
+    conexao.release();
+  }
+}
+
+export async function registrar(dados, usuario) {
+  const agendamentoId = Number(dados.agendamentoId);
+  const { etapa } = dados;
+  if (!Number.isInteger(agendamentoId) || agendamentoId <= 0 || !["PRE_USO", "POS_USO"].includes(etapa)) {
+    throw new TypeError("Agendamento ou etapa inválidos.");
+  }
+
+  const agendamento = await AgendamentoModel.buscarPorId(agendamentoId);
+  if (!agendamento) throw new Error("Agendamento nao encontrado.");
+  if (Number(agendamento.responsavel_id) !== Number(usuario.id)) {
+    const erro = new Error("Acesso negado.");
+    erro.status = 403;
+    throw erro;
+  }
+  if ((etapa === "PRE_USO" && agendamento.status !== "CONFIRMADO")
+    || (etapa === "POS_USO" && agendamento.status !== "EM_ANDAMENTO")) {
+    throw new TypeError("Etapa não permitida para o status atual.");
+  }
+
+  const equipamento = await EquipamentoModel.buscarPorId(agendamento.equipamento_id);
+  const modelo = await ChecklistModeloModel.buscarPorTipoEtapa(equipamento.tipo, etapa);
+  const itens = modelo ? await ChecklistItemModel.listarPorModelo(modelo.id) : [];
+  const respostas = new Map((Array.isArray(dados.respostas) ? dados.respostas : [])
+    .map((resposta) => [Number(resposta.itemId), resposta]));
+  if (!itens.length || itens.some((item) => typeof respostas.get(item.id)?.conforme !== "boolean")) {
+    throw new TypeError("Responda todos os itens do checklist.");
+  }
+
+  const reprovada = itens.some((item) => item.critico && !respostas.get(item.id).conforme);
+  const possuiFalha = itens.some((item) => !respostas.get(item.id).conforme);
+  const resultado = reprovada ? "REPROVADO" : possuiFalha ? "APROVADO_COM_RESSALVAS" : "APROVADO";
+  const descricaoChamado = typeof dados.chamadoDescricao === "string" ? dados.chamadoDescricao.trim() : "";
+  const severidade = dados.chamadoSeveridade || "ALTA";
+
+  if (reprovada && !descricaoChamado) {
+    throw new TypeError("Descreva o problema para abrir o chamado.");
+  }
+  if (reprovada && !SEVERIDADES_VALIDAS.includes(severidade)) {
+    throw new TypeError(`Prioridade deve ser uma de: ${SEVERIDADES_VALIDAS.join(", ")}.`);
+  }
+
+  const conexao = await pool.getConnection();
+  try {
+    await conexao.beginTransaction();
+    const inspecaoId = await InspecaoModel.criar({
+      agendamento_id: agendamentoId,
+      modelo_id: modelo.id,
+      professor_id: Number(usuario.id),
+      etapa,
+      resultado,
+      observacoes: typeof dados.observacoes === "string" ? dados.observacoes.trim() : "",
+    }, conexao);
+
+    await InspecaoModel.criarRespostas(inspecaoId, itens.map((item) => ({
+      item_id: item.id,
+      conforme: respostas.get(item.id).conforme,
+      observacao: respostas.get(item.id).observacao || null,
+    })), conexao);
+
+    await EquipamentoModel.atualizarStatus(
+      equipamento.id,
+      reprovada ? "EM_MANUTENCAO" : etapa === "PRE_USO" ? "EM_USO" : "DISPONIVEL",
+      conexao,
+    );
+    if (etapa === "PRE_USO" && !reprovada) {
+      await AgendamentoModel.atualizarStatus(agendamentoId, "EM_ANDAMENTO", conexao);
+    }
+    if (etapa === "POS_USO") {
+      await AgendamentoModel.atualizarStatus(agendamentoId, "CONCLUIDO", conexao);
+    }
+
+    let chamado = null;
+    if (reprovada) {
+      chamado = await ChamadoModel.criar(new Chamado({
+        id: 1,
+        equipamento_id: Number(equipamento.id),
+        inspecao_id: Number(inspecaoId),
+        solicitante_id: Number(usuario.id),
+        titulo: `Falha na inspeção — ${equipamento.nome}`.slice(0, 150),
+        descricao: descricaoChamado,
+        tipo: "CORRETIVO",
+        severidade,
+      }), conexao);
+    }
+
+    await conexao.commit();
+    return {
+      id: inspecaoId,
+      resultado,
+      equipamento: equipamento.nome,
+      chamadoId: chamado?.id ?? null,
+      chamadoStatus: chamado?.status ?? null,
+    };
+  } catch (erro) {
+    await conexao.rollback();
+    throw erro;
+  } finally {
+    conexao.release();
+  }
 }

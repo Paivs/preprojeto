@@ -10,6 +10,7 @@ const itens = [
   { href: "/professor/agendamentos", label: "Agendamentos", icon: "calendar_month", pronto: true },
   { href: "/professor/turmas", label: "Minhas turmas", icon: "groups", pronto: true },
   { href: "/professor/inspecoes", label: "Inspeções", icon: "fact_check", pronto: true },
+  { href: "/professor/chamados", label: "Chamados", icon: "build", pronto: true },
   { href: "/professor/equipamentos", label: "Equipamentos", icon: "precision_manufacturing", pronto: true },
 ];
 
