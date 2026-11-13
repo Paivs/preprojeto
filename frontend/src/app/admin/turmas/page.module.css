@@ -317,3 +317,8 @@
 .tableScroll { overflow: auto hidden; }
 .studentCount,.studentCountEmpty { border-radius: 999px; }
 .modalCard { border: 2px solid rgba(245,243,244,.15); border-radius: 17px; }
+
+/* Indicadores separados para evitar contornos sobrepostos. */
+.metrics { gap: 10px; overflow: visible; border: 0; background: transparent; box-shadow: none; }
+.metric,.metric + .metric { border: 2px solid rgba(245,243,244,.15); border-radius: 15px; }
+.metricIcon { border-radius: 11px; }
