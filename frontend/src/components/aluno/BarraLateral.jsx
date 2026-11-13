@@ -8,11 +8,7 @@ import styles from "./BarraLateral.module.css";
 
 export default function BarraLateral({ itemAtivo }) {
   const pathname = usePathname();
-  const itemAtual = pathname === "/aluno/equipamentos"
-    ? "equipamentos"
-    : pathname === "/aluno/diagnostico"
-      ? "diagnostico"
-      : itemAtivo;
+  const itemAtual = pathname === "/aluno/diagnostico" ? "diagnostico" : "inicio";
 
   return (
     <aside className={styles.barra} aria-label="Navegação do aluno">
@@ -28,27 +24,27 @@ export default function BarraLateral({ itemAtivo }) {
           />
         </Link>
       </div>
-      <div className={styles.sectionHeading}>Área do aluno</div>
+      <div className={styles.sectionHeading}>Área do Aluno</div>
       <nav className={styles.navegacao}>
+        <Link
+          className={`${styles.link} ${itemAtual === "inicio" ? styles.ativo : ""}`}
+          href="/aluno"
+          aria-current={itemAtual === "inicio" ? "page" : undefined}
+        >
+          <span className={styles.caixaIcone}>
+            <IconeCasa className={`${styles.icone} ${itemAtual === "inicio" ? styles.iconeAtivo : ""}`} />
+          </span>
+          <span>Início</span>
+        </Link>
         <Link
           className={`${styles.link} ${itemAtual === "diagnostico" ? styles.ativo : ""}`}
           href="/aluno/diagnostico"
           aria-current={itemAtual === "diagnostico" ? "page" : undefined}
         >
           <span className={styles.caixaIcone}>
-            <IconeCasa className={`${styles.icone} ${itemAtual === "diagnostico" ? styles.iconeAtivo : ""}`} />
+            <IconeEquipamento className={`${styles.icone} ${itemAtual === "diagnostico" ? styles.iconeAtivo : ""}`} />
           </span>
           <span>Diagnóstico</span>
-        </Link>
-        <Link
-          className={`${styles.link} ${itemAtual === "equipamentos" ? styles.ativo : ""}`}
-          href="/aluno/equipamentos"
-          aria-current={itemAtual === "equipamentos" ? "page" : undefined}
-        >
-          <span className={styles.caixaIcone}>
-            <IconeEquipamento className={`${styles.icone} ${itemAtual === "equipamentos" ? styles.iconeAtivo : ""}`} />
-          </span>
-          <span>Equipamentos</span>
         </Link>
       </nav>
       <footer className={styles.footer}>

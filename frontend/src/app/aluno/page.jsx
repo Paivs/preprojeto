@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { sessaoAluno } from "@/mocks/aluno";
 import FormularioVinculo from "@/components/aluno/FormularioVinculo";
 import EstadoAguardando from "@/components/aluno/EstadoAguardando";
@@ -34,6 +35,9 @@ export default function PaginaAluno() {
 
   return (
     <section className={styles.pagina}>
+      <Link className={styles.voltar} href="/login">
+        <span aria-hidden="true">←</span> Voltar
+      </Link>
       <h1 className={styles.titulo}>{saudacao}</h1>
       <p className={styles.turma}>{sessaoAluno.turma}</p>
       {etapa === "FORM" && (
