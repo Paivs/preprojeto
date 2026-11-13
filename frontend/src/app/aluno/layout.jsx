@@ -30,7 +30,7 @@ export default function LayoutAluno({ children }) {
     <AuthGuard>
       {rotaVerificada !== pathname ? null : pathname === "/aluno" ? children : (
         <div className={styles.layout}>
-          <BarraLateral itemAtivo="bem-vindo" />
+          <BarraLateral itemAtivo="diagnostico" />
           <main className={styles.conteudo}>{children}</main>
         </div>
       )}

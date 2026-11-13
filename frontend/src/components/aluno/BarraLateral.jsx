@@ -10,8 +10,8 @@ export default function BarraLateral({ itemAtivo }) {
   const pathname = usePathname();
   const itemAtual = pathname === "/aluno/equipamentos"
     ? "equipamentos"
-    : pathname === "/aluno/bem-vindo"
-      ? "bem-vindo"
+    : pathname === "/aluno/diagnostico"
+      ? "diagnostico"
       : itemAtivo;
 
   return (
@@ -31,14 +31,14 @@ export default function BarraLateral({ itemAtivo }) {
       <div className={styles.sectionHeading}>Área do aluno</div>
       <nav className={styles.navegacao}>
         <Link
-          className={`${styles.link} ${itemAtual === "bem-vindo" ? styles.ativo : ""}`}
-          href="/aluno/bem-vindo"
-          aria-current={itemAtual === "bem-vindo" ? "page" : undefined}
+          className={`${styles.link} ${itemAtual === "diagnostico" ? styles.ativo : ""}`}
+          href="/aluno/diagnostico"
+          aria-current={itemAtual === "diagnostico" ? "page" : undefined}
         >
           <span className={styles.caixaIcone}>
-            <IconeCasa className={`${styles.icone} ${itemAtual === "bem-vindo" ? styles.iconeAtivo : ""}`} />
+            <IconeCasa className={`${styles.icone} ${itemAtual === "diagnostico" ? styles.iconeAtivo : ""}`} />
           </span>
-          <span>Bem-vindo</span>
+          <span>Diagnóstico</span>
         </Link>
         <Link
           className={`${styles.link} ${itemAtual === "equipamentos" ? styles.ativo : ""}`}

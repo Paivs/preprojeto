@@ -14,7 +14,7 @@ export default function PaginaAcessoAluno() {
   useEffect(() => {
     if (step === "APPROVED") {
       window.sessionStorage.setItem("tenken-aluno-bancada-liberada", "true");
-      router.replace("/aluno/bem-vindo");
+      router.replace("/aluno/diagnostico");
     }
   }, [step, router]);
 
