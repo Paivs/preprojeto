@@ -7,117 +7,88 @@
     <img src="https://img.shields.io/badge/JavaScript-ES6%2B-f7df1e?logo=javascript&logoColor=111111" alt="JavaScript" />
     <img src="https://img.shields.io/badge/React-UI-61dafb?logo=react&logoColor=111111" alt="React" />
     <img src="https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs" alt="Next.js 16" />
+    <img src="https://img.shields.io/badge/Express-API-000000?logo=express&logoColor=white" alt="Express" />
+    <img src="https://img.shields.io/badge/MySQL-banco%20de%20dados-4479a1?logo=mysql&logoColor=white" alt="MySQL" />
     <img src="https://img.shields.io/badge/CSS3-estilos-1572b6?logo=css3&logoColor=white" alt="CSS3" />
-    <img src="https://img.shields.io/badge/Bootstrap-5.3-7952b3?logo=bootstrap&logoColor=white" alt="Bootstrap 5.3" />
   </p>
 </div>
 
 ## Sobre o projeto
 
-Tenken (点検) é uma plataforma web, em desenvolvimento, para apoiar a organização de bancadas didáticas, robôs, componentes e ferramentas em laboratórios educacionais de robótica e automação. O nome significa inspeção, checagem ou verificação.
+Tenken (点検) é uma plataforma web para apoiar a organização de bancadas didáticas, robôs, componentes e ferramentas em laboratórios educacionais de robótica e automação. O nome significa inspeção, checagem ou verificação.
 
-O projeto busca substituir controles dispersos por um fluxo rastreável que ajude a prevenir falhas, preservar equipamentos e registrar seu histórico de uso. Seu público inclui estudantes, professores, orientadores, técnicos de laboratório e administradores.
+O projeto substitui controles dispersos por um fluxo rastreável que ajuda a prevenir falhas, preservar equipamentos e registrar seu histórico de uso. Tem front-end em Next.js, back-end em Express e banco de dados MySQL, com autenticação por matrícula/senha e tokens JWT.
 
-> Este repositório contém atualmente a interface institucional de apresentação do Tenken. Os módulos de gestão descritos neste README fazem parte do escopo planejado e ainda não estão implementados nesta aplicação.
+## O que já está disponível
 
-## Tecnologias da interface
+- Página institucional pública, login e cadastro de alunos.
+- Painel do administrador: gestão de equipamentos, usuários, turmas e chamados, além de relatórios.
+- Painel do professor: turmas, agendamentos de equipamentos, inspeções (checklist pré e pós-uso) e chamados de manutenção.
+- Painel do técnico: acompanhamento e atendimento de chamados de manutenção.
+- Área do aluno: solicitação de acesso à bancada por token de turma (a tela atual ainda usa dados de exemplo enquanto a integração completa com o back-end está em andamento).
+- API REST em Express, com autenticação JWT e senhas protegidas com bcrypt.
 
-<table>
-  <tr>
-    <td align="center" width="20%"><img src="https://img.shields.io/badge/JavaScript-ES6%2B-f7df1e?logo=javascript&logoColor=111111" alt="JavaScript" /><br /><sub>Linguagem da aplicação</sub></td>
-    <td align
-    center" width="20%"><img src="https://img.shields.io/badge/React-UI-61dafb?logo=react&logoColor=111111" alt="React" /><br /><sub>Componentes de interface</sub></td>
-    <td align="center" width="20%"><img src="https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs" alt="Next.js" /><br /><sub>Framework web</sub></td>
-    <td align="center" width="20%"><img src="https://img.shields.io/badge/CSS3-estilos-1572b6?logo=css3&logoColor=white" alt="CSS3" /><br /><sub>Estilos e responsividade</sub></td>
-    <td align="center" width="20%"><img src="https://img.shields.io/badge/Bootstrap-5.3-7952b3?logo=bootstrap&logoColor=white" alt="Bootstrap" /><br /><sub>Grid e utilitários</sub></td>
-  </tr>
-</table>
-
-O Bootstrap 5.3 é importado pelo layout da aplicação. Os estilos próprios, incluindo a identidade visual e os comportamentos responsivos, ficam em `src/app/globals.css`.
-
-## O que está disponível
-
-- Página institucional de uma página, com hero em vídeo e navegação por âncoras.
-- Apresentação do propósito do Tenken, do ciclo de uso dos equipamentos e chamada para acesso.
-- Faixa horizontal de logos parceiras, com movimento contínuo no desktop, pausa ao passar o mouse, navegação por toque em celular e respeito a `prefers-reduced-motion`.
-- Header que aparece conforme a rolagem da página.
-- Layout responsivo e identidade industrial baseada em tons escuros, vermelho, branco e cinza.
-- Link de acesso apontando para `/login`. A tela de login ainda não está implementada neste repositório.
-
-## Ciclo de uso proposto
+## Ciclo de uso
 
 **Agendamento → inspeção prévia → utilização → inspeção posterior → manutenção, quando necessária.**
 
-## Escopo funcional planejado
+### Regras principais
 
-Os módulos abaixo descrevem a visão do produto e não devem ser tratados como funcionalidades já disponíveis na interface atual:
+- Inspeções pré e pós-uso são obrigatórias.
+- Reservas, inspeções e chamados ficam vinculados ao usuário responsável.
+- Falhas críticas bloqueiam o equipamento e abrem chamado corretivo com prioridade alta.
+- Permissões e disponibilidade são validadas no back-end, além da interface.
 
-- **Inventário:** cadastrar equipamentos, componentes e ferramentas, identificando patrimônio e localização.
-- **Agendamentos:** consultar disponibilidade, reservar e cancelar horários, evitando conflitos e reservas de equipamentos inativos ou em manutenção.
-- **Inspeções:** realizar checklists antes e depois do uso, validar o acesso associado à reserva e registrar condições e evidências de avarias.
-- **Ocorrências e manutenção:** registrar falhas, abrir chamados e acompanhar reparos, peças, custos e histórico.
-- **Usuários e gestão acadêmica:** trabalhar com perfis de aluno, professor, técnico e administrador, turmas e projetos, com permissões adequadas.
-- **Painel e relatórios:** acompanhar disponibilidade, utilização, falhas, ocupação e manutenção.
-
-### Princípios operacionais previstos
-
-- Inspeções pré e pós-uso obrigatórias.
-- Rastreabilidade das reservas, inspeções e ocorrências até os usuários responsáveis.
-- Falhas críticas bloqueiam o equipamento e exigem encaminhamento urgente para manutenção.
-- Falhas não críticas podem gerar manutenção preventiva quando o uso continuar seguro.
-- Permissões e disponibilidade precisam ser validadas no back-end, além da interface.
-- A segurança operacional tem prioridade sobre a disponibilidade do equipamento.
-
-## Executar localmente
-
-### Acesso de administrador para testes
-
-Depois de criar o banco e aplicar o esquema, execute `database/seed/admin_teste.sql` para criar a conta administrativa de teste:
-
-```text
-Matrícula: ADMIN001
-Senha: TenkenAdmin123!
-```
-
-O login da aplicação usa matrícula e senha. Este usuário é destinado somente a ambientes locais de teste.
-
-### Acesso de professor para testes
-
-Depois de criar o banco e aplicar o esquema, execute `database/seed/professor_teste.sql` para criar a conta de professor de teste:
-
-```text
-Matrícula: PROF001
-Senha: TenkenProf123!
-```
-
-O login da aplicação usa matrícula e senha. Este usuário é destinado somente a ambientes locais de teste.
-
-### Acesso de técnico para testes
-
-Depois de criar o banco e aplicar o esquema, execute `database/seed/tecnico_teste.sql` para criar a conta de técnico de teste:
-
-```text
-Matrícula: TEC001
-Senha: TenkenTec123!
-```
-
-O login da aplicação usa matrícula e senha. Este usuário é destinado somente a ambientes locais de teste.
-
-### Requisitos
-
-- Node.js compatível com a versão do Next.js usada pelo projeto.
-- npm.
-
-### Instalação e desenvolvimento
+## Executar localmente com Docker
 
 ```bash
+cp .env.example .env
+docker compose up --build
+```
+
+O front-end fica disponível em `http://localhost:3000` e a API em `http://localhost:8080/api`.
+
+## Executar localmente sem Docker
+
+### Banco de dados
+
+Crie o banco e aplique o esquema em `database/init/02-schema.sql`. Em seguida, execute o seed de usuários de teste:
+
+```bash
+mysql tenken_db < database/seed/usuarios_teste.sql
+```
+
+Isso cria três contas de teste (uso restrito a ambiente local):
+
+```text
+Administrador — Matrícula: ADMIN001 — Senha: TenkenAdmin123!
+Professor     — Matrícula: PROF001  — Senha: TenkenProf123!
+Técnico       — Matrícula: TEC001   — Senha: TenkenTec123!
+```
+
+Para um ambiente de desenvolvimento com mais dados (turmas, equipamentos, agendamentos), use também `database/seed/20261108_1020_seed_completa_laboratorio.sql`.
+
+### Back-end
+
+```bash
+cd backend
+cp .env.example .env   # defina DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, JWT_SECRET
+npm install
+npm run dev
+```
+
+### Front-end
+
+```bash
+cd frontend
+cp .env.example .env   # defina NEXT_PUBLIC_API_URL
 npm install
 npm run dev
 ```
 
 Abra `http://localhost:3000` no navegador.
 
-### Comandos disponíveis
+### Comandos disponíveis (front-end)
 
 | Comando | Ação |
 | --- | --- |
@@ -125,20 +96,31 @@ Abra `http://localhost:3000` no navegador.
 | `npm run build` | Gera a versão de produção. |
 | `npm run start` | Inicia a versão de produção após o build. |
 
+### Comandos disponíveis (back-end)
+
+| Comando | Ação |
+| --- | --- |
+| `npm run dev` | Inicia a API com recarregamento automático. |
+| `npm run start` | Inicia a API em modo produção. |
+
 ## Estrutura do repositório
 
 ```text
-src/app/
-├── globals.css          # Identidade visual e estilos responsivos
-├── header.jsx           # Header com revelação durante a rolagem
-├── layout.jsx           # Layout raiz, metadados e importação do Bootstrap
-├── page.jsx             # Página institucional
-└── patrocinadores.jsx   # Faixa de logos parceiras
+backend/src/
+├── controllers/   # Recebe a requisição e devolve a resposta
+├── services/      # Regras de negócio
+├── models/        # Acesso ao banco de dados (mysql2)
+├── routes/        # Definição das rotas por recurso
+└── middlewares/   # Autenticação e tratamento de erros
 
-public/assets/
-├── img/logo-site/       # Logos Tenken usadas na interface e neste README
-├── img/logo-patrocinadores/ # Logos exibidas na faixa de parceiros
-└── videos/              # Vídeo de fundo do hero
+frontend/src/
+├── app/           # Rotas do Next.js (App Router), uma pasta por perfil
+├── components/    # Componentes compartilhados entre os perfis
+└── lib/           # Cliente de API e sessão do usuário
+
+database/
+├── init/          # Esquema do banco (MySQL)
+└── seed/          # Dados de exemplo e contas de teste
 ```
 
 ## Identidade visual
@@ -155,14 +137,9 @@ public/assets/
 | `--white-smoke` | `#f5f3f4` | Superfícies claras |
 | `--white` | `#ffffff` | Texto sobre fundos escuros |
 
-## Arquitetura futura
-
-O contexto do projeto prevê uma API REST em JSON, banco de dados relacional e autenticação com perfis e tokens JWT. PostgreSQL aparece como opção na arquitetura documentada, enquanto o planejamento inicial também cita MySQL; a definição deve ser confirmada pela equipe antes de implementar a persistência. O armazenamento de evidências fotográficas também deverá ser definido junto à implementação do back-end.
-
 ## Equipe
 
 - **Felipe Stevanato:** banco de dados, modelagem e suporte.
 - **Guilherme Silva:** interface, arquitetura visual e integração.
 - **Samuel Sousa:** documentação, requisitos e apoio ao front-end.
 - **Miguel Cantarino:** back-end, API e validação dos fluxos.
-
