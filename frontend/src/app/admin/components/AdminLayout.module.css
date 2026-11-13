@@ -206,3 +206,9 @@
   .logoutBtn { padding: 8px; font-size: 0; }
   .mainView { padding: 18px 14px 28px; }
 }
+
+
+/* Acabamento visual alinhado à visão geral do professor. */
+.topbar { border-bottom-color: rgba(245,243,244,.14); background: linear-gradient(90deg,rgba(164,22,26,.07),transparent 52%),rgba(11,15,18,.94); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+.statusPill,.userBadge { border-radius: 12px; border-color: rgba(245,243,244,.14); }
+.menuBtn { border-radius: 10px; }
