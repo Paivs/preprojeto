@@ -102,12 +102,12 @@ export default function DiagnosticoAluno() {
                 const idPainel = `detalhes-${equipamento.id}`;
                 return (
                   <li className={styles.item} key={equipamento.id}>
-                    <button className={styles.linha} type="button" onClick={() => alternarEquipamento(equipamento.id)} aria-expanded={aberto} aria-controls={idPainel}>
+                    <button id={`linha-${equipamento.id}`} className={styles.linha} type="button" onClick={() => alternarEquipamento(equipamento.id)} aria-expanded={aberto} aria-controls={idPainel}>
                       <span className={styles.idEquipamento}>{equipamento.id}</span>
                       <span className={styles.dadosEquipamento}><strong>{equipamento.nome}</strong><small>{equipamento.tipo} <i>·</i> {equipamento.detalhe}</small></span>
                       <span className={styles.acoesLinha}><span className={styles.badge}>OPERACIONAL</span><IconeSeta className={`${styles.seta} ${aberto ? styles.setaAberta : ""}`} direcao="baixo" /></span>
                     </button>
-                    <div className={`${styles.painel} ${aberto ? styles.painelAberto : ""}`} id={idPainel} aria-hidden={!aberto}>
+                    <div className={`${styles.painel} ${aberto ? styles.painelAberto : ""}`} id={idPainel} role="region" aria-labelledby={`linha-${equipamento.id}`} aria-hidden={!aberto}>
                       <div className={styles.detalhes}>
                         <p><span>Alimentação / pressão nominal</span><strong>{equipamento.detalhes.alimentacao}</strong></p>
                         <p><span>Última inspeção</span><strong>{equipamento.detalhes.ultimaInspecao}</strong></p>
