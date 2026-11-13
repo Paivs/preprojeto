@@ -916,3 +916,9 @@
 .prioridade,.status { border-radius: 999px; }
 .busca,.filtro select,.botaoDetalhes,.fecharModal,.modalDados div,.campoDescricaoServico textarea { border-radius: 10px; }
 .botaoDetalhes .material-symbols-outlined { display:inline-flex; align-items:center; justify-content:center; line-height:1; }
+
+/* Superfícies, filtros e ações da lista de chamados */
+.filterBar,.ticketCard,.modalCard,.modalActionPanel,.modalMetaGrid > div { border-radius: 15px; }
+.searchInput,.select,.statusSelect,.actionBtn,.openTicketBtn,.pageBtn,.clearBtn { border-radius: 10px; }
+.filterPill,.sevBadge,.statusBadge { border-radius: 999px; }
+.ticketIcon,.modalIcon { border-radius: 12px; }
