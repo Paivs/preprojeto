@@ -50,3 +50,9 @@
   .overlay, .overlayClosing, .dialog, .dialogClosing, .success .icon, .error .icon, .checkPath { animation-duration: 1ms; }
   .checkPath { stroke-dashoffset: 0; }
 }
+
+
+/* Acabamento visual alinhado à visão geral do professor. */
+.dialog { border: 2px solid rgba(245,243,244,.16); border-radius: 18px; background: radial-gradient(ellipse at 100% 0%,rgba(164,22,26,.1),transparent 45%),var(--surface-low,#181c1f); box-shadow: inset 0 1px rgba(255,255,255,.04),0 1rem 2rem rgb(0 0 0 / 50%); }
+.button { border-radius: 10px; }
+.icon { display:grid; place-items:center; }

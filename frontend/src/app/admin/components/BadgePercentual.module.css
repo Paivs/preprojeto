@@ -3,3 +3,7 @@
 .rotulo { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .percentual { min-width:42px; text-align:right; color:var(--silver); }
 .quantidade { min-width:48px; text-align:right; font-weight:600; color:var(--white); }
+
+
+/* Acabamento visual alinhado à visão geral do professor. */
+.marcador { display:grid; place-items:center; border-radius:50%; }

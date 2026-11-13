@@ -195,3 +195,14 @@
   .brandLogo { width: 176px; }
   .mobileCloseBtn { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--border-subtle, #22272b); background: transparent; color: var(--white-smoke, #f5f3f4); cursor: pointer; }
 }
+
+/* Acabamento visual alinhado à visão geral do professor. */
+.sidebar { border-right-color: rgba(245,243,244,.15); background: radial-gradient(ellipse at 0 0,rgba(164,22,26,.11),transparent 42%),var(--surface-lowest,#0b0f12); }
+.brandBadge { border-radius: 11px; box-shadow: 0 7px 18px rgba(164,22,26,.24); }
+.navItem { border-radius: 11px; }
+.navIcon { display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; line-height:1; }
+.telemetryCard { border-radius: 12px; border-color: rgba(245,243,244,.14); }
+
+/* Ícones da navegação no padrão visual da barra do Professor. */
+.navIcon { width:28px; height:28px; flex:0 0 28px; padding-top:2px; border:1px solid rgba(245,243,244,.08); border-radius:9px; font-size:19px; line-height:1; text-align:center; }
+.navItemActive .navIcon { border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.08); }

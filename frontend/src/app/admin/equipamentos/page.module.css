@@ -1187,3 +1187,27 @@
   .filterBar { padding: 0.75rem; }
   .inventorySection { overflow-x: auto; }
 }
+
+
+/* Acabamento visual alinhado à visão geral do professor. */
+.metricCard,.auditLogCard,.modalCard { border-radius: 14px; }
+.metricCard,.auditLogCard { border-color: rgba(245,243,244,.15); box-shadow: inset 0 1px rgba(255,255,255,.035),0 10px 24px rgba(0,0,0,.14); }
+.typeCard { border-radius: 12px; }
+.typeIcon,.modalHeaderIcon,.modalCloseBtn { display:inline-flex; align-items:center; justify-content:center; }
+
+/* Inventário: controles e tabela do equipamento */
+.refreshBtn,.newEquipmentBtn,.resetFiltersBtn,.actionBtn,.cancelBtn,.saveBtn { border-radius: 11px; }
+.filterBar { border: 2px solid rgba(245,243,244,.14); border-radius: 16px; }
+.searchInput,.selectWrapper,.typeBadge { border-radius: 11px; }
+.statusBadge,.notifierBadge { border-radius: 999px; }
+.actionMenu,.initialStatusNotifier { border-radius: 12px; }
+.tableSkeleton { border-radius: 16px; }
+.container :global([class*="AdminTable_card"]) { overflow: hidden; border: 2px solid rgba(245,243,244,.15); border-radius: 16px; }
+.container :global([class*="AdminTable_pageButton"]) { border-radius: 10px; }
+
+/* Busca: conter o fundo interno nas quinas arredondadas. */
+.searchBox { overflow: hidden; border-radius: 14px; }
+.searchBox .searchInput { border-radius: 12px; background-clip: padding-box; }
+
+/* Tabela de inventário: manter o contorno contínuo nas quatro quinas. */
+.inventorySection :global(section[class*="card"]) { overflow: hidden; border: 2px solid rgba(245,243,244,.15); border-radius: 16px; }
