@@ -181,6 +181,17 @@ export async function registrar(dados, usuario) {
         tipo: "CORRETIVO",
         severidade,
       }), conexao);
+    } else if (possuiFalha) {
+      chamado = await ChamadoModel.criar(new Chamado({
+        id: 1,
+        equipamento_id: Number(equipamento.id),
+        inspecao_id: Number(inspecaoId),
+        solicitante_id: Number(usuario.id),
+        titulo: `Ressalva na inspeção — ${equipamento.nome}`.slice(0, 150),
+        descricao: descricaoChamado || "Item não crítico reprovado na inspeção; manutenção preventiva recomendada.",
+        tipo: "PREVENTIVO",
+        severidade: "BAIXA",
+      }), conexao);
     }
 
     await conexao.commit();
