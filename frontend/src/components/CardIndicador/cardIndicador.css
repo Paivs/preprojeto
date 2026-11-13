@@ -1,0 +1,70 @@
+.card-topo{
+    width: 320px;
+    height: 180px;
+    box-shadow: 0 0 5px rgba(0, 0, 0.1);
+    background-color: var(--dark-bg-tertiary);
+    border-radius: 5px;
+    padding: 1.5rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.card-topo h2{
+    font-size: 2.2rem;
+    color: var(--branco);
+    font-weight: 500;
+}
+
+.top strong{
+    color: var(--cinza);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.card-topo i{
+    font-size: 1.5rem;
+    background-color: rgba(146, 79, 240, 0.4);
+    color: var(--roxo-claro);
+    padding: 0.8rem;
+    border-radius: 5px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.top{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-top{
+    display: flex;
+    flex-direction: column;
+}
+
+.bottom{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.bottom hr{
+    width: 100%;
+    height: 2px;
+    border: 0;
+    opacity: 1;
+    background-color: var(--dark-text-tertiary);
+}
+
+.bottom strong{
+    color: var(--dark-text-tertiary);
+    font-size: 1.1rem;
+    font-weight: 500;
+}

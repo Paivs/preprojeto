@@ -1,5 +1,6 @@
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
+import CardIndicador from "@/components/CardIndicador";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import "./financeiro.css";
 
@@ -13,33 +14,33 @@ export default function Financeiro() {
 
                 <div className="container">
                     <div className="topo-pag">
-                        <div className="card-topo">
-                            <div className="top">
-                                <div className="flex-top">
-                                    <strong>Total Faturado</strong>
-                                    <h2>R$ 29.000</h2>
-                                </div>
+                        <CardIndicador
+                            titulo="Lucro Líquido"
+                            valor="R$ 55.000"
+                            icone="bi bi-cash-stack"
+                            numero="01"
+                        />
 
-                                <i className="bi bi-cash-stack"></i>
-                            </div>
+                        <CardIndicador
+                            titulo="Total Faturado"
+                            valor="R$ 91.320"
+                            icone="bi bi-wallet2"
+                            numero="02"
+                        />
 
-                            <div className="bottom">
-                                <strong>01</strong>
-                                <hr/>
-                            </div>
-                        </div>
+                        <CardIndicador
+                            titulo="Qtd. Clientes"
+                            valor="1284"
+                            icone="bi bi-briefcase-fill"
+                            numero="03"
+                        />
 
-                        <div className="card-topo">
-                            
-                        </div>
-
-                        <div className="card-topo">
-                            
-                        </div>
-
-                        <div className="card-topo">
-                            
-                        </div>
+                        <CardIndicador
+                            titulo="Recebimentos"
+                            valor="1282"
+                            icone="bi bi-person-workspace"
+                            numero="04"
+                        />
                     </div>
 
                     <div className="baixo-pag">
@@ -53,14 +54,22 @@ export default function Financeiro() {
                             </div>
 
                             <div className="flex-p">
-                                <p><i className="bi bi-person-workspace"></i> 67 Clientes </p>
+                                <p className="box-pagamentos"><i className="bi bi-info-circle-fill"></i> 2 Pagamentos pendentes</p>
 
-                                <p><i className="bi bi-info-circle-fill"></i> 2 Pagamentos pendentes</p>
+                                <p className="box-barra"><span className="flex-barra">Total Recebido <strong className="flex-end">99%</strong></span> <span className="barra"></span></p>
                             </div>
                            
                         </div>
 
-                        <div className="card"></div>
+                        <div className="card">
+                            <h2>Insights da IA <i className="bi bi-robot"></i></h2>
+
+                            <hr/>
+
+                            <p className="insight">
+                                O resumo financeiro da empresa nos últimos meses é positivo. Embora tenham duas pendências de pagamentos, a empresa teve crescimento no lucro em relação ao último mês
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
