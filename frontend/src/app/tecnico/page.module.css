@@ -98,3 +98,8 @@
   .header { align-items: flex-start; flex-direction: column; }
   .gradeIndicadores { grid-template-columns: 1fr; gap: 12px; }
 }
+
+
+/* Acabamento visual alinhado à visão geral do professor. */
+.gradeIndicadores > * { border-radius: 15px; }
+.erro { border-radius: 12px; border-width: 2px; }
