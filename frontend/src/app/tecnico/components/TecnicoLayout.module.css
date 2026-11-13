@@ -70,3 +70,10 @@
   .accountInfo { min-width: 0; max-width: 120px; }
   .logoutButton { width: 36px; padding: 0; font-size: 0; }
 }
+
+
+/* Acabamento visual alinhado à visão geral do professor. */
+.sidebar { background: radial-gradient(ellipse at 0 0,rgba(164,22,26,.1),transparent 42%),var(--surface-lowest,#0b0f12); border-right-color: rgba(245,243,244,.14); }
+.navLink { border-radius: 11px; }
+.avatar { border-radius: 11px; box-shadow: 0 6px 16px rgba(164,22,26,.2); }
+.closeMenu { border-radius: 10px; }
