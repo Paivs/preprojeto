@@ -101,10 +101,13 @@ export default function AgendamentosProfessor() {
     localizacaoFiltro === "TODAS" || item.localizacao === localizacaoFiltro);
 
   const dataReferencia = paraISO(dataFoco);
+  const hoje = paraISO(new Date());
   const primeiroDiaMes = new Date(dataFoco.getFullYear(), dataFoco.getMonth(), 1, 12);
   const ultimoDiaMes = new Date(dataFoco.getFullYear(), dataFoco.getMonth() + 1, 0, 12);
-  const segundaSemana = inicioDaSemana(dataFoco);
-  const diasSemana = Array.from({ length: 5 }, (_, indice) => somarDias(segundaSemana, indice));
+  const diasSemana = Array.from({ length: 5 }, (_, indice) => somarDias(dataFoco, indice));
+  const podeVoltarPeriodo = visualizacao === "DIA" || visualizacao === "SEMANA"
+    ? dataReferencia > hoje
+    : true;
   const dataInicio = visualizacao === "DIA" ? dataReferencia : visualizacao === "MES" ? paraISO(primeiroDiaMes) : paraISO(diasSemana[0]);
   const dataFim = visualizacao === "DIA" ? dataReferencia : visualizacao === "MES" ? paraISO(ultimoDiaMes) : paraISO(somarDias(diasSemana[4], 2));
 
@@ -279,7 +282,7 @@ export default function AgendamentosProfessor() {
       <section className={styles.painelAgenda} aria-labelledby="titulo-calendario">
         <div className={styles.cabecalhoPainel}>
           <div className={styles.navegacaoPeriodo}>
-            <button type="button" onClick={() => moverPeriodo(-1)} aria-label="Período anterior"><span className="material-symbols-outlined" aria-hidden="true">chevron_left</span></button>
+            <button type="button" onClick={() => moverPeriodo(-1)} disabled={!podeVoltarPeriodo} aria-label="Período anterior"><span className="material-symbols-outlined" aria-hidden="true">chevron_left</span></button>
             <h2 id="titulo-calendario">{rotuloPeriodo}</h2>
             <button type="button" onClick={() => moverPeriodo(1)} aria-label="Próximo período"><span className="material-symbols-outlined" aria-hidden="true">chevron_right</span></button>
             <span className={`${styles.estadoLaboratorio} ${equipamentosOperacionais ? styles.laboratorioAtivo : styles.laboratorioInativo}`}>
@@ -289,7 +292,7 @@ export default function AgendamentosProfessor() {
           <div className={styles.alternadorVisualizacao} role="group" aria-label="Visualização do calendário">
             {[ ["DIA", "Dia"], ["SEMANA", "Semana"], ["MES", "Mês"] ].map(([valor, rotulo]) => <button
               type="button" key={valor} className={visualizacao === valor ? styles.visualizacaoAtiva : ""}
-              aria-pressed={visualizacao === valor} onClick={() => setVisualizacao(valor)}
+              aria-pressed={visualizacao === valor} onClick={() => { setVisualizacao(valor); if (valor === "SEMANA" && dataReferencia < hoje) setDataFoco(new Date()); }}
             >{rotulo}</button>)}
           </div>
         </div>
