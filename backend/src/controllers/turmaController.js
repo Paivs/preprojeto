@@ -14,7 +14,6 @@ export async function criar(req, res, next) {
     const turma = await TurmaService.criar(req.body);
     return res.status(201).json({ sucesso: true, dados: turma });
   } catch (erro) {
-    if (erro instanceof TypeError) return res.status(400).json({ sucesso: false, erro: erro.message });
     return next(erro);
   }
 }
