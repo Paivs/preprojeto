@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./BarraLateral.module.css";
 
@@ -24,7 +25,7 @@ export default function BarraLateral({ statusApi, aberta = false, onNavegar, onF
         {/* Header / Brand */}
         <div className={styles.brandHeader}>
           <Link href="/" className={styles.brandLink} aria-label="Tenken Início">
-            <img src="/assets/img/logo-site/logo_horizontal.svg" alt="Tenken" className={styles.brandLogo} />
+            <Image src="/assets/img/logo-site/logo_horizontal.svg" alt="Tenken" width={380} height={84} className={styles.brandLogo} />
           </Link>
           <button type="button" className={styles.mobileCloseBtn} onClick={onFechar} aria-label="Fechar menu"><span className="material-symbols-outlined">close</span></button>
         </div>

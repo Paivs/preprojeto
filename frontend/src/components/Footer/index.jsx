@@ -1,11 +1,12 @@
 import styles from "./Footer.module.css";
+import Image from "next/image";
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className="container py-4 d-flex flex-column flex-md-row justify-content-between gap-3">
         <a href="#inicio" className={styles.marca} aria-label="Tenken — voltar ao início">
-          <img src="/assets/img/logo-site/letreiro_tenken.svg" alt="Tenken" />
+          <Image src="/assets/img/logo-site/letreiro_tenken.svg" alt="Tenken" width={360} height={82} />
         </a>
         <p className={styles.descricao}>
           O Tenken ajuda laboratórios educacionais a acompanhar seus equipamentos em cada etapa. Organize agendamentos, registre inspeções antes e depois do uso e mantenha ocorrências e manutenções no histórico.
