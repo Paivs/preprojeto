@@ -21,11 +21,10 @@
 
 .brandHeader {
   display: flex;
-  height: 64px;
-  flex: 0 0 64px;
+  height: 40px;
+  flex: 0 0 40px;
   align-items: center;
   padding: 0 24px;
-  border-bottom: 1px solid rgb(255 255 255 / 4%);
 }
 
 .brandLink {
@@ -44,12 +43,11 @@
 }
 
 .sectionHeading {
-  padding: 20px 24px 10px;
+  padding: 0 24px 10px;
+  border-bottom: 0.5px solid var(--border-subtle);
   color: var(--silver);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  line-height: 1.4;
 }
 
 .navegacao {
@@ -178,7 +176,7 @@
     height: auto;
     flex: none;
     align-self: auto;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: 10px 8px;
     padding: 12px 16px;
@@ -199,7 +197,12 @@
   }
 
   .sectionHeading {
-    display: none;
+    display: block;
+    padding: 0 0 6px;
+    font-size: 11px;
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
   }
 
   .navegacao {
@@ -215,6 +218,8 @@
   }
 
   .footer {
+    grid-column: 3;
+    grid-row: 1;
     justify-self: end;
     margin: 0;
     padding: 0;
