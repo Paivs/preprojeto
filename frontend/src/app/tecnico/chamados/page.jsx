@@ -8,6 +8,7 @@ import EmptyState from "@/components/EmptyState";
 const STATUS = [
   ["ABERTO", "Aberto"],
   ["EM_ATENDIMENTO", "Em atendimento"],
+  ["AGUARDANDO_PECAS", "Aguardando peças"],
 ];
 const SEVERIDADES = [["CRITICA", "Crítica"], ["ALTA", "Alta"], ["MEDIA", "Média"], ["BAIXA", "Baixa"]];
 const ROTULO_STATUS = Object.fromEntries(STATUS);
@@ -34,6 +35,8 @@ export default function PaginaChamadosTecnico() {
   const [chamadoSelecionado, setChamadoSelecionado] = useState(null);
   const [atualizandoStatus, setAtualizandoStatus] = useState(false);
   const [descricaoServico, setDescricaoServico] = useState("");
+  const [pecasTrocadas, setPecasTrocadas] = useState("");
+  const [custoServico, setCustoServico] = useState("");
   const [aviso, setAviso] = useState("");
 
   const carregar = useCallback(async () => {
@@ -80,6 +83,8 @@ export default function PaginaChamadosTecnico() {
   function abrirDetalhes(chamado) {
     setChamadoSelecionado(chamado);
     setDescricaoServico("");
+    setPecasTrocadas("");
+    setCustoServico("");
     setErro("");
     setAviso("");
   }
@@ -116,17 +121,24 @@ export default function PaginaChamadosTecnico() {
 
   async function concluirOrdem() {
     if (!chamadoSelecionado || atualizandoStatus) return;
+    const custo = custoServico.trim() === "" ? 0 : Number(custoServico);
+    if (!Number.isFinite(custo) || custo < 0) {
+      setErro("Informe um custo vÃ¡lido, igual ou maior que zero.");
+      return;
+    }
     setAtualizandoStatus(true);
     setErro("");
     setAviso("");
     try {
       await apiFetch(`/api/ordens-servico/${chamadoSelecionado.os_id}/concluir`, {
         method: "POST",
-        body: { descricao: descricaoServico },
+        body: { descricao: descricaoServico, pecas_trocadas: pecasTrocadas, custo },
       });
       setChamados((atuais) => atuais.filter((chamado) => chamado.os_id !== chamadoSelecionado.os_id));
       setChamadoSelecionado(null);
       setDescricaoServico("");
+      setPecasTrocadas("");
+      setCustoServico("");
       setAviso("Ordem de serviço concluída com sucesso.");
     } catch (error) {
       setErro(error.message || "Não foi possível concluir a ordem de serviço.");
@@ -279,7 +291,15 @@ export default function PaginaChamadosTecnico() {
                   <span>Descrição do serviço realizado</span>
                   <textarea value={descricaoServico} onChange={(evento) => setDescricaoServico(evento.target.value)} rows={5} placeholder="Descreva o serviço realizado" required />
                 </label>
-                <button type="button" className={styles.botaoAcao} onClick={concluirOrdem} disabled={atualizandoStatus || !descricaoServico.trim()}>
+                <label className={styles.campoDescricaoServico}>
+                  <span>Peças trocadas (opcional)</span>
+                  <textarea value={pecasTrocadas} onChange={(evento) => setPecasTrocadas(evento.target.value)} rows={3} placeholder="Informe as peças substituídas, se houver" />
+                </label>
+                <label className={styles.campoDescricaoServico}>
+                  <span>Custo do reparo (opcional)</span>
+                  <input type="number" min="0" step="0.01" value={custoServico} onChange={(evento) => setCustoServico(evento.target.value)} placeholder="0.00" />
+                </label>
+                <button type="button" className={styles.botaoAcao} onClick={concluirOrdem} disabled={atualizandoStatus || !descricaoServico.trim() || (custoServico !== "" && (!Number.isFinite(Number(custoServico)) || Number(custoServico) < 0))}>
                   {atualizandoStatus ? "Concluindo..." : "Concluir ordem de serviço"}
                 </button>
               </div>
