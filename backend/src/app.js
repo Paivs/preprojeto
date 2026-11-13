@@ -8,6 +8,7 @@ import healthRoutes from "./routes/healthRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
 import setorRoutes from "./routes/setorRoutes.js";
 import equipamentoRoutes from "./routes/equipamentoRoutes.js";
+import emailRoutes from "./routes/emailRoutes.js";
 import { authRouter } from "./routes/AuthRoutes.js";
 
 const app = express();
@@ -46,6 +47,7 @@ app.use("/api/auth", authRouter); // pública: login e registrar
 
 app.use("/api/setores", autenticar, setorRoutes);
 app.use("/api/equipamentos", autenticar, equipamentoRoutes);
+app.use("/api/emails", autenticar, autorizarAdmin, emailRoutes);
 
 // Protegida: precisa de token E ser admin
 app.use("/api/usuarios", autenticar, autorizarAdmin, usuarioRoutes);
