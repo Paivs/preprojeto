@@ -46,7 +46,7 @@ export function InspecaoPendentePagina() {
   async function salvar(formulario) {
     setSalvando(true);
     try {
-      const resultado = await registrarInspecao({ agendamentoId: item.agendamentoId, etapa: item.etapa, respostas: formulario.respostas, observacoes: formulario.observacoes });
+      const resultado = await registrarInspecao({ agendamentoId: item.agendamentoId, etapa: item.etapa, respostas: formulario.respostas, observacoes: formulario.observacoes, chamadoDescricao: formulario.chamadoDescricao, chamadoSeveridade: formulario.chamadoSeveridade });
       router.replace(`/professor/inspecoes/registro/${resultado.id}`);
       return { ok: true };
     } catch (e) {
