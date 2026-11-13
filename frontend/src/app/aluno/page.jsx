@@ -1,19 +1,42 @@
-import Link from "next/link";
-import styles from "./page.module.css";
+"use client";
 
-export default function PaginaAluno() {
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import FormularioVinculo from "@/components/aluno/FormularioVinculo";
+import EstadoAguardando from "@/components/aluno/EstadoAguardando";
+import styles from "./aluno.module.css";
+
+export default function PaginaVinculacaoAluno() {
+  const router = useRouter();
+  const [etapa, setEtapa] = useState("FORM");
+  const [solicitacao, setSolicitacao] = useState(null);
+
+  useEffect(() => {
+    if (etapa !== "APPROVED") return;
+    window.sessionStorage.setItem("tenken-aluno-bancada-liberada", "true");
+    router.replace("/aluno/bem-vindo");
+  }, [etapa, router]);
+
+  function enviarSolicitacao(dados) {
+    setSolicitacao(dados);
+    setEtapa("WAITING");
+  }
+
   return (
-    <section className={styles.pagina}>
-      <div className={styles.marca} aria-hidden="true">TENKEN / LABORATÓRIO</div>
-      <div className={styles.conteudo}>
-        <span className={styles.indicador}><span /> AMBIENTE DE APRENDIZAGEM</span>
-        <h1 className={styles.titulo}>Bem-vindo ao <span>TENKEN</span></h1>
-        <p className={styles.resumo}>Seu espaço para aprender, acompanhar o plano da aula e consultar os equipamentos do laboratório.</p>
-        <Link className={styles.acao} href="/aluno/diagnostico">
-          Ver diagnóstico da aula <span aria-hidden="true">↗</span>
-        </Link>
+    <main className={styles.pagina}>
+      <div className={`${styles.conteudo} ${styles.compacto}`}>
+        {etapa === "FORM" && (
+          <section className={styles.formulario}>
+            <p className={styles.eyebrow}>VINCULAÇÃO DE SESSÃO</p>
+            <h1 className={styles.titulo}>Acesso à bancada do laboratório</h1>
+            <p className={styles.descricao}>Insira seu nome, turma e o token compartilhado pelo professor para solicitar acesso aos equipamentos da aula.</p>
+            <FormularioVinculo onEnviar={enviarSolicitacao} />
+          </section>
+        )}
+        {etapa === "WAITING" && solicitacao && (
+          <EstadoAguardando sessao={solicitacao} token={solicitacao.token} onCancelar={() => setEtapa("FORM")} onSimularAprovacao={() => setEtapa("APPROVED")} />
+        )}
       </div>
-      <div className={styles.rodape}>TECNOLOGIA INDUSTRIAL <span>•</span> SEGURANÇA <span>•</span> PRECISÃO</div>
-    </section>
+    </main>
   );
 }
