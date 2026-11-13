@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
 import styles from "./page.module.css";
 import EmptyState from "@/components/EmptyState";
@@ -135,14 +135,11 @@ export default function PaginaChamadosTecnico() {
     }
   }
 
-  const filtrados = useMemo(() => {
-    const termo = busca.trim().toLocaleLowerCase("pt-BR");
-    if (!termo) return chamados;
-    return chamados.filter((chamado) =>
-      [chamado.os_numero, chamado.id, chamado.titulo, chamado.descricao, chamado.equipamento_id, chamado.tipo]
-        .some((valor) => String(valor ?? "").toLocaleLowerCase("pt-BR").includes(termo)),
-    );
-  }, [busca, chamados]);
+  const termoBusca = busca.trim().toLocaleLowerCase("pt-BR");
+  const filtrados = !termoBusca ? chamados : chamados.filter((chamado) =>
+    [chamado.os_numero, chamado.id, chamado.titulo, chamado.descricao, chamado.equipamento_id, chamado.tipo]
+      .some((valor) => String(valor ?? "").toLocaleLowerCase("pt-BR").includes(termoBusca)),
+  );
 
   return (
     <div className={styles.container}>

@@ -157,7 +157,6 @@ A comunicação entre o cliente (web/mobile) e o servidor Back-end do sistema Te
 | Alunos | **POST** | /api/alunos/solicitar-acesso | Valida o Token da turma e registra a solicitação de check-in do aluno (fica aguardando aprovação do professor). | 200 OK, 400 Bad Request, 401 Unauthorized, 404 Not Found, 422 Unprocessable Entity |
 | Inspeções | **POST** | /api/inspecoes | Registra uma nova vistoria (Tenken) pré ou pós-uso. | 201 Created, 400 Bad Request, 401 Unauthorized, 422 Unprocessable Entity |
 | Inspeções | **GET** | /api/inspecoes/{id}/respostas | Obtém as respostas do checklist de uma inspeção específica. | 200 OK, 401 Unauthorized, 404 Not Found |
-| Ocorrências | **GET** | /api/ocorrencias | Lista de ocorrências e falhas registradas. | 200 OK, 401 Unauthorized |
 | Chamados | **POST** | /api/chamados | Abre um novo chamado manual de falha/avaria. | 201 Created, 400 Bad Request, 401 Unauthorized |
 | Chamados | **GET** | /api/chamados | Lista os chamados de manutenção. | 200 OK, 401 Unauthorized |
 | Chamados | **PATCH** | /api/chamados/{id}/status | Atualiza o status do chamado. | 200 OK, 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found |
@@ -166,7 +165,7 @@ A comunicação entre o cliente (web/mobile) e o servidor Back-end do sistema Te
 | Usuários | **POST** | /api/usuarios/login | Autentica usuário e retorna token JWT. | 200 OK, 400 Bad Request, 401 Unauthorized |
 | Usuários | **GET** | /api/usuarios | Lista usuários do sistema (Alunos, Professores, Admins). | 200 OK, 401 Unauthorized, 403 Forbidden |
 
-A lista completa de rotas (turmas, checklist, componentes, pré-cadastro de staff, dashboards de admin/técnico) está em `backend/src/app.js`. O fluxo de chamados aberto a partir de inspeções está detalhado em `docs/chamados-professor.md`.
+A lista completa de rotas (turmas, inspeções, pré-cadastro de staff e dashboards de admin/técnico) está em `backend/src/App.js`. O fluxo de chamados aberto a partir de inspeções está detalhado em `docs/chamados-professor.md`.
 
 #### ***5.2. Códigos de Status HTTP***
 

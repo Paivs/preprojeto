@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { listarAgendamentos, listarTurmas } from "../lib/professorApi";
 import EmptyState from "@/components/EmptyState";
 import ModalProfessor from "./ModalProfessor";
@@ -31,17 +31,15 @@ export default function TurmasProfessor() {
   const [turmaId, setTurmaId, fechandoDetalhe, finalizarFechamentoDetalhe] = useModalExit(null);
   const turmaSelecionada = dados.turmas.find((item) => item.id === turmaId);
 
-  const turmas = useMemo(() => dados.turmas.map((turma) => {
+  const turmas = dados.turmas.map((turma) => {
     const reservas = dados.agendamentos.filter((item) => item.turmaId === turma.id && item.status !== "CANCELADO").sort((a, b) => `${a.data}${a.inicio}`.localeCompare(`${b.data}${b.inicio}`));
     const proxima = reservas[0];
     return { ...turma, reservas, proxima };
-  }), [dados.turmas, dados.agendamentos]);
+  });
 
-  const totalAlunos = useMemo(() => dados.turmas.reduce((total, turma) => total + turma.alunos, 0), [dados.turmas]);
-  const visiveis = useMemo(() => {
-    const termo = normalizar(busca.trim());
-    return turmas.filter((turma) => normalizar(`${turma.nome} ${turma.proxima?.atividade || ""}`).includes(termo));
-  }, [busca, turmas]);
+  const totalAlunos = dados.turmas.reduce((total, turma) => total + turma.alunos, 0);
+  const termoBusca = normalizar(busca.trim());
+  const visiveis = turmas.filter((turma) => normalizar(`${turma.nome} ${turma.proxima?.atividade || ""}`).includes(termoBusca));
   const reservasDetalhe = turmaSelecionada ? dados.agendamentos.filter((item) => item.turmaId === turmaSelecionada.id).sort((a, b) => `${a.data}${a.inicio}`.localeCompare(`${b.data}${b.inicio}`)) : [];
 
   return (

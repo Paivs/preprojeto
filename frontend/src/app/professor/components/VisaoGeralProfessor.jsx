@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { listarAgendamentos, listarEquipamentos, listarInspecoes, listarTurmas } from "../lib/professorApi";
 import { getUsuario } from "@/lib/session";
 import { dataPorExtenso, saudacaoPorHorario } from "@/lib/saudacao";
@@ -31,22 +31,19 @@ export default function VisaoGeralProfessor() {
       .finally(() => { if (ativo) setCarregando(false); });
     return () => { ativo = false; };
   }, []);
-  const resumoEquipamentos = useMemo(
-    () => resumirEquipamentos(dados.equipamentos),
-    [dados.equipamentos],
-  );
+  const resumoEquipamentos = resumirEquipamentos(dados.equipamentos);
   const primeiroNome = dados.professora?.nome?.split(" ")[0] || "professor";
   const hoje = new Date();
   const hojeISO = dataLocalISO();
   const dataFormatada = dataPorExtenso(hoje);
   const saudacao = saudacaoPorHorario(hoje);
 
-  const reservasHoje = useMemo(() => dados.agendamentos
+  const reservasHoje = dados.agendamentos
     .filter((item) => item.data === hojeISO && item.status !== "CANCELADO")
-    .sort((a, b) => a.inicio.localeCompare(b.inicio)), [dados.agendamentos, hojeISO]);
-  const pendencias = useMemo(() => dados.inspecoes
+    .sort((a, b) => a.inicio.localeCompare(b.inicio));
+  const pendencias = dados.inspecoes
     .filter((item) => !item.resultado && !item.cancelada)
-    .sort((a, b) => `${a.data}${a.horario}`.localeCompare(`${b.data}${b.horario}`)), [dados.inspecoes]);
+    .sort((a, b) => `${a.data}${a.horario}`.localeCompare(`${b.data}${b.horario}`));
 
   const metricas = [
     { rotulo: "Agendamentos hoje", valor: reservasHoje.length, detalhe: `${reservasHoje.filter((item) => item.status === "CONFIRMADO").length} confirmados · ${reservasHoje.filter((item) => item.status === "EM_ANDAMENTO").length} em andamento`, icone: "calendar_month" },

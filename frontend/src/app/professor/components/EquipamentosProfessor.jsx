@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { listarAgendamentos, listarEquipamentos } from "../lib/professorApi";
 import EmptyState from "@/components/EmptyState";
 import ModalProfessor from "./ModalProfessor";
@@ -33,19 +33,17 @@ export default function EquipamentosProfessor() {
   const [equipamentoId, setEquipamentoId, fechandoDetalhe, finalizarFechamentoDetalhe] = useModalExit(null);
   const equipamentoSelecionado = dados.equipamentos.find((item) => item.id === equipamentoId);
 
-  const contagem = useMemo(() => dados.equipamentos.reduce((total, equipamento) => {
+  const contagem = dados.equipamentos.reduce((total, equipamento) => {
     total[equipamento.status] = (total[equipamento.status] || 0) + 1;
     return total;
-  }, {}), [dados.equipamentos]);
+  }, {});
 
-  const visiveis = useMemo(() => {
-    const termo = normalizar(busca.trim());
-    return dados.equipamentos.filter((equipamento) => {
-      const correspondeStatus = filtroStatus === "TODOS" || equipamento.status === filtroStatus;
-      const texto = normalizar(`${equipamento.nome} ${equipamento.patrimonio} ${equipamento.localizacao} ${equipamento.tipo}`);
-      return correspondeStatus && (!termo || texto.includes(termo));
-    });
-  }, [dados.equipamentos, busca, filtroStatus]);
+  const termoBusca = normalizar(busca.trim());
+  const visiveis = dados.equipamentos.filter((equipamento) => {
+    const correspondeStatus = filtroStatus === "TODOS" || equipamento.status === filtroStatus;
+    const texto = normalizar(`${equipamento.nome} ${equipamento.patrimonio} ${equipamento.localizacao} ${equipamento.tipo}`);
+    return correspondeStatus && (!termoBusca || texto.includes(termoBusca));
+  });
 
   const reservasRelacionadas = equipamentoSelecionado
     ? dados.agendamentos.filter((item) => item.equipamentoId === equipamentoSelecionado.id && item.status !== "CANCELADO").sort((a, b) => `${b.data}${b.inicio}`.localeCompare(`${a.data}${a.inicio}`)).slice(0, 3)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import styles from "./page.module.css";
 import { chamarApi } from "../lib/adminApi";
@@ -43,20 +43,15 @@ function Conteudo({ token }) {
 
   useEffect(() => { carregar(); }, [carregar]);
 
-  const totalAlunos = useMemo(
-    () => turmas.reduce((soma, turma) => soma + Number(turma.alunos ?? 0), 0),
-    [turmas],
-  );
+  const totalAlunos = turmas.reduce((soma, turma) => soma + Number(turma.alunos ?? 0), 0);
 
-  const turmasFiltradas = useMemo(() => {
-    const termo = busca.trim().toLocaleLowerCase("pt-BR");
-    return turmas.filter((turma) => {
-      const correspondeBusca = !termo || [turma.nome, turma.professor_nome, String(turma.id)]
-        .some((valor) => String(valor ?? "").toLocaleLowerCase("pt-BR").includes(termo));
-      const correspondeFiltro = filtro === "todas" || Number(turma.alunos ?? 0) === 0;
-      return correspondeBusca && correspondeFiltro;
-    });
-  }, [busca, filtro, turmas]);
+  const termo = busca.trim().toLocaleLowerCase("pt-BR");
+  const turmasFiltradas = turmas.filter((turma) => {
+    const correspondeBusca = !termo || [turma.nome, turma.professor_nome, String(turma.id)]
+      .some((valor) => String(valor ?? "").toLocaleLowerCase("pt-BR").includes(termo));
+    const correspondeFiltro = filtro === "todas" || Number(turma.alunos ?? 0) === 0;
+    return correspondeBusca && correspondeFiltro;
+  });
 
   async function criarTurma(evento) {
     evento.preventDefault();
