@@ -126,7 +126,7 @@ export function RegistroInspecaoPagina() {
         {!item.chamadoId && <p>O equipamento e o histórico desta inspeção serão vinculados ao chamado.</p>}
       </div>
       {item.chamadoId
-        ? <a className={styles.abrirChamado} href={`/professor/chamados#chamado-${item.chamadoId}`}>Abrir chamado</a>
+        ? <a className={styles.abrirChamado} href={`/professor/chamados#chamado-${item.chamadoId}`}>Ver chamado</a>
         : !abrindoChamado
           ? <button className={styles.abrirChamado} type="button" onClick={() => setAbrindoChamado(true)}>Abrir chamado</button>
           : <form className={styles.formularioChamado} onSubmit={salvarChamado}>
