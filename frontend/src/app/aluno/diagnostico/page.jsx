@@ -43,6 +43,10 @@ export default function DiagnosticoAluno() {
     setEtapa("WAITING");
   }
 
+  function alternarEquipamento(id) {
+    setItemAberto((atual) => (atual === id ? null : id));
+  }
+
   function liberarBancada() {
     setEtapa("APPROVED");
   }
@@ -98,7 +102,7 @@ export default function DiagnosticoAluno() {
                 const idPainel = `detalhes-${equipamento.id}`;
                 return (
                   <li className={styles.item} key={equipamento.id}>
-                    <button className={styles.linha} type="button" onClick={() => setItemAberto(aberto ? null : equipamento.id)} aria-expanded={aberto} aria-controls={idPainel}>
+                    <button className={styles.linha} type="button" onClick={() => alternarEquipamento(equipamento.id)} aria-expanded={aberto} aria-controls={idPainel}>
                       <span className={styles.idEquipamento}>{equipamento.id}</span>
                       <span className={styles.dadosEquipamento}><strong>{equipamento.nome}</strong><small>{equipamento.tipo} <i>·</i> {equipamento.detalhe}</small></span>
                       <span className={styles.acoesLinha}><span className={styles.badge}>OPERACIONAL</span><IconeSeta className={`${styles.seta} ${aberto ? styles.setaAberta : ""}`} direcao="baixo" /></span>
