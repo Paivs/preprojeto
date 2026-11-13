@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { aulaHoje, equipamentosSessao, episObrigatorios, sessaoAluno } from "@/mocks/aluno";
 import FormularioVinculo from "@/components/aluno/FormularioVinculo";
 import EstadoAguardando from "@/components/aluno/EstadoAguardando";
@@ -16,7 +15,6 @@ function formatarTempo(segundos) {
 }
 
 export default function DiagnosticoAluno() {
-  const router = useRouter();
   const [etapa, setEtapa] = useState("FORM");
   const [solicitacao, setSolicitacao] = useState(null);
   const [itemAberto, setItemAberto] = useState(null);
