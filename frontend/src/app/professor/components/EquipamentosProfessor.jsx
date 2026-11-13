@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { listarAgendamentos, listarEquipamentos } from "../lib/professorApi";
+import EmptyState from "@/components/EmptyState";
 import ModalProfessor from "./ModalProfessor";
 import styles from "./EquipamentosProfessor.module.css";
 import { useModalExit } from "../../useModalExit";
@@ -81,7 +82,7 @@ export default function EquipamentosProfessor() {
             <td><span className={`${styles.status} ${styles[`status_${equipamento.status}`]}`}><i />{statusLabels[equipamento.status]}</span></td>
             <td><button className={styles.botaoDetalhes} type="button" onClick={() => setEquipamentoId(equipamento.id)}>Detalhes</button></td>
           </tr>)}</tbody>
-        </table></div> : <div className={styles.estadoVazio}><span className="material-symbols-outlined" aria-hidden="true">search_off</span><h3>Nenhum equipamento encontrado</h3><p>Altere a busca ou o filtro de situação para consultar o inventário.</p></div>}
+        </table></div> : <EmptyState icone="search_off" titulo="Nenhum equipamento encontrado" mensagem="Altere a busca ou o filtro de situação para consultar o inventário." />}
         <p className={styles.notaDados}>Os equipamentos cadastrados no sistema aparecerão nesta lista.</p>
       </section>
 

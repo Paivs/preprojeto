@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { listarAgendamentos, listarTurmas } from "../lib/professorApi";
+import EmptyState from "@/components/EmptyState";
 import ModalProfessor from "./ModalProfessor";
 import styles from "./TurmasProfessor.module.css";
 import { useModalExit } from "../../useModalExit";
@@ -63,7 +64,7 @@ export default function TurmasProfessor() {
           <div className={styles.identidadeTurma}><span className={styles.marcaTurma} aria-hidden="true">{turma.nome.slice(0, 1)}</span><div><h3>{turma.nome}</h3><span>{turma.alunos} alunos vinculados</span></div></div>
           <div className={styles.proximaAtividade}><span>PRÓXIMA ATIVIDADE</span><strong>{turma.proxima?.atividade || "Nenhuma reserva ativa"}</strong><small>{turma.proxima ? `${formatarData(turma.proxima.data, turma.proxima.inicio)} · ${turma.proxima.equipamento}` : "Sem atividade prevista"}</small></div>
           <button className={styles.botaoDetalhes} type="button" onClick={() => setTurmaId(turma.id)} aria-label={`Detalhes de ${turma.nome}`}>Detalhes <span aria-hidden="true">→</span></button>
-        </article>)}</div> : <div className={styles.estadoVazio}><span className="material-symbols-outlined" aria-hidden="true">groups</span><h3>Nenhuma turma encontrada</h3><p>Confira o texto digitado e tente novamente.</p></div>}
+        </article>)}</div> : <EmptyState icone="groups" titulo="Nenhuma turma encontrada" mensagem="Confira o texto digitado e tente novamente." />}
         <p className={styles.notaDados}>As turmas vinculadas à sua conta serão listadas aqui.</p>
       </section>
 

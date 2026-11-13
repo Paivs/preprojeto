@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { listarChamadosProfessor } from "../lib/professorApi";
+import EmptyState from "@/components/EmptyState";
 import styles from "./ChamadosProfessor.module.css";
 
 const filtros = [
@@ -73,7 +74,7 @@ export default function ChamadosProfessor() {
             <Link href={`/professor/inspecoes/registro/${chamado.inspecao_id}`}>Ver inspeção</Link>
           </section>}
         </article>)}
-      </div> : <div className={styles.vazio}><h3>Nenhum chamado encontrado</h3><p>{filtro === "TODOS" ? "Os chamados abertos por você aparecerão aqui." : `Não há chamados com situação “${filtros.find(([valor]) => valor === filtro)?.[1]}”.`}</p></div>}
+      </div> : <EmptyState icone="support_agent" titulo="Nenhum chamado encontrado" mensagem={filtro === "TODOS" ? "Os chamados abertos por você aparecerão aqui." : `Não há chamados com situação “${filtros.find(([valor]) => valor === filtro)?.[1]}”.`} />}
     </section>
   </div>;
 }
