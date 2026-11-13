@@ -7,6 +7,7 @@
 .led { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: var(--aluno-wait); box-shadow: 0 0 10px rgb(255 183 3 / 38%); }
 .statusAtivo { border-color: rgb(46 196 182 / 28%); }
 .statusAtivo .led { background: var(--aluno-active); box-shadow: 0 0 12px rgb(46 196 182 / 45%); }
+.ledAtivo { animation: pulsar 1.8s ease-out infinite; }
 .statusEspera .led { background: var(--aluno-wait); }
 .formulario { width: min(100%, 600px); padding: clamp(22px, 4vw, 34px); border: 1px solid var(--aluno-border); border-radius: 6px; background: linear-gradient(145deg, #161a1d, #101214); }
 .cabecalhoFormulario { margin-bottom: 24px; }
@@ -50,6 +51,7 @@
 .faixaEpis { display: flex; align-items: center; gap: 20px; margin-top: 24px; padding: 16px 0; border-top: 1px solid var(--aluno-border); border-bottom: 1px solid var(--aluno-border); }
 .faixaEpis ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .faixaEpis li { padding: 6px 9px; border: 1px solid rgb(164 22 26 / 45%); border-radius: 3px; color: #e4dddd; font-size: 11px; }
-@media (prefers-reduced-motion: no-preference) { .statusAtivo .led { animation: pulsar 1.8s ease-out infinite; } @keyframes pulsar { 0% { box-shadow: 0 0 0 0 rgb(46 196 182 / 48%); } 70%, 100% { box-shadow: 0 0 0 8px rgb(46 196 182 / 0%); } } }
+@keyframes pulsar { 0% { box-shadow: 0 0 0 0 rgb(46 196 182 / 48%); } 70%, 100% { box-shadow: 0 0 0 8px rgb(46 196 182 / 0%); } }
+@media (prefers-reduced-motion: reduce) { .ledAtivo { animation: none; } .painel, .detalhes, .seta { transition: none; } }
 @media (max-width: 760px) { .telemetria { grid-template-columns: repeat(2, minmax(0, 1fr)); } .telemetria > div:nth-child(3) { border-left: 0; } .telemetria > div:nth-child(n + 3) { border-top: 1px solid var(--aluno-border); } }
 @media (max-width: 560px) { .cabecalho { align-items: flex-start; flex-direction: column; } .linha { grid-template-columns: 74px minmax(0, 1fr) auto; gap: 8px; padding-right: 4px; padding-left: 4px; } .acoesLinha { gap: 7px; } .badge { padding: 4px 5px; font-size: 8px; } .detalhes { margin-right: 4px; margin-left: 4px; padding-right: 12px; padding-left: 12px; } .detalhes p { align-items: flex-start; flex-direction: column; gap: 3px; } .detalhes p strong { text-align: left; } .faixaEpis { align-items: flex-start; flex-direction: column; gap: 10px; } }

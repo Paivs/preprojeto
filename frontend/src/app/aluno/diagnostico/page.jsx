@@ -56,7 +56,7 @@ export default function DiagnosticoAluno() {
           <p className={styles.subtitulo}>{sessaoAluno.turma}</p>
         </div>
         <div className={`${styles.status} ${bancadaLiberada ? styles.statusAtivo : styles.statusEspera}`} role="status">
-          <span className={styles.led} aria-hidden="true" />
+          <span className={`${styles.led} ${bancadaLiberada ? styles.ledAtivo : ""}`} aria-hidden="true" />
           {bancadaLiberada ? "Bancada liberada" : etapa === "WAITING" ? "Aguardando aprovação" : "Acesso não solicitado"}
         </div>
       </header>
