@@ -18,7 +18,7 @@
 .telemetria { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: hidden; border: 1px solid var(--aluno-border); border-radius: 6px; background: var(--aluno-carbon); }
 .telemetria > div { display: flex; min-width: 0; flex-direction: column; gap: 10px; padding: 19px 20px; }
 .telemetria > div + div { border-left: 1px solid var(--aluno-border); }
-.telemetria > div > span, .faixaEpis > span { color: #9c9292; font-family: var(--fonte-mono); font-size: 10px; letter-spacing: .1em; }
+.telemetria > div > span, .faixaEpis > h3 { margin: 0; color: #9c9292; font-family: var(--fonte-mono); font-size: 10px; font-weight: 400; letter-spacing: .1em; }
 .telemetria strong { overflow-wrap: anywhere; font-size: 14px; font-weight: 500; }
 .telemetria i { color: var(--aluno-crimson); font-style: normal; }
 .token { font-family: var(--fonte-mono); letter-spacing: .06em; }

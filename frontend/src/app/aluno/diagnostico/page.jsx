@@ -118,7 +118,10 @@ export default function DiagnosticoAluno() {
                 );
               })}
             </ul>
-            <div className={styles.faixaEpis}><span>EPIs OBRIGATÓRIOS</span><ul>{episObrigatorios.map((epi) => <li key={epi}>{epi}</li>)}</ul></div>
+            <section className={styles.faixaEpis} aria-label="Equipamentos de proteção individual obrigatórios">
+              <h3>EPIs OBRIGATÓRIOS</h3>
+              <ul>{episObrigatorios.map((epi) => <li key={epi}>{epi}</li>)}</ul>
+            </section>
           </section>
         </>
       )}
