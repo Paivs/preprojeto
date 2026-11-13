@@ -28,9 +28,9 @@ export default function LayoutAluno({ children }) {
 
   return (
     <AuthGuard>
-      {rotaVerificada !== pathname ? null : pathname === "/aluno" ? children : (
+      {rotaVerificada !== pathname ? null : (
         <div className={styles.layout}>
-          <BarraLateral itemAtivo="diagnostico" />
+          <BarraLateral itemAtivo={pathname === "/aluno" ? "inicio" : "diagnostico"} />
           <main className={styles.conteudo}>{children}</main>
         </div>
       )}

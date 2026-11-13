@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import AuthGuard from "@/components/auth/AuthGuard";
 import { sessaoAluno } from "@/mocks/aluno";
 import styles from "./page.module.css";
 
@@ -17,15 +16,13 @@ export default function PaginaAluno() {
   }, [primeiroNome]);
 
   return (
-    <AuthGuard>
-      <main className={styles.pagina}>
-        <h1 className={styles.titulo}>{saudacao}</h1>
-        <p className={styles.turma}>{sessaoAluno.turma}</p>
-        <p className={styles.instrucao}>
-          <Link className={styles.link} href="/aluno/acesso">Acesse a bancada</Link>{" "}
-          da aula com o token informado pelo professor.
-        </p>
-      </main>
-    </AuthGuard>
+    <section className={styles.pagina}>
+      <h1 className={styles.titulo}>{saudacao}</h1>
+      <p className={styles.turma}>{sessaoAluno.turma}</p>
+      <p className={styles.instrucao}>
+        <Link className={styles.link} href="/aluno/acesso">Acesse a bancada</Link>{" "}
+        da aula com o token informado pelo professor.
+      </p>
+    </section>
   );
 }
