@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import styles from "./EstadoLiberado.module.css";
 
 export default function EstadoLiberado({ sessao, equipamentos, onVoltar }) {
@@ -15,10 +16,10 @@ export default function EstadoLiberado({ sessao, equipamentos, onVoltar }) {
   return (
     <section className={styles.conteudo} aria-labelledby="titulo-aluno">
       <header className={styles.linhaSuperior}>
-        <button className={styles.voltar} type="button" onClick={onVoltar} aria-label="Voltar">
+        <Link className={styles.voltar} href="/login" aria-label="Voltar">
           <span className="ti ti-arrow-left" aria-hidden="true" />
           Voltar
-        </button>
+        </Link>
         <span className={styles.status}>
           <span className={styles.pontoStatus} aria-hidden="true" />
           Bancada liberada

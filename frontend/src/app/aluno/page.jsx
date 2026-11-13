@@ -3,28 +3,23 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthGuard from "@/components/auth/AuthGuard";
-import EstadoAguardando from "@/components/aluno/EstadoAguardando";
 import FormularioVinculo from "@/components/aluno/FormularioVinculo";
 import styles from "./aluno.module.css";
 
 export default function PaginaAluno() {
   const router = useRouter();
   const [step, setStep] = useState("FORM");
-  const [solicitacao, setSolicitacao] = useState(null);
   const compacto = step !== "APPROVED";
 
   useEffect(() => {
-    if (step === "APPROVED") router.replace("/aluno/bem-vindo");
+    if (step === "APPROVED") {
+      window.sessionStorage.setItem("tenken-aluno-bancada-liberada", "true");
+      router.replace("/aluno/bem-vindo");
+    }
   }, [step, router]);
 
-  function enviarSolicitacao(dados) {
-    setSolicitacao(dados);
-    setStep("WAITING");
-  }
-
-  function cancelarSolicitacao() {
-    setSolicitacao(null);
-    setStep("FORM");
+  function enviarSolicitacao() {
+    setStep("APPROVED");
   }
 
   return (
@@ -40,15 +35,6 @@ export default function PaginaAluno() {
               </p>
               <FormularioVinculo onEnviar={enviarSolicitacao} />
             </section>
-          )}
-
-          {step === "WAITING" && solicitacao && (
-            <EstadoAguardando
-              sessao={{ nome: solicitacao.nome, turma: solicitacao.turma }}
-              token={solicitacao.token}
-              onCancelar={cancelarSolicitacao}
-              onSimularAprovacao={() => setStep("APPROVED")}
-            />
           )}
 
         </div>
