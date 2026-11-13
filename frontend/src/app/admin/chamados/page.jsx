@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import styles from "./page.module.css";
 import { chamarApi } from "../lib/adminApi";
+import { useModalExit } from "../../useModalExit";
+import FeedbackModal from "../components/FeedbackModal";
 
 const STATUS = [
   "ABERTO",
@@ -36,14 +38,11 @@ function Conteudo({ token }) {
   const [busca, setBusca] = useState("");
   const [pagina, setPagina] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [erro, setErro] = useState("");
-  const [aviso, setAviso] = useState("");
-  const [historico, setHistorico] = useState({});
-  const [selecionado, setSelecionado] = useState(null);
+  const [notificacao, setNotificacao] = useState(null);
+  const [selecionado, setSelecionado, fechandoDetalhes, finalizarFechamentoDetalhes] = useModalExit(null);
 
   const carregar = useCallback(async () => {
     setLoading(true);
-    setErro("");
     try {
       const q = new URLSearchParams({ pagina: "1", limite: "100" });
       if (status) q.set("status", status);
@@ -55,7 +54,7 @@ function Conteudo({ token }) {
       setItens(data.dados ?? data ?? []);
       setTiposEquipamento(Object.fromEntries((equipamentos.dados ?? equipamentos ?? []).map((equipamento) => [equipamento.id, equipamento.tipo])));
     } catch (e) {
-      setErro(e.message);
+      setNotificacao({ tipo: "erro", mensagem: e.message });
     } finally {
       setLoading(false);
     }
@@ -73,28 +72,13 @@ function Conteudo({ token }) {
     try {
       await chamarApi(`/chamados/${item.id}/status`, token, {
         method: "PATCH",
-        body: JSON.stringify({ status: value }),
+        body: { status: value },
       });
       setSelecionado((atual) => atual?.id === item.id ? { ...atual, status: value } : atual);
-      setAviso(`Status do chamado #${item.id} atualizado para ${value}.`);
+      setNotificacao({ tipo: "sucesso", mensagem: `Status do chamado #${item.id} atualizado para ${value}.` });
       await carregar();
     } catch (e) {
-      setErro(e.message);
-    }
-  }
-
-  async function encaminhar(item) {
-    const id = window.prompt("ID do usuÃ¡rio com perfil TECNICO:");
-    if (!id) return;
-    try {
-      await chamarApi(`/chamados/${item.id}/tecnico`, token, {
-        method: "PATCH",
-        body: JSON.stringify({ tecnico_id: Number(id) }),
-      });
-      setAviso(`Chamado #${item.id} encaminhado ao tÃ©cnico ID ${id}.`);
-      await carregar();
-    } catch (e) {
-      setErro(e.message);
+      setNotificacao({ tipo: "erro", mensagem: e.message });
     }
   }
 
@@ -102,35 +86,13 @@ function Conteudo({ token }) {
     try {
       const os = await chamarApi(`/chamados/${item.id}/ordem-servico`, token, {
         method: "POST",
-        body: JSON.stringify({}),
+        body: {},
       });
-      setAviso(`Ordem de serviço ${os.numero ?? os.id} emitida com sucesso.`);
+      setSelecionado(null);
+      setNotificacao({ tipo: "sucesso", mensagem: `Ordem de serviço ${os.numero ?? os.id} criada e enviada ao painel do técnico.` });
+      await carregar();
     } catch (e) {
-      setErro(e.message);
-    }
-  }
-
-  async function verHistorico(id) {
-    try {
-      const data = await chamarApi(`/chamados/${id}/historico`, token);
-      setHistorico((atual) => ({ ...atual, [id]: data.dados ?? data ?? [] }));
-    } catch (e) {
-      setErro(e.message);
-    }
-  }
-
-  async function adicionarHistorico(id) {
-    const descricao = window.prompt("Descrição do registro de manutenção:");
-    if (!descricao) return;
-    try {
-      await chamarApi(`/chamados/${id}/historico`, token, {
-        method: "POST",
-        body: JSON.stringify({ descricao }),
-      });
-      setAviso(`Registro adicionado ao chamado #${id}.`);
-      await verHistorico(id);
-    } catch (e) {
-      setErro(e.message);
+      setNotificacao({ tipo: "erro", mensagem: e.message });
     }
   }
 
@@ -161,9 +123,6 @@ function Conteudo({ token }) {
           <span className={styles.refreshLabel}>Atualizar lista</span>
         </button>
       </div>
-
-      {erro && <div className={styles.alertError} role="alert">{erro}</div>}
-      {aviso && <div className={styles.alertSuccess}>{aviso}</div>}
 
       {/* Filters inspired by the Stitch work order screen */}
       <div className={styles.filterBar}>
@@ -241,8 +200,8 @@ function Conteudo({ token }) {
         </nav>
       </div>
       {selecionado && (
-        <div className={styles.modalOverlay} role="dialog" aria-modal="true" aria-labelledby="ticket-detail-title" onMouseDown={(e) => { if (e.target === e.currentTarget) setSelecionado(null); }}>
-          <section className={styles.modalCard}>
+        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoDetalhes ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true" aria-labelledby="ticket-detail-title" onMouseDown={(e) => { if (e.target === e.currentTarget) setSelecionado(null); }}>
+          <section className={`${styles.modalCard} abrir-modal ${fechandoDetalhes ? "fechar-modal" : ""}`} onAnimationEnd={finalizarFechamentoDetalhes}>
             <header className={styles.modalHeader}>
               <div className={styles.modalHeading}>
                 <div className={styles.modalIcon}><span className="material-symbols-outlined">assignment_late</span></div>
@@ -269,52 +228,27 @@ function Conteudo({ token }) {
                 <p>{selecionado.descricao || "Nenhuma descrição adicional foi informada."}</p>
               </section>
               <div className={styles.modalActionPanel}>
-                <div>
-                  <span className={styles.modalEyebrow}>Ações de atendimento</span>
-                  <h3>Atualização e ordem de serviço</h3>
+                <div className={styles.modalActionHeader}>
+                  <div>
+                    <span className={styles.modalEyebrow}>Ações de atendimento</span>
+                    <h3>Atualização e ordem de serviço</h3>
+                  </div>
+                  <label className={styles.statusControl}>
+                    <span>Status</span>
+                    <select aria-label={`Status do chamado ${selecionado.id}`} className={styles.statusSelect} value={selecionado.status} onChange={(e) => atualizarStatus(selecionado, e.target.value)}>
+                      {STATUS.map((value) => <option key={value} value={value}>{ROTULO_STATUS[value] || value}</option>)}
+                    </select>
+                  </label>
                 </div>
-                <label className={styles.statusControl}>
-                  <span>Status</span>
-                  <select aria-label={`Status do chamado ${selecionado.id}`} className={styles.statusSelect} value={selecionado.status} onChange={(e) => atualizarStatus(selecionado, e.target.value)}>
-                    {STATUS.map((value) => <option key={value} value={value}>{ROTULO_STATUS[value] || value}</option>)}
-                  </select>
-                </label>
                 <div className={styles.modalActions}>
-                  <button type="button" className={styles.actionBtn} onClick={() => encaminhar(selecionado)}><span className="material-symbols-outlined">engineering</span>Encaminhar técnico</button>
-                  <button type="button" className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => emitirOS(selecionado)}><span className="material-symbols-outlined">build_circle</span>Emitir OS</button>
-                  <button type="button" className={styles.actionBtn} onClick={() => verHistorico(selecionado.id)}><span className="material-symbols-outlined">history</span>Ver histórico</button>
-                  <button type="button" className={styles.actionBtn} onClick={() => adicionarHistorico(selecionado.id)}><span className="material-symbols-outlined">post_add</span>Registrar manutenção</button>
+                  <button type="button" className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => emitirOS(selecionado)}><span className="material-symbols-outlined" aria-hidden="true">build_circle</span>Emitir ordem de serviço (OS)</button>
                 </div>
               </div>
             </div>
           </section>
         </div>
       )}
-      {/* PainÃ©is de HistÃ³rico Expandidos */}
-      {Object.entries(historico).map(([id, registros]) => (
-        <div className={styles.historyPanel} key={id}>
-          <div className={styles.historyHeader}>
-            <div className={styles.historyTitleRow}>
-              <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "#ffb4ac" }}>history</span>
-              <strong>HistÃ³rico de ManutenÃ§Ã£o do Chamado #{id}</strong>
-            </div>
-          </div>
-          <div className={styles.historyList}>
-            {registros.length ? (
-              registros.map((r, i) => (
-                <div key={r.id ?? i} className={styles.historyItem}>
-                  <span className={styles.historyDesc}>{r.descricao || r.acao || JSON.stringify(r)}</span>
-                  <span className={styles.historyTime}>
-                    {r.criado_em ? new Date(r.criado_em).toLocaleString("pt-BR") : ""}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className={styles.emptyState}>Ainda nÃ£o hÃ¡ atualizaÃ§Ãµes para este chamado.</p>
-            )}
-          </div>
-        </div>
-      ))}
+      <FeedbackModal feedback={notificacao} onClose={() => setNotificacao(null)} />
     </div>
   );
 }

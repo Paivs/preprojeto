@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { listarAgendamentos, listarTurmas } from "../lib/professorApi";
+import EmptyState from "@/components/EmptyState";
 import ModalProfessor from "./ModalProfessor";
 import styles from "./TurmasProfessor.module.css";
+import { useModalExit } from "../../useModalExit";
 
 function normalizar(texto) {
   return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -26,20 +28,18 @@ export default function TurmasProfessor() {
     return () => { ativo = false; };
   }, []);
   const [busca, setBusca] = useState("");
-  const [turmaId, setTurmaId] = useState(null);
+  const [turmaId, setTurmaId, fechandoDetalhe, finalizarFechamentoDetalhe] = useModalExit(null);
   const turmaSelecionada = dados.turmas.find((item) => item.id === turmaId);
 
-  const turmas = useMemo(() => dados.turmas.map((turma) => {
+  const turmas = dados.turmas.map((turma) => {
     const reservas = dados.agendamentos.filter((item) => item.turmaId === turma.id && item.status !== "CANCELADO").sort((a, b) => `${a.data}${a.inicio}`.localeCompare(`${b.data}${b.inicio}`));
     const proxima = reservas[0];
     return { ...turma, reservas, proxima };
-  }), [dados.turmas, dados.agendamentos]);
+  });
 
-  const totalAlunos = useMemo(() => dados.turmas.reduce((total, turma) => total + turma.alunos, 0), [dados.turmas]);
-  const visiveis = useMemo(() => {
-    const termo = normalizar(busca.trim());
-    return turmas.filter((turma) => normalizar(`${turma.nome} ${turma.proxima?.atividade || ""}`).includes(termo));
-  }, [busca, turmas]);
+  const totalAlunos = dados.turmas.reduce((total, turma) => total + turma.alunos, 0);
+  const termoBusca = normalizar(busca.trim());
+  const visiveis = turmas.filter((turma) => normalizar(`${turma.nome} ${turma.proxima?.atividade || ""}`).includes(termoBusca));
   const reservasDetalhe = turmaSelecionada ? dados.agendamentos.filter((item) => item.turmaId === turmaSelecionada.id).sort((a, b) => `${a.data}${a.inicio}`.localeCompare(`${b.data}${b.inicio}`)) : [];
 
   return (
@@ -62,11 +62,11 @@ export default function TurmasProfessor() {
           <div className={styles.identidadeTurma}><span className={styles.marcaTurma} aria-hidden="true">{turma.nome.slice(0, 1)}</span><div><h3>{turma.nome}</h3><span>{turma.alunos} alunos vinculados</span></div></div>
           <div className={styles.proximaAtividade}><span>PRÓXIMA ATIVIDADE</span><strong>{turma.proxima?.atividade || "Nenhuma reserva ativa"}</strong><small>{turma.proxima ? `${formatarData(turma.proxima.data, turma.proxima.inicio)} · ${turma.proxima.equipamento}` : "Sem atividade prevista"}</small></div>
           <button className={styles.botaoDetalhes} type="button" onClick={() => setTurmaId(turma.id)} aria-label={`Detalhes de ${turma.nome}`}>Detalhes <span aria-hidden="true">→</span></button>
-        </article>)}</div> : <div className={styles.estadoVazio}><span className="material-symbols-outlined" aria-hidden="true">groups</span><h3>Nenhuma turma encontrada</h3><p>Confira o texto digitado e tente novamente.</p></div>}
+        </article>)}</div> : <EmptyState icone="groups" titulo="Nenhuma turma encontrada" mensagem="Confira o texto digitado e tente novamente." />}
         <p className={styles.notaDados}>As turmas vinculadas à sua conta serão listadas aqui.</p>
       </section>
 
-      {turmaSelecionada && <ModalProfessor titulo={turmaSelecionada.nome} descricao="Resumo da turma e atividades registradas." onClose={() => setTurmaId(null)}>
+      {turmaSelecionada && <ModalProfessor titulo={turmaSelecionada.nome} descricao="Resumo da turma e atividades registradas." closing={fechandoDetalhe} onExitEnd={finalizarFechamentoDetalhe} onClose={() => setTurmaId(null)}>
         <div className={styles.detalhesTurma}><p><span>Alunos vinculados</span><strong>{turmaSelecionada.alunos}</strong></p><p><span>Atividades ativas</span><strong>{reservasDetalhe.filter((item) => item.status !== "CANCELADO").length}</strong></p></div>
         <div className={styles.listaAtividades}><h3>Agendamentos da turma</h3>{reservasDetalhe.length ? reservasDetalhe.map((reserva) => <p key={reserva.id}><span>{formatarData(reserva.data, reserva.inicio)}–{reserva.fim} · {reserva.status === "CANCELADO" ? "Cancelado" : reserva.status === "CONCLUIDO" ? "Concluído" : reserva.status === "EM_ANDAMENTO" ? "Em andamento" : "Confirmado"}</span><strong>{reserva.atividade} — {reserva.equipamento}</strong></p>) : <p className={styles.semAtividade}>Nenhuma atividade registrada.</p>}</div>
         <div className={styles.rodapeDetalhes}><button type="button" onClick={() => setTurmaId(null)}>Fechar</button></div>

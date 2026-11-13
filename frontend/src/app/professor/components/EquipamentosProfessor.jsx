@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { listarAgendamentos, listarEquipamentos } from "../lib/professorApi";
+import EmptyState from "@/components/EmptyState";
 import ModalProfessor from "./ModalProfessor";
 import styles from "./EquipamentosProfessor.module.css";
+import { useModalExit } from "../../useModalExit";
 
 const statusLabels = {
   DISPONIVEL: "Disponível",
@@ -28,22 +30,20 @@ export default function EquipamentosProfessor() {
   useEffect(() => { let active=true; Promise.all([listarEquipamentos(),listarAgendamentos()]).then(([equipamentos,agendamentos])=>{if(active)setDados({equipamentos,agendamentos});}).catch((error)=>{if(active)setErro(error.message || "Não foi possível carregar os equipamentos.");}).finally(()=>{if(active)setCarregando(false);}); return ()=>{active=false;}; }, []);
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("TODOS");
-  const [equipamentoId, setEquipamentoId] = useState(null);
+  const [equipamentoId, setEquipamentoId, fechandoDetalhe, finalizarFechamentoDetalhe] = useModalExit(null);
   const equipamentoSelecionado = dados.equipamentos.find((item) => item.id === equipamentoId);
 
-  const contagem = useMemo(() => dados.equipamentos.reduce((total, equipamento) => {
+  const contagem = dados.equipamentos.reduce((total, equipamento) => {
     total[equipamento.status] = (total[equipamento.status] || 0) + 1;
     return total;
-  }, {}), [dados.equipamentos]);
+  }, {});
 
-  const visiveis = useMemo(() => {
-    const termo = normalizar(busca.trim());
-    return dados.equipamentos.filter((equipamento) => {
-      const correspondeStatus = filtroStatus === "TODOS" || equipamento.status === filtroStatus;
-      const texto = normalizar(`${equipamento.nome} ${equipamento.patrimonio} ${equipamento.localizacao} ${equipamento.tipo}`);
-      return correspondeStatus && (!termo || texto.includes(termo));
-    });
-  }, [dados.equipamentos, busca, filtroStatus]);
+  const termoBusca = normalizar(busca.trim());
+  const visiveis = dados.equipamentos.filter((equipamento) => {
+    const correspondeStatus = filtroStatus === "TODOS" || equipamento.status === filtroStatus;
+    const texto = normalizar(`${equipamento.nome} ${equipamento.patrimonio} ${equipamento.localizacao} ${equipamento.tipo}`);
+    return correspondeStatus && (!termoBusca || texto.includes(termoBusca));
+  });
 
   const reservasRelacionadas = equipamentoSelecionado
     ? dados.agendamentos.filter((item) => item.equipamentoId === equipamentoSelecionado.id && item.status !== "CANCELADO").sort((a, b) => `${b.data}${b.inicio}`.localeCompare(`${a.data}${a.inicio}`)).slice(0, 3)
@@ -80,11 +80,11 @@ export default function EquipamentosProfessor() {
             <td><span className={`${styles.status} ${styles[`status_${equipamento.status}`]}`}><i />{statusLabels[equipamento.status]}</span></td>
             <td><button className={styles.botaoDetalhes} type="button" onClick={() => setEquipamentoId(equipamento.id)}>Detalhes</button></td>
           </tr>)}</tbody>
-        </table></div> : <div className={styles.estadoVazio}><span className="material-symbols-outlined" aria-hidden="true">search_off</span><h3>Nenhum equipamento encontrado</h3><p>Altere a busca ou o filtro de situação para consultar o inventário.</p></div>}
+        </table></div> : <EmptyState icone="search_off" titulo="Nenhum equipamento encontrado" mensagem="Altere a busca ou o filtro de situação para consultar o inventário." />}
         <p className={styles.notaDados}>Os equipamentos cadastrados no sistema aparecerão nesta lista.</p>
       </section>
 
-      {equipamentoSelecionado && <ModalProfessor titulo={equipamentoSelecionado.nome} descricao="Detalhes do equipamento cadastrado." onClose={() => setEquipamentoId(null)}>
+      {equipamentoSelecionado && <ModalProfessor titulo={equipamentoSelecionado.nome} descricao="Detalhes do equipamento cadastrado." closing={fechandoDetalhe} onExitEnd={finalizarFechamentoDetalhe} onClose={() => setEquipamentoId(null)}>
         <div className={styles.detalhes}>
           <p><span>Patrimônio</span><strong>{equipamentoSelecionado.patrimonio}</strong></p><p><span>Tipo</span><strong>{equipamentoSelecionado.tipo === "ROBO" ? "Robô" : "Bancada"}</strong></p>
           <p><span>Localização</span><strong>{equipamentoSelecionado.localizacao}</strong></p><p><span>Situação</span><strong className={styles[`texto_${equipamentoSelecionado.status}`]}>{statusLabels[equipamentoSelecionado.status]}</strong></p>

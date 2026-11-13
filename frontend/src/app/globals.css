@@ -56,6 +56,94 @@
   user-select: none;
 }
 
+.abrir-modal-fundo.abrir-modal-fundo {
+  animation: tenkenModalOverlayEnter 220ms ease-out both;
+}
+
+.abrir-modal.abrir-modal {
+  animation: tenkenModalCardEnter 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.fechar-modal-fundo.fechar-modal-fundo {
+  pointer-events: none;
+  animation: tenkenModalOverlayExit 150ms ease-in both;
+}
+
+.fechar-modal.fechar-modal {
+  animation: tenkenModalCardExit 150ms ease-in both;
+}
+
+@keyframes tenkenModalOverlayEnter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tenkenModalCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tenkenModalOverlayExit {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes tenkenModalCardExit {
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .abrir-modal-fundo.abrir-modal-fundo {
+    animation-duration: 1ms;
+  }
+
+  .abrir-modal.abrir-modal {
+    animation-name: tenkenModalCardEnterReduced;
+    animation-duration: 1ms;
+  }
+
+  .fechar-modal-fundo.fechar-modal-fundo {
+    animation-duration: 1ms;
+  }
+
+  .fechar-modal.fechar-modal {
+    animation-name: tenkenModalCardExitReduced;
+    animation-duration: 1ms;
+  }
+}
+
+@keyframes tenkenModalCardEnterReduced {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tenkenModalCardExitReduced {
+  to {
+    opacity: 0;
+  }
+}
+
 html {
   scroll-behavior: auto;
   scroll-padding-top: 80px;
@@ -108,19 +196,44 @@ a {
   animation: hero-copy-in 650ms cubic-bezier(.2, .7, .2, 1) both;
 }
 
-.secao-destaque.hero-ready .texto-destaque { animation-delay: 100ms; }
-.secao-destaque.hero-ready .titulo-destaque { animation-delay: 220ms; }
-.secao-destaque.hero-ready .chamada-destaque { animation-delay: 360ms; }
-.secao-destaque.hero-ready .indicacao-rolagem { animation-delay: 480ms; }
+.secao-destaque.hero-ready .texto-destaque {
+  animation-delay: 100ms;
+}
+
+.secao-destaque.hero-ready .titulo-destaque {
+  animation-delay: 220ms;
+}
+
+.secao-destaque.hero-ready .chamada-destaque {
+  animation-delay: 360ms;
+}
+
+.secao-destaque.hero-ready .indicacao-rolagem {
+  animation-delay: 480ms;
+}
 
 @keyframes hero-video-in {
-  from { opacity: .35; transform: scale(1.035); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: .35;
+    transform: scale(1.035);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes hero-copy-in {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .scroll-reveal {
@@ -610,6 +723,7 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -645,6 +759,7 @@ a {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -660,4 +775,3 @@ a {
     animation: none;
   }
 }
-

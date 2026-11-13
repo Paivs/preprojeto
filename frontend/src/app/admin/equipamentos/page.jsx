@@ -1,10 +1,12 @@
-"use client";
+﻿"use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
-import PainelEquipamentos from "../components/PainelEquipamentos";
+import TabelaAdmin from "../components/TabelaAdmin";
 import styles from "./page.module.css";
 import { chamarApi } from "../lib/adminApi";
+import { useModalExit } from "../../useModalExit";
+import FeedbackModal from "../components/FeedbackModal";
 
 const STATUS = ["DISPONIVEL", "RESERVADO", "EM_USO", "EM_MANUTENCAO", "INATIVO"];
 const ROTULO_STATUS = {
@@ -43,8 +45,9 @@ function Conteudo({ token }) {
   const [itens, setItens] = useState([]);
   const [busca, setBusca] = useState("");
   const [statusFiltro, setStatusFiltro] = useState("");
+  const [tipoFiltro, setTipoFiltro] = useState("");
   const [pagina, setPagina] = useState(1);
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalAberto, setModalAberto, fechandoModal, finalizarFechamentoModal] = useModalExit(false);
   const [form, setForm] = useState({
     codigo_patrimonio: gerarPatrimonioInicial(),
     nome: "",
@@ -54,6 +57,7 @@ function Conteudo({ token }) {
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
   const [aviso, setAviso] = useState("");
+  const [feedback, setFeedback] = useState(null);
   const [menuStatusId, setMenuStatusId] = useState(null);
   const [historico, setHistorico] = useState([]);
 
@@ -62,7 +66,6 @@ function Conteudo({ token }) {
     setErro("");
     try {
       const q = new URLSearchParams({ pagina: "1", limite: "100" });
-      if (statusFiltro) q.set("status", statusFiltro);
       const dados = await chamarApi(`/equipamentos?${q}`, token);
       setItens(dados.dados ?? dados ?? []);
     } catch (e) {
@@ -70,7 +73,7 @@ function Conteudo({ token }) {
     } finally {
       setLoading(false);
     }
-  }, [token, statusFiltro]);
+  }, [token]);
 
   useEffect(() => {
     carregar();
@@ -78,81 +81,59 @@ function Conteudo({ token }) {
 
   useEffect(() => {
     setPagina(1);
-  }, [busca, statusFiltro]);
+  }, [busca, statusFiltro, tipoFiltro]);
 
   // Contagem por status
-  const contagemPorStatus = useMemo(() => {
-    const mapa = Object.fromEntries(STATUS.map((s) => [s, 0]));
-    itens.forEach((item) => {
-      if (mapa[item.status] !== undefined) mapa[item.status] += 1;
-    });
-    return mapa;
-  }, [itens]);
+  const contagemPorStatus = Object.fromEntries(STATUS.map((status) => [
+    status,
+    itens.filter((item) => item.status === status).length,
+  ]));
 
   // Métricas do topo (Stitch strip)
-  const metricas = useMemo(() => {
-    const total = itens.length || 0;
-    const operacionais = contagemPorStatus.DISPONIVEL + contagemPorStatus.EM_USO;
-    const manutencao = contagemPorStatus.EM_MANUTENCAO;
-    const reservados = contagemPorStatus.RESERVADO;
-    const inativos = contagemPorStatus.INATIVO;
-
-    const calcPct = (v) => (total ? Math.round((v / total) * 100) : 0);
-
-    return [
+  const total = itens.length;
+  const calcPct = (valor) => total ? Math.round((valor / total) * 100) : 0;
+  const metricas = [
       {
         rotulo: "Operacionais",
-        valor: operacionais,
-        pct: calcPct(operacionais),
+        valor: contagemPorStatus.DISPONIVEL + contagemPorStatus.EM_USO,
+        pct: calcPct(contagemPorStatus.DISPONIVEL + contagemPorStatus.EM_USO),
         icone: "check_circle",
         classeTom: styles.tomOperacional,
         progressoCor: "#10b981",
       },
       {
         rotulo: "Em Manutenção",
-        valor: manutencao,
-        pct: calcPct(manutencao),
+        valor: contagemPorStatus.EM_MANUTENCAO,
+        pct: calcPct(contagemPorStatus.EM_MANUTENCAO),
         icone: "engineering",
         classeTom: styles.tomManutencao,
         progressoCor: "#f59e0b",
       },
       {
         rotulo: "Reservados",
-        valor: reservados,
-        pct: calcPct(reservados),
-        icone: "pending_actions",
+        valor: contagemPorStatus.RESERVADO,
+        pct: calcPct(contagemPorStatus.RESERVADO),
+        icone: "pause_circle",
         classeTom: styles.tomReservado,
         progressoCor: "#aa8986",
       },
       {
         rotulo: "Inativos",
-        valor: inativos,
-        pct: calcPct(inativos),
+        valor: contagemPorStatus.INATIVO,
+        pct: calcPct(contagemPorStatus.INATIVO),
         icone: "do_not_disturb_on",
         classeTom: styles.tomInativo,
         progressoCor: "#6b7280",
       },
-    ];
-  }, [itens, contagemPorStatus]);
-
-  // Distribuição Robôs vs Bancadas
-  const porCategoria = useMemo(() => {
-    const bancadas = itens.filter((i) => i.tipo === "BANCADA").length;
-    const robos = itens.filter((i) => i.tipo === "ROBO").length;
-    return [
-      { status: "Bancadas", total: bancadas },
-      { status: "Robôs", total: robos },
-    ];
-  }, [itens]);
+  ];
 
   // Filtro de busca
-  const visiveis = useMemo(() => {
-    return itens.filter((item) =>
-      `${item.nome} ${item.codigo_patrimonio} ${item.localizacao}`
-        .toLowerCase()
-        .includes(busca.toLowerCase())
-    );
-  }, [itens, busca]);
+  const termoBusca = busca.trim().toLocaleLowerCase("pt-BR");
+  const visiveis = itens.filter((item) => {
+    const correspondeBusca = `${item.nome} ${item.codigo_patrimonio} ${item.localizacao}`
+      .toLocaleLowerCase("pt-BR").includes(termoBusca);
+    return correspondeBusca && (!statusFiltro || item.status === statusFiltro) && (!tipoFiltro || item.tipo === tipoFiltro);
+  });
 
   // Paginação
   const totalPaginas = Math.max(1, Math.ceil(visiveis.length / ITENS_POR_PAGINA));
@@ -178,13 +159,13 @@ function Conteudo({ token }) {
     try {
       await chamarApi("/equipamentos", token, {
         method: "POST",
-        body: JSON.stringify(form),
+        body: form,
       });
       setModalAberto(false);
-      setAviso("Equipamento cadastrado com sucesso.");
+      setFeedback({ type: "success", message: "Equipamento cadastrado com sucesso." });
       await carregar();
     } catch (e) {
-      setErro(e.message);
+      setFeedback({ type: "error", message: e.message });
     }
   }
 
@@ -193,7 +174,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi(`/equipamentos/${item.id}/status`, token, {
         method: "PATCH",
-        body: JSON.stringify({ status }),
+        body: { status },
       });
       setHistorico((atual) => [
         {
@@ -237,15 +218,19 @@ function Conteudo({ token }) {
   function limparFiltros() {
     setBusca("");
     setStatusFiltro("");
+    setTipoFiltro("");
   }
 
   return (
     <div className={styles.container}>
       {/* Top Utility Bar */}
-      <div className={styles.topUtilityBar}>
+      <header className={styles.topUtilityBar}>
         <div className={styles.headerTitleBlock}>
-          <h1 className={styles.title}>Equipamentos</h1>
-          <p className={styles.subtitle}>Consulte e atualize os equipamentos do laboratório.</p>
+          <div className={styles.titleRow}>
+            <h1 className={styles.title}>Equipamentos</h1>
+            {loading && <span className={styles.loadingBadge}><span />Carregando inventário</span>}
+          </div>
+          <p className={styles.subtitle}>Inventário e monitoramento operacional de ativos.</p>
         </div>
 
         <div className={styles.topActions}>
@@ -258,7 +243,7 @@ function Conteudo({ token }) {
             <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "var(--accent-tertiary)" }}>
               refresh
             </span>
-            <span>Atualizar lista</span>
+            <span>Atualizar dados</span>
           </button>
 
           <button
@@ -270,13 +255,13 @@ function Conteudo({ token }) {
             <span>Cadastrar equipamento</span>
           </button>
         </div>
-      </div>
+      </header>
 
-      {erro && <div className={styles.alertError} role="alert">{erro}</div>}
+      {erro && <div className={styles.alertError} role="alert"><span>{erro}</span><button type="button" onClick={carregar}>Tentar novamente</button></div>}
       {aviso && <div className={styles.alertSuccess}>{aviso}</div>}
 
       {/* Metric Badges Strip */}
-      <div className={styles.metricStrip}>
+      <section className={styles.metricStrip} aria-label="Resumo do inventário">
         {metricas.map((m) => (
           <div key={m.rotulo} className={styles.metricCard}>
             <div className={styles.metricCardTop}>
@@ -286,27 +271,27 @@ function Conteudo({ token }) {
               </span>
             </div>
             <div className={styles.metricValueRow}>
-              <span className={styles.metricNumber}>{String(m.valor).padStart(2, "0")}</span>
-              <span className={styles.metricSubNumber}>/ {m.pct}%</span>
+              {loading ? <span className={styles.metricSkeletonNumber} aria-label="Carregando" /> : <><span className={styles.metricNumber}>{m.valor}</span><span className={styles.metricSubNumber}>/ {m.pct}%</span></>}
             </div>
             <div className={styles.metricBarTrack}>
               <div
-                className={styles.metricBarFill}
-                style={{ width: `${m.pct}%`, backgroundColor: m.progressoCor }}
+                className={`${styles.metricBarFill} ${loading ? styles.metricBarLoading : ""}`}
+                style={loading ? undefined : { width: `${m.pct}%`, backgroundColor: m.progressoCor }}
               />
             </div>
           </div>
         ))}
-      </div>
+      </section>
 
       {/* Main Search, Filtering, and Primary Action Bar */}
-      <div className={styles.filterBar}>
+      <section className={styles.filterBar} aria-label="Filtros do inventário">
         <div className={styles.filterControls}>
           {/* Search Box */}
-          <div className={styles.searchBox}>
+          <label className={styles.searchBox}>
             <span className={`material-symbols-outlined ${styles.searchIcon}`}>search</span>
+            <span className={styles.visuallyHidden}>Pesquisar equipamentos</span>
             <input
-              type="text"
+              type="search"
               placeholder="Pesquisar por nome, patrimônio ou localização..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
@@ -322,7 +307,7 @@ function Conteudo({ token }) {
                 <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>close</span>
               </button>
             )}
-          </div>
+          </label>
 
           {/* Status Select */}
           <div className={styles.selectWrapper}>
@@ -342,7 +327,17 @@ function Conteudo({ token }) {
             <span className={`material-symbols-outlined ${styles.selectArrow}`}>expand_more</span>
           </div>
 
-          {(busca || statusFiltro) && (
+          <div className={styles.selectWrapper}>
+            <span className={`material-symbols-outlined ${styles.selectIcon}`}>layers</span>
+            <select aria-label="Filtrar por tipo" value={tipoFiltro} onChange={(e) => setTipoFiltro(e.target.value)} className={styles.statusSelect}>
+              <option value="">Todos os tipos ({itens.length})</option>
+              <option value="BANCADA">Bancadas ({itens.filter((item) => item.tipo === "BANCADA").length})</option>
+              <option value="ROBO">Robôs ({itens.filter((item) => item.tipo === "ROBO").length})</option>
+            </select>
+            <span className={`material-symbols-outlined ${styles.selectArrow}`}>expand_more</span>
+          </div>
+
+          {(busca || statusFiltro || tipoFiltro) && (
             <button
               type="button"
               className={styles.resetFiltersBtn}
@@ -354,39 +349,51 @@ function Conteudo({ token }) {
             </button>
           )}
         </div>
-      </div>
+      </section>
 
-      {/* Table Ticker Info */}
-      <div className={styles.tableTicker}>
-        <div className={styles.tickerLeft}>
-          <span className={styles.tickerTag}>EQUIPAMENTOS CADASTRADOS</span>
+      <section className={styles.inventorySection} aria-label="Inventário de equipamentos">
+        <div className={styles.inventoryHeader}>
+          <div><h2>Gestão de inventário</h2><p>{loading ? "Sincronizando equipamentos..." : visiveis.length + (visiveis.length === 1 ? " equipamento encontrado" : " equipamentos encontrados")}</p></div>
+          {!loading && visiveis.length > 0 && <span>Ordem: mais recentes</span>}
         </div>
-        <div className={styles.tickerRight}>
-        </div>
-      </div>
 
-      {/* Main Technical Table */}
-      <div className={styles.tableCard}>
-        <div className={styles.tableResponsive}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Nome do Equipamento</th>
-                <th>Tipo</th>
-                <th>Localização</th>
-                <th>Status</th>
-                <th style={{ textAlign: "right" }}>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
+        {loading ? <EquipmentSkeleton /> : erro && itens.length === 0 ? (
+          <div className={styles.emptyState}>
+            <span className={"material-symbols-outlined " + styles.emptyIcon}>cloud_off</span>
+            <h2>Falha ao carregar o inventário</h2>
+            <p>Verifique a conexão com o servidor e tente novamente.</p>
+            <button type="button" className={styles.secondaryEmptyBtn} onClick={carregar}><span className="material-symbols-outlined">refresh</span>Tentar novamente</button>
+          </div>
+        ) : visiveis.length === 0 ? (
+          <div className={styles.emptyState}>
+            <span className={"material-symbols-outlined " + styles.emptyIcon}>precision_manufacturing</span>
+            <h2>{itens.length === 0 ? "Nenhum equipamento cadastrado" : "Nenhum equipamento encontrado"}</h2>
+            <p>{itens.length === 0 ? "Cadastre o primeiro equipamento para iniciar o monitoramento do inventário." : "Nenhum item corresponde aos filtros selecionados. Ajuste a busca ou limpe os filtros para ver todos os equipamentos."}</p>
+            <div className={styles.emptyActions}>
+              {itens.length === 0 && <button type="button" className={styles.emptyPrimaryBtn} onClick={abrirModalCadastro}><span className="material-symbols-outlined">add_circle</span>Cadastrar primeiro equipamento</button>}
+              {(itens.length === 0 || busca || statusFiltro || tipoFiltro) && <button type="button" className={styles.secondaryEmptyBtn} onClick={limparFiltros}><span className="material-symbols-outlined">filter_alt_off</span>Limpar filtros de busca</button>}
+            </div>
+          </div>
+        ) : <TabelaAdmin
+        columns={["Código", "Nome do Equipamento", "Tipo", "Localização", "Status", { label: "Ações", align: "right" }]}
+        tableClassName={styles.table}
+        minWidth="900px"
+        loading={false}
+        empty={false}
+        pagination={{
+          page: paginaAtual,
+          totalPages: totalPaginas,
+          onChange: setPagina,
+          info: `Página ${paginaAtual} de ${totalPaginas} (${visiveis.length} registros)`,
+        }}
+      >
               {paginados.map((item) => {
                 const tom = TOM_STATUS[item.status] || "neutro";
                 const rotuloStatus = ROTULO_STATUS[item.status] || item.status;
                 const isRobo = item.tipo === "ROBO";
 
                 return (
-                  <tr key={item.id} className={styles.tableRow}>
+                  <tr key={item.id}>
                     <td className={styles.codeCell}>
                       <code>{item.codigo_patrimonio}</code>
                     </td>
@@ -489,69 +496,18 @@ function Conteudo({ token }) {
                   </tr>
                 );
               })}
-            </tbody>
-          </table>
+      </TabelaAdmin>}
+      </section>
 
-          {loading ? (
-            <div className={styles.tableEmpty}>Carregando equipamentos...</div>
-          ) : visiveis.length === 0 ? (
-            <div className={styles.tableEmpty}>Nenhum equipamento encontrado.</div>
-          ) : null}
-        </div>
-
-        {/* Pagination Strip */}
-        <div className={styles.paginationStrip}>
-          <span className={styles.paginationInfo}>
-            Página {paginaAtual} de {totalPaginas} ({visiveis.length} registros)
-          </span>
-
-          <div className={styles.paginationButtons}>
-            <button
-              type="button"
-              disabled={paginaAtual === 1}
-              onClick={() => setPagina(paginaAtual - 1)}
-              className={styles.pageBtn}
-              aria-label="Página anterior"
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>chevron_left</span>
-            </button>
-
-            {Array.from({ length: totalPaginas }, (_, i) => i + 1).slice(0, 7).map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setPagina(n)}
-                className={`${styles.pageBtn} ${n === paginaAtual ? styles.pageBtnActive : ""}`}
-              >
-                {n}
-              </button>
-            ))}
-
-            <button
-              type="button"
-              disabled={paginaAtual === totalPaginas}
-              onClick={() => setPagina(paginaAtual + 1)}
-              className={styles.pageBtn}
-              aria-label="Próxima página"
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>chevron_right</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Operational Diagnostics & Telemetry Strip */}
-      <div className={styles.diagnosticsStrip}>
-        {/* Audit Log Preview */}
-        <div className={styles.auditLogCard}>
+      <section className={styles.auditLogCard} aria-labelledby="historico-status-titulo">
           <div className={styles.auditLogHeader}>
             <div className={styles.auditLogTitleRow}>
               <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "var(--mahogany-red)" }}>
                 history
               </span>
-              <span className={styles.auditLogTitle}>Histórico de Alterações de Status</span>
+              <h2 id="historico-status-titulo" className={styles.auditLogTitle}>Histórico de alterações de status</h2>
             </div>
-            <span className={styles.auditLogMeta}>Sessão Atual</span>
+            <span className={styles.auditLogMeta}>Últimos registros ({historico.length})</span>
           </div>
 
           <div className={styles.auditList}>
@@ -574,22 +530,12 @@ function Conteudo({ token }) {
               ))
             )}
           </div>
-        </div>
-
-        {/* Category Distribution Ratio Donut */}
-        <PainelEquipamentos
-          titulo="Distribuição por Categoria"
-          total={itens.length}
-          porStatus={porCategoria}
-          cores={["#ffffff", "#a4161a"]}
-          carregando={loading}
-        />
-      </div>
+      </section>
 
       {/* CADASTRO DE EQUIPAMENTO MODAL */}
       {modalAberto && (
-        <div className={styles.modalOverlay} role="dialog" aria-modal="true">
-          <div className={styles.modalCard}>
+        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoModal ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true" onMouseDown={(event) => { if (event.target === event.currentTarget) setModalAberto(false); }}>
+          <div className={`${styles.modalCard} abrir-modal ${fechandoModal ? "fechar-modal" : ""}`} onAnimationEnd={finalizarFechamentoModal}>
             {/* Modal Header */}
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderLeft}>
@@ -749,6 +695,29 @@ function Conteudo({ token }) {
           </div>
         </div>
       )}
+      <FeedbackModal feedback={feedback} onClose={() => setFeedback(null)} />
+    </div>
+  );
+}
+
+function EquipmentSkeleton() {
+  return (
+    <div className={styles.tableSkeleton} aria-label="Carregando equipamentos" aria-busy="true">
+      <div className={styles.skeletonTableHeader}>
+        {[8, 15, 8, 11, 10, 12].map((width, index) => <span key={index} className={styles.skeleton} style={{ width: width + "%" }} />)}
+      </div>
+      {Array.from({ length: 6 }, (_, index) => (
+        <div className={styles.skeletonTableRow} key={index}>
+          <span className={styles.skeleton + " " + styles.skeletonCheckbox} />
+          <span className={styles.skeleton + " " + styles.skeletonCode} />
+          <span className={styles.skeletonName}><i className={styles.skeleton} /><i className={styles.skeleton} /></span>
+          <span className={styles.skeleton + " " + styles.skeletonType} />
+          <span className={styles.skeleton + " " + styles.skeletonLocation} />
+          <span className={styles.skeleton + " " + styles.skeletonStatus} />
+          <span className={styles.skeleton + " " + styles.skeletonAction} />
+        </div>
+      ))}
+      <div className={styles.skeletonFooter}><span className={styles.skeleton} /><span className={styles.skeleton} /></div>
     </div>
   );
 }

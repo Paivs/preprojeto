@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { cancelarAgendamento, criarAgendamento, listarAgendamentos, listarEquipamentos, listarInspecoes, listarTurmas } from "../lib/professorApi";
 import FormularioAgendamento from "./FormularioAgendamento";
 import ModalProfessor from "./ModalProfessor";
 import styles from "./AgendamentosProfessor.module.css";
+import { useModalExit } from "../../useModalExit";
 
 const HORAS = ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"];
 const MINUTOS_INICIO = 8 * 60;
@@ -70,12 +71,12 @@ export default function AgendamentosProfessor() {
   const [equipamentoFiltro, setEquipamentoFiltro] = useState("TODOS");
   const [visualizacao, setVisualizacao] = useState("SEMANA");
   const [dataFoco, setDataFoco] = useState(() => new Date());
-  const [criando, setCriando] = useState(false);
+  const [criando, setCriando, fechandoCriacao, finalizarFechamentoCriacao] = useModalExit(false);
   const [formularioInicial, setFormularioInicial] = useState(null);
-  const [reservaCriada, setReservaCriada] = useState(null);
+  const [reservaCriada, setReservaCriada, fechandoConfirmacao, finalizarFechamentoConfirmacao] = useModalExit(null);
   const [tokenCopiado, setTokenCopiado] = useState(false);
   const [erroToken, setErroToken] = useState("");
-  const [detalheId, setDetalheId] = useState(null);
+  const [detalheId, setDetalheId, fechandoDetalhe, finalizarFechamentoDetalhe] = useModalExit(null);
   const [mensagem, setMensagem] = useState("");
 
   const carregar = useCallback(async (mostrarCarregando = false) => {
@@ -95,38 +96,38 @@ export default function AgendamentosProfessor() {
 
   useEffect(() => { carregar(true); }, [carregar]);
 
-  const localizacoes = useMemo(() => [...new Set(dados.equipamentos.map((item) => item.localizacao).filter(Boolean))].sort(), [dados.equipamentos]);
-  const equipamentosFiltrados = useMemo(() => dados.equipamentos.filter((item) =>
-    localizacaoFiltro === "TODAS" || item.localizacao === localizacaoFiltro), [dados.equipamentos, localizacaoFiltro]);
+  const localizacoes = [...new Set(dados.equipamentos.map((item) => item.localizacao).filter(Boolean))].sort();
+  const equipamentosFiltrados = dados.equipamentos.filter((item) =>
+    localizacaoFiltro === "TODAS" || item.localizacao === localizacaoFiltro);
 
   const dataReferencia = paraISO(dataFoco);
+  const hoje = paraISO(new Date());
   const primeiroDiaMes = new Date(dataFoco.getFullYear(), dataFoco.getMonth(), 1, 12);
   const ultimoDiaMes = new Date(dataFoco.getFullYear(), dataFoco.getMonth() + 1, 0, 12);
-  const segundaSemana = inicioDaSemana(dataFoco);
-  const diasSemana = Array.from({ length: 5 }, (_, indice) => somarDias(segundaSemana, indice));
+  const diasSemana = Array.from({ length: 5 }, (_, indice) => somarDias(dataFoco, indice));
+  const podeVoltarPeriodo = visualizacao === "DIA" || visualizacao === "SEMANA"
+    ? dataReferencia > hoje
+    : true;
   const dataInicio = visualizacao === "DIA" ? dataReferencia : visualizacao === "MES" ? paraISO(primeiroDiaMes) : paraISO(diasSemana[0]);
   const dataFim = visualizacao === "DIA" ? dataReferencia : visualizacao === "MES" ? paraISO(ultimoDiaMes) : paraISO(somarDias(diasSemana[4], 2));
 
-  const reservasPeriodo = useMemo(() => dados.agendamentos
-    .filter((item) => item.data >= dataInicio && item.data <= dataFim)
-    .sort((a, b) => `${a.data}${a.inicio}`.localeCompare(`${b.data}${b.inicio}`)),
-  [dados.agendamentos, dataInicio, dataFim]);
+  const reservasPeriodo = dados.agendamentos
+    .filter((item) => item.status !== "CANCELADO" && item.data >= dataInicio && item.data <= dataFim)
+    .sort((a, b) => `${a.data}${a.inicio}`.localeCompare(`${b.data}${b.inicio}`));
 
-  const reservasVisiveis = useMemo(() => {
-    const termo = busca.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    return reservasPeriodo.filter((item) => {
-      const equipamento = dados.equipamentos.find((registro) => String(registro.id) === String(item.equipamentoId));
-      const correspondeLocal = localizacaoFiltro === "TODAS" || equipamento?.localizacao === localizacaoFiltro;
-      const correspondeEquipamento = equipamentoFiltro === "TODOS" || String(item.equipamentoId) === equipamentoFiltro;
-      const texto = `${item.atividade} ${item.turma} ${item.equipamento} ${item.patrimonio}`.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-      return correspondeLocal && correspondeEquipamento && (!termo || texto.includes(termo));
-    });
-  }, [reservasPeriodo, dados.equipamentos, localizacaoFiltro, equipamentoFiltro, busca]);
+  const termoBusca = busca.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const reservasVisiveis = reservasPeriodo.filter((item) => {
+    const equipamento = dados.equipamentos.find((registro) => String(registro.id) === String(item.equipamentoId));
+    const correspondeLocal = localizacaoFiltro === "TODAS" || equipamento?.localizacao === localizacaoFiltro;
+    const correspondeEquipamento = equipamentoFiltro === "TODOS" || String(item.equipamentoId) === equipamentoFiltro;
+    const texto = `${item.atividade} ${item.turma} ${item.equipamento} ${item.patrimonio}`.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return correspondeLocal && correspondeEquipamento && (!termoBusca || texto.includes(termoBusca));
+  });
 
-  const resumo = useMemo(() => ({
+  const resumo = {
     total: reservasVisiveis.filter((item) => item.status !== "CANCELADO").length,
     pendentes: dados.inspecoes.filter((item) => !item.resultado && !item.cancelada && item.data >= dataInicio && item.data <= dataFim).length,
-  }), [reservasVisiveis, dados.inspecoes, dataInicio, dataFim]);
+  };
 
   const reservaDetalhe = dados.agendamentos.find((item) => item.id === detalheId);
   const preUsoDetalhe = reservaDetalhe && dados.inspecoes.find((item) => item.agendamentoId === reservaDetalhe.id && item.etapa === "PRE_USO");
@@ -154,6 +155,10 @@ export default function AgendamentosProfessor() {
   }
 
   function abrirFormulario(data = dataReferencia, inicio = "09:00", equipamentoId = equipamentoFiltro === "TODOS" ? "" : equipamentoFiltro) {
+    if (data < paraISO(new Date())) {
+      setMensagem("Não é possível criar agendamentos em dias anteriores a hoje.");
+      return;
+    }
     const [hora] = inicio.split(":").map(Number);
     const fim = `${String(Math.min(hora + (inicio === "09:00" ? 1 : 2), 23)).padStart(2, "0")}:00`;
     setFormularioInicial({ data, inicio, fim, equipamentoId });
@@ -203,12 +208,14 @@ export default function AgendamentosProfessor() {
 
   function renderAgendaDia(data) {
     const eventos = eventosDoDia(data);
+    const diaPassado = paraISO(data) < hoje;
     return <div className={styles.agendaDia}>
       {HORAS.map((hora, indice) => <button
         type="button"
         key={hora}
         className={styles.slotVazio}
         style={{ top: `${indice * ALTURA_INTERVALO}px` }}
+        disabled={diaPassado}
         onClick={() => abrirFormulario(paraISO(data), hora)}
         aria-label={`Criar agendamento em ${formatarData(paraISO(data))}, às ${hora}`}
       ><span>+ Reservar</span></button>)}
@@ -281,7 +288,7 @@ export default function AgendamentosProfessor() {
       <section className={styles.painelAgenda} aria-labelledby="titulo-calendario">
         <div className={styles.cabecalhoPainel}>
           <div className={styles.navegacaoPeriodo}>
-            <button type="button" onClick={() => moverPeriodo(-1)} aria-label="Período anterior"><span className="material-symbols-outlined" aria-hidden="true">chevron_left</span></button>
+            <button type="button" onClick={() => moverPeriodo(-1)} disabled={!podeVoltarPeriodo} aria-label="Período anterior"><span className="material-symbols-outlined" aria-hidden="true">chevron_left</span></button>
             <h2 id="titulo-calendario">{rotuloPeriodo}</h2>
             <button type="button" onClick={() => moverPeriodo(1)} aria-label="Próximo período"><span className="material-symbols-outlined" aria-hidden="true">chevron_right</span></button>
             <span className={`${styles.estadoLaboratorio} ${equipamentosOperacionais ? styles.laboratorioAtivo : styles.laboratorioInativo}`}>
@@ -291,7 +298,7 @@ export default function AgendamentosProfessor() {
           <div className={styles.alternadorVisualizacao} role="group" aria-label="Visualização do calendário">
             {[ ["DIA", "Dia"], ["SEMANA", "Semana"], ["MES", "Mês"] ].map(([valor, rotulo]) => <button
               type="button" key={valor} className={visualizacao === valor ? styles.visualizacaoAtiva : ""}
-              aria-pressed={visualizacao === valor} onClick={() => setVisualizacao(valor)}
+              aria-pressed={visualizacao === valor} onClick={() => { setVisualizacao(valor); if (valor === "SEMANA" && dataReferencia < hoje) setDataFoco(new Date()); }}
             >{rotulo}</button>)}
           </div>
         </div>
@@ -332,11 +339,11 @@ export default function AgendamentosProfessor() {
         <p className={styles.notaDados}>Selecione um horário livre para iniciar uma reserva. As inspeções pré-uso são obrigatórias antes da atividade.</p>
       </section>
 
-      {criando && formularioInicial && <ModalProfessor titulo="Novo agendamento" descricao="Informe a atividade, a turma, o equipamento e o horário." icone="event_available" onClose={() => setCriando(false)}>
+      {criando && formularioInicial && <ModalProfessor titulo="Novo agendamento" descricao="Informe a atividade, a turma, o equipamento e o horário." icone="event_available" closing={fechandoCriacao} onExitEnd={finalizarFechamentoCriacao} onClose={() => setCriando(false)}>
         <FormularioAgendamento dataInicial={formularioInicial.data} horarioInicial={formularioInicial.inicio} fimInicial={formularioInicial.fim} equipamentoInicial={formularioInicial.equipamentoId} turmas={dados.turmas} equipamentos={dados.equipamentos} onCreate={salvarReserva} onCancel={() => setCriando(false)} />
       </ModalProfessor>}
 
-      {reservaCriada && <ModalProfessor titulo="Reserva confirmada" descricao="Compartilhe o token com os alunos da turma." icone="task_alt" onClose={() => setReservaCriada(null)}>
+      {reservaCriada && <ModalProfessor titulo="Reserva confirmada" descricao="Compartilhe o token com os alunos da turma." icone="task_alt" closing={fechandoConfirmacao} onExitEnd={finalizarFechamentoConfirmacao} onClose={() => setReservaCriada(null)}>
         <div className={styles.confirmacaoReserva}>
           <p><span>Equipamento</span><strong>{reservaCriada.equipamento} · {reservaCriada.patrimonio}</strong></p>
           <p><span>Turma / atividade</span><strong>{reservaCriada.turma} · {reservaCriada.atividade}</strong></p>
@@ -354,7 +361,7 @@ export default function AgendamentosProfessor() {
         </div>
       </ModalProfessor>}
 
-      {reservaDetalhe && <ModalProfessor titulo={reservaDetalhe.atividade} descricao="Detalhes do agendamento." onClose={() => setDetalheId(null)}>
+      {reservaDetalhe && <ModalProfessor titulo={reservaDetalhe.atividade} descricao="Detalhes do agendamento." closing={fechandoDetalhe} onExitEnd={finalizarFechamentoDetalhe} onClose={() => setDetalheId(null)}>
         <div className={styles.detalhesReserva}>
           <p><span>Data</span><strong>{formatarData(reservaDetalhe.data, { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}</strong></p>
           <p><span>Horário</span><strong>{reservaDetalhe.inicio}–{reservaDetalhe.fim}</strong></p>

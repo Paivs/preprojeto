@@ -35,13 +35,13 @@ function LoginContent() {
         TECNICO: "/tecnico",
       };
 
-      const destino = destinosPorPerfil[resultado.usuario?.perfil];
+      const destino = destinosPorPerfil[resultado.dados.usuario?.perfil];
       if (!destino) {
         setAlerta("Esta conta não tem acesso ao login de usuários. Procure a coordenação.");
         return;
       }
 
-      saveSession(resultado.token, resultado.usuario);
+      saveSession(resultado.dados.token, resultado.dados.usuario);
       window.location.assign(destino);
     } catch (error) {
       const mensagens = {

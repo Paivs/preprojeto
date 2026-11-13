@@ -6,6 +6,7 @@ export default class Chamado {
   constructor({
     id,
     equipamento_id,
+    inspecao_id = null,
     solicitante_id,
     titulo,
     descricao,
@@ -18,6 +19,9 @@ export default class Chamado {
     }
     if (!Number.isInteger(equipamento_id) || equipamento_id <= 0) {
       throw new TypeError("ID do equipamento deve ser um inteiro positivo.");
+    }
+    if (inspecao_id !== null && (!Number.isInteger(inspecao_id) || inspecao_id <= 0)) {
+      throw new TypeError("ID da inspeção deve ser um inteiro positivo.");
     }
     if (!Number.isInteger(solicitante_id) || solicitante_id <= 0) {
       throw new TypeError("ID do solicitante deve ser um inteiro positivo.");
@@ -40,6 +44,7 @@ export default class Chamado {
 
     this.id = id;
     this.equipamento_id = equipamento_id;
+    this.inspecao_id = inspecao_id;
     this.solicitante_id = solicitante_id;
     this.titulo = titulo.trim();
     this.descricao = descricao.trim();

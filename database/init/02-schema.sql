@@ -1,4 +1,4 @@
-﻿-- ESQUEMA INICIAL DO BANCO DE DADOS 
+-- ESQUEMA INICIAL DO BANCO DE DADOS
 
 
 CREATE DATABASE IF NOT EXISTS tenken_db
@@ -29,6 +29,7 @@ CREATE TABLE turmas_projetos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     professor_id BIGINT UNSIGNED NOT NULL,
+    token_acesso VARCHAR(8) NULL UNIQUE,
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (professor_id) REFERENCES usuarios(id)
 ) ENGINE=InnoDB;
@@ -59,26 +60,6 @@ CREATE TABLE equipamentos (
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- TABELA: componentes
--- RF02: catÃ¡logo de peÃ§as e quantidade total controlada.
-CREATE TABLE componentes (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    categoria VARCHAR(50) NOT NULL,
-    quantidade_total INT UNSIGNED NOT NULL DEFAULT 1
-) ENGINE=InnoDB;
-
--- TABELA: equipamento_componentes
--- RF02: composiÃ§Ã£o fÃ­sica de cada equipamento e quantidade de cada componente.
-CREATE TABLE equipamento_componentes (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    equipamento_id BIGINT UNSIGNED NOT NULL,
-    componente_id BIGINT UNSIGNED NOT NULL,
-    quantidade INT UNSIGNED NOT NULL DEFAULT 1,
-    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id) ON DELETE CASCADE,
-    FOREIGN KEY (componente_id) REFERENCES componentes(id)
-) ENGINE=InnoDB;
-
 -- TABELA: agendamentos
 -- RN03: responsavel_id identifica o responsÃ¡vel patrimonial da reserva.
 -- RN05/RF06: perÃ­odo, ativo, estado e token Ãºnico da reserva. CHECK valida a
@@ -94,7 +75,8 @@ CREATE TABLE agendamentos (
     atividade VARCHAR(120) NULL,
     inicio DATETIME NOT NULL,
     fim DATETIME NOT NULL,
-    token_acesso VARCHAR(20) NOT NULL UNIQUE,
+    -- legado: token agora fica em turmas_projetos.
+    token_acesso VARCHAR(20) NULL,
     status ENUM('CONFIRMADO', 'EM_ANDAMENTO', 'CONCLUIDO', 'CANCELADO') NOT NULL DEFAULT 'CONFIRMADO',
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CHECK (fim > inicio),
@@ -112,6 +94,8 @@ CREATE TABLE checkins (
     agendamento_id BIGINT UNSIGNED NOT NULL,
     aluno_id BIGINT UNSIGNED NOT NULL,
     realizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    -- NULL = aguardando aprovação do professor.
+    aprovado_em DATETIME NULL,
     PRIMARY KEY (agendamento_id, aluno_id),
     FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id) ON DELETE CASCADE,
     FOREIGN KEY (aluno_id) REFERENCES usuarios(id)
@@ -136,6 +120,35 @@ CREATE TABLE checklist_itens (
     critico BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (modelo_id) REFERENCES checklist_modelos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+-- Modelos e itens iniciais dos checklists usados na página do professor.
+INSERT INTO checklist_modelos (titulo, tipo_equipamento, etapa, ativo) VALUES
+('Inspeção de bancada — pré-uso', 'BANCADA', 'PRE_USO', TRUE),
+('Inspeção de bancada — pós-uso', 'BANCADA', 'POS_USO', TRUE),
+('Inspeção de robô colaborativo — início', 'ROBO', 'PRE_USO', TRUE),
+('Devolução de robô colaborativo', 'ROBO', 'POS_USO', TRUE);
+
+INSERT INTO checklist_itens (modelo_id, descricao, critico) VALUES
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pré-uso'), 'Botão de emergência interrompe o circuito ao ser acionado', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pré-uso'), 'Cabos e pontas de prova sem cobre exposto', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pré-uso'), 'Bornes, seletores e instrumentos estão identificados e funcionando', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pré-uso'), 'Proteções e tampas do painel estão instaladas e sem danos visíveis', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pré-uso'), 'A bancada está estável e não há peças soltas', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pós-uso'), 'Bancada, fontes e instrumentos desligados; área organizada e segura', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pós-uso'), 'Cabos e acessórios devolvidos ao suporte', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pós-uso'), 'Não houve aquecimento, cheiro ou ruído anormal durante o uso', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pós-uso'), 'Cabos, conectores e instrumentos continuam sem danos após a atividade', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de bancada — pós-uso'), 'Componentes usados foram contabilizados; itens faltantes foram registrados', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Cercamento e parada de emergência funcionando', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Garra e ferramenta firmemente fixadas', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Área de trabalho livre de objetos soltos', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Cabos, mangueiras e conexões estão sem desgaste, esmagamento ou vazamento visível.', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Inspeção de robô colaborativo — início'), 'Modo de operação e velocidade estão adequados à atividade planejada.', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'Robô estacionado e alimentação isolada', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'Ferramentas e gabaritos guardados', FALSE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'Garra e ferramenta continuam firmes e sem danos após o uso.', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'Não houve colisão, parada de emergência ou comportamento inesperado durante a atividade.', TRUE),
+((SELECT id FROM checklist_modelos WHERE titulo = 'Devolução de robô colaborativo'), 'A célula e a área de trabalho estão sem danos e sem objetos deixados para trás.', TRUE);
 
 -- TABELA: inspecoes
 -- RN02: registra vistoria prÃ© e pÃ³s; UNIQUE permite uma de cada por reserva.
@@ -172,36 +185,6 @@ CREATE TABLE inspecao_respostas (
     FOREIGN KEY (item_id) REFERENCES checklist_itens(id)
 ) ENGINE=InnoDB;
 
--- TABELA: inspecao_componentes
--- RF02/RN02: compara quantidades esperadas, encontradas e danificadas durante
--- a vistoria; diferenÃ§a pode gerar ocorrÃªncia patrimonial conforme a API.
-CREATE TABLE inspecao_componentes (
-    inspecao_id BIGINT UNSIGNED NOT NULL,
-    componente_id BIGINT UNSIGNED NOT NULL,
-    quantidade_esperada INT UNSIGNED NOT NULL,
-    quantidade_encontrada INT UNSIGNED NOT NULL,
-    quantidade_danificada INT UNSIGNED NOT NULL DEFAULT 0,
-    PRIMARY KEY (inspecao_id, componente_id),
-    CHECK (quantidade_danificada <= quantidade_encontrada),
-    FOREIGN KEY (inspecao_id) REFERENCES inspecoes(id) ON DELETE CASCADE,
-    FOREIGN KEY (componente_id) REFERENCES componentes(id)
-) ENGINE=InnoDB;
-
--- TABELA: ocorrencias_patrimoniais
--- RN03: registra dano/extravio de componente vinculado Ã  reserva; o responsÃ¡vel
--- Ã© obtido por agendamentos.responsavel_id. A API valida essa associaÃ§Ã£o.
-CREATE TABLE ocorrencias_patrimoniais (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    agendamento_id BIGINT UNSIGNED NOT NULL,
-    componente_id BIGINT UNSIGNED,
-    tipo ENUM('DANO', 'EXTRAVIO') NOT NULL,
-    quantidade INT UNSIGNED NOT NULL DEFAULT 1,
-    descricao TEXT,
-    criada_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id),
-    FOREIGN KEY (componente_id) REFERENCES componentes(id)
-) ENGINE=InnoDB;
-
 -- TABELA: chamados_manutencao
 -- RN01/RF05: falha em item crÃ­tico gera chamado urgente e bloqueio do ativo;
 -- falha nÃ£o crÃ­tica gera chamado preventivo e mantÃ©m o uso liberado. A API
@@ -226,7 +209,8 @@ CREATE TABLE chamados_manutencao (
     FOREIGN KEY (inspecao_id) REFERENCES inspecoes(id),
     FOREIGN KEY (solicitante_id) REFERENCES usuarios(id),
     FOREIGN KEY (tecnico_id) REFERENCES usuarios(id),
-    INDEX idx_chamado_equipamento_status (equipamento_id, status)
+    INDEX idx_chamado_equipamento_status (equipamento_id, status),
+    INDEX idx_chamados_professor_status_aberto (solicitante_id, status, aberto_em)
 ) ENGINE=InnoDB;
 
 -- TABELA: historico_manutencao
@@ -244,34 +228,6 @@ CREATE TABLE historico_manutencao (
     FOREIGN KEY (tecnico_id) REFERENCES usuarios(id)
 ) ENGINE=InnoDB;
 
--- TABELA: notificacoes
--- RF16: alertas associados a usuÃ¡rios e chamados; a API cria notificaÃ§Ãµes para
--- professores e tÃ©cnicos quando um chamado urgente Ã© aberto.
-CREATE TABLE notificacoes (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    usuario_id BIGINT UNSIGNED NOT NULL,
-    chamado_id BIGINT UNSIGNED,
-    mensagem VARCHAR(255) NOT NULL,
-    lida BOOLEAN NOT NULL DEFAULT FALSE,
-    criada_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (chamado_id) REFERENCES chamados_manutencao(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
--- TABELA: resultados_testes
--- RF15: relatÃ³rio e resultado da prÃ¡tica vinculados Ã  reserva e ao aluno autor.
-CREATE TABLE resultados_testes (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    agendamento_id BIGINT UNSIGNED NOT NULL,
-    usuario_id BIGINT UNSIGNED NOT NULL,
-    titulo VARCHAR(150),
-    relatorio TEXT NOT NULL,
-    enviado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id) ON DELETE CASCADE,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-) ENGINE=InnoDB;
-
-
 -- TABELA: pre_matriculas_alunos
 -- RF10/regra de matrÃ­cula: guarda os dados de quem gerou matrÃ­cula antes de criar a conta.
 -- A matrÃ­cula sÃ³ vira usuÃ¡rio quando o aluno define a senha (POST /api/alunos/cadastro).
@@ -286,7 +242,7 @@ CREATE TABLE pre_matriculas_alunos (
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- Tabela adicional incorporada da migração de ordens de serviço.
+-- Estrutura consolidada da antiga migration 20261111_ordens_servico.sql.
 -- TABELA: ordens_servico
 -- Vinculada 1:1 a um chamado de manutenÃ§Ã£o.
 CREATE TABLE ordens_servico (
@@ -312,4 +268,3 @@ CREATE TABLE pre_cadastros_staff (
     utilizada BOOLEAN NOT NULL DEFAULT FALSE,
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
-

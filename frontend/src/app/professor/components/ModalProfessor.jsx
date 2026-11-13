@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import styles from "./ModalProfessor.module.css";
 import modalStyles from "../../admin/equipamentos/page.module.css";
 
-export default function ModalProfessor({ titulo, descricao, onClose, children, largura = "normal", icone }) {
+export default function ModalProfessor({ titulo, descricao, onClose, children, largura = "normal", icone, closing = false, onExitEnd }) {
   const modalRef = useRef(null);
   useEffect(() => {
     const focoAnterior = document.activeElement;
@@ -12,7 +12,7 @@ export default function ModalProfessor({ titulo, descricao, onClose, children, l
     const seletor = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
     (modal?.querySelector(seletor) || modal)?.focus();
     function fecharComEscape(evento) {
-      if (evento.key === "Escape") onClose();
+      if (evento.key === "Escape" && !closing) onClose();
       if (evento.key === "Tab" && modal) {
         const focaveis = [...modal.querySelectorAll(seletor)];
         const primeiro = focaveis[0];
@@ -24,11 +24,11 @@ export default function ModalProfessor({ titulo, descricao, onClose, children, l
     }
     window.addEventListener("keydown", fecharComEscape);
     return () => { window.removeEventListener("keydown", fecharComEscape); if (focoAnterior?.isConnected) focoAnterior.focus(); };
-  }, [onClose]);
+  }, [onClose, closing]);
 
   return (
-    <div className={styles.fundo} onMouseDown={(evento) => evento.target === evento.currentTarget && onClose()}>
-      <section ref={modalRef} tabIndex={-1} className={`${styles.modal} ${largura === "larga" ? styles.modalLargo : ""}`} role="dialog" aria-modal="true" aria-labelledby="titulo-modal-professor">
+    <div className={`${styles.fundo} abrir-modal-fundo ${closing ? "fechar-modal-fundo" : ""}`} onMouseDown={(evento) => evento.target === evento.currentTarget && !closing && onClose()}>
+      <section ref={modalRef} onAnimationEnd={onExitEnd} tabIndex={-1} className={`${styles.modal} abrir-modal ${largura === "larga" ? styles.modalLargo : ""} ${closing ? "fechar-modal" : ""}`} role="dialog" aria-modal="true" aria-labelledby="titulo-modal-professor">
         <header className={styles.cabecalho}>
           <div className={styles.cabecalhoEsquerdo}>
             {icone && (
@@ -41,7 +41,7 @@ export default function ModalProfessor({ titulo, descricao, onClose, children, l
               {descricao && <p>{descricao}</p>}
             </div>
           </div>
-          <button className={styles.fechar} type="button" onClick={onClose} aria-label="Fechar janela">
+          <button className={styles.fechar} type="button" onClick={onClose} disabled={closing} aria-label="Fechar janela">
             <span className="material-symbols-outlined" aria-hidden="true">close</span>
           </button>
         </header>

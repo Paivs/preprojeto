@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
 import styles from "./page.module.css";
 import EmptyState from "@/components/EmptyState";
@@ -8,13 +8,15 @@ import EmptyState from "@/components/EmptyState";
 const STATUS = [
   ["ABERTO", "Aberto"],
   ["EM_ATENDIMENTO", "Em atendimento"],
-  ["AGUARDANDO_PECAS", "Aguardando peças"],
-  ["CONCLUIDO", "Concluído"],
-  ["CANCELADO", "Cancelado"],
 ];
 const SEVERIDADES = [["CRITICA", "Crítica"], ["ALTA", "Alta"], ["MEDIA", "Média"], ["BAIXA", "Baixa"]];
 const ROTULO_STATUS = Object.fromEntries(STATUS);
 const ROTULO_SEVERIDADE = Object.fromEntries(SEVERIDADES);
+const STATUS_ORDEM_POR_CHAMADO = {
+  ABERTO: "EMITIDA",
+  EM_ATENDIMENTO: "EM_EXECUCAO",
+  CANCELADO: "CANCELADA",
+};
 
 function formatarData(valor) {
   if (!valor) return "Data não informada";
@@ -29,6 +31,10 @@ export default function PaginaChamadosTecnico() {
   const [busca, setBusca] = useState("");
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
+  const [chamadoSelecionado, setChamadoSelecionado] = useState(null);
+  const [atualizandoStatus, setAtualizandoStatus] = useState(false);
+  const [descricaoServico, setDescricaoServico] = useState("");
+  const [aviso, setAviso] = useState("");
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -37,8 +43,17 @@ export default function PaginaChamadosTecnico() {
       const params = new URLSearchParams({ pagina: "1", limite: "100" });
       if (status) params.set("status", status);
       if (severidade) params.set("severidade", severidade);
-      const resposta = await apiFetch(`/api/chamados?${params}`);
-      setChamados(Array.isArray(resposta?.dados) ? resposta.dados : []);
+      const resposta = await apiFetch(`/api/ordens-servico?${params}`);
+      const ordens = Array.isArray(resposta?.dados) ? resposta.dados : [];
+      const ordensExibidas = ordens.filter((ordem) => !["CONCLUIDO", "CANCELADO"].includes(ordem.chamado_status));
+      setChamados(ordensExibidas.map((ordem) => ({
+        ...ordem,
+        os_id: ordem.id,
+        os_numero: ordem.numero,
+        os_status: ordem.status,
+        id: ordem.chamado_id,
+        status: ordem.chamado_status,
+      })));
     } catch (error) {
       setErro(error.message || "Não foi possível carregar os chamados.");
     } finally {
@@ -48,22 +63,91 @@ export default function PaginaChamadosTecnico() {
 
   useEffect(() => { carregar(); }, [carregar]);
 
-  const filtrados = useMemo(() => {
-    const termo = busca.trim().toLocaleLowerCase("pt-BR");
-    if (!termo) return chamados;
-    return chamados.filter((chamado) =>
-      [chamado.id, chamado.titulo, chamado.descricao, chamado.equipamento_id, chamado.tipo]
-        .some((valor) => String(valor ?? "").toLocaleLowerCase("pt-BR").includes(termo)),
-    );
-  }, [busca, chamados]);
+  useEffect(() => {
+    const intervalo = window.setInterval(carregar, 30000);
+    const atualizarAoVoltar = () => {
+      if (document.visibilityState === "visible") carregar();
+    };
+    window.addEventListener("focus", atualizarAoVoltar);
+    document.addEventListener("visibilitychange", atualizarAoVoltar);
+    return () => {
+      window.clearInterval(intervalo);
+      window.removeEventListener("focus", atualizarAoVoltar);
+      document.removeEventListener("visibilitychange", atualizarAoVoltar);
+    };
+  }, [carregar]);
+
+  function abrirDetalhes(chamado) {
+    setChamadoSelecionado(chamado);
+    setDescricaoServico("");
+    setErro("");
+    setAviso("");
+  }
+
+  async function atualizarStatus(novoStatus) {
+    if (!chamadoSelecionado || atualizandoStatus) return;
+    setAtualizandoStatus(true);
+    setErro("");
+    setAviso("");
+    try {
+      const resposta = await apiFetch(`/api/chamados/${chamadoSelecionado.id}/status`, {
+        method: "PATCH",
+        body: { status: novoStatus },
+      });
+      const chamadoAtualizado = resposta?.dados ?? { ...chamadoSelecionado, status: novoStatus };
+      const statusOrdem = STATUS_ORDEM_POR_CHAMADO[novoStatus];
+      setChamadoSelecionado((atual) => ({
+        ...atual,
+        ...chamadoAtualizado,
+        ...(statusOrdem ? { os_status: statusOrdem } : {}),
+      }));
+      setChamados((atuais) => atuais.map((chamado) =>
+        chamado.id === chamadoAtualizado.id
+          ? { ...chamado, ...chamadoAtualizado, ...(statusOrdem ? { os_status: statusOrdem } : {}) }
+          : chamado,
+      ));
+      setAviso("Status do chamado atualizado.");
+    } catch (error) {
+      setErro(error.message || "Não foi possível atualizar o chamado.");
+    } finally {
+      setAtualizandoStatus(false);
+    }
+  }
+
+  async function concluirOrdem() {
+    if (!chamadoSelecionado || atualizandoStatus) return;
+    setAtualizandoStatus(true);
+    setErro("");
+    setAviso("");
+    try {
+      await apiFetch(`/api/ordens-servico/${chamadoSelecionado.os_id}/concluir`, {
+        method: "POST",
+        body: { descricao: descricaoServico },
+      });
+      setChamados((atuais) => atuais.filter((chamado) => chamado.os_id !== chamadoSelecionado.os_id));
+      setChamadoSelecionado(null);
+      setDescricaoServico("");
+      setAviso("Ordem de serviço concluída com sucesso.");
+    } catch (error) {
+      setErro(error.message || "Não foi possível concluir a ordem de serviço.");
+    } finally {
+      setAtualizandoStatus(false);
+    }
+  }
+
+  const termoBusca = busca.trim().toLocaleLowerCase("pt-BR");
+  const filtrados = !termoBusca ? chamados : chamados.filter((chamado) =>
+    [chamado.os_numero, chamado.id, chamado.titulo, chamado.descricao, chamado.equipamento_id, chamado.tipo]
+      .some((valor) => String(valor ?? "").toLocaleLowerCase("pt-BR").includes(termoBusca)),
+  );
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <div>
           <p className={styles.sobretitulo}>Atendimento técnico</p>
-          <h1 className={styles.titulo}>Chamados</h1>
-          <p className={styles.descricao}>Consulte os chamados atribuídos a você e acompanhe suas prioridades.</p>
+          <h1 className={styles.titulo}>Ordens de Serviço</h1>
+          <p className={styles.descricao}>Consulte as ordens de serviços atribuídos a você e acompanhe suas prioridades.</p>
         </div>
         <button type="button" className={styles.atualizar} onClick={carregar} disabled={carregando}>
           <span className={`material-symbols-outlined ${carregando ? styles.girando : ""}`}>sync</span>
@@ -92,14 +176,15 @@ export default function PaginaChamadosTecnico() {
         </label>
       </section>
 
-      {erro && <p className={styles.erro} role="alert">{erro}</p>}
-      <p className={styles.contagem}>{carregando ? "Carregando chamados…" : `${filtrados.length} chamados encontrados`}</p>
+      {erro && !chamadoSelecionado && <p className={styles.erro} role="alert">{erro}</p>}
+      {aviso && !chamadoSelecionado && <p className={styles.aviso} role="status">{aviso}</p>}
+      <p className={styles.contagem}>{carregando ? "Carregando ordens de serviço…" : `${filtrados.length} ordens de serviço encontradas`}</p>
 
       {!carregando && !erro && filtrados.length === 0 && (
         <EmptyState
           icone="inbox"
-          titulo={chamados.length ? "Nenhum resultado para esses filtros" : "Nenhum chamado atribuído"}
-          mensagem={chamados.length ? "Tente alterar a busca ou os filtros." : "Quando houver chamados atribuídos, eles aparecem aqui."}
+          titulo={chamados.length ? "Nenhum resultado para esses filtros" : "Nenhuma OS recebida"}
+          mensagem={chamados.length ? "Tente alterar a busca ou os filtros." : "Ordens de serviço emitidas pelo administrador para seus chamados aparecerão aqui."}
         />
       )}
 
@@ -108,26 +193,100 @@ export default function PaginaChamadosTecnico() {
           const prioridade = String(chamado.severidade || "").toUpperCase();
           const statusAtual = String(chamado.status || "").toUpperCase();
           return (
-            <article className={styles.cartao} key={chamado.id}>
+            <article className={styles.cartao} key={chamado.os_id}>
               <div className={styles.cartaoTopo}>
                 <span className={`${styles.prioridade} ${styles[`prioridade_${prioridade.toLowerCase()}`] || ""}`}>
                   {ROTULO_SEVERIDADE[prioridade] || "Prioridade não informada"}
                 </span>
                 <span className={`${styles.status} ${styles[`status_${statusAtual.toLowerCase()}`] || ""}`}>
-                  {ROTULO_STATUS[statusAtual] || statusAtual}
+                  {chamado.os_numero || `OS #${chamado.os_id}`} · {chamado.os_status}
                 </span>
               </div>
               <h2 className={styles.tituloChamado}>{chamado.titulo || `Chamado #${chamado.id}`}</h2>
               <p className={styles.resumo}>{chamado.descricao || "Sem descrição informada."}</p>
               <div className={styles.detalhes}>
                 <span><strong>Chamado</strong> #{String(chamado.id).padStart(4, "0")}</span>
-                <span><strong>Equipamento</strong> {chamado.equipamento_id ? `#${chamado.equipamento_id}` : "Não informado"}</span>
+                <span><strong>Equipamento</strong> {chamado.equipamento_nome || (chamado.equipamento_id ? `#${chamado.equipamento_id}` : "Não informado")}</span>
                 <span><strong>Aberto em</strong> {formatarData(chamado.aberto_em)}</span>
               </div>
+              <button type="button" className={styles.botaoDetalhes} onClick={() => abrirDetalhes(chamado)}>
+                Resolver OS
+                <span className="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+              </button>
             </article>
           );
         })}
       </section>
+
+      {chamadoSelecionado && (
+        <div
+          className={styles.modalFundo}
+          role="presentation"
+          onMouseDown={(evento) => {
+            if (evento.target === evento.currentTarget) setChamadoSelecionado(null);
+          }}
+        >
+          <section className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="titulo-detalhes-chamado">
+            <header className={styles.modalCabecalho}>
+              <div>
+                <p className={styles.sobretitulo}>Resolução da ordem de serviço</p>
+                <h2 className={styles.modalTitulo} id="titulo-detalhes-chamado">
+                  {chamadoSelecionado.titulo || `Chamado #${chamadoSelecionado.id}`}
+                </h2>
+              </div>
+              <button type="button" className={styles.fecharModal} onClick={() => setChamadoSelecionado(null)} aria-label="Fechar detalhes">
+                <span className="material-symbols-outlined" aria-hidden="true">close</span>
+              </button>
+            </header>
+            {erro && <p className={styles.erro} role="alert">{erro}</p>}
+            {aviso && <p className={styles.aviso} role="status">{aviso}</p>}
+            <div className={styles.modalEtiquetas}>
+              <span className={`${styles.prioridade} ${styles[`prioridade_${String(chamadoSelecionado.severidade || "").toLowerCase()}`] || ""}`}>
+                {ROTULO_SEVERIDADE[chamadoSelecionado.severidade] || "Prioridade não informada"}
+              </span>
+              <span className={`${styles.status} ${styles[`status_${String(chamadoSelecionado.status || "").toLowerCase()}`] || ""}`}>
+            {chamadoSelecionado.status === "AGUARDANDO_PECAS" ? "Em atendimento" : ROTULO_STATUS[chamadoSelecionado.status] || chamadoSelecionado.status}
+              </span>
+            </div>
+            <dl className={styles.modalDados}>
+              <div>
+                <dt>Equipamento</dt>
+                <dd>{chamadoSelecionado.equipamento_nome || `Equipamento #${chamadoSelecionado.equipamento_id}`}</dd>
+              </div>
+              <div>
+                <dt>Tipo de manutenção</dt>
+                <dd>{chamadoSelecionado.tipo === "PREVENTIVO" ? "Preventiva" : "Corretiva"}</dd>
+              </div>
+              <div>
+                <dt>Aberto em</dt>
+                <dd>{formatarData(chamadoSelecionado.aberto_em)}</dd>
+              </div>
+            </dl>
+            <div className={styles.modalDescricao}>
+              <h3>Descrição</h3>
+              <p>{chamadoSelecionado.descricao || "Sem descrição informada."}</p>
+            </div>
+            {chamadoSelecionado.status === "ABERTO" && (
+              <div className={styles.modalAcoes}>
+                <button type="button" className={styles.botaoAcao} onClick={() => atualizarStatus("EM_ATENDIMENTO")} disabled={atualizandoStatus}>
+                  {atualizandoStatus ? "Atualizando..." : "Iniciar atendimento"}
+                </button>
+              </div>
+            )}
+            {["EM_ATENDIMENTO", "AGUARDANDO_PECAS"].includes(chamadoSelecionado.status) && (
+              <div className={styles.modalAcoes}>
+                <label className={styles.campoDescricaoServico}>
+                  <span>Descrição do serviço realizado</span>
+                  <textarea value={descricaoServico} onChange={(evento) => setDescricaoServico(evento.target.value)} rows={5} placeholder="Descreva o serviço realizado" required />
+                </label>
+                <button type="button" className={styles.botaoAcao} onClick={concluirOrdem} disabled={atualizandoStatus || !descricaoServico.trim()}>
+                  {atualizandoStatus ? "Concluindo..." : "Concluir ordem de serviço"}
+                </button>
+              </div>
+            )}
+          </section>
+        </div>
+      )}
     </div>
   );
 }
