@@ -8,6 +8,7 @@ import EmptyState from "@/components/EmptyState";
 const STATUS = [
   ["ABERTO", "Aberto"],
   ["EM_ATENDIMENTO", "Em atendimento"],
+  ["AGUARDANDO_PECAS", "Aguardando peças"],
 ];
 const SEVERIDADES = [["CRITICA", "Crítica"], ["ALTA", "Alta"], ["MEDIA", "Média"], ["BAIXA", "Baixa"]];
 const ROTULO_STATUS = Object.fromEntries(STATUS);
