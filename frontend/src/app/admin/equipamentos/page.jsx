@@ -171,7 +171,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi("/equipamentos", token, {
         method: "POST",
-        body: JSON.stringify(form),
+        body: form,
       });
       setModalAberto(false);
       setFeedback({ type: "success", message: "Equipamento cadastrado com sucesso." });
@@ -186,7 +186,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi(`/equipamentos/${item.id}/status`, token, {
         method: "PATCH",
-        body: JSON.stringify({ status }),
+        body: { status },
       });
       setHistorico((atual) => [
         {

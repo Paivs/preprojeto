@@ -94,7 +94,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi(`/usuarios/${user.id}/perfil`, token, {
         method: "PUT",
-        body: JSON.stringify({ perfil }),
+        body: { perfil },
       });
       setAviso(`Perfil de ${user.nome} atualizado para ${perfil}.`);
       await carregarUsuarios();
@@ -107,7 +107,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi(`/usuarios/${user.id}/ativo`, token, {
         method: "PATCH",
-        body: JSON.stringify({ ativo }),
+        body: { ativo },
       });
       setAviso(`Usuário ${user.nome} ${ativo ? "ativado" : "desativado"}.`);
       await carregarUsuarios();
@@ -137,7 +137,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi(`/usuarios/${alunoEditado.id}`, token, {
         method: "PUT",
-        body: JSON.stringify({ ...formEdicao, turmaIds: formEdicao.turmaIds }),
+        body: { ...formEdicao, turmaIds: formEdicao.turmaIds },
       });
       setAviso(`Dados de ${formEdicao.nome} atualizados.`);
       setModalEdicaoAberto(false);
@@ -166,11 +166,11 @@ function Conteudo({ token }) {
       if (novoUsuario.perfil === "PROFESSOR" || novoUsuario.perfil === "TECNICO") {
         await chamarApi("/pre-cadastros", token, {
           method: "POST",
-          body: JSON.stringify({
+          body: {
             nome: novoUsuario.nome,
             email: novoUsuario.email,
             perfil: novoUsuario.perfil,
-          }),
+          },
         });
       }
       setFeedback({ type: "success", message: `Usuário ${novoUsuario.nome} cadastrado com sucesso.` });

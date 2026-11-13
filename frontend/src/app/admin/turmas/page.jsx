@@ -65,7 +65,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi("/turmas", token, {
         method: "POST",
-        body: JSON.stringify({ nome, professor_id: Number(professorId) }),
+        body: { nome, professor_id: Number(professorId) },
       });
       setFeedback({ type: "success", message: `Turma ${nome.trim()} criada com sucesso.` });
       setNome("");
