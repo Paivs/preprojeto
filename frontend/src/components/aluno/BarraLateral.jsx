@@ -6,36 +6,44 @@ import { usePathname } from "next/navigation";
 import { IconeCasa, IconeEquipamento } from "./IconesNavegacao";
 import styles from "./BarraLateral.module.css";
 
-export default function BarraLateral() {
+const itens = [
+  { href: "/aluno/bem-vindo", label: "Bem-vindo", Icone: IconeCasa },
+  { href: "/aluno/equipamentos", label: "Equipamentos", Icone: IconeEquipamento },
+];
+
+export default function BarraLateral({ aberta = false, onNavegar, onFechar }) {
   const pathname = usePathname();
-  const itemAtual = pathname === "/aluno" ? "inicio" : pathname === "/aluno/equipamentos" ? "equipamentos" : "diagnostico";
 
   return (
-    <aside className={styles.barra} aria-label="Navegação do aluno">
-      <div className={styles.brandHeader}>
-        <Link href="/" className={styles.brandLink} aria-label="Tenken início">
-          <Image src="/assets/img/logo-site/logo_horizontal.svg" alt="Tenken" width={150} height={36} priority className={styles.brandLogo} />
-        </Link>
+    <aside className={`${styles.barra} ${aberta ? styles.barraAberta : ""}`} aria-label="Navegação do aluno" aria-hidden={!aberta && undefined}>
+      <div className={styles.topSection}>
+        <div className={styles.brandHeader}>
+          <Link href="/aluno/bem-vindo" className={styles.brandLink} aria-label="TENKEN início">
+            <Image src="/assets/img/logo-site/logo_horizontal.svg" alt="TENKEN" width={190} height={42} priority className={styles.brandLogo} />
+          </Link>
+          <button type="button" className={styles.mobileCloseBtn} onClick={onFechar} aria-label="Fechar menu">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div className={styles.sectionHeading}><span>Área do aluno</span></div>
+        <nav className={styles.navMenu} aria-label="Navegação do aluno">
+          {itens.map(({ href, label, Icone }) => {
+            const ativo = pathname === href;
+            return (
+              <Link key={href} href={href} className={`${styles.navItem} ${ativo ? styles.navItemActive : ""}`} aria-current={ativo ? "page" : undefined} onClick={onNavegar}>
+                <Icone className={styles.navIcon} />
+                <span className={styles.navLabel}>{label}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
-      <div className={styles.sectionHeading}>Área do Aluno</div>
-      <nav className={styles.navegacao}>
-        <Link className={`${styles.link} ${itemAtual === "inicio" ? styles.ativo : ""}`} href="/aluno" aria-current={itemAtual === "inicio" ? "page" : undefined}>
-          <span className={styles.caixaIcone}><IconeCasa className={styles.icone} /></span>
-          <span>Início</span>
-        </Link>
-        <Link className={`${styles.link} ${itemAtual === "diagnostico" ? styles.ativo : ""}`} href="/aluno/diagnostico" aria-current={itemAtual === "diagnostico" ? "page" : undefined}>
-          <span className={styles.caixaIcone}><IconeEquipamento className={styles.icone} /></span>
-          <span>Diagnóstico</span>
-        </Link>
-        <Link className={`${styles.link} ${itemAtual === "equipamentos" ? styles.ativo : ""}`} href="/aluno/equipamentos" aria-current={itemAtual === "equipamentos" ? "page" : undefined}>
-          <span className={styles.caixaIcone}><IconeEquipamento className={styles.icone} /></span>
-          <span>Equipamentos</span>
-        </Link>
-      </nav>
+
       <footer className={styles.footer}>
-        <div className={styles.statusCard} role="status">
-          <span className={styles.pontoVerde} aria-hidden="true" />
-          <span>Sessão autenticada</span>
+        <div className={styles.telemetryCard} role="status">
+          <span className={styles.pulseDot} aria-hidden="true" />
+          <span className={styles.telemetryText}>Bancada liberada</span>
         </div>
       </footer>
     </aside>
