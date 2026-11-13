@@ -1,13 +1,7 @@
+import { validarId } from "../utils/validarId.js";
 import Componente from "../models/Componente.js";
 import * as ComponenteModel from "../models/componenteModel.js";
 
-function validarId(idRecebido) {
-  const id = Number(idRecebido);
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new TypeError("ID deve ser um número inteiro positivo.");
-  }
-  return id;
-}
 
 export async function listar({ pagina = 1, limite = 20 } = {}) {
   const paginaNum = Number(pagina);

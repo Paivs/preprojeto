@@ -1,14 +1,10 @@
+import { validarId } from "../utils/validarId.js";
 import * as ChecklistItemModel from "../models/checklistItemModel.js";
 import * as ChecklistModeloModel from "../models/checklistModeloModel.js";
 
 const TIPOS_EQUIPAMENTO_VALIDOS = ["BANCADA", "ROBO"];
 const ETAPAS_VALIDAS = ["PRE_USO", "POS_USO"];
 
-function validarId(idRecebido, nomeCampo = "ID") {
-  const id = Number(idRecebido);
-  if (!Number.isInteger(id) || id <= 0) throw new TypeError(`${nomeCampo} deve ser um número inteiro positivo.`);
-  return id;
-}
 
 function validarModelo({ titulo, tipo_equipamento, etapa }) {
   if (typeof titulo !== "string" || titulo.trim() === "") throw new TypeError("Título é obrigatório.");

@@ -1,13 +1,7 @@
+import { validarId } from "../utils/validarId.js";
 import Equipamento, { STATUS_VALIDOS } from "../models/Equipamento.js";
 import * as EquipamentoModel from "../models/equipamentoModel.js";
 
-function validarId(idRecebido) {
-  const id = Number(idRecebido);
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new TypeError("ID deve ser um número inteiro positivo.");
-  }
-  return id;
-}
 
 export async function listar({ pagina = 1, limite = 20, tipo, localizacao, status } = {}) {
   const paginaNum = Number(pagina);

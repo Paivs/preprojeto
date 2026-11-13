@@ -1,12 +1,8 @@
+import { validarId } from "../utils/validarId.js";
 import * as OcorrenciaModel from "../models/ocorrenciaModel.js";
 
 const TIPOS_VALIDOS = ["DANO", "EXTRAVIO"];
 
-function validarId(idRecebido, nomeCampo) {
-  const id = Number(idRecebido);
-  if (!Number.isInteger(id) || id <= 0) throw new TypeError(`${nomeCampo} deve ser um número inteiro positivo.`);
-  return id;
-}
 
 export async function listar({ pagina = 1, limite = 10, tipo, aluno_id, turma_id } = {}) {
   const paginaNum = Number(pagina);

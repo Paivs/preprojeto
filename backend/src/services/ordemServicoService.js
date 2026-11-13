@@ -1,3 +1,4 @@
+import { validarId } from "../utils/validarId.js";
 import * as ChamadoModel from "../models/chamadoModel.js";
 import * as OrdemServicoModel from "../models/ordemServicoModel.js";
 import * as HistoricoManutencaoService from "./historicoManutencaoService.js";
@@ -7,13 +8,6 @@ const STATUS_VALIDOS = ["EMITIDA", "EM_EXECUCAO", "FINALIZADA", "CANCELADA"];
 const STATUS_CHAMADO_VALIDOS = ["ABERTO", "EM_ATENDIMENTO", "AGUARDANDO_PECAS", "CONCLUIDO", "CANCELADO"];
 const SEVERIDADES_VALIDAS = ["BAIXA", "MEDIA", "ALTA", "CRITICA"];
 
-function validarId(idRecebido, nomeCampo = "ID") {
-  const id = Number(idRecebido);
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new TypeError(`${nomeCampo} deve ser um número inteiro positivo.`);
-  }
-  return id;
-}
 
 async function gerarNumero() {
   const ano = new Date().getFullYear();

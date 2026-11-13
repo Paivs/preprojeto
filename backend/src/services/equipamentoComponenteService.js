@@ -1,14 +1,8 @@
+import { validarId } from "../utils/validarId.js";
 import * as ComponenteModel from "../models/componenteModel.js";
 import * as EquipamentoComponenteModel from "../models/equipamentoComponenteModel.js";
 import * as EquipamentoModel from "../models/equipamentoModel.js";
 
-function validarId(idRecebido, nomeCampo) {
-  const id = Number(idRecebido);
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new TypeError(`${nomeCampo} deve ser um número inteiro positivo.`);
-  }
-  return id;
-}
 
 export async function listar(equipamentoIdRecebido) {
   const equipamentoId = validarId(equipamentoIdRecebido, "ID do equipamento");

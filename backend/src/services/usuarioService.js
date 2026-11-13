@@ -1,3 +1,4 @@
+import { validarId } from "../utils/validarId.js";
 import * as UsuarioModel from "../models/usuarioModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -23,13 +24,6 @@ export async function buscarSessao(idRecebido) {
   return usuario;
 }
 
-function validarId(idRecebido) {
-  const id = Number(idRecebido);
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new TypeError("ID deve ser um número inteiro positivo.");
-  }
-  return id;
-}
 
 export async function listar({ pagina = 1, limite = 10, perfil, ativo } = {}) {
   const paginaNum = Number(pagina);

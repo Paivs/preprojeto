@@ -1,14 +1,8 @@
+import { validarId } from "../utils/validarId.js";
 import * as ChamadoModel from "../models/chamadoModel.js";
 import * as HistoricoManutencaoModel from "../models/historicoManutencaoModel.js";
 import * as OrdemServicoModel from "../models/ordemServicoModel.js";
 
-function validarId(idRecebido, nomeCampo = "ID") {
-  const id = Number(idRecebido);
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new TypeError(`${nomeCampo} deve ser um número inteiro positivo.`);
-  }
-  return id;
-}
 
 async function validarAtribuicaoTecnico(chamado, usuarioLogado) {
   if (usuarioLogado?.perfil === "TECNICO" && Number(chamado.tecnico_id) !== Number(usuarioLogado.id)) {

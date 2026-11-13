@@ -1,3 +1,4 @@
+import { validarId } from "../utils/validarId.js";
 import Chamado, { SEVERIDADES_VALIDAS, STATUS_VALIDOS } from "../models/Chamado.js";
 import * as ChamadoModel from "../models/chamadoModel.js";
 import * as EquipamentoModel from "../models/equipamentoModel.js";
@@ -6,13 +7,6 @@ import * as OrdemServicoModel from "../models/ordemServicoModel.js";
 
 const PERFIS_PODEM_ABRIR_CHAMADO = ["ADMIN", "PROFESSOR", "TECNICO"];
 
-function validarId(idRecebido, nomeCampo = "ID") {
-  const id = Number(idRecebido);
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new TypeError(`${nomeCampo} deve ser um número inteiro positivo.`);
-  }
-  return id;
-}
 
 export async function listar({ pagina = 1, limite = 10, status, severidade, equipamento_id } = {}, usuarioLogado) {
   const paginaNum = Number(pagina);

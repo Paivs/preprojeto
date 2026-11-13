@@ -1,3 +1,4 @@
+import { validarId } from "../utils/validarId.js";
 import bcrypt from "bcrypt";
 
 import * as PreCadastroStaffModel from "../models/preCadastroStaffModel.js";
@@ -11,13 +12,6 @@ function gerarCodigo(perfil) {
   return `${prefixo}-${sufixo}`;
 }
 
-function validarId(idRecebido) {
-  const id = Number(idRecebido);
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new TypeError("ID deve ser um número inteiro positivo.");
-  }
-  return id;
-}
 
 export async function listar() {
   return await PreCadastroStaffModel.listar();
