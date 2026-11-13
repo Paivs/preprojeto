@@ -219,3 +219,8 @@
   .modalRow { flex-direction: column; }
   .modalActions { align-items: stretch; flex-direction: column-reverse; }
 }
+
+
+/* Acabamento visual alinhado à visão geral do professor. */
+.quickStatCard { border: 2px solid rgba(245,243,244,.15); border-radius: 14px; background: linear-gradient(145deg,rgba(245,243,244,.03),transparent 60%),var(--surface-low,#181c1f); box-shadow: inset 0 1px rgba(255,255,255,.035),0 10px 24px rgba(0,0,0,.14); }
+.filterPill,.modalCard { border-radius: 12px; }
