@@ -112,7 +112,7 @@ export default function AgendamentosProfessor() {
   const dataFim = visualizacao === "DIA" ? dataReferencia : visualizacao === "MES" ? paraISO(ultimoDiaMes) : paraISO(somarDias(diasSemana[4], 2));
 
   const reservasPeriodo = dados.agendamentos
-    .filter((item) => item.data >= dataInicio && item.data <= dataFim)
+    .filter((item) => item.status !== "CANCELADO" && item.data >= dataInicio && item.data <= dataFim)
     .sort((a, b) => `${a.data}${a.inicio}`.localeCompare(`${b.data}${b.inicio}`));
 
   const termoBusca = busca.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
