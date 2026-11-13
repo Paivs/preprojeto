@@ -70,7 +70,7 @@ export async function ativar({ codigo, senha, confirmarSenha }) {
     throw new TypeError("A confirmação deve ser igual à senha.");
   }
 
-  const senhaHash = await bcrypt.hash(senha, 10);
+  const senhaHash = await bcrypt.hash(senha, 12);
   const resultado = await PreCadastroStaffModel.ativar(codigo.trim(), senhaHash);
 
   if (resultado.status === "nao_encontrado") {
