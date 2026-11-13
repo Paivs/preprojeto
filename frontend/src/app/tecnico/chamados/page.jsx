@@ -35,6 +35,7 @@ export default function PaginaChamadosTecnico() {
   const [chamadoSelecionado, setChamadoSelecionado] = useState(null);
   const [atualizandoStatus, setAtualizandoStatus] = useState(false);
   const [descricaoServico, setDescricaoServico] = useState("");
+  const [pecasTrocadas, setPecasTrocadas] = useState("");
   const [aviso, setAviso] = useState("");
 
   const carregar = useCallback(async () => {
@@ -81,6 +82,7 @@ export default function PaginaChamadosTecnico() {
   function abrirDetalhes(chamado) {
     setChamadoSelecionado(chamado);
     setDescricaoServico("");
+    setPecasTrocadas("");
     setErro("");
     setAviso("");
   }
@@ -123,11 +125,12 @@ export default function PaginaChamadosTecnico() {
     try {
       await apiFetch(`/api/ordens-servico/${chamadoSelecionado.os_id}/concluir`, {
         method: "POST",
-        body: { descricao: descricaoServico },
+        body: { descricao: descricaoServico, pecas_trocadas: pecasTrocadas },
       });
       setChamados((atuais) => atuais.filter((chamado) => chamado.os_id !== chamadoSelecionado.os_id));
       setChamadoSelecionado(null);
       setDescricaoServico("");
+      setPecasTrocadas("");
       setAviso("Ordem de serviço concluída com sucesso.");
     } catch (error) {
       setErro(error.message || "Não foi possível concluir a ordem de serviço.");
@@ -279,6 +282,10 @@ export default function PaginaChamadosTecnico() {
                 <label className={styles.campoDescricaoServico}>
                   <span>Descrição do serviço realizado</span>
                   <textarea value={descricaoServico} onChange={(evento) => setDescricaoServico(evento.target.value)} rows={5} placeholder="Descreva o serviço realizado" required />
+                </label>
+                <label className={styles.campoDescricaoServico}>
+                  <span>Peças trocadas (opcional)</span>
+                  <textarea value={pecasTrocadas} onChange={(evento) => setPecasTrocadas(evento.target.value)} rows={3} placeholder="Informe as peças substituídas, se houver" />
                 </label>
                 <button type="button" className={styles.botaoAcao} onClick={concluirOrdem} disabled={atualizandoStatus || !descricaoServico.trim()}>
                   {atualizandoStatus ? "Concluindo..." : "Concluir ordem de serviço"}
