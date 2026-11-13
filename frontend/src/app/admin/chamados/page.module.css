@@ -922,3 +922,4 @@
 .searchInput,.select,.statusSelect,.actionBtn,.openTicketBtn,.pageBtn,.clearBtn { border-radius: 10px; }
 .filterPill,.sevBadge,.statusBadge { border-radius: 999px; }
 .ticketIcon,.modalIcon { border-radius: 12px; }
+.refreshBtn { border-radius: 12px; }
