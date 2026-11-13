@@ -202,3 +202,7 @@
 .navItem { border-radius: 11px; }
 .navIcon { display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; line-height:1; }
 .telemetryCard { border-radius: 12px; border-color: rgba(245,243,244,.14); }
+
+/* Ícones da navegação no padrão visual da barra do Professor. */
+.navIcon { width:28px; height:28px; flex:0 0 28px; padding-top:2px; border:1px solid rgba(245,243,244,.08); border-radius:9px; font-size:19px; line-height:1; text-align:center; }
+.navItemActive .navIcon { border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.08); }
