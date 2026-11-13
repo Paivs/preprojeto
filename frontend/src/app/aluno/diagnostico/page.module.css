@@ -31,6 +31,7 @@
 .item { border-bottom: 1px solid var(--aluno-border); }
 .linha { display: grid; width: 100%; min-height: 82px; grid-template-columns: 100px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 14px 12px; border: 0; background: transparent; color: inherit; cursor: pointer; text-align: left; transition: background 180ms ease; }
 .linha:hover { background: rgb(255 255 255 / 3%); }
+.linha:active { background: rgb(164 22 26 / 10%); }
 .linha:focus-visible { outline: 2px solid var(--aluno-crimson); outline-offset: -2px; }
 .idEquipamento { color: #d16a6d; font-family: var(--fonte-mono); font-size: 12px; }
 .dadosEquipamento { display: flex; min-width: 0; flex-direction: column; gap: 6px; }
@@ -55,3 +56,4 @@
 @media (prefers-reduced-motion: reduce) { .ledAtivo { animation: none; } .painel, .detalhes, .seta { transition: none; } }
 @media (max-width: 760px) { .telemetria { grid-template-columns: repeat(2, minmax(0, 1fr)); } .telemetria > div:nth-child(3) { border-left: 0; } .telemetria > div:nth-child(n + 3) { border-top: 1px solid var(--aluno-border); } }
 @media (max-width: 560px) { .cabecalho { align-items: flex-start; flex-direction: column; } .linha { grid-template-columns: 74px minmax(0, 1fr) auto; gap: 8px; padding-right: 4px; padding-left: 4px; } .acoesLinha { gap: 7px; } .badge { padding: 4px 5px; font-size: 8px; } .detalhes { margin-right: 4px; margin-left: 4px; padding-right: 12px; padding-left: 12px; } .detalhes p { align-items: flex-start; flex-direction: column; gap: 3px; } .detalhes p strong { text-align: left; } .faixaEpis { align-items: flex-start; flex-direction: column; gap: 10px; } }
+@media (max-width: 380px) { .telemetria > div { padding: 14px 11px; } .telemetria strong { font-size: 12px; } .dadosEquipamento strong { font-size: 13px; } .badge { letter-spacing: 0; } }
