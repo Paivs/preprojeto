@@ -55,6 +55,8 @@
 .campoDescricaoServico { display: grid; width: 100%; gap: 8px; color: var(--silver); font-size: 15px; font-weight: 700; }
 .campoDescricaoServico textarea { width: 100%; min-height: 140px; padding: 12px; resize: none; color: var(--white-smoke); background: var(--surface-lowest); border: 1px solid var(--border-subtle); border-radius: 4px; font: inherit; font-weight: 400; font-size: 15px; line-height: 1.5; }
 .campoDescricaoServico textarea:focus { outline: 1px solid var(--mahogany-red-2); }
+.campoDescricaoServico input { width: 100%; min-height: 48px; padding: 10px 12px; color: var(--white-smoke); background: var(--surface-lowest); border: 1px solid var(--border-subtle); border-radius: 10px; font: inherit; font-weight: 400; font-size: 15px; }
+.campoDescricaoServico input:focus { outline: 1px solid var(--mahogany-red-2); }
 .botaoAcao { min-height: 42px; padding: 0 16px; color: var(--white-smoke); background: var(--mahogany-red); border: 1px solid var(--mahogany-red-2); border-radius: 4px; cursor: pointer; font: inherit; font-size: 14px; font-weight: 700; }
 .botaoAcao:hover:not(:disabled) { background: var(--mahogany-red-2); }
 .botaoAcao:disabled { cursor: wait; opacity: .7; }
