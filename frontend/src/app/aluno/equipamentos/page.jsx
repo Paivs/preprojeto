@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { equipamentosSessao } from "@/mocks/aluno";
+import { IconeSeta } from "@/components/aluno/IconesNavegacao";
 import styles from "./page.module.css";
 
 export default function EquipamentosAluno() {
   const [itemAberto, setItemAberto] = useState(null);
 
   function alternarItem(equipamento) {
-    if (!equipamento.detalhes) return;
     setItemAberto((atual) => atual === equipamento.id ? null : equipamento.id);
   }
 
@@ -21,8 +21,7 @@ export default function EquipamentosAluno() {
 
       <ul className={styles.lista}>
         {equipamentosSessao.map((equipamento) => {
-          const temDetalhes = Boolean(equipamento.detalhes);
-          const aberto = temDetalhes && itemAberto === equipamento.id;
+          const aberto = itemAberto === equipamento.id;
           const idPainel = `detalhes-${equipamento.id}`;
 
           return (
@@ -32,7 +31,7 @@ export default function EquipamentosAluno() {
                 type="button"
                 onClick={() => alternarItem(equipamento)}
                 aria-expanded={aberto}
-                aria-controls={temDetalhes ? idPainel : undefined}
+                aria-controls={idPainel}
               >
                 <span className={styles.idEquipamento}>{equipamento.id}</span>
                 <span className={styles.dadosEquipamento}>
@@ -43,12 +42,7 @@ export default function EquipamentosAluno() {
                 </span>
                 <span className={styles.acoesLinha}>
                   <span className={styles.badge}>OPERACIONAL</span>
-                  {temDetalhes && (
-                    <span
-                      className={`ti ${aberto ? "ti-chevron-up" : "ti-chevron-down"} ${styles.seta}`}
-                      aria-hidden="true"
-                    />
-                  )}
+                  <IconeSeta className={styles.seta} direcao={aberto ? "cima" : "baixo"} />
                 </span>
               </button>
 

@@ -38,3 +38,22 @@ export function IconeEquipamento({ className }) {
     </svg>
   );
 }
+
+export function IconeSeta({ className, direcao }) {
+  return (
+    <svg
+      className={className}
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d={direcao === "cima" ? "m3.5 10 4.5-4.5 4.5 4.5" : "m3.5 6 4.5 4.5L12.5 6"} />
+    </svg>
+  );
+}

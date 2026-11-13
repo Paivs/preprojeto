@@ -41,7 +41,11 @@ export const equipamentosSessao = [
     nome: "Módulo de Atuadores Pneumáticos",
     detalhe: "4 cilindros  Válvulas 5/2",
     icone: "lista",
-    detalhes: null,
+    detalhes: {
+      alimentacao: "24V DC",
+      ultimaInspecao: "Hoje às 13:15, sem avarias",
+      seguranca: "Válvulas com bloqueio manual",
+    },
   },
   {
     id: "COBOT-04",
@@ -49,6 +53,10 @@ export const equipamentosSessao = [
     nome: "Universal Robots UR5",
     detalhe: "6 eixos  Payload 5 kg",
     icone: "robo",
-    detalhes: null,
+    detalhes: {
+      alimentacao: "220V AC no controlador",
+      ultimaInspecao: "Hoje às 12:50, sem avarias",
+      seguranca: "Parada de emergência no teach pendant",
+    },
   },
 ];

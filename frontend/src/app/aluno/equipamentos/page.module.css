@@ -100,8 +100,10 @@
 }
 
 .seta {
+  display: block;
+  width: 16px;
+  height: 16px;
   color: var(--text-secondary, var(--silver));
-  font-size: 18px;
 }
 
 .painel {
