@@ -1,41 +1,19 @@
-import { API_URL } from "./constantes";
+import { apiFetch } from "@/lib/api";
 
-async function requisitar(caminho, token) {
-  const resposta = await fetch(`${API_URL}${caminho}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-    cache: "no-store",
-  });
-  const corpo = await resposta.json().catch(() => ({}));
-  if (!resposta.ok) throw new Error(corpo.message || corpo.mensagem || corpo.erro || `Erro ${resposta.status}`);
-  return corpo;
-}
-
-export async function chamarApi(caminho, token, opcoes = {}) {
-  const resposta = await fetch(`${API_URL}${caminho}`, {
-    ...opcoes,
-    headers: {
-      ...(opcoes.body ? { "Content-Type": "application/json" } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...opcoes.headers,
-    },
-    cache: "no-store",
-  });
-  if (resposta.status === 204) return null;
-  const corpo = await resposta.json().catch(() => ({}));
-  if (!resposta.ok) throw new Error(corpo.message || corpo.mensagem || corpo.erro || `Erro ${resposta.status}`);
-  return corpo.dados ?? corpo;
+export async function chamarApi(caminho, _token, opcoes = {}) {
+  return apiFetch(`/api${caminho}`, opcoes);
 }
 
 export async function verificarSaude() {
   try {
-    await requisitar("/health");
+    await apiFetch("/api/health");
     return "online";
   } catch {
     return "offline";
   }
 }
 
-export async function buscarDashboard(token) {
-  const resultado = await requisitar("/admin/dashboard", token);
-  return resultado.dados ?? resultado;
+export async function buscarDashboard() {
+  const resposta = await chamarApi("/admin/dashboard");
+  return resposta?.dados ?? resposta;
 }

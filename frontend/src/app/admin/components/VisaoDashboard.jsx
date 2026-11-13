@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import CartaoMetrica from "./CartaoMetrica";
 import { somarTotais, nomeItem, valorItem, formatarPercentual } from "../lib/formatadores";
 import { dataPorExtenso, saudacaoPorHorario } from "@/lib/saudacao";
@@ -35,16 +35,13 @@ export default function VisaoDashboard({ usuario, dashboard, loading, error, upd
   const totalAbertos = somarTotais(chamados?.por_severidade_em_aberto);
   const totalConcluidos = Math.max(totalChamados - totalAbertos, 0);
 
-  const severidadePorChave = useMemo(() => {
-    const itens = Array.isArray(chamados?.por_severidade_em_aberto) ? chamados.por_severidade_em_aberto : [];
-    const mapa = new Map();
-    itens.forEach((item, index) => {
-      const nome = normalizar(nomeItem(item, index));
-      const def = SEVERIDADES.find((s) => s.nomes.includes(nome));
-      if (def) mapa.set(def.chave, valorItem(item));
-    });
-    return mapa;
-  }, [chamados]);
+  const severidadePorChave = new Map();
+  const itensSeveridade = Array.isArray(chamados?.por_severidade_em_aberto) ? chamados.por_severidade_em_aberto : [];
+  itensSeveridade.forEach((item, index) => {
+    const nome = normalizar(nomeItem(item, index));
+    const definicao = SEVERIDADES.find((severidade) => severidade.nomes.includes(nome));
+    if (definicao) severidadePorChave.set(definicao.chave, valorItem(item));
+  });
 
   const comprimentoCirculo = 2 * Math.PI * 60;
   let deslocamentoSegmento = 0;

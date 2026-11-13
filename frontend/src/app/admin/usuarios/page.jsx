@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import TabelaAdmin from "../components/TabelaAdmin";
 import styles from "./page.module.css";
@@ -94,7 +94,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi(`/usuarios/${user.id}/perfil`, token, {
         method: "PUT",
-        body: JSON.stringify({ perfil }),
+        body: { perfil },
       });
       setAviso(`Perfil de ${user.nome} atualizado para ${perfil}.`);
       await carregarUsuarios();
@@ -107,7 +107,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi(`/usuarios/${user.id}/ativo`, token, {
         method: "PATCH",
-        body: JSON.stringify({ ativo }),
+        body: { ativo },
       });
       setAviso(`Usuário ${user.nome} ${ativo ? "ativado" : "desativado"}.`);
       await carregarUsuarios();
@@ -137,7 +137,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi(`/usuarios/${alunoEditado.id}`, token, {
         method: "PUT",
-        body: JSON.stringify({ ...formEdicao, turmaIds: formEdicao.turmaIds }),
+        body: { ...formEdicao, turmaIds: formEdicao.turmaIds },
       });
       setAviso(`Dados de ${formEdicao.nome} atualizados.`);
       setModalEdicaoAberto(false);
@@ -166,11 +166,11 @@ function Conteudo({ token }) {
       if (novoUsuario.perfil === "PROFESSOR" || novoUsuario.perfil === "TECNICO") {
         await chamarApi("/pre-cadastros", token, {
           method: "POST",
-          body: JSON.stringify({
+          body: {
             nome: novoUsuario.nome,
             email: novoUsuario.email,
             perfil: novoUsuario.perfil,
-          }),
+          },
         });
       }
       setFeedback({ type: "success", message: `Usuário ${novoUsuario.nome} cadastrado com sucesso.` });
@@ -190,26 +190,22 @@ function Conteudo({ token }) {
   }
 
   // Quick stats calculados
-  const totalAtivos = useMemo(() => usuarios.filter((u) => Boolean(u.ativo)).length, [usuarios]);
-  const totalDesativados = useMemo(() => usuarios.filter((u) => !u.ativo).length, [usuarios]);
+  const totalAtivos = usuarios.filter((u) => Boolean(u.ativo)).length;
+  const totalDesativados = usuarios.filter((u) => !u.ativo).length;
   const totalBase = usuarios.length;
 
   // Contagem por perfil para os pills
-  const contagemPerfis = useMemo(() => {
-    const counts = { all: usuarios.length, ALUNO: 0, PROFESSOR: 0, TECNICO: 0, ADMIN: 0 };
-    usuarios.forEach((u) => {
-      if (counts[u.perfil] !== undefined) counts[u.perfil] += 1;
-    });
+  const contagemPerfis = usuarios.reduce((counts, usuario) => {
+    if (counts[usuario.perfil] !== undefined) counts[usuario.perfil] += 1;
     return counts;
-  }, [usuarios]);
+  }, { all: usuarios.length, ALUNO: 0, PROFESSOR: 0, TECNICO: 0, ADMIN: 0 });
 
   // Filtro de busca textual
-  const filtrados = useMemo(() => {
-    return usuarios.filter((u) => {
-      const termo = `${u.nome} ${u.email} ${u.matricula ?? ""}`.toLowerCase();
-      return termo.includes(busca.toLowerCase());
-    });
-  }, [usuarios, busca]);
+  const termoBusca = busca.toLowerCase();
+  const filtrados = usuarios.filter((u) => {
+    const termo = `${u.nome} ${u.email} ${u.matricula ?? ""}`.toLowerCase();
+    return termo.includes(termoBusca);
+  });
 
   // Paginação
   const totalPaginas = Math.max(1, Math.ceil(filtrados.length / ITENS_POR_PAGINA));
@@ -444,7 +440,7 @@ function Conteudo({ token }) {
 
       {/* Modal: Novo Usuário // Cadastramento */}
       {modalAberto && (
-        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoModal ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true">
+        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoModal ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true" onMouseDown={(event) => { if (event.target === event.currentTarget) setModalAberto(false); }}>
           <div className={`${styles.modalCard} abrir-modal ${fechandoModal ? "fechar-modal" : ""}`} onAnimationEnd={finalizarFechamentoModal}>
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderTitleRow}>
@@ -535,7 +531,7 @@ function Conteudo({ token }) {
       )}
 
       {modalEdicaoAberto && alunoEditado && (
-        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoEdicao ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true" aria-labelledby="editar-aluno-titulo">
+        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoEdicao ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true" aria-labelledby="editar-aluno-titulo" onMouseDown={(event) => { if (event.target === event.currentTarget) setModalEdicaoAberto(false); }}>
           <div className={`${styles.modalCard} abrir-modal ${fechandoEdicao ? "fechar-modal" : ""}`} onAnimationEnd={finalizarFechamentoEdicao}>
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderTitleRow}>

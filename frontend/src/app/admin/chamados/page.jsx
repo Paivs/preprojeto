@@ -72,7 +72,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi(`/chamados/${item.id}/status`, token, {
         method: "PATCH",
-        body: JSON.stringify({ status: value }),
+        body: { status: value },
       });
       setSelecionado((atual) => atual?.id === item.id ? { ...atual, status: value } : atual);
       setNotificacao({ tipo: "sucesso", mensagem: `Status do chamado #${item.id} atualizado para ${value}.` });
@@ -86,7 +86,7 @@ function Conteudo({ token }) {
     try {
       const os = await chamarApi(`/chamados/${item.id}/ordem-servico`, token, {
         method: "POST",
-        body: JSON.stringify({}),
+        body: {},
       });
       setSelecionado(null);
       setNotificacao({ tipo: "sucesso", mensagem: `Ordem de serviço ${os.numero ?? os.id} criada e enviada ao painel do técnico.` });

@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import TabelaAdmin from "../components/TabelaAdmin";
 import styles from "./page.module.css";
@@ -84,68 +84,56 @@ function Conteudo({ token }) {
   }, [busca, statusFiltro, tipoFiltro]);
 
   // Contagem por status
-  const contagemPorStatus = useMemo(() => {
-    const mapa = Object.fromEntries(STATUS.map((s) => [s, 0]));
-    itens.forEach((item) => {
-      if (mapa[item.status] !== undefined) mapa[item.status] += 1;
-    });
-    return mapa;
-  }, [itens]);
+  const contagemPorStatus = Object.fromEntries(STATUS.map((status) => [
+    status,
+    itens.filter((item) => item.status === status).length,
+  ]));
 
   // Métricas do topo (Stitch strip)
-  const metricas = useMemo(() => {
-    const total = itens.length || 0;
-    const operacionais = contagemPorStatus.DISPONIVEL + contagemPorStatus.EM_USO;
-    const manutencao = contagemPorStatus.EM_MANUTENCAO;
-    const reservados = contagemPorStatus.RESERVADO;
-    const inativos = contagemPorStatus.INATIVO;
-
-    const calcPct = (v) => (total ? Math.round((v / total) * 100) : 0);
-
-    return [
+  const total = itens.length;
+  const calcPct = (valor) => total ? Math.round((valor / total) * 100) : 0;
+  const metricas = [
       {
         rotulo: "Operacionais",
-        valor: operacionais,
-        pct: calcPct(operacionais),
+        valor: contagemPorStatus.DISPONIVEL + contagemPorStatus.EM_USO,
+        pct: calcPct(contagemPorStatus.DISPONIVEL + contagemPorStatus.EM_USO),
         icone: "check_circle",
         classeTom: styles.tomOperacional,
         progressoCor: "#10b981",
       },
       {
         rotulo: "Em Manutenção",
-        valor: manutencao,
-        pct: calcPct(manutencao),
+        valor: contagemPorStatus.EM_MANUTENCAO,
+        pct: calcPct(contagemPorStatus.EM_MANUTENCAO),
         icone: "engineering",
         classeTom: styles.tomManutencao,
         progressoCor: "#f59e0b",
       },
       {
         rotulo: "Reservados",
-        valor: reservados,
-        pct: calcPct(reservados),
+        valor: contagemPorStatus.RESERVADO,
+        pct: calcPct(contagemPorStatus.RESERVADO),
         icone: "pause_circle",
         classeTom: styles.tomReservado,
         progressoCor: "#aa8986",
       },
       {
         rotulo: "Inativos",
-        valor: inativos,
-        pct: calcPct(inativos),
+        valor: contagemPorStatus.INATIVO,
+        pct: calcPct(contagemPorStatus.INATIVO),
         icone: "do_not_disturb_on",
         classeTom: styles.tomInativo,
         progressoCor: "#6b7280",
       },
-    ];
-  }, [itens, contagemPorStatus]);
+  ];
 
   // Filtro de busca
-  const visiveis = useMemo(() => {
-    return itens.filter((item) => {
-      const correspondeBusca = `${item.nome} ${item.codigo_patrimonio} ${item.localizacao}`
-        .toLocaleLowerCase("pt-BR").includes(busca.trim().toLocaleLowerCase("pt-BR"));
-      return correspondeBusca && (!statusFiltro || item.status === statusFiltro) && (!tipoFiltro || item.tipo === tipoFiltro);
-    });
-  }, [itens, busca, statusFiltro, tipoFiltro]);
+  const termoBusca = busca.trim().toLocaleLowerCase("pt-BR");
+  const visiveis = itens.filter((item) => {
+    const correspondeBusca = `${item.nome} ${item.codigo_patrimonio} ${item.localizacao}`
+      .toLocaleLowerCase("pt-BR").includes(termoBusca);
+    return correspondeBusca && (!statusFiltro || item.status === statusFiltro) && (!tipoFiltro || item.tipo === tipoFiltro);
+  });
 
   // Paginação
   const totalPaginas = Math.max(1, Math.ceil(visiveis.length / ITENS_POR_PAGINA));
@@ -171,7 +159,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi("/equipamentos", token, {
         method: "POST",
-        body: JSON.stringify(form),
+        body: form,
       });
       setModalAberto(false);
       setFeedback({ type: "success", message: "Equipamento cadastrado com sucesso." });
@@ -186,7 +174,7 @@ function Conteudo({ token }) {
     try {
       await chamarApi(`/equipamentos/${item.id}/status`, token, {
         method: "PATCH",
-        body: JSON.stringify({ status }),
+        body: { status },
       });
       setHistorico((atual) => [
         {
@@ -546,7 +534,7 @@ function Conteudo({ token }) {
 
       {/* CADASTRO DE EQUIPAMENTO MODAL */}
       {modalAberto && (
-        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoModal ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true">
+        <div className={`${styles.modalOverlay} abrir-modal-fundo ${fechandoModal ? "fechar-modal-fundo" : ""}`} role="dialog" aria-modal="true" onMouseDown={(event) => { if (event.target === event.currentTarget) setModalAberto(false); }}>
           <div className={`${styles.modalCard} abrir-modal ${fechandoModal ? "fechar-modal" : ""}`} onAnimationEnd={finalizarFechamentoModal}>
             {/* Modal Header */}
             <div className={styles.modalHeader}>

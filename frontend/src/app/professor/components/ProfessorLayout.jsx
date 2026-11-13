@@ -33,7 +33,7 @@ export default function ProfessorLayout({ children, titulo }) {
 
       try {
         const resposta = await apiFetch("/api/usuarios/me");
-        const usuarioApi = resposta?.usuario;
+        const usuarioApi = resposta?.dados?.usuario;
 
         if (!montado) return;
         if (usuarioApi?.perfil !== "PROFESSOR") {

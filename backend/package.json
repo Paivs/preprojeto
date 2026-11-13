@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/server.js",
-    "start": "node src/server.js"
+    "dev": "node --watch src/Server.js",
+    "start": "node src/Server.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -14,6 +14,7 @@
     "express": "^5.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "multer": "^2.5.0",
     "mysql2": "^3.15.3"
   }
 }

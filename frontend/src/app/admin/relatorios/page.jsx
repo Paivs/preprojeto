@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import styles from "./page.module.css";
 import { chamarApi } from "../lib/adminApi";
@@ -44,7 +44,7 @@ function Conteudo({ token }) {
   const [erro, setErro] = useState("");
   const [aviso, setAviso] = useState("");
 
-  const datas = useMemo(() => calcularDatasPeriodo(periodoChave), [periodoChave]);
+  const datas = calcularDatasPeriodo(periodoChave);
 
   const carregarRelatorio = useCallback(async () => {
     setLoading(true);
@@ -69,23 +69,14 @@ function Conteudo({ token }) {
   }, [carregarRelatorio]);
 
   // Mostra apenas dados recebidos do relatório.
-  const eficienciaGeral = useMemo(() => {
-    const lista = relatorio?.equipamentos_por_status;
-    if (!Array.isArray(lista) || lista.length === 0) return null;
-    const total = lista.reduce((soma, item) => soma + Number(item.total ?? 0), 0);
-    if (!total) return null;
-    const operacionais = lista.find(
-      (item) => String(item.status).toUpperCase() === "OPERACIONAL" || String(item.status).toUpperCase() === "DISPONIVEL"
-    );
-    if (!operacionais) return null;
-    return (Number(operacionais.total ?? 0) / total) * 100;
-  }, [relatorio]);
-
-  const totalAtivosMonitorados = useMemo(() => {
-    const lista = relatorio?.equipamentos_por_status;
-    if (!Array.isArray(lista) || lista.length === 0) return 0;
-    return lista.reduce((soma, item) => soma + Number(item.total ?? 0), 0);
-  }, [relatorio]);
+  const equipamentosPorStatus = Array.isArray(relatorio?.equipamentos_por_status) ? relatorio.equipamentos_por_status : [];
+  const totalAtivosMonitorados = equipamentosPorStatus.reduce((soma, item) => soma + Number(item.total ?? 0), 0);
+  const equipamentosOperacionais = equipamentosPorStatus.find(
+    (item) => ["OPERACIONAL", "DISPONIVEL"].includes(String(item.status).toUpperCase()),
+  );
+  const eficienciaGeral = totalAtivosMonitorados && equipamentosOperacionais
+    ? (Number(equipamentosOperacionais.total ?? 0) / totalAtivosMonitorados) * 100
+    : null;
 
   const mttrValor = relatorio?.mttr_horas ?? null;
   const mttrPercentualSla = mttrValor === null ? 0 : Math.min(100, (mttrValor / META_MTTR_HORAS) * 100);
@@ -139,32 +130,17 @@ function Conteudo({ token }) {
   }
 
   // Lista de falhas para o gráfico de barras.
-  const listaFalhas = useMemo(() => {
-    if (Array.isArray(relatorio?.ranking_falhas) && relatorio.ranking_falhas.length > 0) {
-      return relatorio.ranking_falhas;
-    }
-    return [];
-  }, [relatorio]);
+  const listaFalhas = Array.isArray(relatorio?.ranking_falhas) ? relatorio.ranking_falhas : [];
 
   const maxFalhas = listaFalhas.reduce((m, item) => Math.max(m, Number(item.total ?? 0)), 0) || 1;
 
   // Lista de uso em horas
-  const listaUso = useMemo(() => {
-    if (Array.isArray(relatorio?.ranking_uso) && relatorio.ranking_uso.length > 0) {
-      return relatorio.ranking_uso;
-    }
-    return [];
-  }, [relatorio]);
+  const listaUso = Array.isArray(relatorio?.ranking_uso) ? relatorio.ranking_uso : [];
 
   const maxUso = listaUso.reduce((m, item) => Math.max(m, Number(item.horas_reservadas ?? 0)), 0) || 1;
 
   // Taxa de ocupação
-  const listaOcupacao = useMemo(() => {
-    if (Array.isArray(relatorio?.taxa_ocupacao) && relatorio.taxa_ocupacao.length > 0) {
-      return relatorio.taxa_ocupacao;
-    }
-    return [];
-  }, [relatorio]);
+  const listaOcupacao = Array.isArray(relatorio?.taxa_ocupacao) ? relatorio.taxa_ocupacao : [];
 
   return (
     <div className={styles.container}>

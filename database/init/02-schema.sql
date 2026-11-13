@@ -60,26 +60,6 @@ CREATE TABLE equipamentos (
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- TABELA: componentes
--- RF02: catÃ¡logo de peÃ§as e quantidade total controlada.
-CREATE TABLE componentes (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    categoria VARCHAR(50) NOT NULL,
-    quantidade_total INT UNSIGNED NOT NULL DEFAULT 1
-) ENGINE=InnoDB;
-
--- TABELA: equipamento_componentes
--- RF02: composiÃ§Ã£o fÃ­sica de cada equipamento e quantidade de cada componente.
-CREATE TABLE equipamento_componentes (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    equipamento_id BIGINT UNSIGNED NOT NULL,
-    componente_id BIGINT UNSIGNED NOT NULL,
-    quantidade INT UNSIGNED NOT NULL DEFAULT 1,
-    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id) ON DELETE CASCADE,
-    FOREIGN KEY (componente_id) REFERENCES componentes(id)
-) ENGINE=InnoDB;
-
 -- TABELA: agendamentos
 -- RN03: responsavel_id identifica o responsÃ¡vel patrimonial da reserva.
 -- RN05/RF06: perÃ­odo, ativo, estado e token Ãºnico da reserva. CHECK valida a
@@ -205,36 +185,6 @@ CREATE TABLE inspecao_respostas (
     FOREIGN KEY (item_id) REFERENCES checklist_itens(id)
 ) ENGINE=InnoDB;
 
--- TABELA: inspecao_componentes
--- RF02/RN02: compara quantidades esperadas, encontradas e danificadas durante
--- a vistoria; diferenÃ§a pode gerar ocorrÃªncia patrimonial conforme a API.
-CREATE TABLE inspecao_componentes (
-    inspecao_id BIGINT UNSIGNED NOT NULL,
-    componente_id BIGINT UNSIGNED NOT NULL,
-    quantidade_esperada INT UNSIGNED NOT NULL,
-    quantidade_encontrada INT UNSIGNED NOT NULL,
-    quantidade_danificada INT UNSIGNED NOT NULL DEFAULT 0,
-    PRIMARY KEY (inspecao_id, componente_id),
-    CHECK (quantidade_danificada <= quantidade_encontrada),
-    FOREIGN KEY (inspecao_id) REFERENCES inspecoes(id) ON DELETE CASCADE,
-    FOREIGN KEY (componente_id) REFERENCES componentes(id)
-) ENGINE=InnoDB;
-
--- TABELA: ocorrencias_patrimoniais
--- RN03: registra dano/extravio de componente vinculado Ã  reserva; o responsÃ¡vel
--- Ã© obtido por agendamentos.responsavel_id. A API valida essa associaÃ§Ã£o.
-CREATE TABLE ocorrencias_patrimoniais (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    agendamento_id BIGINT UNSIGNED NOT NULL,
-    componente_id BIGINT UNSIGNED,
-    tipo ENUM('DANO', 'EXTRAVIO') NOT NULL,
-    quantidade INT UNSIGNED NOT NULL DEFAULT 1,
-    descricao TEXT,
-    criada_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id),
-    FOREIGN KEY (componente_id) REFERENCES componentes(id)
-) ENGINE=InnoDB;
-
 -- TABELA: chamados_manutencao
 -- RN01/RF05: falha em item crÃ­tico gera chamado urgente e bloqueio do ativo;
 -- falha nÃ£o crÃ­tica gera chamado preventivo e mantÃ©m o uso liberado. A API
@@ -277,34 +227,6 @@ CREATE TABLE historico_manutencao (
     FOREIGN KEY (chamado_id) REFERENCES chamados_manutencao(id) ON DELETE CASCADE,
     FOREIGN KEY (tecnico_id) REFERENCES usuarios(id)
 ) ENGINE=InnoDB;
-
--- TABELA: notificacoes
--- RF16: alertas associados a usuÃ¡rios e chamados; a API cria notificaÃ§Ãµes para
--- professores e tÃ©cnicos quando um chamado urgente Ã© aberto.
-CREATE TABLE notificacoes (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    usuario_id BIGINT UNSIGNED NOT NULL,
-    chamado_id BIGINT UNSIGNED,
-    mensagem VARCHAR(255) NOT NULL,
-    lida BOOLEAN NOT NULL DEFAULT FALSE,
-    criada_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (chamado_id) REFERENCES chamados_manutencao(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
--- TABELA: resultados_testes
--- RF15: relatÃ³rio e resultado da prÃ¡tica vinculados Ã  reserva e ao aluno autor.
-CREATE TABLE resultados_testes (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    agendamento_id BIGINT UNSIGNED NOT NULL,
-    usuario_id BIGINT UNSIGNED NOT NULL,
-    titulo VARCHAR(150),
-    relatorio TEXT NOT NULL,
-    enviado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id) ON DELETE CASCADE,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-) ENGINE=InnoDB;
-
 
 -- TABELA: pre_matriculas_alunos
 -- RF10/regra de matrÃ­cula: guarda os dados de quem gerou matrÃ­cula antes de criar a conta.

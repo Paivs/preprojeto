@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { cancelarAgendamento, criarAgendamento, listarAgendamentos, listarEquipamentos, listarInspecoes, listarTurmas } from "../lib/professorApi";
 import FormularioAgendamento from "./FormularioAgendamento";
 import ModalProfessor from "./ModalProfessor";
@@ -96,9 +96,9 @@ export default function AgendamentosProfessor() {
 
   useEffect(() => { carregar(true); }, [carregar]);
 
-  const localizacoes = useMemo(() => [...new Set(dados.equipamentos.map((item) => item.localizacao).filter(Boolean))].sort(), [dados.equipamentos]);
-  const equipamentosFiltrados = useMemo(() => dados.equipamentos.filter((item) =>
-    localizacaoFiltro === "TODAS" || item.localizacao === localizacaoFiltro), [dados.equipamentos, localizacaoFiltro]);
+  const localizacoes = [...new Set(dados.equipamentos.map((item) => item.localizacao).filter(Boolean))].sort();
+  const equipamentosFiltrados = dados.equipamentos.filter((item) =>
+    localizacaoFiltro === "TODAS" || item.localizacao === localizacaoFiltro);
 
   const dataReferencia = paraISO(dataFoco);
   const primeiroDiaMes = new Date(dataFoco.getFullYear(), dataFoco.getMonth(), 1, 12);
@@ -108,26 +108,23 @@ export default function AgendamentosProfessor() {
   const dataInicio = visualizacao === "DIA" ? dataReferencia : visualizacao === "MES" ? paraISO(primeiroDiaMes) : paraISO(diasSemana[0]);
   const dataFim = visualizacao === "DIA" ? dataReferencia : visualizacao === "MES" ? paraISO(ultimoDiaMes) : paraISO(somarDias(diasSemana[4], 2));
 
-  const reservasPeriodo = useMemo(() => dados.agendamentos
+  const reservasPeriodo = dados.agendamentos
     .filter((item) => item.data >= dataInicio && item.data <= dataFim)
-    .sort((a, b) => `${a.data}${a.inicio}`.localeCompare(`${b.data}${b.inicio}`)),
-  [dados.agendamentos, dataInicio, dataFim]);
+    .sort((a, b) => `${a.data}${a.inicio}`.localeCompare(`${b.data}${b.inicio}`));
 
-  const reservasVisiveis = useMemo(() => {
-    const termo = busca.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    return reservasPeriodo.filter((item) => {
-      const equipamento = dados.equipamentos.find((registro) => String(registro.id) === String(item.equipamentoId));
-      const correspondeLocal = localizacaoFiltro === "TODAS" || equipamento?.localizacao === localizacaoFiltro;
-      const correspondeEquipamento = equipamentoFiltro === "TODOS" || String(item.equipamentoId) === equipamentoFiltro;
-      const texto = `${item.atividade} ${item.turma} ${item.equipamento} ${item.patrimonio}`.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-      return correspondeLocal && correspondeEquipamento && (!termo || texto.includes(termo));
-    });
-  }, [reservasPeriodo, dados.equipamentos, localizacaoFiltro, equipamentoFiltro, busca]);
+  const termoBusca = busca.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const reservasVisiveis = reservasPeriodo.filter((item) => {
+    const equipamento = dados.equipamentos.find((registro) => String(registro.id) === String(item.equipamentoId));
+    const correspondeLocal = localizacaoFiltro === "TODAS" || equipamento?.localizacao === localizacaoFiltro;
+    const correspondeEquipamento = equipamentoFiltro === "TODOS" || String(item.equipamentoId) === equipamentoFiltro;
+    const texto = `${item.atividade} ${item.turma} ${item.equipamento} ${item.patrimonio}`.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return correspondeLocal && correspondeEquipamento && (!termoBusca || texto.includes(termoBusca));
+  });
 
-  const resumo = useMemo(() => ({
+  const resumo = {
     total: reservasVisiveis.filter((item) => item.status !== "CANCELADO").length,
     pendentes: dados.inspecoes.filter((item) => !item.resultado && !item.cancelada && item.data >= dataInicio && item.data <= dataFim).length,
-  }), [reservasVisiveis, dados.inspecoes, dataInicio, dataFim]);
+  };
 
   const reservaDetalhe = dados.agendamentos.find((item) => item.id === detalheId);
   const preUsoDetalhe = reservaDetalhe && dados.inspecoes.find((item) => item.agendamentoId === reservaDetalhe.id && item.etapa === "PRE_USO");
