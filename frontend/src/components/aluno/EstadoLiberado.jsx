@@ -1,26 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { saudacaoPorHorario } from "@/lib/saudacao";
 import styles from "./EstadoLiberado.module.css";
 
 export default function EstadoLiberado({ sessao, equipamentos }) {
-  const [saudacao, setSaudacao] = useState("");
-
-  useEffect(() => {
-    const hora = new Date().getHours();
-    const cumprimento =
-      hora < 12 ? "Bom dia" : hora <= 18 ? "Boa tarde" : "Boa noite";
-    const primeiroNome = sessao.nome.trim().split(/\s+/)[0];
-
-    setSaudacao(`${cumprimento}, ${primeiroNome}!`);
-  }, [sessao.nome]);
+  const primeiroNome = sessao.nome.trim().split(/\s+/)[0];
+  const saudacao = `${saudacaoPorHorario()}, ${primeiroNome}!`;
 
   return (
     <section className={styles.conteudo} aria-labelledby="titulo-aluno">
       <div className={styles.introducao}>
         <p className={styles.badgeLiberado} role="status"><span aria-hidden="true" /> Bancada liberada</p>
         <h1 className={styles.titulo} id="titulo-aluno">
-          {saudacao || `Olá, ${sessao.nome}!`}
+          {saudacao}
         </h1>
         <p className={styles.turma}>{sessao.turma}</p>
       </div>
