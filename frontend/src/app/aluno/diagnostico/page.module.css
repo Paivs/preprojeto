@@ -1,4 +1,26 @@
 .pagina { --aluno-onyx: #0b090a; --aluno-carbon: #161a1d; --aluno-border: #262626; --aluno-crimson: #a4161a; --aluno-wait: #ffb703; --aluno-active: #2ec4b6; width: 100%; min-height: calc(100vh - 44px); margin: 0 auto; color: #f5f3f4; }
+.grade { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr); align-items: start; gap: 24px; }
+.colunaAula, .colunaAcesso { min-width: 0; }
+.cartaoAula, .secaoEpis, .formulario, .liberacao { padding: clamp(20px, 3vw, 30px); border: 1px solid var(--aluno-border); border-radius: 6px; background: var(--aluno-carbon); }
+.cartaoAula h2, .secaoEpis h2, .liberacao h2 { margin: 12px 0; font-size: clamp(20px, 2.5vw, 27px); font-weight: 500; line-height: 1.35; }
+.cartaoAula > p, .secaoEpis > p, .liberacao p { margin: 0; color: #aaa3a4; font-size: 14px; line-height: 1.7; }
+.dadosAula { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 26px 0 0; padding-top: 20px; border-top: 1px solid var(--aluno-border); }
+.dadosAula div { display: flex; flex-direction: column; gap: 7px; }
+.dadosAula dt { color: #9c9292; font-family: var(--fonte-mono); font-size: 10px; letter-spacing: .1em; }
+.dadosAula dd { margin: 0; font-size: 14px; }
+.secaoEpis { margin-top: 16px; }
+.secaoEpis h2 { margin-top: 0; font-size: 18px; }
+.secaoEpis ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0 0; padding: 0; list-style: none; }
+.secaoEpis li { padding: 7px 10px; border: 1px solid rgb(164 22 26 / 45%); border-radius: 3px; color: #e4dddd; font-size: 12px; }
+.linkEquipamentos { display: inline-flex; align-items: center; gap: 12px; margin-top: 18px; color: #f2a0a2; font-size: 13px; text-decoration: none; }
+.linkEquipamentos:hover { color: #fff; }
+.formulario { width: 100%; }
+.cabecalhoFormulario { margin-bottom: 24px; }
+.cabecalhoFormulario h2 { margin: 10px 0 7px; font-size: 22px; font-weight: 500; }
+.cabecalhoFormulario p { margin: 0; color: #aaa3a4; font-size: 14px; line-height: 1.6; }
+.liberacao { border-color: rgb(46 196 182 / 30%); }
+.liberacao h2 { color: var(--aluno-active); }
+.botaoEquipamentos { display: inline-flex; margin-top: 20px; padding: 12px 15px; background: var(--aluno-crimson); color: #fff; font-size: 13px; text-decoration: none; }
 .cabecalho { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
 .sobretitulo { margin: 0 0 8px; color: #9c9292; font-family: var(--fonte-mono); font-size: 10px; letter-spacing: .13em; }
 .titulo { margin: 0; font-size: clamp(30px, 4vw, 42px); font-weight: 500; letter-spacing: -.04em; }
@@ -54,6 +76,7 @@
 .faixaEpis li { padding: 6px 9px; border: 1px solid rgb(164 22 26 / 45%); border-radius: 3px; color: #e4dddd; font-size: 11px; }
 @keyframes pulsar { 0% { box-shadow: 0 0 0 0 rgb(46 196 182 / 48%); } 70%, 100% { box-shadow: 0 0 0 8px rgb(46 196 182 / 0%); } }
 @media (prefers-reduced-motion: reduce) { .ledAtivo { animation: none; } .painel, .detalhes, .seta { transition: none; } }
+@media (max-width: 900px) { .grade { grid-template-columns: minmax(0, 1fr); } .colunaAcesso { grid-row: 1; } }
 @media (max-width: 760px) { .telemetria { grid-template-columns: repeat(2, minmax(0, 1fr)); } .telemetria > div:nth-child(3) { border-left: 0; } .telemetria > div:nth-child(n + 3) { border-top: 1px solid var(--aluno-border); } }
 @media (max-width: 560px) { .cabecalho { align-items: flex-start; flex-direction: column; } .linha { grid-template-columns: 74px minmax(0, 1fr) auto; gap: 8px; padding-right: 4px; padding-left: 4px; } .acoesLinha { gap: 7px; } .badge { padding: 4px 5px; font-size: 8px; } .detalhes { margin-right: 4px; margin-left: 4px; padding-right: 12px; padding-left: 12px; } .detalhes p { align-items: flex-start; flex-direction: column; gap: 3px; } .detalhes p strong { text-align: left; } .faixaEpis { align-items: flex-start; flex-direction: column; gap: 10px; } }
 @media (max-width: 380px) { .telemetria > div { padding: 14px 11px; } .telemetria strong { font-size: 12px; } .dadosEquipamento strong { font-size: 13px; } .badge { letter-spacing: 0; } }
