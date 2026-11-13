@@ -8,6 +8,20 @@ function idValido(v) {
   if (!Number.isInteger(n) || n <= 0) throw new TypeError("ID inválido.");
   return n;
 }
+
+function dataLocalISO() {
+  const hoje = new Date();
+  return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}-${String(hoje.getDate()).padStart(2, "0")}`;
+}
+
+function dataISOValida(data) {
+  const partes = /^(\d{4})-(\d{2})-(\d{2})$/.exec(data || "");
+  if (!partes) return false;
+  const [, ano, mes, dia] = partes.map(Number);
+  const validada = new Date(Date.UTC(ano, mes - 1, dia));
+  return validada.getUTCFullYear() === ano && validada.getUTCMonth() === mes - 1 && validada.getUTCDate() === dia;
+}
+
 export async function listarPorProfessor(id) {
   return AgendamentoModel.listarPorProfessor(id);
 }
@@ -19,6 +33,10 @@ export async function criar(dados, usuario) {
   const { data, inicio, fim } = dados;
   if (!atividade || !data || !inicio || !fim || fim <= inicio)
     throw new TypeError("Informe atividade, data e horário válido.");
+  if (!dataISOValida(data))
+    throw new TypeError("Informe uma data vÃ¡lida para o agendamento.");
+  if (data < dataLocalISO())
+    throw new TypeError("NÃ£o Ã© possÃ­vel criar agendamentos em dias anteriores a hoje.");
   const turma = await TurmaModel.buscarPorId(turmaId);
   if (!turma || Number(turma.professor_id) !== Number(usuario.id))
     throw new TypeError("A turma não está vinculada a este professor.");

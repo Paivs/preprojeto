@@ -372,6 +372,9 @@
   background: rgba(16, 185, 129, .035);
 }
 
+.slotVazio:disabled { cursor: not-allowed; }
+.slotVazio:disabled span { display: none; }
+
 .evento {
   position: absolute;
   z-index: 2;

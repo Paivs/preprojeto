@@ -101,15 +101,18 @@ export default function AgendamentosProfessor() {
     localizacaoFiltro === "TODAS" || item.localizacao === localizacaoFiltro);
 
   const dataReferencia = paraISO(dataFoco);
+  const hoje = paraISO(new Date());
   const primeiroDiaMes = new Date(dataFoco.getFullYear(), dataFoco.getMonth(), 1, 12);
   const ultimoDiaMes = new Date(dataFoco.getFullYear(), dataFoco.getMonth() + 1, 0, 12);
-  const segundaSemana = inicioDaSemana(dataFoco);
-  const diasSemana = Array.from({ length: 5 }, (_, indice) => somarDias(segundaSemana, indice));
+  const diasSemana = Array.from({ length: 5 }, (_, indice) => somarDias(dataFoco, indice));
+  const podeVoltarPeriodo = visualizacao === "DIA" || visualizacao === "SEMANA"
+    ? dataReferencia > hoje
+    : true;
   const dataInicio = visualizacao === "DIA" ? dataReferencia : visualizacao === "MES" ? paraISO(primeiroDiaMes) : paraISO(diasSemana[0]);
   const dataFim = visualizacao === "DIA" ? dataReferencia : visualizacao === "MES" ? paraISO(ultimoDiaMes) : paraISO(somarDias(diasSemana[4], 2));
 
   const reservasPeriodo = dados.agendamentos
-    .filter((item) => item.data >= dataInicio && item.data <= dataFim)
+    .filter((item) => item.status !== "CANCELADO" && item.data >= dataInicio && item.data <= dataFim)
     .sort((a, b) => `${a.data}${a.inicio}`.localeCompare(`${b.data}${b.inicio}`));
 
   const termoBusca = busca.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -152,6 +155,10 @@ export default function AgendamentosProfessor() {
   }
 
   function abrirFormulario(data = dataReferencia, inicio = "09:00", equipamentoId = equipamentoFiltro === "TODOS" ? "" : equipamentoFiltro) {
+    if (data < paraISO(new Date())) {
+      setMensagem("Não é possível criar agendamentos em dias anteriores a hoje.");
+      return;
+    }
     const [hora] = inicio.split(":").map(Number);
     const fim = `${String(Math.min(hora + (inicio === "09:00" ? 1 : 2), 23)).padStart(2, "0")}:00`;
     setFormularioInicial({ data, inicio, fim, equipamentoId });
@@ -201,12 +208,14 @@ export default function AgendamentosProfessor() {
 
   function renderAgendaDia(data) {
     const eventos = eventosDoDia(data);
+    const diaPassado = paraISO(data) < hoje;
     return <div className={styles.agendaDia}>
       {HORAS.map((hora, indice) => <button
         type="button"
         key={hora}
         className={styles.slotVazio}
         style={{ top: `${indice * ALTURA_INTERVALO}px` }}
+        disabled={diaPassado}
         onClick={() => abrirFormulario(paraISO(data), hora)}
         aria-label={`Criar agendamento em ${formatarData(paraISO(data))}, às ${hora}`}
       ><span>+ Reservar</span></button>)}
@@ -279,7 +288,7 @@ export default function AgendamentosProfessor() {
       <section className={styles.painelAgenda} aria-labelledby="titulo-calendario">
         <div className={styles.cabecalhoPainel}>
           <div className={styles.navegacaoPeriodo}>
-            <button type="button" onClick={() => moverPeriodo(-1)} aria-label="Período anterior"><span className="material-symbols-outlined" aria-hidden="true">chevron_left</span></button>
+            <button type="button" onClick={() => moverPeriodo(-1)} disabled={!podeVoltarPeriodo} aria-label="Período anterior"><span className="material-symbols-outlined" aria-hidden="true">chevron_left</span></button>
             <h2 id="titulo-calendario">{rotuloPeriodo}</h2>
             <button type="button" onClick={() => moverPeriodo(1)} aria-label="Próximo período"><span className="material-symbols-outlined" aria-hidden="true">chevron_right</span></button>
             <span className={`${styles.estadoLaboratorio} ${equipamentosOperacionais ? styles.laboratorioAtivo : styles.laboratorioInativo}`}>
@@ -289,7 +298,7 @@ export default function AgendamentosProfessor() {
           <div className={styles.alternadorVisualizacao} role="group" aria-label="Visualização do calendário">
             {[ ["DIA", "Dia"], ["SEMANA", "Semana"], ["MES", "Mês"] ].map(([valor, rotulo]) => <button
               type="button" key={valor} className={visualizacao === valor ? styles.visualizacaoAtiva : ""}
-              aria-pressed={visualizacao === valor} onClick={() => setVisualizacao(valor)}
+              aria-pressed={visualizacao === valor} onClick={() => { setVisualizacao(valor); if (valor === "SEMANA" && dataReferencia < hoje) setDataFoco(new Date()); }}
             >{rotulo}</button>)}
           </div>
         </div>
