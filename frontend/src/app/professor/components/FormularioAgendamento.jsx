@@ -3,6 +3,11 @@
 import { useState } from "react";
 import styles from "./FormularioAgendamento.module.css";
 
+function dataLocalISO() {
+  const hoje = new Date();
+  return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}-${String(hoje.getDate()).padStart(2, "0")}`;
+}
+
 export default function FormularioAgendamento({ dataInicial, horarioInicial = "09:00", fimInicial = "10:00", equipamentoInicial = "", turmas, equipamentos, onCreate, onCancel }) {
   const [form, setForm] = useState({
     atividade: "",
@@ -24,6 +29,10 @@ export default function FormularioAgendamento({ dataInicial, horarioInicial = "0
     evento.preventDefault();
     if (!form.atividade.trim() || !form.data || !form.inicio || !form.fim || !form.turmaId || !form.equipamentoId) {
       setErro("Preencha todos os campos para continuar.");
+      return;
+    }
+    if (form.data < dataLocalISO()) {
+      setErro("A data do agendamento deve ser hoje ou uma data futura.");
       return;
     }
     if (form.fim <= form.inicio) {
@@ -80,7 +89,7 @@ export default function FormularioAgendamento({ dataInicial, horarioInicial = "0
 
       <label className={styles.campo} htmlFor="data-reserva">
         <span>Data</span>
-        <input id="data-reserva" type="date" value={form.data} onChange={(evento) => alterar("data", evento.target.value)} />
+        <input id="data-reserva" type="date" min={dataLocalISO()} value={form.data} onChange={(evento) => alterar("data", evento.target.value)} />
       </label>
 
       <div className={styles.horarios}>

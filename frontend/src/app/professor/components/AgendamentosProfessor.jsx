@@ -155,6 +155,10 @@ export default function AgendamentosProfessor() {
   }
 
   function abrirFormulario(data = dataReferencia, inicio = "09:00", equipamentoId = equipamentoFiltro === "TODOS" ? "" : equipamentoFiltro) {
+    if (data < paraISO(new Date())) {
+      setMensagem("Não é possível criar agendamentos em dias anteriores a hoje.");
+      return;
+    }
     const [hora] = inicio.split(":").map(Number);
     const fim = `${String(Math.min(hora + (inicio === "09:00" ? 1 : 2), 23)).padStart(2, "0")}:00`;
     setFormularioInicial({ data, inicio, fim, equipamentoId });
@@ -204,12 +208,14 @@ export default function AgendamentosProfessor() {
 
   function renderAgendaDia(data) {
     const eventos = eventosDoDia(data);
+    const diaPassado = paraISO(data) < hoje;
     return <div className={styles.agendaDia}>
       {HORAS.map((hora, indice) => <button
         type="button"
         key={hora}
         className={styles.slotVazio}
         style={{ top: `${indice * ALTURA_INTERVALO}px` }}
+        disabled={diaPassado}
         onClick={() => abrirFormulario(paraISO(data), hora)}
         aria-label={`Criar agendamento em ${formatarData(paraISO(data))}, às ${hora}`}
       ><span>+ Reservar</span></button>)}
