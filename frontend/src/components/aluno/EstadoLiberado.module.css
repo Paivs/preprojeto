@@ -2,134 +2,159 @@
   width: 100%;
 }
 
-.introducao {
+.linhaSuperior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
   margin-bottom: 28px;
 }
 
-.badgeLiberado {
+.voltar {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin: 0 0 14px;
-  padding: 7px 10px;
-  border: 1px solid rgb(46 196 182 / 35%);
-  color: #2ec4b6;
-  font-family: var(--fonte-mono);
-  font-size: 10px;
-  letter-spacing: .08em;
-  text-transform: uppercase;
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  color: var(--silver);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
 }
 
-.badgeLiberado span { width: 7px; height: 7px; border-radius: 50%; background: #2ec4b6; box-shadow: 0 0 10px #2ec4b6; }
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--status-liberado-verde);
+  font-size: 12px;
+}
+
+.pontoStatus {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--status-liberado-verde);
+}
 
 .titulo {
   margin: 0;
-  color: var(--white);
-  font-size: 30px;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-}
-
-.turma {
-  margin: 9px 0 0;
-  color: var(--silver);
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.secaoEquipamentos {
-  padding: 22px;
-  background: linear-gradient(145deg, #161a1d, #101214);
-  border: 1px solid #2d343f;
-  box-shadow: 0 20px 60px rgb(0 0 0 / 30%), inset 0 1px rgb(255 255 255 / 3%);
-}
-
-.tituloEquipamentos {
-  margin: 0;
   color: var(--white-smoke);
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 500;
   line-height: 1.4;
 }
 
-.descricaoEquipamentos {
-  margin: 6px 0 0;
-  color: var(--silver);
+.turma {
+  margin: 8px 0 0;
+  color: var(--text-secondary, var(--silver));
   font-size: 13px;
   line-height: 1.5;
 }
 
-.grade {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  margin-top: 18px;
-}
-
-.card {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  padding: 18px;
-  background: #0b090a;
-  border: 1px solid #29292d;
-  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
-}
-
-.card:hover { transform: translateY(-3px); border-color: #a4161a; background: #101214; }
-.cardCabecalho, .cardRodape { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.numeroAtivo { color: #52525b; font-family: var(--fonte-mono); font-size: 11px; }
-.badgeAtivo { display: inline-flex; align-items: center; gap: 6px; padding: 5px 7px; border: 1px solid rgb(16 185 129 / 25%); color: #6ee7b7; font-family: var(--fonte-mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
-.badgeAtivo span { width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 9px #10b981; }
-
-.tipo {
-  margin: 0;
-  color: var(--silver);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  line-height: 1.45;
-  text-transform: uppercase;
-}
-
-.nome {
-  margin: 10px 0 0;
-  color: var(--white-smoke);
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.45;
-}
-
-.detalhe {
-  margin: 8px 0 0;
-  color: var(--silver);
+.contexto {
+  margin: 4px 0 0;
+  color: var(--text-muted, var(--silver));
   font-size: 12px;
   line-height: 1.5;
 }
 
-.id {
-  margin: 16px 0 0;
-  color: #e4e4e7;
-  font-family: var(--fonte-mono);
-  font-size: 11px;
-  letter-spacing: 0.04em;
-}
-.cardRodape { margin-top: auto; padding-top: 13px; border-top: 1px solid #262626; }
-.preUso { color: #a1a1aa; font-size: 10px; }
-
-@media (max-width: 767px) {
-  .titulo {
-    font-size: 24px;
-  }
-
-  .secaoEquipamentos {
-    padding: 16px;
-  }
+.secaoEquipamentos {
+  margin-top: 28px;
+  overflow: hidden;
+  border-radius: 8px;
 }
 
-@media (min-width: 768px) {
-  .grade {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+.cabecalhoLista {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+}
+
+.tituloLista {
+  margin: 0;
+  color: var(--white-smoke);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.instrucaoLista {
+  margin: 0;
+  color: var(--text-muted, var(--silver));
+  font-size: 12px;
+}
+
+.listaEquipamentos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.itemEquipamento {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 64px;
+  padding: 10px 8px;
+  border-top: 0.5px solid var(--border, var(--border-subtle));
+}
+
+.itemEquipamento:last-child {
+  border-bottom: 0.5px solid var(--border, var(--border-subtle));
+}
+
+.idEquipamento {
+  flex: 0 0 74px;
+  color: var(--text-secondary, var(--silver));
+  font-family: var(--font-mono, var(--fonte-mono));
+  font-size: 12px;
+}
+
+.dadosEquipamento {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.nomeEquipamento {
+  overflow: hidden;
+  color: var(--white-smoke);
+  font-size: 14px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detalhesEquipamento {
+  overflow: hidden;
+  color: var(--text-secondary, var(--silver));
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.estadoEquipamento {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--status-liberado-verde);
+}
+
+.rodape {
+  margin-top: 24px;
+  color: var(--text-muted, var(--silver));
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 480px) {
+  .itemEquipamento { gap: 10px; padding-right: 4px; padding-left: 4px; }
+  .idEquipamento { flex-basis: 74px; font-size: 11px; }
+  .instrucaoLista { font-size: 11px; }
 }
