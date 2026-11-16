@@ -52,7 +52,7 @@
     display: flex;
     gap: 10px;
     align-items: center;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid var(--cor-borda);
     padding: 10px 0;
     margin-bottom: 1rem;
 }
@@ -71,7 +71,7 @@
 }
 
 .tema-dados h4 {
-    color: var(--branco);
+    color: var(--cor-texto);
     font-size: 1.05rem;
 }
 
@@ -109,10 +109,15 @@
     padding: 10px 10px;
     border: 1px solid var(--cor-borda);
     border-radius: 6px;
-    background: var(--dark-bg-input);
-    color: var(--branco);
+    background: var(--cor-campo);
+    color: var(--cor-texto);
     font-size: .8rem;
     outline: none;
+}
+
+.dados-config input::placeholder {
+    color: var(--cor-texto-fraco);
+    opacity: 1;
 }
 
 .dados-config input:focus {

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
+import ModalNovoCliente from "@/components/clientes/ModalNovoCliente";
 import "./clientes.css";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/$/, "");
@@ -272,6 +273,14 @@ export default function Clientes() {
           </section>
         </main>
       </div>
+      {modalAberto && (
+        <ModalNovoCliente
+          onFechar={() => setModalAberto(false)}
+          onSucesso={(cliente) =>
+            setClientesAdicionados((atuais) => [cliente, ...atuais])
+          }
+        />
+      )}
     </div>
   );
 }

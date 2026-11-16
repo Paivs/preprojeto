@@ -68,6 +68,7 @@ export default function Header({ tipoUsuario = "usuario" }) {
   const eAdmin = tipoUsuario === "admin";
   const nomePerfil = "Marina Vieira";
   const cargoPerfil = eAdmin ? "Administradora" : "Cliente";
+  const [temaClaro, setTemaClaro] = useState(false);
   const [perfilAberto, setPerfilAberto] = useState(false);
   const [notificacoesAbertas, setNotificacoesAbertas] = useState(false);
   const [notificacoes, setNotificacoes] = useState(() =>
@@ -75,6 +76,42 @@ export default function Header({ tipoUsuario = "usuario" }) {
   );
   const notificacoesRef = useRef(null);
   const quantidadeNaoLidas = notificacoes.filter((item) => !item.lida).length;
+
+  useEffect(() => {
+    let temaSalvo = "escuro";
+
+    try {
+      temaSalvo = localStorage.getItem("volthouse-tema") || "escuro";
+    } catch {
+      // O tema continua funcionando durante a sessão se o armazenamento estiver indisponível.
+    }
+
+    const temaAplicado = temaSalvo === "claro" ? "claro" : "escuro";
+    if (temaAplicado === "claro") {
+      document.documentElement.dataset.tema = "claro";
+    } else {
+      delete document.documentElement.dataset.tema;
+    }
+    setTemaClaro(temaAplicado === "claro");
+  }, []);
+
+  function alternarTema() {
+    const novoTema = temaClaro ? "escuro" : "claro";
+
+    if (novoTema === "claro") {
+      document.documentElement.dataset.tema = "claro";
+    } else {
+      delete document.documentElement.dataset.tema;
+    }
+
+    try {
+      localStorage.setItem("volthouse-tema", novoTema);
+    } catch {
+      // A troca visual não depende do armazenamento local.
+    }
+
+    setTemaClaro(novoTema === "claro");
+  }
 
   useEffect(() => {
     if (!perfilAberto && !notificacoesAbertas) return undefined;
@@ -135,9 +172,12 @@ export default function Header({ tipoUsuario = "usuario" }) {
           <button
             type="button"
             className="botao-icone botao-tema"
-            aria-label="Tema"
+            aria-label={`Ativar tema ${temaClaro ? "escuro" : "claro"}`}
+            aria-pressed={temaClaro}
+            title={`Ativar tema ${temaClaro ? "escuro" : "claro"}`}
+            onClick={alternarTema}
           >
-            <i className="bi bi-sun" />
+            <i className={`bi ${temaClaro ? "bi-moon-stars" : "bi-sun"}`} />
           </button>
 
           <div

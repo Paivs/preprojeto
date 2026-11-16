@@ -34,7 +34,8 @@ export default function Home() {
           <div className="patrocinador-container">
             <div className="grid-patrocinador">
               <div className="img-pat">
-                <img src="/images/enelBranca.png" />
+                <img className="logo-tema-escuro" src="/images/enelBranca.png" alt="Enel" />
+                <img className="logo-tema-claro" src="/images/enel.png" alt="Enel" />
               </div>
               <div className="img-pat">
                 <img src="/images/comercio.png" />
@@ -43,10 +44,12 @@ export default function Home() {
                 <img src="/images/energisa.png" />
               </div>
               <div className="img-pat">
-                <img src="/images/wegBranco.png" />
+                <img className="logo-tema-escuro" src="/images/wegBranco.png" alt="WEG" />
+                <img className="logo-tema-claro" src="/images/weg.png" alt="WEG" />
               </div>
               <div className="img-pat">
-                <img src="/images/cpflBranco.png" style={{ width: "10vw" }} />
+                <img className="logo-tema-escuro" src="/images/cpflBranco.png" style={{ width: "10vw" }} alt="CPFL Energia" />
+                <img className="logo-tema-claro" src="/images/cpfl.png" style={{ width: "10vw" }} alt="CPFL Energia" />
               </div>
             </div>
           </div>
