@@ -9,6 +9,7 @@ export default function ModalNovoCliente({ onFechar, onSucesso }) {
   const [empresa, setEmpresa] = useState("");
   const [cnpj, setCnpj] = useState("");
   const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -102,6 +103,18 @@ export default function ModalNovoCliente({ onFechar, onSucesso }) {
               placeholder="00.000.000/0000-00"
               autoComplete="off"
               required
+            />
+          </label>
+
+          <label>
+            Telefone
+            <input
+              type="tel"
+              name="telefone"
+              value={telefone}
+              onChange={(evento) => setTelefone(evento.target.value)}
+              placeholder="(00) 00000-0000"
+              autoComplete="tel"
             />
           </label>
 

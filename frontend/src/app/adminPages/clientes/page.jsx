@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import ModalNovoCliente from "@/components/clientes/ModalNovoCliente";
@@ -43,7 +42,7 @@ function iniciaisEmpresa(nome = "") {
 }
 
 export default function Clientes() {
-  const router = useRouter();
+  const [modalAberto, setModalAberto] = useState(false);
   const [clientes, setClientes] = useState([]);
   const [buscaInput, setBuscaInput] = useState("");
   const [buscaAplicada, setBuscaAplicada] = useState("");
@@ -139,7 +138,7 @@ export default function Clientes() {
               <p>Consulte empresas, equipamentos, consumo e situação dos pagamentos.</p>
             </div>
             <div className="btn-adicionar">
-              <button type="button" onClick={() => router.push("/adminPages/addCliente")}>
+              <button type="button" onClick={() => setModalAberto(true)}>
                 <i className="bi bi-plus" aria-hidden="true"></i>
                 Adicionar cliente
               </button>
@@ -276,9 +275,10 @@ export default function Clientes() {
       {modalAberto && (
         <ModalNovoCliente
           onFechar={() => setModalAberto(false)}
-          onSucesso={(cliente) =>
-            setClientesAdicionados((atuais) => [cliente, ...atuais])
-          }
+          onSucesso={() => {
+            setModalAberto(false);
+            carregarClientes(1, buscaAplicada);
+          }}
         />
       )}
     </div>
