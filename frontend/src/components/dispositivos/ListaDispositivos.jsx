@@ -5,7 +5,8 @@ export default function ListaDispositivos({
   dispositivos,
   selecionadoId,
   onSelecionar,
-  onAlternar,
+  carregando = false,
+  erro = "",
 }) {
   return (
     <section>
@@ -15,9 +16,13 @@ export default function ListaDispositivos({
         </h2>
       </div>
 
-      {dispositivos.length === 0 ? (
+      {erro && <p className="lista-erro" role="alert">{erro}</p>}
+
+      {carregando ? (
+        <p className="lista-vazia">Carregando seus equipamentos...</p>
+      ) : dispositivos.length === 0 && !erro ? (
         <p className="lista-vazia">Nenhum dispositivo encontrado.</p>
-      ) : (
+      ) : dispositivos.length > 0 ? (
         <div className="lista-dispositivos">
           {dispositivos.map((d) => (
             <CardDispositivo
@@ -25,11 +30,10 @@ export default function ListaDispositivos({
               dispositivo={d}
               selecionado={d.id === selecionadoId}
               onSelecionar={() => onSelecionar(d.id)}
-              onAlternar={() => onAlternar(d.id)}
             />
           ))}
         </div>
-      )}
+      ) : null}
     </section>
   );
 }

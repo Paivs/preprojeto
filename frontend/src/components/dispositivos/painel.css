@@ -103,6 +103,49 @@
     color: var(--dark-text-primary);
 }
 
+.painel-dados-lista {
+    display: grid;
+    gap: 0;
+    margin: 16px 0 0;
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    background: var(--cor-card);
+}
+
+.painel-dados-lista div {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.painel-dados-lista div:last-child {
+    border-bottom: 0;
+}
+
+.painel-dados-lista dt {
+    color: var(--cor-texto-fraco);
+    font-size: 11px;
+}
+
+.painel-dados-lista dd {
+    margin: 0;
+    color: var(--dark-text-primary);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: right;
+}
+
+.painel-nota-consumo {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--cor-card);
+    color: var(--cor-texto-fraco);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
 .painel-secao-topo {
     display: flex;
     justify-content: space-between;
