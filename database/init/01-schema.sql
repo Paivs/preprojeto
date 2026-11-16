@@ -8,7 +8,8 @@ CREATE TABLE usuario (
     cnpj VARCHAR(18) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,
-    nivel_permissao ENUM('admin', 'cliente') DEFAULT 'cliente'
+    nivel_permissao ENUM('admin', 'cliente') DEFAULT 'cliente',
+    telefone VARCHAR(20) NULL
 );
 
 
