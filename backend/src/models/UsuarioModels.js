@@ -1,9 +1,5 @@
-import * as dbModule from '../config/database.js';
+import { pool } from '../config/database.js';
 import { criarCondicaoBusca } from '../utils/busca.js';
-
-
-// Suporta tanto o pool exportado diretamente quanto a fábrica criarPool()
-const pool = typeof dbModule.criarPool === 'function' ? dbModule.criarPool() : dbModule.pool;
 
 const resumoEquipamentosSql = `
   SELECT s.id_usuario, COUNT(DISTINCT e.id_equipamento) AS qtd_equipamentos
@@ -22,104 +18,137 @@ const resumoPagamentosSql = `
     FROM pagamento p
    GROUP BY p.id_usuario`;
 
+const camposUsuario = `
+  u.id_usuario,
+  u.nome_empresa,
+  u.cnpj,
+  u.email,
+  u.nivel_permissao,
+  COALESCE(u.consumo_total, 0) AS consumo_total,
+  COALESCE(u.consumo_maximo, 0) AS consumo_maximo,
+  COALESCE(resumo.qtd_equipamentos, 0) AS qtd_equipamentos,
+  COALESCE(u.consumo_total, 0) AS consumo_total_energia,
+  COALESCE(pagamentos.status_cliente, 'Sem pagamentos') AS status_cliente`;
 
-// 1. Listagem administrativa com resumo de equipamentos e consumo por empresa
+const joinsResumo = `
+  LEFT JOIN (${resumoEquipamentosSql}) resumo
+    ON resumo.id_usuario = u.id_usuario
+  LEFT JOIN (${resumoPagamentosSql}) pagamentos
+    ON pagamentos.id_usuario = u.id_usuario`;
+
+function erroDuplicidade() {
+  const erro = new Error('Já existe um usuário com esse e-mail ou CNPJ.');
+  erro.status = 409;
+  return erro;
+}
+
+function tratarErroBanco(erro) {
+  if (erro.code === 'ER_DUP_ENTRY') throw erroDuplicidade();
+  throw erro;
+}
+
 export async function listar({ limite, offset, busca }) {
   const limiteNum = Number.parseInt(limite, 10);
   const offsetNum = Number.parseInt(offset, 10);
-
-
-  // Monta o filtro de busca (opcional). Escapa os curingas do LIKE (% e _)
-  // para que o usuário busque esses caracteres literalmente.
   const filtroBusca = criarCondicaoBusca(busca, ['u.nome_empresa', 'u.email', 'u.cnpj']);
   const filtroSql = filtroBusca.sql ? `WHERE ${filtroBusca.sql}` : '';
 
-
-  const [linhas] = await pool.query(
-    `SELECT u.id_usuario, u.nome_empresa, u.email,
-            COALESCE(resumo.qtd_equipamentos, 0) AS qtd_equipamentos,
-            COALESCE(u.consumo_total, 0) AS consumo_total_energia,
-            COALESCE(pagamentos.status_cliente, 'Sem pagamentos') AS status_cliente
+  const [usuarios] = await pool.query(
+    `SELECT ${camposUsuario}
        FROM usuario u
-       LEFT JOIN (
-         ${resumoEquipamentosSql}
-       ) resumo ON resumo.id_usuario = u.id_usuario
-       LEFT JOIN (
-         ${resumoPagamentosSql}
-       ) pagamentos ON pagamentos.id_usuario = u.id_usuario
+       ${joinsResumo}
        ${filtroSql}
       ORDER BY u.id_usuario
       LIMIT ? OFFSET ?`,
     [...filtroBusca.valores, limiteNum, offsetNum]
   );
 
-
   const [[{ total }]] = await pool.query(
     `SELECT COUNT(*) AS total FROM usuario u ${filtroSql}`,
     filtroBusca.valores
   );
 
-
-  return {
-    usuarios: linhas,
-    total: Number(total)
-  };
+  return { usuarios, total: Number(total) };
 }
 
-
-// 2. Busca por ID
 export async function buscarPorId(id) {
   const [linhas] = await pool.query(
-    `SELECT u.id_usuario, u.nome_empresa, u.email,
-            COALESCE(resumo.qtd_equipamentos, 0) AS qtd_equipamentos,
-            COALESCE(u.consumo_total, 0) AS consumo_total_energia,
-            COALESCE(pagamentos.status_cliente, 'Sem pagamentos') AS status_cliente
+    `SELECT ${camposUsuario}
        FROM usuario u
-       LEFT JOIN (
-         ${resumoEquipamentosSql}
-       ) resumo ON resumo.id_usuario = u.id_usuario
-       LEFT JOIN (
-         ${resumoPagamentosSql}
-       ) pagamentos ON pagamentos.id_usuario = u.id_usuario
+       ${joinsResumo}
       WHERE u.id_usuario = ?`,
     [id]
   );
-  if (linhas.length === 0) return null;
-  return linhas[0];
+  return linhas[0] || null;
 }
 
-
-// 3. Busca por email (para impedir duplicados)
 export async function buscarPorEmail(email) {
   const [linhas] = await pool.query(
-    'SELECT id_usuario, nome_empresa, email FROM usuario WHERE email = ?',
+    'SELECT id_usuario, email FROM usuario WHERE email = ?',
     [email]
   );
-  if (linhas.length === 0) return null;
-  return linhas[0];
+  return linhas[0] || null;
 }
 
+export async function buscarPorCnpj(cnpj) {
+  const [linhas] = await pool.query(
+    'SELECT id_usuario, cnpj FROM usuario WHERE cnpj = ?',
+    [cnpj]
+  );
+  return linhas[0] || null;
+}
 
-// 4. Inserção
 export async function criar(usuario) {
-  const sql = 'INSERT INTO usuario (nome, email) VALUES (?, ?)';
-  const valores = [usuario.nome, usuario.email];
-  const [resultado] = await pool.query(sql, valores);
-  return { ...usuario, id: resultado.insertId };
+  try {
+    const [resultado] = await pool.query(
+      `INSERT INTO usuario
+         (nome_empresa, cnpj, email, senha, nivel_permissao, consumo_total, consumo_maximo)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        usuario.nome_empresa,
+        usuario.cnpj,
+        usuario.email,
+        usuario.senhaHash,
+        usuario.nivel_permissao,
+        usuario.consumo_total,
+        usuario.consumo_maximo
+      ]
+    );
+    return buscarPorId(resultado.insertId);
+  } catch (erro) {
+    tratarErroBanco(erro);
+  }
 }
 
-
-// 5. Atualização completa (PUT)
 export async function atualizar(id, usuario) {
-  const sql = 'UPDATE usuario SET nome_empresa = ?, email = ? WHERE id_usuario = ?';
-  const valores = [usuario.nome, usuario.email, id];
-  const [resultado] = await pool.query(sql, valores);
-  return resultado.affectedRows > 0;
+  try {
+    const [resultado] = await pool.query(
+      `UPDATE usuario
+          SET nome_empresa = ?, cnpj = ?, email = ?,
+              senha = COALESCE(?, senha), nivel_permissao = ?,
+              consumo_total = ?, consumo_maximo = ?
+        WHERE id_usuario = ?`,
+      [
+        usuario.nome_empresa,
+        usuario.cnpj,
+        usuario.email,
+        usuario.senhaHash || null,
+        usuario.nivel_permissao,
+        usuario.consumo_total,
+        usuario.consumo_maximo,
+        id
+      ]
+    );
+    return resultado.affectedRows > 0;
+  } catch (erro) {
+    tratarErroBanco(erro);
+  }
 }
 
-
-// 6. Remoção (DELETE)
 export async function excluir(id) {
-  const [resultado] = await pool.query('DELETE FROM usuario WHERE id_usuario = ?', [id]);
+  const [resultado] = await pool.query(
+    'DELETE FROM usuario WHERE id_usuario = ?',
+    [id]
+  );
   return resultado.affectedRows > 0;
 }
