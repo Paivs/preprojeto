@@ -174,7 +174,7 @@
 
 .heatmap-celula:hover { z-index: 1; transform: scale(1.2); border-color: var(--cor-texto-secundario); filter: brightness(1.12); }
 .heatmap-celula.selecionada { outline: 2px solid var(--cor-texto); outline-offset: 1px; }
-.nivel-0 { background-color: #19243a; }
+.nivel-0 { background-color: var(--cor-fundo); }
 .nivel-1 { background-color: #273c68; }
 .nivel-2 { background-color: #3d5e9d; }
 .nivel-3 { background-color: #8c68ee; }

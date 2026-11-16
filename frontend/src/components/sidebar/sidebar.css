@@ -23,6 +23,10 @@
   height: auto;
 }
 
+:root[data-tema="claro"] .logo-imagem {
+  filter: brightness(0) saturate(100%);
+}
+
 .logo-icone {
   width: 36px;
   height: 36px;

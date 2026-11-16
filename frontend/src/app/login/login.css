@@ -107,6 +107,10 @@
   width: 9vw;
 }
 
+:root[data-tema="claro"] .top-login img {
+  filter: brightness(0) saturate(100%);
+}
+
 .txt-card-top {
   display: flex;
   flex-direction: column;
@@ -147,18 +151,18 @@
 
 .input-wrapper input {
   width: 100%;
-  background-color: #0b0f19;
-  border: 1px solid #23293e;
+  background-color: var(--cor-campo);
+  border: 1px solid var(--cor-borda);
   border-radius: 8px;
   padding: 12px 14px 12px 42px;
-  color: #ffffff;
+  color: var(--cor-texto);
   font-size: 0.85rem;
   outline: none;
   transition: border-color 0.2s;
 }
 
 .input-wrapper input::placeholder {
-  color: #475569;
+  color: var(--cor-texto-fraco);
 }
 
 .input-wrapper input:focus {
@@ -171,7 +175,7 @@
   left: 14px;
   width: 16px;
   height: 16px;
-  color: #475569;
+  color: var(--cor-texto-fraco);
 }
 
 .esquecer-senha {
@@ -191,7 +195,7 @@
     border: none;
     background: var(--light-primary);
     padding: 10px;
-    color: var(--dark-text-primary);
+    color: #fff;
     border-radius: 6px;
     width: 100%;
 }

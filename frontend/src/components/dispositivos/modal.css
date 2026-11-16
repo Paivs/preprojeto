@@ -50,7 +50,7 @@
 .modal-topo h2 {
     font-size: 16px;
     font-weight: 600;
-    color: var(--dark-text-primary);
+    color: var(--cor-texto);
 }
 
 .modal-formulario {
@@ -75,11 +75,16 @@
     border-radius: 10px;
     border: 1px solid var(--cor-borda);
     background: var(--cor-campo);
-    color: var(--dark-text-primary);
+    color: var(--cor-texto);
+}
+
+.modal-formulario input::placeholder {
+    color: var(--cor-texto-fraco);
 }
 
 .modal-formulario select option {
     background: var(--cor-card);
+    color: var(--cor-texto);
 }
 
 .modal-erro {
