@@ -1,8 +1,128 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import "./clientes.css";
 
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/$/, "");
+const LIMITE_POR_PAGINA = 10;
+
+function formatarNumero(valor) {
+  const numero = Number(valor);
+  return new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 }).format(
+    Number.isFinite(numero) ? numero : 0,
+  );
+}
+
+function obterStatus(status) {
+  const statusMapeados = {
+    pago: { texto: "Pago", classe: "pago" },
+    nao_pago: { texto: "Não pago", classe: "nao-pago" },
+    atrasado: { texto: "Atrasado", classe: "atrasado" },
+    cancelado: { texto: "Cancelado", classe: "cancelado" },
+    "Sem pagamentos": { texto: "Sem pagamentos", classe: "sem-pagamentos" },
+  };
+
+  return statusMapeados[status] || {
+    texto: status || "Sem pagamentos",
+    classe: "sem-pagamentos",
+  };
+}
+
+function iniciaisEmpresa(nome = "") {
+  return nome
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((parte) => parte[0])
+    .join("")
+    .toLocaleUpperCase("pt-BR") || "?";
+}
+
 export default function Clientes() {
+  const router = useRouter();
+  const [clientes, setClientes] = useState([]);
+  const [buscaInput, setBuscaInput] = useState("");
+  const [buscaAplicada, setBuscaAplicada] = useState("");
+  const [pagina, setPagina] = useState(1);
+  const [paginacao, setPaginacao] = useState({ total: 0, totalPaginas: 0 });
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
+
+  const carregarClientes = useCallback(async (paginaSolicitada, termoBusca) => {
+    setCarregando(true);
+    setErro("");
+
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      setErro("Sua sessão não foi encontrada. Entre novamente como administrador.");
+      setClientes([]);
+      setPaginacao({ total: 0, totalPaginas: 0 });
+      setCarregando(false);
+      return;
+    }
+
+    const parametros = new URLSearchParams({
+      pagina: String(paginaSolicitada),
+      limite: String(LIMITE_POR_PAGINA),
+      nivel_permissao: "cliente",
+    });
+    if (termoBusca) parametros.set("busca", termoBusca);
+
+    try {
+      const resposta = await fetch(`${API_URL}/usuarios?${parametros.toString()}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      const resultado = await resposta.json().catch(() => ({}));
+
+      if (!resposta.ok) {
+        if (resposta.status === 401 || resposta.status === 403) {
+          throw new Error("Acesso não autorizado. Entre novamente com uma conta administradora.");
+        }
+        throw new Error(resultado.erro || "Não foi possível carregar os clientes.");
+      }
+
+      const dados = Array.isArray(resultado.dados) ? resultado.dados : [];
+      setClientes(dados);
+      setPagina(resultado.paginacao?.pagina || paginaSolicitada);
+      setPaginacao({
+        total: Number(resultado.paginacao?.total) || 0,
+        totalPaginas: Number(resultado.paginacao?.totalPaginas) || 0,
+      });
+    } catch (erroRequisicao) {
+      setErro(erroRequisicao.message || "Não foi possível conectar à API.");
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    carregarClientes(1, "");
+  }, [carregarClientes]);
+
+  function pesquisar(evento) {
+    evento.preventDefault();
+    const termo = buscaInput.trim();
+    setBuscaAplicada(termo);
+    carregarClientes(1, termo);
+  }
+
+  function irParaPagina(novaPagina) {
+    const totalPaginas = Math.max(1, paginacao.totalPaginas);
+    if (novaPagina < 1 || novaPagina > totalPaginas || novaPagina === pagina) return;
+    carregarClientes(novaPagina, buscaAplicada);
+  }
+
+  const totalEquipamentos = clientes.reduce(
+    (total, cliente) => total + (Number(cliente.qtd_equipamentos) || 0),
+    0,
+  );
+  const primeiraLinha = paginacao.total === 0 ? 0 : (pagina - 1) * LIMITE_POR_PAGINA + 1;
+  const ultimaLinha = Math.min(pagina * LIMITE_POR_PAGINA, paginacao.total);
+
   return (
     <div className="pagina">
       <Sidebar />
@@ -13,15 +133,13 @@ export default function Clientes() {
         <main className="conteudo-pagina">
           <div className="cabecalho-pagina">
             <div>
-              <span className="cabecalho-etiqueta">CONTROLE DE ATIVOS</span>
-
+              <span className="cabecalho-etiqueta">CONTROLE DE CLIENTES</span>
               <h1>Clientes</h1>
-
-              <p>Gerencie sua base, planos e consumo em um só lugar</p>
+              <p>Consulte empresas, equipamentos, consumo e situação dos pagamentos.</p>
             </div>
             <div className="btn-adicionar">
-              <button type="button">
-                <i className="bi bi-plus"></i>
+              <button type="button" onClick={() => router.push("/adminPages/addCliente")}>
+                <i className="bi bi-plus" aria-hidden="true"></i>
                 Adicionar cliente
               </button>
             </div>
@@ -30,34 +148,27 @@ export default function Clientes() {
           <div className="grid-kpi">
             <div className="kpi-group">
               <div className="cabecalho-kpi">
-                <span>Total de clientes</span>
-                <i className="bi bi-people"></i>
+                <span>Clientes encontrados</span>
+                <i className="bi bi-people" aria-hidden="true"></i>
               </div>
               <div className="main-kpi">
-                <h3>1.284</h3>
+                <h3>{formatarNumero(paginacao.total)}</h3>
               </div>
               <div className="footer-kpi">
-                <span>
-                  <i className="bi bi-chevron-compact-up"></i>
-                  48 novos este mês
-                </span>
+                <span>Resultado da consulta atual</span>
               </div>
             </div>
 
             <div className="kpi-group">
               <div className="cabecalho-kpi">
-                <span>Novas adesões</span>
-                <i className="bi bi-person-plus"></i>
+                <span>Equipamentos na página</span>
+                <i className="bi bi-lightning-charge" aria-hidden="true"></i>
               </div>
               <div className="main-kpi">
-                <h3>124</h3>
+                <h3>{formatarNumero(totalEquipamentos)}</h3>
               </div>
               <div className="footer-kpi">
-                <span>
-                  <i className="bi bi-chevron-compact-up"></i>
-                  18,2% vs. mês
-                  anterio
-                </span>
+                <span>Somatório dos clientes exibidos</span>
               </div>
             </div>
           </div>
@@ -66,15 +177,26 @@ export default function Clientes() {
             <div className="cabecalho-table">
               <div className="cabecalho-left">
                 <h2>Base de clientes</h2>
-                <span>Todos os contratos ativos e recentes</span>
+                <span>Dados carregados da API</span>
               </div>
               <div className="cabecalho-right">
-                <div className="barra-pesquisa">
-                  <span className="icone-busca">⌕</span>
-                  <input type="text" placeholder="Buscar empresa..." />
-                </div>
+                <form className="barra-pesquisa" onSubmit={pesquisar}>
+                  <i className="bi bi-search icone-busca" aria-hidden="true"></i>
+                  <input
+                    type="search"
+                    placeholder="Buscar empresa..."
+                    aria-label="Buscar clientes por empresa, e-mail ou CNPJ"
+                    value={buscaInput}
+                    onChange={(evento) => setBuscaInput(evento.target.value)}
+                  />
+                  <button type="submit" aria-label="Pesquisar clientes">
+                    Buscar
+                  </button>
+                </form>
               </div>
             </div>
+
+            {erro && <p className="mensagem-tabela erro-tabela" role="alert">{erro}</p>}
 
             <div className="tabela-wrapper">
               <table>
@@ -82,142 +204,67 @@ export default function Clientes() {
                   <tr>
                     <th>EMPRESA</th>
                     <th>DISPOSITIVOS</th>
-                    <th>CONSUMO</th>
-                    <th>STATUS</th>
-                    <th></th>
+                    <th>CONSUMO TOTAL</th>
+                    <th>STATUS DO PAGAMENTO</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>
-                      <div className="info-empresa">
-                        <div className="avatar-sigla">LT</div>
-                        <div>
-                          <strong>Lumina Tech</strong>
-                          <p>financeiro@lumina.com</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td>84</td>
-                    <td>
-                      <strong>12.840 kWh</strong>
-                    </td>
-                    <td>
-                      <span className="badge-status ativo">● Ativo</span>
-                    </td>
-                    <td>
-                      <button type="button" className="btn-opcoes">
-                        •••
-                      </button>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td>
-                      <div className="info-empresa">
-                        <div className="avatar-sigla">OE</div>
-                        <div>
-                          <strong>Orbe Energia</strong>
-                          <p>contato@orbe.com</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td>42</td>
-                    <td>
-                      <strong>8.290 kWh</strong>
-                    </td>
-                    <td>
-                      <span class="badge-status ativo">● Ativo</span>
-                    </td>
-                    <td>
-                      <button type="button" className="btn-opcoes">
-                        •••
-                      </button>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td>
-                      <div className="info-empresa">
-                        <div className="avatar-sigla">NL</div>
-                        <div>
-                          <strong>Norte Logística</strong>
-                          <p>admin@nortelog.com</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td>126</td>
-                    <td>
-                      <strong>21.560 kWh</strong>
-                    </td>
-                    <td>
-                      <span class="badge-status pendente">● Pendente</span>
-                    </td>
-                    <td>
-                      <button type="button" className="btn-opcoes">
-                        •••
-                      </button>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td>
-                      <div className="info-empresa">
-                        <div className="avatar-sigla">SA</div>
-                        <div>
-                          <strong>Studio Alba</strong>
-                          <p>ola@studioalba.com</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td>12</td>
-                    <td>
-                      <strong>2.130 kWh</strong>
-                    </td>
-                    <td>
-                      <span class="badge-status inativo">● Inativo</span>
-                    </td>
-                    <td>
-                      <button type="button" className="btn-opcoes">
-                        •••
-                      </button>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td>
-                      <div className="info-empresa">
-                        <div className="avatar-sigla">VC</div>
-                        <div>
-                          <strong>Verde Campo</strong>
-                          <p>energia@verdecampo.com</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td>38</td>
-                    <td>
-                      <strong>7.480 kWh</strong>
-                    </td>
-                    <td>
-                      <span class="badge-status ativo">● Ativo</span>
-                    </td>
-                    <td>
-                      <button type="button" className="btn-opcoes">
-                        •••
-                      </button>
-                    </td>
-                  </tr>
+                  {carregando ? (
+                    <tr><td colSpan={4} className="mensagem-tabela">Carregando clientes...</td></tr>
+                  ) : clientes.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="mensagem-tabela">
+                        {erro ? "" : "Nenhum cliente encontrado."}
+                      </td>
+                    </tr>
+                  ) : clientes.map((cliente) => {
+                    const status = obterStatus(cliente.status_cliente);
+                    return (
+                      <tr key={cliente.id_usuario}>
+                        <td>
+                          <div className="info-empresa">
+                            <div className="avatar-sigla">{iniciaisEmpresa(cliente.nome_empresa)}</div>
+                            <div>
+                              <strong>{cliente.nome_empresa}</strong>
+                              <p>{cliente.email}</p>
+                              <small>CNPJ: {cliente.cnpj}</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{formatarNumero(cliente.qtd_equipamentos)}</td>
+                        <td><strong>{formatarNumero(cliente.consumo_total_energia)} kWh</strong></td>
+                        <td>
+                          <span className={`badge-status ${status.classe}`}>
+                            <span aria-hidden="true">●</span> {status.texto}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
 
             <div className="rodape-tabela">
-              <p>Exibindo 5 de 1.284 clientes</p>
+              <p>Exibindo {primeiraLinha}–{ultimaLinha} de {formatarNumero(paginacao.total)} clientes</p>
               <div className="paginacao">
-                <button type="button" className="btn-paginacao">
+                <button
+                  type="button"
+                  className="btn-paginacao"
+                  onClick={() => irParaPagina(pagina - 1)}
+                  disabled={carregando || pagina <= 1}
+                >
                   Anterior
                 </button>
-                <button type="button" className="btn-paginacao ativo">
+                <span className="pagina-atual">
+                  Página {pagina} de {Math.max(1, paginacao.totalPaginas)}
+                </span>
+                <button
+                  type="button"
+                  className="btn-paginacao"
+                  onClick={() => irParaPagina(pagina + 1)}
+                  disabled={carregando || pagina >= paginacao.totalPaginas}
+                >
                   Próxima
                 </button>
               </div>

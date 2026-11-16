@@ -47,11 +47,18 @@ function tratarErroBanco(erro) {
   throw erro;
 }
 
-export async function listar({ limite, offset, busca }) {
+export async function listar({ limite, offset, busca, nivel_permissao }) {
   const limiteNum = Number.parseInt(limite, 10);
   const offsetNum = Number.parseInt(offset, 10);
   const filtroBusca = criarCondicaoBusca(busca, ['u.nome_empresa', 'u.email', 'u.cnpj']);
-  const filtroSql = filtroBusca.sql ? `WHERE ${filtroBusca.sql}` : '';
+  const filtros = [];
+  const valoresFiltro = [...filtroBusca.valores];
+  if (filtroBusca.sql) filtros.push(filtroBusca.sql);
+  if (nivel_permissao) {
+    filtros.push('u.nivel_permissao = ?');
+    valoresFiltro.push(nivel_permissao);
+  }
+  const filtroSql = filtros.length ? `WHERE ${filtros.join(' AND ')}` : '';
 
   const [usuarios] = await pool.query(
     `SELECT ${camposUsuario}
@@ -60,12 +67,12 @@ export async function listar({ limite, offset, busca }) {
        ${filtroSql}
       ORDER BY u.id_usuario
       LIMIT ? OFFSET ?`,
-    [...filtroBusca.valores, limiteNum, offsetNum]
+    [...valoresFiltro, limiteNum, offsetNum]
   );
 
   const [[{ total }]] = await pool.query(
     `SELECT COUNT(*) AS total FROM usuario u ${filtroSql}`,
-    filtroBusca.valores
+    valoresFiltro
   );
 
   return { usuarios, total: Number(total) };

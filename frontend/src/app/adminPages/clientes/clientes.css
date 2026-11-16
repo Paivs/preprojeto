@@ -156,6 +156,19 @@
   color: #6b7280;
 }
 
+.barra-pesquisa button {
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  background: var(--roxo);
+  color: #fff;
+  cursor: pointer;
+}
+
+.barra-pesquisa button:hover {
+  background: var(--roxo-escuro);
+}
+
 .tabela-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -215,6 +228,13 @@
   color: #6b7280;
 }
 
+.info-empresa small {
+  display: block;
+  margin-top: 3px;
+  color: #6b7280;
+  font-size: 0.7rem;
+}
+
 .badge-plano {
   display: inline-block;
   padding: 4px 10px;
@@ -265,6 +285,41 @@
   color: #f87171;
 }
 
+.badge-status.pago {
+  background-color: rgba(6, 78, 59, 0.5);
+  color: #34d399;
+}
+
+.badge-status.nao-pago {
+  background-color: rgba(69, 26, 3, 0.5);
+  color: #fbbf24;
+}
+
+.badge-status.atrasado {
+  background-color: rgba(69, 10, 10, 0.5);
+  color: #f87171;
+}
+
+.badge-status.cancelado,
+.badge-status.sem-pagamentos {
+  background-color: rgba(55, 65, 81, 0.55);
+  color: #d1d5db;
+}
+
+.mensagem-tabela {
+  padding: 24px !important;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.erro-tabela {
+  margin: 0 0 16px;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 8px;
+  background: rgba(127, 29, 29, 0.2);
+  color: #fca5a5;
+}
+
 .btn-opcoes {
   background: transparent;
   border: none;
@@ -293,6 +348,12 @@
   margin: 0;
 }
 
+.pagina-atual {
+  align-self: center;
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
 .paginacao {
   display: flex;
   gap: 8px;
@@ -317,4 +378,49 @@
   background-color: #1f293d;
   border-color: #3b82f6;
   color: #ffffff;
+}
+
+.btn-paginacao:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+@media (max-width: 900px) {
+  .conteudo-principal {
+    margin-left: 0;
+  }
+
+  .conteudo-pagina {
+    padding: 20px 16px 36px;
+  }
+
+  .grid-kpi {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .cabecalho-table,
+  .rodape-tabela {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .barra-pesquisa {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid-kpi {
+    grid-template-columns: 1fr;
+  }
+
+  .paginacao {
+    flex-wrap: wrap;
+  }
+
+  .tabela-wrapper table {
+    min-width: 650px;
+  }
 }
