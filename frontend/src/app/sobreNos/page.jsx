@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import "./sobreNos.css";
 
 export default function SobreNos() {
     return (
-        <main>
+        <main className="sobre-nos-page">
             <section className="hero">
                 <div className="container">
                     <div className="text">

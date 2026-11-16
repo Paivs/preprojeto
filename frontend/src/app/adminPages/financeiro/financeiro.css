@@ -19,6 +19,16 @@
     /* background-color: aqua; */
 }
 
+.financeiro-feedback {
+    width: 100%;
+    margin: 0;
+    color: var(--dark-text-secondary);
+}
+
+.financeiro-feedback.erro {
+    color: #ff8a8a;
+}
+
 .topo-pag{
     height: fit-content;
     width: 100%;
@@ -50,7 +60,7 @@
 .card h2{
     font-size: 2rem;
     font-weight: 600;
-    color: var(--branco);
+    color: var(--cor-texto);
     
     display: flex;
     align-items: center;
@@ -76,9 +86,8 @@
 
 .card h3{
     color: var(--branco);
-    font-size: 1.8rem;
-    font-weight: 500;
-    /* margin-top: 30px; */
+    font-size: 2rem;
+    font-weight: 600;
 }
 
 .simple-text{
@@ -145,12 +154,12 @@
     display: block;
     width: 220px;
     height: 6px;
-    background: linear-gradient(
-        to right,
-        var(--roxo) 99%,
-        var(--cinza) 1%
-    );
+    background: linear-gradient(to right, var(--roxo) var(--percentual-recebido, 0%), var(--cinza) var(--percentual-recebido, 0%));
     border-radius: 15px;
+}
+
+.variacao-positiva {
+    color: var(--verde) !important;
 }
 
 .flex-barra {

@@ -1,79 +1,99 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import CardIndicador from "@/components/CardIndicador";
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import { API_BASE_URL } from "@/lib/api";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "./financeiro.css";
 
+const formatarMoeda = (valor) =>
+  Number(valor || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 2,
+  });
+
 export default function Financeiro() {
-    return(
-        <main>
-            <Sidebar/>
+  const [resumo, setResumo] = useState(null);
+  const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(true);
 
-            <div className="conteudo">
-                <Header tipoUsuario="admin" />
+  useEffect(() => {
+    let ativo = true;
 
-                <div className="container">
-                    <div className="topo-pag">
-                        <CardIndicador
-                            titulo="Lucro Líquido"
-                            valor="R$ 55.000"
-                            icone="bi bi-cash-stack"
-                            numero="01"
-                        />
+    async function carregarResumo() {
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) throw new Error("Sua sessão expirou. Entre novamente para ver os dados financeiros.");
 
-                        <CardIndicador
-                            titulo="Total Faturado"
-                            valor="R$ 91.320"
-                            icone="bi bi-wallet2"
-                            numero="02"
-                        />
+        const resposta = await fetch(`${API_BASE_URL}/financeiro/resumo`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const resultado = await resposta.json();
+        if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível carregar o resumo financeiro.");
+        if (ativo) setResumo(resultado.dados);
+      } catch (erroRequisicao) {
+        if (ativo) setErro(erroRequisicao.message || "Não foi possível conectar ao servidor.");
+      } finally {
+        if (ativo) setCarregando(false);
+      }
+    }
 
-                        <CardIndicador
-                            titulo="Qtd. Clientes"
-                            valor="1284"
-                            icone="bi bi-briefcase-fill"
-                            numero="03"
-                        />
+    carregarResumo();
+    return () => { ativo = false; };
+  }, []);
 
-                        <CardIndicador
-                            titulo="Recebimentos"
-                            valor="1282"
-                            icone="bi bi-person-workspace"
-                            numero="04"
-                        />
-                    </div>
+  const percentual = resumo?.percentualRecebido ?? 0;
+  const variacao = resumo?.variacaoMensal;
+  const textoVariacao = variacao === null || variacao === undefined
+    ? "Sem dados do mês anterior para comparação"
+    : `${variacao > 0 ? "+" : ""}${variacao.toLocaleString("pt-BR")}% em relação ao mês anterior`;
 
-                    <div className="baixo-pag">
-                        <div className="card">
-                            <h2>Resumo Financeiro</h2>
+  return (
+    <main>
+      <Sidebar />
+      <div className="conteudo">
+        <Header tipoUsuario="admin" />
+        <div className="container">
+          {erro && <p className="financeiro-feedback erro" role="alert">{erro}</p>}
+          {carregando && <p className="financeiro-feedback" role="status">Carregando resumo financeiro...</p>}
 
-                            <div className="info">
-                                 <h3>R$ 55.000 <span className="simple-text">Lucro Líquido</span></h3>
+          <div className="topo-pag">
+            <CardIndicador titulo="Total Recebido" valor={resumo ? formatarMoeda(resumo.totalRecebido) : "—"} icone="bi bi-cash-stack" numero="01" />
+            <CardIndicador titulo="Total Faturado" valor={resumo ? formatarMoeda(resumo.totalFaturado) : "—"} icone="bi bi-wallet2" numero="02" />
+            <CardIndicador titulo="Qtd. Clientes" valor={resumo ? Number(resumo.quantidadeClientes).toLocaleString("pt-BR") : "—"} icone="bi bi-briefcase-fill" numero="03" />
+            <CardIndicador titulo="Recebimentos" valor={resumo ? Number(resumo.quantidadeRecebimentos).toLocaleString("pt-BR") : "—"} icone="bi bi-person-workspace" numero="04" />
+          </div>
 
-                                 <strong><span style={{color: "var(--verde)"}}>+18% </span> em relação ao último mês</strong>
-                            </div>
+          <div className="baixo-pag">
+            <section className="card">
+              <h2>Resumo Financeiro</h2>
+              <div className="info">
+                <h3>{resumo ? formatarMoeda(resumo.totalRecebido) : "—"} <span className="simple-text">Total recebido</span></h3>
+              </div>
+              <div className="flex-p">
+                <p className="box-pagamentos"><i className="bi bi-info-circle-fill" /> {resumo?.pagamentosPendentes ?? 0} pagamentos pendentes</p>
+                <p className="box-barra">
+                  <span className="flex-barra">Total recebido <strong className="flex-end">{percentual}%</strong></span>
+                  <span className="barra" style={{ "--percentual-recebido": `${percentual}%` }} />
+                </p>
+              </div>
+            </section>
 
-                            <div className="flex-p">
-                                <p className="box-pagamentos"><i className="bi bi-info-circle-fill"></i> 2 Pagamentos pendentes</p>
-
-                                <p className="box-barra"><span className="flex-barra">Total Recebido <strong className="flex-end">99%</strong></span> <span className="barra"></span></p>
-                            </div>
-                           
-                        </div>
-
-                        <div className="card">
-                            <h2>Insights da IA <i className="bi bi-robot"></i></h2>
-
-                            <hr/>
-
-                            <p className="insight">
-                                O resumo financeiro da empresa nos últimos meses é positivo. Embora tenham duas pendências de pagamentos, a empresa teve crescimento no lucro em relação ao último mês
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-        </main>
-    )
+            <section className="card">
+              <h2>Análise Financeira <i className="bi bi-graph-up-arrow" /></h2>
+              <hr />
+              <p className="insight">
+                {resumo
+                  ? `Há ${resumo.pagamentosPendentes} pagamento(s) pendente(s). ${variacao === null ? "Ainda não há dados suficientes para comparar o recebimento mensal." : `O recebimento deste mês está ${variacao >= 0 ? "acima" : "abaixo"} do mês anterior em ${Math.abs(variacao).toLocaleString("pt-BR")}%.`}`
+                  : "Os indicadores financeiros serão exibidos assim que os dados forem carregados."}
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
 }

@@ -24,7 +24,7 @@
 }
 
 .kpi-group h4 {
-  color: var(--branco);
+  color: var(--cor-texto);
   font-size: 1.25rem;
   margin-top: 0.5rem;
 }
@@ -46,7 +46,7 @@
 }
 
 .main-kpi h3 {
-  color: var(--branco);
+  color: var(--cor-texto);
   font-size: 1.75rem;
 }
 

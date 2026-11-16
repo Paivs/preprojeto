@@ -16,11 +16,16 @@
   gap: 12px;
   padding: 4px 8px 28px;
   min-height: 56px;
+  margin-left: 1.5rem;
 }
 
 .logo-imagem {
-  max-width: 150px;
+  max-width: 9rem;
   height: auto;
+}
+
+:root[data-tema="claro"] .logo-imagem {
+  filter: brightness(0) saturate(100%);
 }
 
 .logo-icone {

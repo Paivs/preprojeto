@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
+import ModalNovoCliente from "@/components/clientes/ModalNovoCliente";
 import "./clientes.css";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/$/, "");
-const LIMITE_POR_PAGINA = 10;
+const LIMITE_POR_PAGINA = 5;
 
 function formatarNumero(valor) {
   const numero = Number(valor);
@@ -42,7 +42,7 @@ function iniciaisEmpresa(nome = "") {
 }
 
 export default function Clientes() {
-  const router = useRouter();
+  const [modalAberto, setModalAberto] = useState(false);
   const [clientes, setClientes] = useState([]);
   const [buscaInput, setBuscaInput] = useState("");
   const [buscaAplicada, setBuscaAplicada] = useState("");
@@ -138,7 +138,7 @@ export default function Clientes() {
               <p>Consulte empresas, equipamentos, consumo e situação dos pagamentos.</p>
             </div>
             <div className="btn-adicionar">
-              <button type="button" onClick={() => router.push("/adminPages/addCliente")}>
+              <button type="button" onClick={() => setModalAberto(true)}>
                 <i className="bi bi-plus" aria-hidden="true"></i>
                 Adicionar cliente
               </button>
@@ -272,6 +272,15 @@ export default function Clientes() {
           </section>
         </main>
       </div>
+      {modalAberto && (
+        <ModalNovoCliente
+          onFechar={() => setModalAberto(false)}
+          onSucesso={() => {
+            setModalAberto(false);
+            carregarClientes(1, buscaAplicada);
+          }}
+        />
+      )}
     </div>
   );
 }
