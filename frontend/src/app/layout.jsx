@@ -4,8 +4,11 @@ import Script from "next/script";
 import "./globals.css";
 import LayoutConteudo from "@/components/layoutConteudo";
 export const metadata = {
-  title: "Projeto Base",
+  title: "Volt House",
   description: "Template base com Next.js, Express e MySQL",
+  icons: {
+    icon: "/images/logo-txt.png?v=2",
+  },
 };
 
 export default function RootLayout({ children }) {
