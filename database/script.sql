@@ -56,19 +56,3 @@ CREATE TABLE pagamento (
         ON DELETE CASCADE 
         ON UPDATE CASCADE
 );
-
--- Inserts --
-
-INSERT INTO pagamento 
-(valor, data_vencimento, data_pagamento, status, forma_pagamento, id_usuario)
-VALUES
-(250.00, '2026-10-05', '2026-10-04 10:30:00', 'pago', 'Pix', 1),
-(350.00, '2026-10-10', '2026-10-09 14:20:00', 'pago', 'Cartão de crédito', 2),
-(180.00, '2026-11-10', NULL, 'nao_pago', 'Boleto', 3),
-(420.00, '2026-10-20', NULL, 'atrasado', 'Boleto', 4),
-(290.00, '2026-11-15', NULL, 'nao_pago', 'Pix', 5),
-(500.00, '2026-10-25', '2026-10-24 16:45:00', 'pago', 'Transferência bancária', 6),
-(150.00, '2026-10-15', NULL, 'cancelado', 'Cartão de crédito', 7),
-(380.00, '2026-11-20', NULL, 'nao_pago', 'Pix', 8),
-(220.00, '2026-10-28', NULL, 'atrasado', 'Boleto', 9),
-(450.00, '2026-11-25', '2026-11-03 09:15:00', 'pago', 'Cartão de crédito', 10);
