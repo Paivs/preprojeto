@@ -1,9 +1,10 @@
 import * as EquipamentoModel from '../models/EquipamentoModels.js';
+import { validarTermoBusca } from '../utils/busca.js';
 
 function validarId(valor, campo) {
   const id = Number(valor);
   if (!Number.isInteger(id) || id <= 0) {
-    throw new TypeError(`${campo} deve ser um nÃºmero inteiro positivo.`);
+    throw new TypeError(`${campo} deve ser um número inteiro positivo.`);
   }
   return id;
 }
@@ -37,7 +38,7 @@ function validarDados(dados = {}) {
   const consumoMinimo = validarConsumo(dados.consumo_minimo, 'Consumo mínimo', 0);
   const consumoMaximo = validarConsumo(dados.consumo_maximo, 'Consumo máximo');
   if (consumoMaximo !== null && consumoMaximo < consumoMinimo) {
-    throw new TypeError('Consumo mÃ¡ximo nÃ£o pode ser menor que o consumo mínimo.');
+    throw new TypeError('Consumo máximo não pode ser menor que o consumo mínimo.');
   }
 
   return {
@@ -56,17 +57,19 @@ function erroNaoEncontrado(mensagem) {
   return erro;
 }
 
-export async function listar(idUsuarioRecebido) {
+export async function listar(idUsuarioRecebido, buscaRecebida) {
   const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
-  return EquipamentoModel.listarPorUsuario(idUsuario);
+  const busca = validarTermoBusca(buscaRecebida);
+  return EquipamentoModel.listarPorUsuario(idUsuario, busca);
 }
 
-export async function listarPorSetor(idSetorRecebido, idUsuarioRecebido) {
+export async function listarPorSetor(idSetorRecebido, idUsuarioRecebido, buscaRecebida) {
   const idSetor = validarId(idSetorRecebido, 'ID do setor');
   const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const busca = validarTermoBusca(buscaRecebida);
   const setorValido = await EquipamentoModel.setorPertenceAoUsuario(idSetor, idUsuario);
   if (!setorValido) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
-  return EquipamentoModel.listarPorSetor(idSetor, idUsuario);
+  return EquipamentoModel.listarPorSetor(idSetor, idUsuario, busca);
 }
 
 export async function buscarPorId(idEquipamentoRecebido, idUsuarioRecebido) {
@@ -95,7 +98,7 @@ export async function atualizar(idEquipamentoRecebido, dados, idUsuarioRecebido)
 
   const equipamento = validarDados(dados);
   const setorValido = await EquipamentoModel.setorPertenceAoUsuario(equipamento.id_setor, idUsuario);
-  if (!setorValido) throw erroNaoEncontrado('Setor nÃ£o encontrado para este usuário.');
+  if (!setorValido) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
   const atualizado = await EquipamentoModel.atualizar(idEquipamento, equipamento, idUsuario);
   if (!atualizado) throw erroNaoEncontrado('Equipamento não encontrado.');
   return atualizado;

@@ -1,12 +1,14 @@
 import { pool } from '../config/database.js';
+import { criarCondicaoBusca } from '../utils/busca.js';
 
-export async function listarPorUsuario(idUsuario) {
+export async function listarPorUsuario(idUsuario, busca = '') {
+  const filtroBusca = criarCondicaoBusca(busca, ['nome_setor', 'descricao']);
   const [linhas] = await pool.query(
     `SELECT id_setor, nome_setor, descricao, consumo_geral, custo
        FROM setor
-      WHERE id_usuario = ?
+      WHERE id_usuario = ? ${filtroBusca.sql ? `AND ${filtroBusca.sql}` : ''}
       ORDER BY id_setor`,
-    [idUsuario]
+    [idUsuario, ...filtroBusca.valores]
   );
   return linhas;
 }

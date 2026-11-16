@@ -40,7 +40,8 @@ export default function Sidebar() {
   function sair() {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("usuario");
-    router.replace("/login");
+    setPerfil(null);
+    window.location.replace("/");
   }
 
   if (!perfil) return null;
@@ -137,7 +138,7 @@ export default function Sidebar() {
             <Link
               href="/userPages/setores"
               className={`menu-item ${
-                pathname === "/userPages/setores" ? "menu-item-ativo" : ""
+                pathname.startsWith("/userPages/setores") ? "menu-item-ativo" : ""
               }`}
             >
               <span>
@@ -162,7 +163,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebar-rodape">
-        <button type="button" className="menu-item menu-sair" onClick={sair}>
+        <button type="button" className="menu-item menu-sair" onClick={sair} aria-label="Sair da conta">
           <span>⇥</span>
           <span>Sair</span>
         </button>
