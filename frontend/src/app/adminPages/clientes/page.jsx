@@ -7,7 +7,7 @@ import ModalNovoCliente from "@/components/clientes/ModalNovoCliente";
 import "./clientes.css";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/$/, "");
-const LIMITE_POR_PAGINA = 10;
+const LIMITE_POR_PAGINA = 5;
 
 function formatarNumero(valor) {
   const numero = Number(valor);
