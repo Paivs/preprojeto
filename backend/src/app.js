@@ -10,6 +10,8 @@ import setorRoutes from "./routes/setorRoutes.js";
 import equipamentoRoutes from "./routes/equipamentoRoutes.js";
 import emailRoutes from "./routes/emailRoutes.js";
 import { authRouter } from "./routes/AuthRoutes.js";
+import financeiroRoutes from "./routes/financeiroRoutes.js";
+import configuracaoAdminRoutes from "./routes/configuracaoAdminRoutes.js";
 
 const app = express();
 
@@ -48,6 +50,8 @@ app.use("/api/auth", authRouter); // pública: login e registrar
 app.use("/api/setores", autenticar, setorRoutes);
 app.use("/api/equipamentos", autenticar, equipamentoRoutes);
 app.use("/api/emails", autenticar, autorizarAdmin, emailRoutes);
+app.use("/api/financeiro", autenticar, autorizarAdmin, financeiroRoutes);
+app.use("/api/configuracoes/admin", autenticar, autorizarAdmin, configuracaoAdminRoutes);
 
 // Protegida: precisa de token E ser admin
 app.use("/api/usuarios", autenticar, autorizarAdmin, usuarioRoutes);

@@ -14,7 +14,7 @@ main{
 
 .card{
     width: 450px;
-    height: 620px;
+    height: 650px;
     background-color: var(--dark-bg-card);
     border: 1px solid var(--cor-borda);
     border-radius: 10px;
