@@ -1,8 +1,15 @@
+"use client";
+
+import { useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
+import ModalNovoCliente from "@/components/clientes/ModalNovoCliente";
 import "./clientes.css";
 
 export default function Clientes() {
+  const [modalAberto, setModalAberto] = useState(false);
+  const [clientesAdicionados, setClientesAdicionados] = useState([]);
+
   return (
     <div className="pagina">
       <Sidebar />
@@ -20,7 +27,7 @@ export default function Clientes() {
               <p>Gerencie sua base, planos e consumo em um só lugar</p>
             </div>
             <div className="btn-adicionar">
-              <button type="button">
+              <button type="button" onClick={() => setModalAberto(true)}>
                 <i className="bi bi-plus"></i>
                 Adicionar cliente
               </button>
@@ -88,6 +95,30 @@ export default function Clientes() {
                   </tr>
                 </thead>
                 <tbody>
+                  {clientesAdicionados.map((cliente) => (
+                    <tr key={cliente.email}>
+                      <td>
+                        <div className="info-empresa">
+                          <div className="avatar-sigla">
+                            {cliente.empresa
+                              .split(/\s+/)
+                              .slice(0, 2)
+                              .map((parte) => parte[0])
+                              .join("")
+                              .toUpperCase()}
+                          </div>
+                          <div>
+                            <strong>{cliente.empresa}</strong>
+                            <p>{cliente.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>—</td>
+                      <td><strong>—</strong></td>
+                      <td><span className="badge-status pendente">● Novo</span></td>
+                      <td />
+                    </tr>
+                  ))}
                   <tr>
                     <td>
                       <div className="info-empresa">
@@ -212,7 +243,7 @@ export default function Clientes() {
             </div>
 
             <div className="rodape-tabela">
-              <p>Exibindo 5 de 1.284 clientes</p>
+              <p>Exibindo {5 + clientesAdicionados.length} de 1.284 clientes</p>
               <div className="paginacao">
                 <button type="button" className="btn-paginacao">
                   Anterior
@@ -225,6 +256,14 @@ export default function Clientes() {
           </section>
         </main>
       </div>
+      {modalAberto && (
+        <ModalNovoCliente
+          onFechar={() => setModalAberto(false)}
+          onSucesso={(cliente) =>
+            setClientesAdicionados((atuais) => [cliente, ...atuais])
+          }
+        />
+      )}
     </div>
   );
 }

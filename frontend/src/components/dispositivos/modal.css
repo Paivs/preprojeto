@@ -15,7 +15,6 @@
     max-width: 440px;
     max-height: 100%;
     overflow-y: auto;
-    border-radius: 16px;
     border: 1px solid var(--cor-borda);
     background: var(--cor-card);
     box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35);

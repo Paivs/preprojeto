@@ -11,7 +11,7 @@
     background: var(--cor-sidebar);
     border-left: 1px solid var(--cor-borda);
     box-shadow: var(--sombra-painel);
-    z-index: 30;
+    z-index: 70;
     animation: painel-entrar 0.2s ease-out;
 }
 
