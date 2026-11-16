@@ -111,7 +111,9 @@
   --dark-success: #42d6a0;
   --dark-warning: #ffd166;
   --dark-danger: #ff6875;
-  --dark-info: #6ca5ff
+  --dark-info: #6ca5ff;
+
+  color-scheme: dark;
 }
 
 
@@ -139,6 +141,29 @@
   --vermelho-suave: rgba(217, 54, 69, 0.08);
 
   --sombra-painel: -12px 0 40px rgba(20, 30, 60, 0.12);
+
+  /* Compatibilidade com telas que ainda usam tokens nomeados como tema escuro. */
+  --dark-bg-primary: var(--light-bg-secondary);
+  --dark-bg-secondary: var(--light-bg-tertiary);
+  --dark-bg-tertiary: var(--light-bg-tertiary);
+  --dark-bg-card: var(--light-bg-card);
+  --dark-bg-input: var(--light-bg-input);
+
+  --dark-text-primary: var(--light-text-primary);
+  --dark-text-secondary: var(--light-text-secondary);
+  --dark-text-tertiary: var(--light-text-tertiary);
+
+  --dark-primary: var(--light-primary);
+  --dark-primary-hover: var(--light-primary-hover);
+  --dark-secondary: var(--light-secondary);
+  --dark-accent: var(--light-accent);
+
+  --dark-success: var(--light-success);
+  --dark-warning: var(--light-warning);
+  --dark-danger: var(--light-danger);
+  --dark-info: var(--light-info);
+
+  color-scheme: light;
 }
 
 * {
@@ -148,6 +173,7 @@
 }
 
 body {
-  background: var(--dark-bg-primary);
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
 }
 

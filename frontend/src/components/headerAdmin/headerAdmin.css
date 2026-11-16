@@ -57,10 +57,16 @@
   display: grid;
   place-items: center;
   color: var(--cor-texto-secundario);
+  cursor: pointer;
+  transition: color .15s ease, background-color .15s ease, border-color .15s ease;
 }
 
 .botao-tema {
   color: var(--amarelo);
+}
+
+:root[data-tema="claro"] .botao-tema {
+  color: var(--light-primary);
 }
 
 .botao-icone-ponto {

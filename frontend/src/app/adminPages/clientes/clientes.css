@@ -43,7 +43,7 @@
   border: none;
   background: var(--roxo);
   padding: 10px 10px;
-  color: var(--cor-texto);
+  color: var(--branco);
 }
 
 .btn-adicionar button:hover {
@@ -79,7 +79,7 @@
   padding: 5px 10px;
   color: var(--roxo);
   border: 1px solid var(--roxo);
-  background: #541f7241;
+  background: var(--roxo-suave);
 }
 
 .main-kpi h3 {
@@ -99,11 +99,11 @@
 }
 
 .container-tabela {
-  background-color: #0b0f19;
-  color: #ffffff;
+  background-color: var(--cor-card);
+  color: var(--cor-texto);
   padding: 24px;
   border-radius: 12px;
-  border: 1px solid #1a2234;
+  border: 1px solid var(--cor-borda);
   font-family: system-ui, -apple-system, sans-serif;
   margin-top: 2rem;
 }
@@ -119,17 +119,17 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 4px 0;
-  color: #ffffff;
+  color: var(--cor-texto);
 }
 
 .cabecalho-left span {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--cor-texto-fraco);
 }
 
 .barra-pesquisa {
-  background-color: #111827;
-  border: 1px solid #1f2937;
+  background-color: var(--cor-campo);
+  border: 1px solid var(--cor-borda);
   border-radius: 8px;
   padding: 8px 14px;
   display: flex;
@@ -140,20 +140,20 @@
 
 .icone-busca {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--cor-texto-fraco);
 }
 
 .barra-pesquisa input {
   background: transparent;
   border: none;
-  color: #ffffff;
+  color: var(--cor-texto);
   outline: none;
   font-size: 0.875rem;
   width: 100%;
 }
 
 .barra-pesquisa input::placeholder {
-  color: #6b7280;
+  color: var(--cor-texto-fraco);
 }
 
 .tabela-wrapper {
@@ -168,17 +168,17 @@
 }
 
 .tabela-wrapper th {
-  color: #6b7280;
+  color: var(--cor-texto-fraco);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   padding: 12px 16px;
-  border-bottom: 1px solid #1a2234;
+  border-bottom: 1px solid var(--cor-borda);
 }
 
 .tabela-wrapper td {
   padding: 16px;
-  border-bottom: 1px solid #1a2234;
+  border-bottom: 1px solid var(--cor-borda);
   font-size: 0.875rem;
   vertical-align: middle;
 }
@@ -205,14 +205,14 @@
 
 .info-empresa strong {
   display: block;
-  color: #ffffff;
+  color: var(--cor-texto);
   font-weight: 500;
 }
 
 .info-empresa p {
   margin: 2px 0 0 0;
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--cor-texto-fraco);
 }
 
 .badge-plano {
@@ -221,23 +221,23 @@
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 500;
-  background-color: #2e1065;
-  color: #c084fc;
+  background-color: var(--roxo-suave);
+  color: var(--cor-destaque);
 }
 
 .badge-plano.enterprise {
-  background-color: #2e1065;
-  color: #c084fc;
+  background-color: var(--roxo-suave);
+  color: var(--cor-destaque);
 }
 
 .badge-plano.pro {
-  background-color: #3b0764;
-  color: #a855f7;
+  background-color: var(--roxo-suave);
+  color: var(--cor-destaque);
 }
 
 .badge-plano.essencial {
-  background-color: #1e1b4b;
-  color: #818cf8;
+  background-color: var(--roxo-suave);
+  color: var(--cor-destaque);
 }
 
 .badge-status {
@@ -251,24 +251,24 @@
 }
 
 .badge-status.ativo {
-  background-color: rgba(6, 78, 59, 0.5);
-  color: #34d399;
+  background-color: var(--verde-suave);
+  color: var(--verde);
 }
 
 .badge-status.pendente {
-  background-color: rgba(69, 26, 3, 0.5);
-  color: #fbbf24;
+  background-color: var(--amarelo-suave);
+  color: var(--amarelo);
 }
 
 .badge-status.inativo {
-  background-color: rgba(69, 10, 10, 0.5);
-  color: #f87171;
+  background-color: var(--vermelho-suave);
+  color: var(--cor-vermelho);
 }
 
 .btn-opcoes {
   background: transparent;
   border: none;
-  color: #6b7280;
+  color: var(--cor-texto-fraco);
   cursor: pointer;
   font-size: 1.1rem;
   padding: 4px 8px;
@@ -276,8 +276,8 @@
 }
 
 .btn-opcoes:hover {
-  color: #ffffff;
-  background-color: #1f2937;
+  color: var(--cor-texto);
+  background-color: var(--cor-campo);
 }
 
 .rodape-tabela {
@@ -285,7 +285,7 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 20px;
-  color: #6b7280;
+  color: var(--cor-texto-fraco);
   font-size: 0.875rem;
 }
 
@@ -299,9 +299,9 @@
 }
 
 .btn-paginacao {
-  background-color: #111827;
-  border: 1px solid #1f2937;
-  color: #9ca3af;
+  background-color: var(--cor-campo);
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto-secundario);
   padding: 6px 14px;
   border-radius: 6px;
   font-size: 0.875rem;
@@ -309,12 +309,12 @@
 }
 
 .btn-paginacao:hover {
-  border-color: #374151;
-  color: #ffffff;
+  border-color: var(--cor-destaque);
+  color: var(--cor-texto);
 }
 
 .btn-paginacao.ativo {
-  background-color: #1f293d;
-  border-color: #3b82f6;
-  color: #ffffff;
+  background-color: var(--roxo-suave);
+  border-color: var(--cor-destaque);
+  color: var(--cor-destaque);
 }
