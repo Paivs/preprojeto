@@ -12,6 +12,25 @@ export const ROTULO_ESTADO = {
   desligado: "Desligado",
 };
 
+export function adaptarEquipamentoApi(equipamento) {
+  return {
+    id: equipamento.id_equipamento,
+    nome: equipamento.nome_equipamento,
+    local: equipamento.nome_setor || "Setor não informado",
+    categoria: equipamento.tipo || "Outros",
+    grupo: (equipamento.nome_setor || "Sem setor").toLocaleUpperCase("pt-BR"),
+    status: equipamento.status || "Não informado",
+    consumoMinimo:
+      equipamento.consumo_minimo === null || equipamento.consumo_minimo === undefined
+        ? null
+        : Number(equipamento.consumo_minimo),
+    consumoMaximo:
+      equipamento.consumo_maximo === null || equipamento.consumo_maximo === undefined
+        ? null
+        : Number(equipamento.consumo_maximo),
+  };
+}
+
 const NOMES_DIAS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 export function gerarHistorico(base) {
@@ -168,9 +187,24 @@ export function novoDispositivo({ nome, categoria, local }) {
 }
 
 export function obterEstado(d) {
-  if (!d.ligado) return "desligado";
-  if (d.alerta) return "atencao";
+  const status = String(d.status || "").trim().toLocaleLowerCase("pt-BR");
+  if (status.includes("alerta") || status.includes("atenção")) return "atencao";
+  if (status.includes("inativo") || status.includes("desligado")) return "desligado";
   return "normal";
+}
+
+export function formatarFaixaConsumo(dispositivo) {
+  const minimo = Number.isFinite(dispositivo.consumoMinimo)
+    ? formatarKwh(dispositivo.consumoMinimo)
+    : null;
+  const maximo = Number.isFinite(dispositivo.consumoMaximo)
+    ? formatarKwh(dispositivo.consumoMaximo)
+    : null;
+
+  if (minimo === null && maximo === null) return "Não informado";
+  if (minimo === null) return `Máx. ${maximo}`;
+  if (maximo === null) return `Mín. ${minimo}`;
+  return `${minimo} – ${maximo}`;
 }
 
 export function formatarKwh(valor) {

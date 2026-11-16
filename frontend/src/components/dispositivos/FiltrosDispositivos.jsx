@@ -9,6 +9,7 @@ export default function FiltrosDispositivos({
   onEstado,
   categoria,
   onCategoria,
+  categorias = CATEGORIAS,
   onAdicionar,
 }) {
   return (
@@ -47,16 +48,18 @@ export default function FiltrosDispositivos({
           aria-label="Filtrar por categoria"
         >
           <option value="todas">Todas as categorias</option>
-          {CATEGORIAS.map((c) => (
+          {categorias.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
           ))}
         </select>
 
-        <button type="button" className="botao-adicionar" onClick={onAdicionar}>
-          <Icone nome="mais" /> Adicionar dispositivo
-        </button>
+        {onAdicionar && (
+          <button type="button" className="botao-adicionar" onClick={onAdicionar}>
+            <Icone nome="mais" /> Adicionar dispositivo
+          </button>
+        )}
       </div>
     </div>
   );
