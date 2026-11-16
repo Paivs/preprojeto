@@ -1,0 +1,156 @@
+.card-dispositivo {
+    display: flex;
+    flex-direction: column;
+    padding: 18px 20px;
+    border-radius: 16px;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-card);
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+.card-dispositivo:hover {
+    border-color: var(--roxo-suave);
+}
+
+.card-dispositivo:focus-visible {
+    outline: 2px solid var(--roxo-claro);
+    outline-offset: 2px;
+}
+
+.card-dispositivo-selecionado,
+.card-dispositivo-selecionado:hover {
+    border-color: var(--roxo-claro);
+}
+
+.card-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+}
+
+.icone-dispositivo {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--roxo-suave);
+    color: var(--roxo-claro);
+    display: grid;
+    place-items: center;
+}
+
+.icone-dispositivo-atencao {
+    background: var(--amarelo-suave);
+    color: var(--amarelo);
+}
+
+.card-topo-direita {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 14px;
+}
+
+.card-pontos {
+    color: var(--cor-texto-fraco);
+    display: grid;
+    place-items: center;
+}
+
+.status-dispositivo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--cor-texto-secundario);
+}
+
+.status-ponto {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status-normal .status-ponto {
+    background: var(--verde);
+}
+
+.status-atencao .status-ponto {
+    background: var(--amarelo);
+}
+
+.status-desligado .status-ponto {
+    background: var(--cor-texto-fraco);
+}
+
+.card-nome {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--dark-text-primary);
+}
+
+.card-local {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--cor-texto-fraco);
+}
+
+.card-divisor {
+    height: 1px;
+    background: var(--cor-borda);
+    margin: 18px 0;
+}
+
+.consumo-rotulo {
+    font-size: 10px;
+    color: var(--cor-texto-secundario);
+}
+
+.consumo-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 8px;
+}
+
+.consumo-valor {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--dark-text-primary);
+}
+
+.consumo-valor small {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--cor-texto-fraco);
+}
+
+.consumo-valor-pequeno {
+    font-size: 19px;
+}
+
+.alerta-consumo {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--amarelo);
+}
+
+.card-rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.card-conexao {
+    font-size: 10px;
+    color: var(--cor-texto-fraco);
+}

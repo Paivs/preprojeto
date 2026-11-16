@@ -1,0 +1,511 @@
+.conteudo-principal {
+    margin-left: 245px;
+    min-height: 100vh;
+    font-family: var(--font-nunito);
+}
+
+.conteudo-pagina {
+    padding: 24px 32px 48px;
+}
+
+.cabecalho-pagina {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.cabecalho-etiqueta {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--amarelo);
+}
+
+.cabecalho-pagina h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 8px 0 6px;
+    color: var(--dark-text-primary);
+}
+
+.cabecalho-pagina p {
+    font-size: 14px;
+    color: var(--cor-texto-secundario);
+}
+
+.navegacao-config {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    min-height: 61px;
+    background: var(--cor-card);
+    border-radius: 15px;
+    padding: 0 28px;
+    margin-bottom: 26px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.navegacao-config::-webkit-scrollbar {
+    display: none;
+}
+
+.aba-config {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 61px;
+    min-width: 135px;
+    padding: 0 26px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--cor-texto-secundario);
+    font-family: var(--font-primary);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.25s ease;
+}
+
+.aba-config:hover {
+    color: var(--cor-texto);
+}
+
+.aba-config.aba-ativa {
+    color: var(--cor-texto);
+    font-weight: 600;
+}
+
+.aba-config.aba-ativa::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 70%;
+    height: 4px;
+    background: var(--amarelo);
+    border-radius: 5px 5px 0 0;
+}
+
+.conteudo-abas {
+    width: 100%;
+    min-width: 0;
+
+}
+
+/* PERFIL */
+
+.container-abas {
+    padding: 20px 40px 40px;
+    background: var(--cor-card);
+    border-radius: 15px;
+    font-family: var(--font-primary)
+}
+
+.cabecalho-conteudo-abas {
+    border-bottom: 1px solid var(--cor-borda);
+    line-height: .7;
+    padding: 20px 0 30px;
+    margin-bottom: 2rem;
+}
+
+.cabecalho-conteudo-abas p {
+    color: var(--branco);
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.cabecalho-conteudo-abas span {
+    color: var(--cor-texto-secundario);
+    font-size: .9rem;
+}
+
+.formulario-perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.form-group label {
+    color: var(--cor-texto-secundario);
+    font-family: var(--font-primary);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    height: 53px;
+
+    padding: 0 16px;
+
+    background: var(--cor-campo);
+    border: 1px solid var(--cor-borda);
+    border-radius: 10px;
+
+    color: var(--cor-texto);
+    font-family: var(--font-primary);
+    font-size: 14px;
+    font-weight: 400;
+
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.form-group input::placeholder {
+    color: var(--cor-texto-fraco);
+}
+
+.form-group input:hover,
+.form-group select:hover {
+    border-color: var(--cinza-escuro);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--cor-destaque);
+    box-shadow: 0 0 0 3px var(--roxo-suave);
+}
+
+.form-group select {
+    cursor: pointer;
+    appearance: none;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238492a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 42px;
+}
+
+.form-group select option {
+    background: var(--cor-card);
+    color: var(--cor-texto);
+}
+
+.grid-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+    width: 100%;
+}
+
+
+/* LIMITES */
+
+.limites-consumo {
+    width: 100%;
+    color: var(--cor-texto);
+    font-family: var(--font-primary);
+}
+
+.limites-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(280px, 0.9fr);
+    align-items: stretch;
+    gap: 24px;
+    width: 100%;
+}
+
+.card-limites,
+.card-resumo-consumo,
+.card-info-limites {
+    min-width: 0;
+    border: 1px solid var(--cor-borda);
+    border-radius: 15px;
+}
+
+.card-limites,
+.card-resumo-consumo {
+    background: var(--cor-card);
+}
+
+.card-limites {
+    display: flex;
+    flex-direction: column;
+    height: 38vh;
+    padding: 20px 40px 40px;
+}
+
+.titulo-card-limites {
+    padding: 20px 0 25px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.titulo-card-limites h2,
+.card-resumo-consumo h2 {
+    margin: 0;
+    color: var(--cor-texto);
+    font-family: var(--font-secondary);
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.titulo-card-limites p {
+    margin: 10px 0 0;
+    color: var(--cor-texto-fraco);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.form-limites {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 28px;
+    width: 100%;
+}
+
+.campos-limites {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+    width: 100%;
+}
+
+.campo-limite {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+}
+
+.campo-limite label {
+    color: var(--cor-texto-secundario);
+    font-family: var(--font-primary);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.campo-limite input,
+.campo-limite select {
+    width: 100%;
+    height: 53px;
+    padding: 0 16px;
+    background: var(--cor-campo);
+    border: 1px solid var(--cor-borda);
+    border-radius: 10px;
+    color: var(--cor-texto);
+    font-family: var(--font-primary);
+    font-size: 14px;
+    font-weight: 400;
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    box-sizing: border-box;
+}
+
+.campo-limite input::placeholder {
+    color: var(--cor-texto-fraco);
+}
+
+.campo-limite input:hover,
+.campo-limite select:hover {
+    border-color: var(--cinza-escuro);
+}
+
+.campo-limite input:focus,
+.campo-limite select:focus {
+    border-color: var(--cor-destaque);
+    box-shadow: 0 0 0 3px var(--roxo-suave);
+}
+
+.campo-limite select {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 42px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238492a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+}
+
+.campo-limite select option {
+    background: var(--cor-card);
+    color: var(--cor-texto);
+}
+
+.campo-somente-leitura {
+    position: relative;
+    width: 100%;
+}
+
+.campo-somente-leitura input {
+    padding-right: 48px;
+    background: var(--cor-fundo);
+    border-color: var(--cor-borda);
+    color: var(--cor-texto-secundario);
+    cursor: not-allowed;
+    opacity: 0.9;
+}
+
+.campo-somente-leitura input:hover,
+.campo-somente-leitura input:focus {
+    border-color: var(--cor-borda);
+    box-shadow: none;
+}
+
+.icone-bloqueio {
+    position: absolute;
+    top: 50%;
+    right: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cor-texto-fraco);
+    font-size: 15px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.aviso-limite-admin {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--cor-texto-fraco);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.aviso-limite-admin i {
+    color: var(--verde);
+    font-size: 14px;
+}
+
+.coluna-resumo-limites {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.card-resumo-consumo {
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+    padding: 30px 24px;
+}
+
+.resumo-energia {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 28px;
+}
+
+.resumo-energia>strong {
+    color: var(--cor-texto);
+    font-family: var(--font-secondary);
+    font-size: 23px;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.barra-progresso-limite {
+    width: 100%;
+    height: 9px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: var(--cor-borda);
+}
+
+.barra-progresso-limite span {
+    display: block;
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--azul);
+    transition: width 0.3s ease;
+}
+
+.percentual-limite {
+    color: var(--amarelo);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.resumo-custo {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 35px;
+}
+
+.resumo-custo strong {
+    color: var(--cor-texto);
+    font-family: var(--font-secondary);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.resumo-custo span {
+    color: var(--cor-texto-fraco);
+    font-size: 12px;
+}
+
+.descricao-resumo {
+    max-width: 280px;
+    margin: auto 0 0;
+    padding-top: 32px;
+    color: var(--cor-texto-fraco);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.card-info-limites {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-height: 180px;
+    padding: 25px 24px;
+    border-color: transparent;
+    background: var(--roxo-profundo);
+}
+
+.card-info-limites>span {
+    color: var(--amarelo);
+    font-family: var(--font-secondary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.card-info-limites h3 {
+    margin: 0;
+    color: var(--branco);
+    font-family: var(--font-secondary);
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.card-info-limites p {
+    margin: 0;
+    color: var(--cinza-claro);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.aviso-limites {
+    margin: 24px 0 0;
+    color: var(--cor-texto-fraco);
+    font-size: 12px;
+    line-height: 1.6;
+}

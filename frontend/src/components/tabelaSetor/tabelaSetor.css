@@ -1,0 +1,271 @@
+.tabela-setores {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  color: var(--cor-texto);
+  font-family: var(--font-inter);
+}
+
+.tabela-setores__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px;
+  background: var(--cor-card);
+}
+
+.tabela-setores__titulo h2 {
+  margin: 0;
+  color: var(--cor-texto);
+  font-family: var(--font-primary);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.tabela-setores__titulo p {
+  margin: 3px 0 0;
+  color: var(--cor-texto-fraco);
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.tabela-setores__busca {
+  width: 220px;
+  max-width: 45%;
+}
+
+.tabela-setores__busca input {
+  width: 100%;
+  height: 28px;
+  padding: 15px 11px;
+  outline: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: var(--cor-campo);
+  color: var(--cor-texto);
+  font-family: var(--font-inter);
+  font-size: 10px;
+  transition: border-color 0.2s ease;
+}
+
+.tabela-setores__busca input::placeholder {
+  color: var(--cor-texto-fraco);
+}
+
+.tabela-setores__busca input:focus {
+  border-color: var(--cor-destaque);
+}
+
+.tabela-setores__busca input::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+.tabela-setores__rolagem {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cor-borda) transparent;
+}
+
+.tabela-setores table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.tabela-setores thead {
+  background: var(--cor-fundo);
+}
+
+.tabela-setores th {
+  height: 35px;
+  padding: 0 14px;
+  border-top: 1px solid var(--cor-borda);
+  border-bottom: 1px solid var(--cor-borda);
+  color: var(--cor-texto-fraco);
+  font-family: var(--font-inter);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1px;
+}
+
+.tabela-setores td {
+  height: 36px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--cor-borda);
+  color: var(--cor-texto-secundario);
+  font-size: 12px;
+  font-weight: 400;
+  transition: background 0.2s ease;
+}
+
+.tabela-setores tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela-setores tbody tr:hover td {
+  background: rgba(132, 146, 166, 0.04);
+}
+
+.tabela-setores .setor-nome {
+  color: var(--cor-texto);
+  font-weight: 500;
+}
+
+.tabela-setores .setor-descricao {
+  color: var(--cor-texto-fraco);
+}
+
+.tabela-setores .coluna-acoes {
+  text-align: center;
+}
+
+.tabela-setores th:first-child,
+.tabela-setores td:first-child {
+  min-width: 150px;
+}
+
+.tabela-setores th:nth-child(2),
+.tabela-setores td:nth-child(2) {
+  min-width: 210px;
+}
+
+.tabela-setores th:nth-child(3),
+.tabela-setores td:nth-child(3),
+.tabela-setores th:nth-child(4),
+.tabela-setores td:nth-child(4) {
+  min-width: 120px;
+}
+
+.tabela-setores th:nth-child(5),
+.tabela-setores td:nth-child(5) {
+  min-width: 60px;
+}
+
+.tabela-setores th:last-child,
+.tabela-setores td:last-child {
+  min-width: 65px;
+}
+
+/* ===== BOTÃO EDITAR ===== */
+
+.setor-botao-editar {
+  padding: 4px 7px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--cor-texto);
+  font-family: var(--font-inter);
+  font-size: 9px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.setor-botao-editar:hover {
+  background: var(--roxo-suave);
+  color: var(--cor-destaque);
+}
+
+.setor-botao-editar:focus-visible,
+.setor-paginacao button:focus-visible {
+  outline: 2px solid var(--cor-destaque);
+  outline-offset: 2px;
+}
+
+.tabela-setores__rodape {
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 14px;
+  border-top: 1px solid var(--cor-borda);
+  background: var(--cor-card);
+}
+
+.tabela-setores__rodape > span {
+  color: var(--cor-texto-fraco);
+  font-size: 9px;
+}
+
+.setor-paginacao {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.setor-paginacao button {
+  width: 19px;
+  height: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--cor-texto-secundario);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.setor-paginacao button:hover:not(:disabled) {
+  background: var(--roxo-suave);
+  color: var(--cor-destaque);
+}
+
+.setor-paginacao button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.setor-paginacao span {
+  min-width: 15px;
+  color: var(--cor-texto-secundario);
+  font-size: 9px;
+  text-align: center;
+}
+
+.tabela-setores .setor-vazio {
+  height: 65px;
+  color: var(--cor-texto-fraco);
+  text-align: center;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+@media (max-width: 600px) {
+  .tabela-setores__topo {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tabela-setores__busca {
+    width: 100%;
+    max-width: none;
+  }
+
+  .tabela-setores__busca input {
+    box-sizing: border-box;
+    height: 34px;
+  }
+
+  .tabela-setores__rodape {
+    padding: 8px 10px;
+  }
+
+  .tabela-setores__rodape > span {
+    font-size: 8px;
+  }
+}
