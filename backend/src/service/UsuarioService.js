@@ -64,7 +64,7 @@ async function validarUnicidade(usuario, idIgnorado) {
   }
 }
 
-export async function listar({ pagina = 1, limite = 10, busca } = {}) {
+export async function listar({ pagina = 1, limite = 10, busca, nivel_permissao } = {}) {
   const paginaNum = Number(pagina);
   const limiteNum = Number(limite);
   if (!Number.isInteger(paginaNum) || paginaNum <= 0) {
@@ -73,13 +73,17 @@ export async function listar({ pagina = 1, limite = 10, busca } = {}) {
   if (!Number.isInteger(limiteNum) || limiteNum < 1 || limiteNum > 100) {
     throw new TypeError('Limite deve ser um inteiro entre 1 e 100.');
   }
+  if (nivel_permissao !== undefined && !['admin', 'cliente'].includes(nivel_permissao)) {
+    throw new TypeError('nivel_permissao deve ser "admin" ou "cliente".');
+  }
 
   const termoBusca = validarTermoBusca(busca);
   const offset = (paginaNum - 1) * limiteNum;
   const { usuarios, total } = await UsuarioModel.listar({
     limite: limiteNum,
     offset,
-    busca: termoBusca || null
+    busca: termoBusca || null,
+    nivel_permissao
   });
 
   return {
