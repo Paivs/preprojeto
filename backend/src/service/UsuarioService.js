@@ -1,7 +1,9 @@
+import bcrypt from 'bcryptjs';
 import Usuario from '../models/Usuario.js';
 import * as UsuarioModel from '../models/UsuarioModels.js';
 import { validarTermoBusca } from '../utils/busca.js';
 
+const REGEX_SENHA_FORTE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
 function validarId(idRecebido) {
   const id = Number(idRecebido);
@@ -11,31 +13,78 @@ function validarId(idRecebido) {
   return id;
 }
 
+function validarSenha(senha, obrigatoria) {
+  if (senha === undefined || senha === null || senha === '') {
+    if (obrigatoria) {
+      throw new TypeError('Informe uma senha com no mínimo 8 caracteres, incluindo maiúscula, minúscula, número e símbolo.');
+    }
+    return null;
+  }
+  if (typeof senha !== 'string' || !REGEX_SENHA_FORTE.test(senha)) {
+    throw new TypeError('A senha deve ter no mínimo 8 caracteres, incluindo maiúscula, minúscula, número e símbolo.');
+  }
+  return senha;
+}
 
-export async function listar({ pagina = 1, limite = 10, busca } = {}) {
+function dadosNormalizados(dados, atual = {}) {
+  const senha = validarSenha(dados.senha, !atual.id_usuario);
+  const usuario = new Usuario({
+    id_usuario: atual.id_usuario,
+    nome_empresa: dados.nome_empresa ?? dados.nome ?? atual.nome_empresa,
+    cnpj: dados.cnpj ?? atual.cnpj,
+    email: dados.email ?? atual.email,
+    nivel_permissao: dados.nivel_permissao ?? dados.perfil ?? atual.nivel_permissao ?? 'cliente',
+    consumo_total: dados.consumo_total ?? atual.consumo_total ?? 0,
+    consumo_maximo: dados.consumo_maximo ?? atual.consumo_maximo ?? 0
+  });
+  return { usuario, senha };
+}
+
+function erroNaoEncontrado(id) {
+  const erro = new Error(`Usuário ${id} não encontrado.`);
+  erro.status = 404;
+  return erro;
+}
+
+async function validarUnicidade(usuario, idIgnorado) {
+  const [porEmail, porCnpj] = await Promise.all([
+    UsuarioModel.buscarPorEmail(usuario.email),
+    UsuarioModel.buscarPorCnpj(usuario.cnpj)
+  ]);
+
+  if (porEmail && Number(porEmail.id_usuario) !== idIgnorado) {
+    const erro = new Error('E-mail já cadastrado.');
+    erro.status = 409;
+    throw erro;
+  }
+  if (porCnpj && Number(porCnpj.id_usuario) !== idIgnorado) {
+    const erro = new Error('CNPJ já cadastrado.');
+    erro.status = 409;
+    throw erro;
+  }
+}
+
+export async function listar({ pagina = 1, limite = 10, busca, nivel_permissao } = {}) {
   const paginaNum = Number(pagina);
   const limiteNum = Number(limite);
-
-
   if (!Number.isInteger(paginaNum) || paginaNum <= 0) {
     throw new TypeError('Página deve ser um número inteiro positivo.');
   }
   if (!Number.isInteger(limiteNum) || limiteNum < 1 || limiteNum > 100) {
     throw new TypeError('Limite deve ser um inteiro entre 1 e 100.');
   }
+  if (nivel_permissao !== undefined && !['admin', 'cliente'].includes(nivel_permissao)) {
+    throw new TypeError('nivel_permissao deve ser "admin" ou "cliente".');
+  }
 
-
-  // Termo da barra de pesquisa; vazio ou só espaços = sem filtro
   const termoBusca = validarTermoBusca(busca);
-
-
   const offset = (paginaNum - 1) * limiteNum;
   const { usuarios, total } = await UsuarioModel.listar({
     limite: limiteNum,
     offset,
-    busca: termoBusca || null
+    busca: termoBusca || null,
+    nivel_permissao
   });
-
 
   return {
     usuarios,
@@ -48,58 +97,34 @@ export async function listar({ pagina = 1, limite = 10, busca } = {}) {
   };
 }
 
-
 export async function buscarPorId(idRecebido) {
   const id = validarId(idRecebido);
   const usuario = await UsuarioModel.buscarPorId(id);
-  if (!usuario) {
-    throw new Error(`Usuário ${id} não encontrado.`);
-  }
+  if (!usuario) throw erroNaoEncontrado(id);
   return usuario;
 }
 
-
-export async function criar(dados) {
-  const usuarioDominio = new Usuario({ id: 1, ...dados });
-
-
-  const jaExiste = await UsuarioModel.buscarPorEmail(usuarioDominio.email);
-  if (jaExiste) {
-    const erro = new Error('E-mail já cadastrado.');
-    erro.status = 409;
-    throw erro;
-  }
-
-
-  return await UsuarioModel.criar(usuarioDominio);
+export async function criar(dados = {}) {
+  const { usuario, senha } = dadosNormalizados(dados);
+  await validarUnicidade(usuario);
+  const senhaHash = await bcrypt.hash(senha, 10);
+  return UsuarioModel.criar({ ...usuario, senhaHash });
 }
 
-
-export async function atualizar(idRecebido, dados) {
+export async function atualizar(idRecebido, dados = {}) {
   const id = validarId(idRecebido);
-  const usuarioDominio = new Usuario({ id, ...dados });
+  const atual = await UsuarioModel.buscarPorId(id);
+  if (!atual) throw erroNaoEncontrado(id);
 
-
-  const jaExiste = await UsuarioModel.buscarPorEmail(usuarioDominio.email);
-  if (jaExiste && jaExiste.id !== id) {
-    const erro = new Error('E-mail já cadastrado.');
-    erro.status = 409;
-    throw erro;
-  }
-
-
-  const atualizou = await UsuarioModel.atualizar(id, usuarioDominio);
-  if (!atualizou) {
-    throw new Error(`Usuário ${id} não encontrado.`);
-  }
-  return await UsuarioModel.buscarPorId(id);
+  const { usuario, senha } = dadosNormalizados(dados, { ...atual, id_usuario: id });
+  await validarUnicidade(usuario, id);
+  const senhaHash = senha ? await bcrypt.hash(senha, 10) : null;
+  await UsuarioModel.atualizar(id, { ...usuario, senhaHash });
+  return UsuarioModel.buscarPorId(id);
 }
-
 
 export async function excluir(idRecebido) {
   const id = validarId(idRecebido);
   const removeu = await UsuarioModel.excluir(id);
-  if (!removeu) {
-    throw new Error(`Usuário ${id} não encontrado.`);
-  }
+  if (!removeu) throw erroNaoEncontrado(id);
 }

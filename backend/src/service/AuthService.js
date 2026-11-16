@@ -31,15 +31,21 @@ function assinarToken(payload, options) {
   return jwt.sign(payload, obterSegredo(), options);
 }
 
-export async function registrar({ nome, cnpj, email, senha } = {}) {
-  const nomeLimpo = typeof nome === 'string' ? nome.trim() : '';
+export async function registrar({ nome, nome_empresa, cnpj, email, senha } = {}) {
+  const nomeLimpo = typeof (nome_empresa ?? nome) === 'string'
+    ? (nome_empresa ?? nome).trim()
+    : '';
   const emailLimpo = typeof email === 'string' ? email.trim().toLowerCase() : '';
+  const cnpjLimpo = typeof cnpj === 'string' ? cnpj.trim() : '';
 
   if (nomeLimpo.length < 3) {
     throw new TypeError('Nome deve ter no mínimo 3 caracteres.');
   }
   if (!REGEX_EMAIL.test(emailLimpo)) {
     throw new TypeError('Informe um e-mail válido.');
+  }
+  if (!cnpjLimpo || cnpjLimpo.length > 18) {
+    throw new TypeError('Informe um CNPJ válido com até 18 caracteres.');
   }
   if (
     typeof senha !== 'string' ||
@@ -59,11 +65,14 @@ export async function registrar({ nome, cnpj, email, senha } = {}) {
     throw erro;
   }
 
-  const senhaHash = await bcrypt.hash(senha, 10);
-  const cnpjLimpo = typeof cnpj === 'string' ? cnpj.trim() : '';
-  if (!cnpjLimpo) {
-    throw new TypeError('Informe o CNPJ.');
+  const cnpjExistente = await UsuarioModel.buscarPorCnpj(cnpjLimpo);
+  if (cnpjExistente) {
+    const erro = new Error('CNPJ já cadastrado.');
+    erro.status = 409;
+    throw erro;
   }
+
+  const senhaHash = await bcrypt.hash(senha, 10);
 
   return await UsuarioModel.criar({
     nome: nomeLimpo,
