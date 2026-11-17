@@ -9,6 +9,7 @@ import usuarioRoutes from "./routes/usuarioRoutes.js";
 import setorRoutes from "./routes/setorRoutes.js";
 import equipamentoRoutes from "./routes/equipamentoRoutes.js";
 import emailRoutes from "./routes/emailRoutes.js";
+import contatoRoutes from "./routes/contatoRoutes.js";
 import { authRouter } from "./routes/AuthRoutes.js";
 import financeiroRoutes from "./routes/financeiroRoutes.js";
 import configuracaoAdminRoutes from "./routes/configuracaoAdminRoutes.js";
@@ -46,6 +47,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRouter); // pública: login e registrar
+app.use("/api/contato", contatoRoutes);
 
 app.use("/api/setores", autenticar, setorRoutes);
 app.use("/api/equipamentos", autenticar, equipamentoRoutes);

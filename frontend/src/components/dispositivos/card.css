@@ -137,6 +137,10 @@
     font-size: 19px;
 }
 
+.consumo-faixa {
+    font-size: 20px;
+}
+
 .alerta-consumo {
     font-size: 10px;
     font-weight: 600;

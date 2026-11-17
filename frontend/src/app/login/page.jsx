@@ -55,7 +55,7 @@ export default function Login() {
       if (usuario.perfil === "admin") {
         router.push("/adminPages/clientes");
       } else if (usuario.perfil === "cliente") {
-        router.push("/userPages/dispositivos");
+        router.push("/userPages/dashboard");
       } else {
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("usuario");

@@ -1,21 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Icone from "./Icone";
-import Interruptor from "./Interruptor";
-import GraficoConsumo from "./GraficoConsumo";
-import { obterEstado, formatarKwh, resumoDias } from "./dados";
+import { formatarFaixaConsumo, obterEstado } from "./dados";
 import "./painel.css";
 
-export default function PainelDispositivo({
-  dispositivo,
-  onFechar,
-  onAlternar,
-  onAtualizar,
-}) {
-  const [manutencaoSolicitada, setManutencaoSolicitada] = useState(false);
+export default function PainelDispositivo({ dispositivo, onFechar }) {
   const estado = obterEstado(dispositivo);
-  const { agendamento } = dispositivo;
 
   useEffect(() => {
     function aoPressionarTecla(evento) {
@@ -25,34 +16,15 @@ export default function PainelDispositivo({
     return () => window.removeEventListener("keydown", aoPressionarTecla);
   }, [onFechar]);
 
-  let textoStatus = "Desligado";
-  if (!dispositivo.conectado) textoStatus = "Desconectado";
-  else if (dispositivo.ligado) textoStatus = "Ligado e conectado";
-
-  function alternarAgendamento() {
-    onAtualizar(dispositivo.id, {
-      agendamento: { ...agendamento, ativo: !agendamento.ativo },
-    });
-  }
-
-  function desconectar() {
-    onAtualizar(dispositivo.id, {
-      conectado: false,
-      ligado: false,
-      consumo: 0,
-    });
-  }
-
   return (
     <div className="modal-fundo" onClick={onFechar}>
       <aside
         className="painel-detalhes"
         aria-label={`Detalhes de ${dispositivo.nome}`}
+        onClick={(evento) => evento.stopPropagation()}
       >
         <div className="painel-topo">
-          <span
-            className={`icone-dispositivo ${estado === "atencao" ? "icone-dispositivo-atencao" : ""}`}
-          >
+          <span className={`icone-dispositivo ${estado === "atencao" ? "icone-dispositivo-atencao" : ""}`}>
             <Icone categoria={dispositivo.categoria} tamanho={22} />
           </span>
           <div className="painel-titulo">
@@ -70,102 +42,42 @@ export default function PainelDispositivo({
         </div>
 
         <div className="painel-corpo">
-          <div className="painel-status">
+          <section className="painel-status">
             <div>
-              <span className="painel-rotulo">Status do dispositivo</span>
+              <span className="painel-rotulo">Status do equipamento</span>
               <p className={`painel-status-texto status-${estado}`}>
-                <span className="status-ponto" /> {textoStatus}
+                <span className="status-ponto" /> {dispositivo.status}
               </p>
             </div>
-            <Interruptor
-              ligado={dispositivo.ligado}
-              onAlternar={() => onAlternar(dispositivo.id)}
-              rotulo="Ligar ou desligar o dispositivo"
-            />
-          </div>
+          </section>
 
           <section className="painel-secao">
-            <div className="painel-secao-topo">
+            <h3>Dados cadastrados</h3>
+            <dl className="painel-dados-lista">
               <div>
-                <h3>Consumo nas últimas 24h</h3>
-                <span className="painel-rotulo">Atualização em tempo real</span>
+                <dt>Setor</dt>
+                <dd>{dispositivo.local}</dd>
               </div>
-              <p className="consumo-valor consumo-valor-pequeno">
-                {formatarKwh(dispositivo.consumo)} <small>kWh</small>
-              </p>
-            </div>
-            <GraficoConsumo valores={dispositivo.historico} />
-          </section>
-
-          <section className="painel-secao painel-divisor">
-            <div className="painel-secao-topo">
               <div>
-                <h3>Agendamento</h3>
-                <span className="painel-rotulo">Automação de funcionamento</span>
+                <dt>Tipo</dt>
+                <dd>{dispositivo.categoria}</dd>
               </div>
-              <Interruptor
-                ligado={agendamento.ativo}
-                onAlternar={alternarAgendamento}
-                rotulo="Ativar ou desativar agendamento"
-              />
-            </div>
-
-            <button
-              type="button"
-              className={`card-agendamento ${agendamento.ativo ? "" : "card-agendamento-inativo"}`}
-            >
-              <span className="agendamento-icone">
-                <Icone nome="relogio" tamanho={18} />
-              </span>
-              <span className="agendamento-texto">
-                <small>{resumoDias(agendamento.dias)}</small>
-                <strong>
-                  {agendamento.inicio} — {agendamento.fim}
-                </strong>
-              </span>
-              <Icone nome="seta" />
-            </button>
+              <div>
+                <dt>Faixa de consumo</dt>
+                <dd>{formatarFaixaConsumo(dispositivo)}</dd>
+              </div>
+              <div>
+                <dt>Identificador</dt>
+                <dd>#{dispositivo.id}</dd>
+              </div>
+            </dl>
           </section>
 
-          <section className="painel-secao painel-divisor">
-            <h3>Manutenção</h3>
-            <span className="painel-rotulo">
-              Última revisão em {dispositivo.ultimaRevisao}
-            </span>
-
-            <div className="painel-botoes">
-              <button
-                type="button"
-                className={`botao-manutencao ${manutencaoSolicitada ? "botao-manutencao-ok" : ""}`}
-                onClick={() => setManutencaoSolicitada(true)}
-                disabled={manutencaoSolicitada}
-              >
-                <Icone
-                  nome={manutencaoSolicitada ? "check" : "chave"}
-                  tamanho={15}
-                />
-                {manutencaoSolicitada
-                  ? "Manutenção solicitada"
-                  : "Solicitar manutenção"}
-              </button>
-              <button type="button" className="botao-secundario">
-                <Icone nome="ajustes" tamanho={15} /> Configurar
-              </button>
-            </div>
-          </section>
-        </div>
-
-        <div className="painel-rodape">
-          <button
-            type="button"
-            className="botao-desconectar"
-            onClick={desconectar}
-            disabled={!dispositivo.conectado}
-          >
-            <Icone nome="power" tamanho={15} /> Desconectar dispositivo
-          </button>
+          <p className="painel-nota-consumo">
+            A tabela de equipamentos contém consumo mínimo e máximo cadastrados; ela não fornece uma medição atual ou histórico.
+          </p>
         </div>
       </aside>
     </div>
-     );}
-
+  );
+}
