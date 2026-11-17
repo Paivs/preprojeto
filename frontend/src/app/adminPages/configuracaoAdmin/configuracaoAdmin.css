@@ -151,6 +151,16 @@
     cursor: not-allowed;
 }
 
+.dados-config input[aria-invalid="true"] {
+    border-color: #ff6875;
+}
+
+.erro-campo-senha {
+    color: #ff8a8a;
+    font-size: .78rem;
+    line-height: 1.4;
+}
+
 .config-botao {
     display: block;
     margin: 20px 0 0 auto;
