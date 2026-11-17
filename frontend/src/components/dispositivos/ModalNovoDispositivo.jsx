@@ -96,7 +96,7 @@ export default function ModalNovoDispositivo({ onSalvar, onFechar }) {
               Cancelar
             </button>
             <button type="submit" className="botao-adicionar">
-              Adicionar
+              Adicionar 
             </button>
           </div>
         </form>

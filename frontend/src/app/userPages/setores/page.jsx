@@ -1,10 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import "./setores.css";
 import KpiSetores from "@/components/kpis";
 import TabelaSetores from "@/components/tabelaSetor";
+import ModalNovoSetor from "@/components/tabelaSetor/ModalNovoSetor";
 
 export default function Setores() {
+  const [modalAberto, setModalAberto] = useState(false);
+  const [setoresAdicionais, setSetoresAdicionais] = useState([]);
+
   return (
     <div className="pagina">
       <Sidebar />
@@ -22,7 +29,11 @@ export default function Setores() {
               </p>
             </div>
             <div className="right-cabecalho">
-              <button type="button" className="botao-adicionar">
+              <button
+                type="button"
+                className="botao-adicionar"
+                onClick={() => setModalAberto(true)}
+              >
                 <i className="bi bi-plus"></i>
                 Adicionar setor
               </button>
@@ -34,7 +45,7 @@ export default function Setores() {
           </div>
 
           <div className="container-table">
-            <TabelaSetores />
+            <TabelaSetores setoresAdicionais={setoresAdicionais} />
           </div>
 
           <div className="container-total">
@@ -63,6 +74,15 @@ export default function Setores() {
           </div>
         </main>
       </div>
+      {modalAberto && (
+        <ModalNovoSetor
+          onFechar={() => setModalAberto(false)}
+          onSalvar={(setor) => {
+            setSetoresAdicionais((atuais) => [...atuais, setor]);
+            setModalAberto(false);
+          }}
+        />
+      )}
     </div>
   );
 }

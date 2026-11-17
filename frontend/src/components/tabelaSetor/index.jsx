@@ -49,6 +49,7 @@ const formatarConsumo = (valor) =>
 
 export default function TabelaSetores({
   setores = setoresIniciais,
+  setoresAdicionais = [],
   idUsuario = "0042",
   onEditar,
 }) {
@@ -61,7 +62,7 @@ export default function TabelaSetores({
   const setoresFiltrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
 
-    return setores.filter((setor) => {
+    return [...setores, ...setoresAdicionais].filter((setor) => {
       const pertenceAoUsuario = String(setor.usuario) === String(idUsuario);
 
       const correspondeBusca =
@@ -74,7 +75,7 @@ export default function TabelaSetores({
 
       return pertenceAoUsuario && correspondeBusca;
     });
-  }, [setores, busca, idUsuario]);
+  }, [setores, setoresAdicionais, busca, idUsuario]);
 
   // Calcular quantidade de páginas
   const totalPaginas = Math.max(
