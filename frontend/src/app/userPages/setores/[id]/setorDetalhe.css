@@ -1,8 +1,8 @@
 .setor-detalhe {
-  max-width: 1200px;
-  width: 100%;
+  width: 1250px;
   margin: 2rem auto;
 }
+
 .setor-voltar {
   display: inline-flex;
   align-items: center;
@@ -170,6 +170,266 @@
   color: var(--cor-texto-fraco);
   font-size: 10px;
 }
+.setor-grafico {
+  overflow: hidden;
+  margin-bottom: 18px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  background: var(--cor-card);
+}
+.setor-grafico-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--cor-borda);
+}
+.setor-grafico-titulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.setor-grafico-icone {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: var(--cor-fundo);
+  color: var(--cor-destaque);
+  font-size: 15px;
+}
+.setor-grafico-cabecalho h2 {
+  margin: 0;
+  color: var(--cor-texto);
+  font-size: 14px;
+  font-weight: 700;
+}
+.setor-grafico-cabecalho p {
+  margin: 4px 0 0;
+  color: var(--cor-texto-fraco);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.grafico-unidade {
+  padding: 5px 9px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  background: var(--cor-fundo);
+  color: var(--cor-texto-secundario);
+  font-size: 10px;
+  font-weight: 700;
+}
+.grafico-faixas {
+  padding: 8px 20px 0;
+}
+.grafico-faixa-linha {
+  display: grid;
+  grid-template-columns: minmax(145px, 0.9fr) minmax(140px, 1fr) minmax(
+      145px,
+      0.8fr
+    );
+  align-items: center;
+  gap: 18px;
+  min-height: 72px;
+  border-bottom: 1px solid var(--cor-borda);
+}
+.grafico-faixa-linha:last-of-type {
+  border-bottom: 0;
+}
+.grafico-faixa-equipamento {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+.grafico-faixa-nome {
+  overflow: hidden;
+  color: var(--cor-texto);
+  font-size: 11px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.grafico-faixa-tipo {
+  overflow: hidden;
+  color: var(--cor-texto-fraco);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.grafico-faixa-visual {
+  min-width: 0;
+  padding-top: 5px;
+}
+.grafico-faixa-trilho {
+  position: relative;
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid var(--cor-borda);
+  border-radius: 99px;
+  background: var(--cor-fundo);
+  padding: 5px 10px;
+}
+.grafico-faixa-trilho::before,
+.grafico-faixa-trilho::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 1px;
+  background: var(--cor-borda);
+  content: "";
+}
+.grafico-faixa-trilho::before {
+  left: 50%;
+}
+.grafico-faixa-trilho::after {
+  right: 0;
+}
+.grafico-faixa-barra {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  min-width: 3px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--azul), var(--roxo-claro));
+  box-shadow: 0 0 10px rgba(145, 79, 240, 0.25);
+}
+.grafico-faixa-barra::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--cor-card);
+  border-radius: 50%;
+  background: var(--azul-claro);
+  content: "";
+  transform: translate(-1px, -50%);
+}
+.grafico-faixa-barra.faixa-aberta {
+  border-right: 2px dashed var(--cor-destaque);
+  background: linear-gradient(90deg, var(--azul), rgba(145, 79, 240, 0.22));
+  box-shadow: none;
+}
+.grafico-faixa-escala {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  color: var(--cor-texto-fraco);
+  font-size: 8px;
+}
+.grafico-faixa-valor {
+  color: var(--cor-texto-secundario);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: right;
+}
+.grafico-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 14px 0;
+  color: var(--cor-texto-fraco);
+  font-size: 9px;
+}
+.grafico-legenda span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.grafico-legenda i {
+  display: inline-block;
+  width: 14px;
+  height: 5px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--azul), var(--roxo-claro));
+}
+.grafico-legenda .legenda-minimo {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--azul);
+}
+.grafico-legenda .legenda-aberta {
+  border: 1px dashed var(--cor-destaque);
+  background: transparent;
+}
+.grafico-faixas-vazio {
+  display: flex;
+  min-height: 130px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  color: var(--cor-texto-fraco);
+  font-size: 11px;
+  text-align: center;
+}
+.grafico-faixas-vazio i {
+  color: var(--cor-destaque);
+  font-size: 19px;
+}
+.grafico-faixas-nota {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  padding: 11px 20px;
+  border-top: 1px solid var(--cor-borda);
+  background: var(--cor-fundo);
+  color: var(--cor-texto-fraco);
+  font-size: 9px;
+  line-height: 1.5;
+}
+.grafico-faixas-nota i {
+  flex: 0 0 auto;
+  color: var(--cor-destaque);
+  font-size: 11px;
+}
+@media (max-width: 760px) {
+  .grafico-faixa-linha {
+    grid-template-columns: minmax(0, 1fr) minmax(130px, 0.8fr);
+    gap: 10px;
+    padding: 12px 0;
+  }
+  .grafico-faixa-valor {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+  .grafico-faixas {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+  .grafico-faixas-nota {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}
+@media (max-width: 460px) {
+  .setor-grafico-cabecalho {
+    padding: 15px;
+  }
+  .setor-grafico-cabecalho p {
+    max-width: 230px;
+  }
+  .grafico-faixa-linha {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .grafico-faixa-valor {
+    grid-column: auto;
+  }
+  .grafico-faixa-visual {
+    width: 100%;
+  }
+  .grafico-legenda {
+    gap: 10px;
+  }
+}
 .setor-equipamentos {
   overflow: hidden;
   border: 1px solid var(--cor-borda);
@@ -327,7 +587,7 @@
   color: var(--cor-texto-secundario);
   font: 600 10px var(--font-inter);
   cursor: pointer;
-  transition: border-color .15s ease, color .15s ease, background .15s ease;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 .setor-botao-editar-equipamento:hover {
   border-color: var(--cor-destaque);

@@ -16,6 +16,11 @@ const formatarMoeda = (valor) =>
   });
 const formatarConsumo = (valor) =>
   `${Number(valor || 0).toLocaleString("pt-BR")} kWh`;
+const formatarValor = (valor) =>
+  Number(valor).toLocaleString("pt-BR", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
 
 export default function DetalheSetor() {
   const { id } = useParams();
@@ -24,6 +29,21 @@ export default function DetalheSetor() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [equipamentoEmEdicao, setEquipamentoEmEdicao] = useState(null);
+
+  const equipamentosComFaixa = equipamentos.filter(
+    (equipamento) =>
+      equipamento.consumo_minimo != null || equipamento.consumo_maximo != null
+  );
+  const maiorConsumo =
+    Math.max(
+      1,
+      ...equipamentosComFaixa.map((equipamento) =>
+        Math.max(
+          Number(equipamento.consumo_minimo) || 0,
+          Number(equipamento.consumo_maximo) || 0
+        )
+      )
+    ) * 1.1;
 
   useEffect(() => {
     if (!id) return;
@@ -148,6 +168,133 @@ export default function DetalheSetor() {
                     </div>
                   </article>
                 </section>
+                <section
+                  className="setor-grafico"
+                  aria-labelledby="grafico-faixas-titulo"
+                >
+                  <header className="setor-grafico-cabecalho">
+                    <div className="setor-grafico-titulo">
+                      <span className="setor-grafico-icone">
+                        <i className="bi bi-bar-chart-line" />
+                      </span>
+                      <div>
+                        <h2 id="grafico-faixas-titulo">
+                          Faixa de consumo cadastrada
+                        </h2>
+                        <p>
+                          Compare os limites mínimo e máximo configurados para
+                          cada equipamento.
+                        </p>
+                      </div>
+                    </div>
+                    <span className="grafico-unidade">kWh</span>
+                  </header>
+                  {equipamentosComFaixa.length ? (
+                    <div className="grafico-faixas">
+                      {equipamentosComFaixa.map((equipamento) => {
+                        const minimoInformado =
+                          equipamento.consumo_minimo != null;
+                        const maximoInformado =
+                          equipamento.consumo_maximo != null;
+                        const minimo = minimoInformado
+                          ? Number(equipamento.consumo_minimo) || 0
+                          : 0;
+                        const maximo = maximoInformado
+                          ? Number(equipamento.consumo_maximo) || 0
+                          : maiorConsumo;
+                        const inicio = Math.min(
+                          98.5,
+                          (minimo / maiorConsumo) * 100
+                        );
+                        const comprimento = Math.max(
+                          1.5,
+                          ((Math.max(minimo, maximo) - minimo) / maiorConsumo) *
+                            100
+                        );
+                        const somenteMinimo =
+                          minimoInformado && !maximoInformado;
+                        const descricaoFaixa =
+                          minimoInformado && maximoInformado
+                            ? `${formatarValor(minimo)} a ${formatarValor(
+                                maximo
+                              )} kWh`
+                            : somenteMinimo
+                            ? `A partir de ${formatarValor(
+                                minimo
+                              )} kWh, máximo não definido`
+                            : `Até ${formatarValor(
+                                maximo
+                              )} kWh, mínimo não definido`;
+
+                        return (
+                          <div
+                            className="grafico-faixa-linha"
+                            key={equipamento.id_equipamento}
+                          >
+                            <div className="grafico-faixa-equipamento">
+                              <span className="grafico-faixa-nome">
+                                {equipamento.nome_equipamento}
+                              </span>
+                              <span className="grafico-faixa-tipo">
+                                {equipamento.tipo || "Tipo não informado"}
+                              </span>
+                            </div>
+                            <div
+                              className="grafico-faixa-visual"
+                              role="img"
+                              aria-label={`${equipamento.nome_equipamento}: ${descricaoFaixa}`}
+                            >
+                              <div className="grafico-faixa-trilho">
+                                <span
+                                  className={`grafico-faixa-barra${
+                                    somenteMinimo ? " faixa-aberta" : ""
+                                  }`}
+                                  style={{
+                                    left: `${inicio}%`,
+                                    width: `${Math.min(
+                                      comprimento,
+                                      100 - inicio
+                                    )}%`,
+                                  }}
+                                />
+                              </div>
+                              <div className="grafico-faixa-escala">
+                                <span>0</span>
+                                <span>{formatarValor(maiorConsumo)} kWh</span>
+                              </div>
+                            </div>
+                            <strong className="grafico-faixa-valor">
+                              {descricaoFaixa}
+                            </strong>
+                          </div>
+                        );
+                      })}
+                      <div className="grafico-legenda">
+                        <span>
+                          <i className="legenda-minimo" /> Mínimo
+                        </span>
+                        <span>
+                          <i className="legenda-faixa" /> Faixa cadastrada
+                        </span>
+                        <span>
+                          <i className="legenda-aberta" /> Sem limite máximo
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grafico-faixas-vazio">
+                      <i className="bi bi-bar-chart" />
+                      <span>
+                        Cadastre as faixas de consumo dos equipamentos para
+                        visualizar o gráfico.
+                      </span>
+                    </div>
+                  )}
+                  <p className="grafico-faixas-nota">
+                    <i className="bi bi-info-circle" /> Valores cadastrados, não
+                    representam consumo medido ou histórico.
+                  </p>
+                </section>
                 <section className="setor-equipamentos">
                   <div className="setor-equipamentos-cabecalho">
                     <div className="setor-equipamentos-titulo">
@@ -213,8 +360,16 @@ export default function DetalheSetor() {
                                     } kWh`}
                               </td>
                               <td className="setor-coluna-acoes">
-                                <button type="button" className="setor-botao-editar-equipamento" onClick={() => setEquipamentoEmEdicao(equipamento)} aria-label={`Editar ${equipamento.nome_equipamento}`}>
-                                  <i className="bi bi-pencil" /> <span>Editar</span>
+                                <button
+                                  type="button"
+                                  className="setor-botao-editar-equipamento"
+                                  onClick={() =>
+                                    setEquipamentoEmEdicao(equipamento)
+                                  }
+                                  aria-label={`Editar ${equipamento.nome_equipamento}`}
+                                >
+                                  <i className="bi bi-pencil" />{" "}
+                                  <span>Editar</span>
                                 </button>
                               </td>
                             </tr>
@@ -249,7 +404,13 @@ export default function DetalheSetor() {
           idSetor={setor?.id_setor || id}
           onFechar={() => setEquipamentoEmEdicao(null)}
           onSalvo={(atualizado) => {
-            setEquipamentos((atuais) => atuais.map((item) => item.id_equipamento === atualizado.id_equipamento ? atualizado : item));
+            setEquipamentos((atuais) =>
+              atuais.map((item) =>
+                item.id_equipamento === atualizado.id_equipamento
+                  ? atualizado
+                  : item
+              )
+            );
             setEquipamentoEmEdicao(null);
           }}
         />

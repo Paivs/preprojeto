@@ -109,6 +109,7 @@ export default function ConfiguracaoAdmin() {
         nome: dados.nome_empresa,
         email: dados.email,
       }));
+      window.dispatchEvent(new Event("volthouse:perfil-atualizado"));
       setFeedback({ tipo: "sucesso", texto: "Configurações salvas com sucesso." });
     } catch (erro) {
       setFeedback({ tipo: "erro", texto: erro.message });
