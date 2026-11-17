@@ -1,259 +1,530 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
+import { API_BASE_URL } from "@/lib/api";
 import "./configuracoes.css";
+
+const abas = [
+  { id: "perfil", rotulo: "Perfil", icone: "bi-person" },
+  { id: "limites", rotulo: "Limites de consumo", icone: "bi-lightning-charge" },
+  { id: "seguranca", rotulo: "Segurança", icone: "bi-shield-lock" },
+];
 
 export default function ConfiguracaoUser() {
   const [abaAtiva, setAbaAtiva] = useState("perfil");
-  const [alertaAtivo, setAlertaAtivo] = useState(true);
+  const [perfil, setPerfil] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState("");
+  const [sucesso, setSucesso] = useState("");
+  const [senha, setSenha] = useState({ atual: "", nova: "", confirmar: "" });
+
+  const carregarPerfil = useCallback(async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      setErro(
+        "Sua sessão não foi encontrada. Entre novamente para acessar as configurações."
+      );
+      setCarregando(false);
+      return;
+    }
+    try {
+      const resposta = await fetch(`${API_BASE_URL}/configuracoes/usuario`, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      const resultado = await resposta.json().catch(() => ({}));
+      if (!resposta.ok)
+        throw new Error(
+          resultado.erro || "Não foi possível carregar seus dados."
+        );
+      setPerfil({
+        ...resultado.dados,
+        nome_empresa: resultado.dados.nome_empresa || "",
+        email: resultado.dados.email || "",
+        cnpj: resultado.dados.cnpj || "",
+        consumo_maximo: resultado.dados.consumo_maximo ?? 0,
+      });
+      setErro("");
+    } catch (falha) {
+      setErro(falha.message || "Não foi possível conectar à API.");
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const agendamento = window.setTimeout(() => carregarPerfil(), 0);
+    return () => window.clearTimeout(agendamento);
+  }, [carregarPerfil]);
+
+  function alterarCampo(campo, valor) {
+    setPerfil((atual) => ({ ...atual, [campo]: valor }));
+    setSucesso("");
+    setErro("");
+  }
+
+  async function salvarPerfil(evento) {
+    evento.preventDefault();
+    await enviar(
+      `${API_BASE_URL}/configuracoes/usuario`,
+      {
+        nome_empresa: perfil.nome_empresa,
+        email: perfil.email,
+        cnpj: perfil.cnpj,
+        consumo_maximo: Number(perfil.consumo_maximo),
+      },
+      "Dados da conta atualizados."
+    );
+  }
+
+  async function salvarLimite(evento) {
+    evento.preventDefault();
+    await enviar(
+      `${API_BASE_URL}/configuracoes/usuario`,
+      {
+        nome_empresa: perfil.nome_empresa,
+        email: perfil.email,
+        cnpj: perfil.cnpj,
+        consumo_maximo: Number(perfil.consumo_maximo),
+      },
+      "Limite mensal atualizado."
+    );
+  }
+
+  async function alterarSenha(evento) {
+    evento.preventDefault();
+    await enviar(
+      `${API_BASE_URL}/configuracoes/usuario/senha`,
+      {
+        senha_atual: senha.atual,
+        nova_senha: senha.nova,
+        confirmar_senha: senha.confirmar,
+      },
+      "Senha alterada com sucesso.",
+      "PUT",
+      () => setSenha({ atual: "", nova: "", confirmar: "" })
+    );
+  }
+
+  async function enviar(url, dados, mensagem, metodo = "PUT", aoConcluir) {
+    setSalvando(true);
+    setErro("");
+    setSucesso("");
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      setErro("Sua sessão expirou. Entre novamente.");
+      setSalvando(false);
+      return;
+    }
+    try {
+      const resposta = await fetch(url, {
+        method: metodo,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(dados),
+      });
+      const resultado = await resposta.json().catch(() => ({}));
+      if (!resposta.ok)
+        throw new Error(
+          resultado.erro || "Não foi possível salvar as alterações."
+        );
+      if (
+        resultado.dados &&
+        typeof resultado.dados === "object" &&
+        "nome_empresa" in resultado.dados
+      ) {
+        setPerfil((atual) => ({ ...atual, ...resultado.dados }));
+        let usuarioSessao = {};
+        try {
+          usuarioSessao = JSON.parse(sessionStorage.getItem("usuario") || "{}");
+        } catch {
+          sessionStorage.removeItem("usuario");
+        }
+        sessionStorage.setItem("usuario", JSON.stringify({
+          ...usuarioSessao,
+          nome: resultado.dados.nome_empresa,
+          email: resultado.dados.email,
+        }));
+        window.dispatchEvent(new Event("volthouse:perfil-atualizado"));
+      }
+      aoConcluir?.();
+      setSucesso(mensagem);
+    } catch (falha) {
+      setErro(falha.message || "Não foi possível conectar à API.");
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  const consumoTotal = Number(perfil?.consumo_total || 0);
+  const consumoMaximo = Number(perfil?.consumo_maximo || 0);
+  const percentualConsumo =
+    consumoMaximo > 0
+      ? Math.min(100, Math.round((consumoTotal / consumoMaximo) * 100))
+      : 0;
 
   return (
     <div className="pagina">
       <Sidebar />
-
       <div className="conteudo-principal">
         <Header />
-
-        <main className="conteudo-pagina">
-          {/* CABEÇALHO */}
-          <div className="cabecalho-pagina">
-            <span className="cabecalho-etiqueta">CONFIGURAÇÕES</span>
-
-            <h1>Seu espaço, do seu jeito.</h1>
-
+        <main className="configuracoes-pagina">
+          <header className="config-hero">
+            <span className="cabecalho-etiqueta">PREFERÊNCIAS DA CONTA</span>
+            <h1>Configurações</h1>
             <p>
-              Gerencie sua conta, preferências e a segurança da sua unidade.
+              Gerencie os dados da sua unidade, os limites e a segurança da
+              conta.
             </p>
-          </div>
+          </header>
 
-          {/* NAVEGAÇÃO DAS ABAS */}
-          <nav className="navegacao-config" role="tablist">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={abaAtiva === "perfil"}
-              className={`aba-config ${
-                abaAtiva === "perfil" ? "aba-ativa" : ""
-              }`}
-              onClick={() => setAbaAtiva("perfil")}
+          <div className="config-layout">
+            <nav
+              className="config-nav"
+              role="tablist"
+              aria-label="Seções de configuração"
             >
-              Perfil
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={abaAtiva === "limites"}
-              className={`aba-config ${
-                abaAtiva === "limites" ? "aba-ativa" : ""
-              }`}
-              onClick={() => setAbaAtiva("limites")}
-            >
-              Limites de Consumo
-            </button>
-          </nav>
-
-          {/* CONTEÚDO DAS ABAS */}
-          <section className="conteudo-abas">
-            {/* ================= PERFIL ================= */}
-
-            {abaAtiva === "perfil" && (
-              <div className="container-abas">
-                <div className="cabecalho-conteudo-abas">
-                  <p>Informações pessoais</p>
-                  <span>Mantenha seus dados de identificação atualizados.</span>
+              {abas.map((aba) => (
+                <button
+                  key={aba.id}
+                  type="button"
+                  role="tab"
+                  id={`tab-${aba.id}`}
+                  aria-controls={`painel-${aba.id}`}
+                  aria-selected={abaAtiva === aba.id}
+                  className={abaAtiva === aba.id ? "ativa" : ""}
+                  onClick={() => {
+                    setAbaAtiva(aba.id);
+                    setErro("");
+                    setSucesso("");
+                  }}
+                >
+                  <i className={`bi ${aba.icone}`} aria-hidden="true" />
+                  <span>{aba.rotulo}</span>
+                  <i
+                    className="bi bi-chevron-right config-nav-seta"
+                    aria-hidden="true"
+                  />
+                </button>
+              ))}
+              {perfil && (
+                <div className="config-conta-resumo">
+                  <div className="config-avatar">
+                    {perfil.nome_empresa
+                      ?.trim()
+                      .charAt(0)
+                      .toLocaleUpperCase("pt-BR") || "V"}
+                  </div>
+                  <div>
+                    <strong>{perfil.nome_empresa}</strong>
+                    <span>Conta #{perfil.id_usuario}</span>
+                  </div>
                 </div>
+              )}
+            </nav>
 
-                <form className="formulario-perfil">
-                  <div className="form-group">
-                    <label htmlFor="nome">Nome da empresa</label>
-
-                    <input
-                      type="text"
-                      name="nome"
-                      id="nome"
-                      defaultValue="Financeiro Lab"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="email">E-mail</label>
-
-                    <input
-                      type="email"
-                      name="email"
-                      id="email"
-                      defaultValue="financeiro@volthouse.com.br"
-                    />
-                  </div>
-
-                  <div className="grid-form">
-                    <div className="form-group">
-                      <label htmlFor="cnpj">CNPJ</label>
-
-                      <input
-                        type="text"
-                        name="cnpj"
-                        id="cnpj"
-                        placeholder="00.000.000/0000-00"
-                        defaultValue="99.999.999/9999-99"
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="id">ID do usuário</label>
-
-                      <input
-                        type="text"
-                        name="id"
-                        id="id"
-                        defaultValue="0042"
-                        readOnly
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="permissao">Permissão</label>
-
-                    <select
-                      name="permissao"
-                      id="permissao"
-                      defaultValue="cliente"
-                      disabled
+            <section className="config-conteudo" aria-live="polite">
+              {(erro || sucesso) && (
+                <div
+                  className={`config-feedback ${
+                    erro ? "feedback-erro" : "feedback-sucesso"
+                  }`}
+                  role={erro ? "alert" : "status"}
+                >
+                  <i
+                    className={`bi ${
+                      erro ? "bi-exclamation-circle" : "bi-check-circle"
+                    }`}
+                  />
+                  {erro || sucesso}
+                  {erro && !perfil && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCarregando(true);
+                        setErro("");
+                        carregarPerfil();
+                      }}
                     >
-                      <option value="cliente">Cliente</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                </form>
-              </div>
-            )}
+                      Tentar novamente
+                    </button>
+                  )}
+                </div>
+              )}
 
-            {/*  LIMITES DE CONSUMO = */}
-
-            {abaAtiva === "limites" && (
-              <div className="limites-consumo">
-                <div className="limites-layout">
-                  <section className="card-limites">
-                    <div className="titulo-card-limites">
-                      <h2>Limites de consumo</h2>
-
-                      <p>
-                        Defina tetos mensais para evitar surpresas na conta.
-                      </p>
-                    </div>
-
-                    <form
-                      className="form-limites"
-                      onSubmit={(e) => e.preventDefault()}
+              {carregando ? (
+                <div className="config-carregando">
+                  <span className="config-spinner" />
+                  Carregando configurações...
+                </div>
+              ) : !perfil ? (
+                <div className="config-vazio">
+                  <i className="bi bi-person-exclamation" />
+                  <h2>Não foi possível abrir suas configurações</h2>
+                  <p>Confira sua conexão e tente novamente.</p>
+                </div>
+              ) : (
+                <>
+                  {abaAtiva === "perfil" && (
+                    <div
+                      className="config-card"
+                      role="tabpanel"
+                      id="painel-perfil"
+                      aria-labelledby="tab-perfil"
                     >
-                      <div className="campos-limites">
-                        <div className="campo-limite">
-                          <label htmlFor="limiteEnergia">
-                            Limite mensal de energia (kWh)
-                          </label>
-
-                          <div className="campo-somente-leitura">
-                            <input
-                              type="text"
-                              id="limiteEnergia"
-                              value="15.000 kWh"
-                              readOnly
-                              aria-describedby="aviso-limite-admin"
-                            />
-
-                            <span className="icone-bloqueio" aria-hidden="true">
-                              <i className="bi bi-lock-fill"></i>
-                            </span>
-                          </div>
-
-                          <span
-                            className="aviso-limite-admin"
-                            id="aviso-limite-admin"
-                          >
-                            <i className="bi bi-shield-check"></i>
-                            Definido pelo administrador
-                          </span>
+                      <div className="config-card-topo">
+                        <div className="config-card-icone">
+                          <i className="bi bi-building" />
                         </div>
+                        <div>
+                          <h2>Perfil da unidade</h2>
+                          <p>
+                            Informações usadas para identificar sua conta na
+                            VoltHouse.
+                          </p>
+                        </div>
+                      </div>
+                      <form className="config-form" onSubmit={salvarPerfil}>
+                        <label className="config-campo config-campo-largo">
+                          Nome da empresa
+                          <input
+                            value={perfil.nome_empresa}
+                            onChange={(e) =>
+                              alterarCampo("nome_empresa", e.target.value)
+                            }
+                            maxLength={150}
+                            required
+                          />
+                        </label>
+                        <label className="config-campo">
+                          E-mail
+                          <input
+                            type="email"
+                            value={perfil.email}
+                            onChange={(e) =>
+                              alterarCampo("email", e.target.value)
+                            }
+                            maxLength={100}
+                            required
+                          />
+                        </label>
+                        <label className="config-campo">
+                          CNPJ
+                          <input
+                            value={perfil.cnpj}
+                            onChange={(e) =>
+                              alterarCampo("cnpj", e.target.value)
+                            }
+                            maxLength={18}
+                            required
+                          />
+                        </label>
+                        <label className="config-campo">
+                          ID da conta
+                          <input value={perfil.id_usuario} readOnly />
+                        </label>
+                        <label className="config-campo">
+                          Tipo de acesso
+                          <input
+                            value={
+                              perfil.perfil === "admin"
+                                ? "Administrador"
+                                : "Cliente"
+                            }
+                            readOnly
+                          />
+                        </label>
+                        <div className="config-form-acoes">
+                          <span>
+                            Alterações aplicadas somente a esta conta.
+                          </span>
+                          <button type="submit" disabled={salvando}>
+                            <i className="bi bi-check2" />
+                            {salvando ? "Salvando..." : "Salvar alterações"}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  )}
 
-                        <div className="campo-limite">
-                          <label htmlFor="limiteCusto">
-                            Limite mensal de custo (R$)
-                          </label>
-
+                  {abaAtiva === "limites" && (
+                    <div
+                      className="config-card"
+                      role="tabpanel"
+                      id="painel-limites"
+                      aria-labelledby="tab-limites"
+                    >
+                      <div className="config-card-topo">
+                        <div className="config-card-icone icone-verde">
+                          <i className="bi bi-lightning-charge" />
+                        </div>
+                        <div>
+                          <h2>Limite de consumo</h2>
+                          <p>
+                            Defina um teto mensal de energia para acompanhar sua
+                            unidade.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="limite-atual">
+                        <div>
+                          <span>Consumo registrado</span>
+                          <strong>
+                            {consumoTotal.toLocaleString("pt-BR")}{" "}
+                            <small>kWh</small>
+                          </strong>
+                        </div>
+                        <div>
+                          <span>Uso do limite</span>
+                          <strong>
+                            {consumoMaximo > 0
+                              ? `${percentualConsumo}%`
+                              : "Sem limite"}
+                          </strong>
+                        </div>
+                        {consumoMaximo > 0 && (
+                          <div
+                            className="limite-barra"
+                            role="progressbar"
+                            aria-label="Uso do limite de consumo"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                            aria-valuenow={percentualConsumo}
+                          >
+                            <span style={{ width: `${percentualConsumo}%` }} />
+                          </div>
+                        )}
+                      </div>
+                      <form
+                        className="config-form config-form-limite"
+                        onSubmit={salvarLimite}
+                      >
+                        <label className="config-campo config-campo-largo">
+                          Limite mensal de energia (kWh)
                           <input
                             type="number"
-                            id="limiteCusto"
-                            name="limiteCusto"
                             min="0"
-                            step="any"
-                            placeholder="Defina seu limite de custo"
+                            max="99999999.99"
+                            step="0.01"
+                            value={perfil.consumo_maximo}
+                            onChange={(e) =>
+                              alterarCampo("consumo_maximo", e.target.value)
+                            }
+                            required
                           />
+                          <small>
+                            Informe zero para deixar o consumo sem limite
+                            definido.
+                          </small>
+                        </label>
+                        <div className="config-form-acoes">
+                          <span>
+                            O limite é usado como referência para sua conta.
+                          </span>
+                          <button type="submit" disabled={salvando}>
+                            <i className="bi bi-check2" />
+                            {salvando ? "Salvando..." : "Salvar limite"}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  )}
+
+                  {abaAtiva === "seguranca" && (
+                    <div
+                      className="config-card"
+                      role="tabpanel"
+                      id="painel-seguranca"
+                      aria-labelledby="tab-seguranca"
+                    >
+                      <div className="config-card-topo">
+                        <div className="config-card-icone icone-ambar">
+                          <i className="bi bi-shield-lock" />
+                        </div>
+                        <div>
+                          <h2>Segurança da conta</h2>
+                          <p>
+                            Atualize sua senha periodicamente para proteger o
+                            acesso.
+                          </p>
                         </div>
                       </div>
-                    </form>
-                  </section>
-
-                  <aside className="coluna-resumo-limites">
-                    <section className="card-resumo-consumo">
-                      <h2>Seu mês até agora</h2>
-
-                      <div className="resumo-energia">
-                        <strong>— / — kWh</strong>
-
-                        <div
-                          className="barra-progresso-limite"
-                          role="progressbar"
-                          aria-label="Consumo mensal de energia"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                          aria-valuenow="0"
-                        >
-                          <span />
+                      <form
+                        className="config-form config-form-seguranca"
+                        onSubmit={alterarSenha}
+                      >
+                        <label className="config-campo config-campo-largo">
+                          Senha atual
+                          <input
+                            type="password"
+                            autoComplete="current-password"
+                            value={senha.atual}
+                            onChange={(e) =>
+                              setSenha((atual) => ({
+                                ...atual,
+                                atual: e.target.value,
+                              }))
+                            }
+                            required
+                          />
+                        </label>
+                        <label className="config-campo config-campo-largo">
+                          Nova senha
+                          <input
+                            type="password"
+                            autoComplete="new-password"
+                            minLength={8}
+                            value={senha.nova}
+                            onChange={(e) =>
+                              setSenha((atual) => ({
+                                ...atual,
+                                nova: e.target.value,
+                              }))
+                            }
+                            required
+                          />
+                          <small>
+                            Use ao menos 8 caracteres, com maiúscula, minúscula,
+                            número e símbolo.
+                          </small>
+                        </label>
+                        <label className="config-campo config-campo-largo">
+                          Confirme a nova senha
+                          <input
+                            type="password"
+                            autoComplete="new-password"
+                            minLength={8}
+                            value={senha.confirmar}
+                            onChange={(e) =>
+                              setSenha((atual) => ({
+                                ...atual,
+                                confirmar: e.target.value,
+                              }))
+                            }
+                            required
+                          />
+                        </label>
+                        <div className="config-form-acoes">
+                          <span>
+                            Sua senha é armazenada de forma protegida.
+                          </span>
+                          <button type="submit" disabled={salvando}>
+                            <i className="bi bi-key" />
+                            {salvando ? "Atualizando..." : "Atualizar senha"}
+                          </button>
                         </div>
-
-                        <span className="percentual-limite">
-                          Aguardando dados de consumo
-                        </span>
-                      </div>
-
-                      <div className="resumo-custo">
-                        <strong>R$ — de R$ —</strong>
-
-                        <span>Saldo disponível: R$ —</span>
-                      </div>
-
-                      <p className="descricao-resumo">
-                        Seu limite foi definido por você e pode ser ajustado a
-                        qualquer momento.
-                      </p>
-                    </section>
-
-                    <section className="card-info-limites">
-                      <span>SUA UNIDADE, SUAS REGRAS</span>
-
-                      <h3>Mais controle. Menos preocupação.</h3>
-
-                      <p>
-                        Preferências vinculadas à sua unidade.
-                        <br />
-                        Suas escolhas podem ser aplicadas em toda a experiência
-                        Volt House.
-                      </p>
-                    </section>
-                  </aside>
-                </div>
-
-                <p className="aviso-limites">
-                  Alterações de configuração ficam registradas no histórico da
-                  sua conta.
-                </p>
-              </div>
-            )}
-          </section>
+                      </form>
+                    </div>
+                  )}
+                </>
+              )}
+            </section>
+          </div>
         </main>
       </div>
     </div>

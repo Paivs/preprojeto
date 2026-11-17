@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { API_BASE_URL } from "@/lib/api";
 import "./headerAdmin.css";
 
 const notificacoesIniciais = [
@@ -65,17 +67,79 @@ const notificacoesAdmin = [
 ];
 
 export default function Header({ tipoUsuario = "usuario" }) {
-  const eAdmin = tipoUsuario === "admin";
-  const nomePerfil = "Marina Vieira";
+  const [conta, setConta] = useState({
+    nome_empresa: "",
+    email: "",
+    cnpj: "",
+    id_usuario: null,
+    perfil: tipoUsuario,
+  });
+  const eAdmin = conta.perfil === "admin" || tipoUsuario === "admin";
+  const nomePerfil = conta.nome_empresa || "Minha conta";
   const cargoPerfil = eAdmin ? "Administradora" : "Cliente";
+  const iniciaisPerfil =
+    nomePerfil
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((parte) => parte[0].toLocaleUpperCase("pt-BR"))
+      .join("") || "V";
+  const linkConfiguracoes = eAdmin
+    ? "/adminPages/configuracaoAdmin"
+    : "/userPages/configuracoes";
   const [temaClaro, setTemaClaro] = useState(false);
   const [perfilAberto, setPerfilAberto] = useState(false);
   const [notificacoesAbertas, setNotificacoesAbertas] = useState(false);
   const [notificacoes, setNotificacoes] = useState(() =>
-    eAdmin ? notificacoesAdmin : notificacoesIniciais,
+    eAdmin ? notificacoesAdmin : notificacoesIniciais
   );
   const notificacoesRef = useRef(null);
   const quantidadeNaoLidas = notificacoes.filter((item) => !item.lida).length;
+
+  useEffect(() => {
+    let ativo = true;
+    async function carregarConta() {
+      await Promise.resolve();
+      let usuarioSessao = {};
+      try {
+        usuarioSessao = JSON.parse(sessionStorage.getItem("usuario") || "{}");
+      } catch {
+        sessionStorage.removeItem("usuario");
+      }
+      const dadosSessao = {
+        nome_empresa: usuarioSessao.nome || usuarioSessao.nome_empresa || "",
+        email: usuarioSessao.email || "",
+        id_usuario: usuarioSessao.id || usuarioSessao.id_usuario || null,
+        perfil: usuarioSessao.perfil || tipoUsuario,
+      };
+      const token = sessionStorage.getItem("token");
+      if (token) {
+        try {
+          const resposta = await fetch(
+            `${API_BASE_URL}/configuracoes/usuario`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+              cache: "no-store",
+            }
+          );
+          const resultado = await resposta.json().catch(() => ({}));
+          if (resposta.ok && resultado.dados && ativo) {
+            setConta({ ...dadosSessao, ...resultado.dados });
+            return;
+          }
+        } catch {
+          // Os dados da sessÃ£o servem de alternativa se a API estiver indisponÃ­vel.
+        }
+      }
+      if (ativo) setConta(dadosSessao);
+    }
+    carregarConta();
+    window.addEventListener("volthouse:perfil-atualizado", carregarConta);
+    return () => {
+      ativo = false;
+      window.removeEventListener("volthouse:perfil-atualizado", carregarConta);
+    };
+  }, [tipoUsuario]);
 
   useEffect(() => {
     let temaSalvo = "escuro";
@@ -92,7 +156,11 @@ export default function Header({ tipoUsuario = "usuario" }) {
     } else {
       delete document.documentElement.dataset.tema;
     }
-    setTemaClaro(temaAplicado === "claro");
+    const agendamentoTema = window.setTimeout(
+      () => setTemaClaro(temaAplicado === "claro"),
+      0
+    );
+    return () => window.clearTimeout(agendamentoTema);
   }, []);
 
   function alternarTema() {
@@ -147,13 +215,13 @@ export default function Header({ tipoUsuario = "usuario" }) {
 
   function marcarTodasComoLidas() {
     setNotificacoes((atuais) =>
-      atuais.map((item) => ({ ...item, lida: true })),
+      atuais.map((item) => ({ ...item, lida: true }))
     );
   }
 
   function marcarComoLida(id) {
     setNotificacoes((atuais) =>
-      atuais.map((item) => (item.id === id ? { ...item, lida: true } : item)),
+      atuais.map((item) => (item.id === id ? { ...item, lida: true } : item))
     );
   }
 
@@ -187,7 +255,9 @@ export default function Header({ tipoUsuario = "usuario" }) {
             <button
               type="button"
               className="botao-icone botao-notificacoes"
-              aria-label={`Notificações${quantidadeNaoLidas ? `, ${quantidadeNaoLidas} não lidas` : ""}`}
+              aria-label={`Notificações${
+                quantidadeNaoLidas ? `, ${quantidadeNaoLidas} não lidas` : ""
+              }`}
               aria-expanded={notificacoesAbertas}
               aria-controls="painel-notificacoes"
               onClick={alternarNotificacoes}
@@ -227,7 +297,9 @@ export default function Header({ tipoUsuario = "usuario" }) {
                     <button
                       type="button"
                       key={notificacao.id}
-                      className={`notificacao-item ${notificacao.lida ? "notificacao-lida" : ""}`}
+                      className={`notificacao-item ${
+                        notificacao.lida ? "notificacao-lida" : ""
+                      }`}
                       onClick={() => marcarComoLida(notificacao.id)}
                     >
                       <span
@@ -261,11 +333,11 @@ export default function Header({ tipoUsuario = "usuario" }) {
             aria-expanded={perfilAberto}
             aria-controls="painel-perfil"
             onClick={() => {
-              setPerfilAberto(true);
+              setPerfilAberto((aberto) => !aberto);
               setNotificacoesAbertas(false);
             }}
           >
-            <span className="avatar">MV</span>
+            <span className="avatar">{iniciaisPerfil}</span>
             <span className="perfil-dados">
               <strong>{nomePerfil}</strong>
               <small>{cargoPerfil}</small>
@@ -305,7 +377,7 @@ export default function Header({ tipoUsuario = "usuario" }) {
             </div>
 
             <div className="perfil-painel-identidade">
-              <span className="perfil-painel-avatar">MV</span>
+              <span className="perfil-painel-avatar">{iniciaisPerfil}</span>
               <div>
                 <h3>{nomePerfil}</h3>
                 <p>{cargoPerfil}</p>
@@ -317,44 +389,58 @@ export default function Header({ tipoUsuario = "usuario" }) {
 
             <section className="perfil-detalhes">
               <h3>Dados da conta</h3>
-              <div className="perfil-detalhe-linha">
-                <span>
-                  <i className="bi bi-envelope" /> E-mail
-                </span>
-                <strong>
-                  {eAdmin
-                    ? "marina.vieira@volthouse.com"
-                    : "marina.vieira@email.com"}
-                </strong>
-              </div>
-              <div className="perfil-detalhe-linha">
-                <span>
-                  <i className="bi bi-telephone" /> Telefone
-                </span>
-                <strong>(11) 99999-0000</strong>
-              </div>
-              <div className="perfil-detalhe-linha">
-                <span>
-                  <i className="bi bi-geo-alt" /> Unidade
-                </span>
-                <strong>{eAdmin ? "VoltHouse" : "São Paulo, SP"}</strong>
-              </div>
-              <div className="perfil-detalhe-linha">
-                <span>
-                  <i className="bi bi-lightning" /> Plano
-                </span>
-                <strong>
-                  {eAdmin ? "Acesso administrativo" : "Residencial"}
-                </strong>
-              </div>
+              {[
+                {
+                  rotulo: "E-mail",
+                  icone: "bi-envelope",
+                  valor: conta.email || "Não informado",
+                },
+                {
+                  rotulo: "CNPJ",
+                  icone: "bi-upc",
+                  valor: conta.cnpj || "Não informado",
+                },
+                {
+                  rotulo: "ID da conta",
+                  icone: "bi-person-badge",
+                  valor: conta.id_usuario ?? "Não informado",
+                },
+                {
+                  rotulo: "Acesso",
+                  icone: "bi-shield-check",
+                  valor: cargoPerfil,
+                },
+              ].map((item) => (
+                <div className="perfil-detalhe-linha" key={item.rotulo}>
+                  <span>
+                    <i className={`bi ${item.icone}`} /> {item.rotulo}
+                  </span>
+                  <strong>{item.valor}</strong>
+                </div>
+              ))}
             </section>
 
             <div className="perfil-painel-rodape">
               <span>
                 <i className="bi bi-shield-check" /> Seus dados estão protegidos
               </span>
-              <button type="button" onClick={() => setPerfilAberto(false)}>
-                <i className="bi bi-box-arrow-right" /> Fechar painel
+              <Link
+                className="perfil-link-configuracoes"
+                href={linkConfiguracoes}
+                onClick={() => setPerfilAberto(false)}
+              >
+                <i className="bi bi-gear" /> Configurações da conta
+              </Link>
+              <button
+                type="button"
+                className="perfil-botao-sair"
+                onClick={() => {
+                  sessionStorage.removeItem("token");
+                  sessionStorage.removeItem("usuario");
+                  window.location.replace("/login");
+                }}
+              >
+                <i className="bi bi-box-arrow-right" /> Sair da conta
               </button>
             </div>
           </aside>
