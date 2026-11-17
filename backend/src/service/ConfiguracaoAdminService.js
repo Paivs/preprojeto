@@ -69,9 +69,8 @@ export async function alterarSenha(idRecebido, entrada = {}) {
   const id = validarId(idRecebido);
   const { senha_atual: senhaAtual, nova_senha: novaSenha, confirmar_senha: confirmarSenha } = entrada;
   if (typeof senhaAtual !== 'string' || !senhaAtual) throw new TypeError('Informe sua senha atual.');
-  if (typeof novaSenha !== 'string' || novaSenha.length < 8 || !/[a-z]/.test(novaSenha) || !/[A-Z]/.test(novaSenha) || !/\d/.test(novaSenha) || !/[^A-Za-z0-9]/.test(novaSenha)) {
-    throw new TypeError('A nova senha deve ter no mínimo 8 caracteres, com maiúscula, minúscula, número e símbolo.');
-  }
+  if (typeof novaSenha !== 'string' || !novaSenha) throw new TypeError('Informe a nova senha.');
+  if (typeof confirmarSenha !== 'string' || !confirmarSenha) throw new TypeError('Confirme a nova senha.');
   if (novaSenha !== confirmarSenha) throw new TypeError('A confirmação da nova senha não corresponde.');
 
   const senhaGuardada = await ConfiguracaoModel.buscarSenha(id);

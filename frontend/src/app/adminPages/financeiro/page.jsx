@@ -30,10 +30,14 @@ export default function Financeiro() {
 
         const resposta = await fetch(`${API_BASE_URL}/financeiro/resumo`, {
           headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
         });
         const resultado = await resposta.json();
         if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível carregar o resumo financeiro.");
-        if (ativo) setResumo(resultado.dados);
+        if (ativo) {
+          setResumo(resultado.dados);
+          setErro("");
+        }
       } catch (erroRequisicao) {
         if (ativo) setErro(erroRequisicao.message || "Não foi possível conectar ao servidor.");
       } finally {
@@ -42,11 +46,20 @@ export default function Financeiro() {
     }
 
     carregarResumo();
-    return () => { ativo = false; };
+    const intervalo = window.setInterval(carregarResumo, 15000);
+    return () => {
+      ativo = false;
+      window.clearInterval(intervalo);
+    };
   }, []);
 
   const percentual = resumo?.percentualRecebido ?? 0;
   const variacao = resumo?.variacaoMensal;
+  const dadosGrafico = [
+    { rotulo: "Mês anterior", valor: Number(resumo?.recebidoMesAnterior || 0) },
+    { rotulo: "Este mês", valor: Number(resumo?.recebidoMes || 0) },
+  ];
+  const maiorValor = Math.max(...dadosGrafico.map(({ valor }) => valor), 1);
   const textoVariacao = variacao === null || variacao === undefined
     ? "Sem dados do mês anterior para comparação"
     : `${variacao > 0 ? "+" : ""}${variacao.toLocaleString("pt-BR")}% em relação ao mês anterior`;
@@ -92,6 +105,34 @@ export default function Financeiro() {
               </p>
             </section>
           </div>
+
+          <section className="financeiro-grafico card" aria-labelledby="titulo-grafico-financeiro">
+            <div className="financeiro-grafico-cabecalho">
+              <div>
+                <h2 id="titulo-grafico-financeiro">Recebimentos mensais</h2>
+                <p>Comparativo dos valores recebidos</p>
+              </div>
+              <span className="financeiro-grafico-unidade">BRL</span>
+            </div>
+            {resumo ? (
+              <div className="financeiro-grafico-barras" role="img" aria-label={`Recebimentos: mês anterior ${formatarMoeda(dadosGrafico[0].valor)}; este mês ${formatarMoeda(dadosGrafico[1].valor)}`}>
+                {dadosGrafico.map(({ rotulo, valor }) => (
+                  <div className="financeiro-grafico-coluna" key={rotulo}>
+                    <span className="financeiro-grafico-rotulo">{rotulo}</span>
+                    <strong>{formatarMoeda(valor)}</strong>
+                    <div className="financeiro-grafico-trilho" aria-hidden="true">
+                      <span style={{ width: `${(valor / maiorValor) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="financeiro-grafico-vazio">
+                {carregando ? "Carregando dados do gráfico..." : "Não foi possível carregar os dados do gráfico."}
+              </p>
+            )}
+          </section>
+
         </div>
       </div>
     </main>
