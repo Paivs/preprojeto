@@ -111,7 +111,7 @@ FRONTEND_URL=http://localhost:3000
 NEXT_PUBLIC_API_URL=http://localhost:8080/api
 
 MYSQL_ROOT_PASSWORD=root_password
-MYSQL_DATABASE=app_db
+MYSQL_DATABASE=db_voltHouse
 MYSQL_USER=app_user
 MYSQL_PASSWORD=app_password
 
@@ -119,7 +119,7 @@ DB_HOST=database
 DB_PORT=3306
 DB_USER=app_user
 DB_PASSWORD=app_password
-DB_NAME=app_db
+DB_NAME=db_voltHouse
 ```
 
 Para rodar varios grupos no mesmo servidor, mude pelo menos as portas publicadas no host e a URL publica da API. Exemplo para um segundo grupo:
@@ -145,7 +145,7 @@ DB_HOST=localhost
 DB_PORT=3306
 DB_USER=app_user
 DB_PASSWORD=app_password
-DB_NAME=app_db
+DB_NAME=db_voltHouse
 ```
 
 Frontend (`frontend/.env.local`):
