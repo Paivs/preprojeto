@@ -31,12 +31,13 @@ function assinarToken(payload, options) {
   return jwt.sign(payload, obterSegredo(), options);
 }
 
-export async function registrar({ nome, nome_empresa, cnpj, email, senha } = {}) {
+export async function registrar({ nome, nome_empresa, cnpj, email, telefone, senha } = {}) {
   const nomeLimpo = typeof (nome_empresa ?? nome) === 'string'
     ? (nome_empresa ?? nome).trim()
     : '';
   const emailLimpo = typeof email === 'string' ? email.trim().toLowerCase() : '';
   const cnpjLimpo = typeof cnpj === 'string' ? cnpj.trim() : '';
+  const telefoneLimpo = telefone == null ? null : validarTelefone(telefone);
 
   if (nomeLimpo.length < 3) {
     throw new TypeError('Nome deve ter no mínimo 3 caracteres.');
@@ -78,10 +79,22 @@ export async function registrar({ nome, nome_empresa, cnpj, email, senha } = {})
     nome: nomeLimpo,
     cnpj: cnpjLimpo,
     email: emailLimpo,
+    telefone: telefoneLimpo,
     senhaHash,
     // Registro público nunca pode conceder privilégios administrativos.
     perfil: 'cliente'
   });
+}
+
+function validarTelefone(telefone) {
+  if (typeof telefone !== 'string') {
+    throw new TypeError('Telefone deve ser um texto.');
+  }
+  const telefoneLimpo = telefone.trim();
+  if (telefoneLimpo.length > 20) {
+    throw new TypeError('Telefone deve ter até 20 caracteres.');
+  }
+  return telefoneLimpo || null;
 }
 
 export async function login({ email, senha } = {}) {
