@@ -12,6 +12,7 @@ import emailRoutes from "./routes/emailRoutes.js";
 import contatoRoutes from "./routes/contatoRoutes.js";
 import { authRouter } from "./routes/AuthRoutes.js";
 import financeiroRoutes from "./routes/financeiroRoutes.js";
+import pagamentoRoutes from "./routes/pagamentoRoutes.js";
 import configuracaoAdminRoutes from "./routes/configuracaoAdminRoutes.js";
 import configuracaoUsuarioRoutes from "./routes/configuracaoUsuarioRoutes.js";
 
@@ -54,6 +55,7 @@ app.use("/api/setores", autenticar, setorRoutes);
 app.use("/api/equipamentos", autenticar, equipamentoRoutes);
 app.use("/api/emails", autenticar, autorizarAdmin, emailRoutes);
 app.use("/api/financeiro", autenticar, autorizarAdmin, financeiroRoutes);
+app.use("/api/pagamentos", autenticar, autorizarAdmin, pagamentoRoutes);
 app.use("/api/configuracoes/admin", autenticar, autorizarAdmin, configuracaoAdminRoutes);
 app.use("/api/configuracoes/usuario", autenticar, configuracaoUsuarioRoutes);
 

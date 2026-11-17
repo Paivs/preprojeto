@@ -21,6 +21,10 @@
     animation: modal-entrada 0.24s ease-out;
 }
 
+.modal.modal-entrada-esquerda {
+    animation: modal-entrada-esquerda 0.24s ease-out;
+}
+
 @keyframes modal-fundo-entrada {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -35,6 +39,11 @@
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+}
+
+@keyframes modal-entrada-esquerda {
+    from { transform: translateX(-24px); opacity: 0.8; }
+    to { transform: translateX(0); opacity: 1; }
 }
 
 .modal-topo {

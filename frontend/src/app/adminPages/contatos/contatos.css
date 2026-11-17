@@ -1,0 +1,253 @@
+.conteudo-principal {
+  margin-left: 245px;
+  min-height: 100vh;
+}
+
+.conteudo-pagina {
+  padding: 24px 32px 48px;
+}
+
+.cabecalho-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.cabecalho-etiqueta {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--amarelo);
+}
+
+.cabecalho-pagina h1 {
+  margin: 8px 0 6px;
+  color: var(--dark-text-primary);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.cabecalho-pagina p {
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+}
+
+.contatos-tabela {
+  margin-top: 0;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  background: var(--cor-card);
+  color: var(--cor-texto);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.contatos-tabela .cabecalho-table {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.contatos-tabela .cabecalho-left h2 {
+  margin: 0 0 4px;
+  color: var(--cor-texto);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.contatos-tabela .cabecalho-left span {
+  color: var(--cor-texto-fraco);
+  font-size: 0.875rem;
+}
+
+.contatos-tabela .tabela-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.contatos-tabela table {
+  width: 100%;
+  min-width: 1120px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.contatos-tabela th {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--cor-borda);
+  color: var(--cor-texto-fraco);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.contatos-tabela td {
+  padding: 15px 14px;
+  border-bottom: 1px solid var(--cor-borda);
+  color: var(--cor-texto-secundario);
+  font-size: 0.84rem;
+  vertical-align: middle;
+}
+
+.contatos-tabela tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.contato-nome {
+  display: flex;
+  min-width: 175px;
+  align-items: center;
+  gap: 10px;
+}
+
+.contato-nome strong {
+  color: var(--cor-texto);
+  font-weight: 600;
+}
+
+.contato-nome .avatar-sigla {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--roxo-suave);
+  color: var(--cor-destaque);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.contato-mensagem {
+  min-width: 260px;
+  max-width: 360px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.contato-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.contato-status.pendente {
+  background: var(--amarelo-suave);
+  color: var(--amarelo);
+}
+
+.contato-status.ignorado {
+  background: var(--vermelho-suave);
+  color: var(--cor-vermelho);
+}
+
+.contato-status.convertido {
+  background: var(--verde-suave);
+  color: var(--verde);
+}
+
+.contato-acoes {
+  display: flex;
+  min-width: 245px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
+}
+
+.contato-acoes button {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 6px 9px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 7px;
+  font: inherit;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.btn-adicionar-contato {
+  background: var(--roxo);
+  border-color: var(--roxo) !important;
+  color: #fff;
+}
+
+.btn-adicionar-contato:hover {
+  background: var(--roxo-hover);
+  border-color: var(--roxo-hover) !important;
+}
+
+.btn-ignorar-contato {
+  background: var(--cor-campo);
+  color: var(--cor-texto-secundario);
+}
+
+.btn-ignorar-contato:hover:not(:disabled) {
+  border-color: var(--cor-vermelho);
+  color: var(--cor-vermelho);
+}
+
+.btn-ignorar-contato:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.contato-acao-concluida {
+  color: var(--cor-texto-fraco);
+}
+
+.contatos-tabela .mensagem-tabela {
+  padding: 24px !important;
+  color: var(--cor-texto-fraco);
+  text-align: center;
+}
+
+.contatos-tabela .erro-tabela {
+  margin: 0 0 16px;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 8px;
+  background: rgba(127, 29, 29, 0.12);
+  color: var(--cor-vermelho);
+}
+
+.contatos-aviso {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--amarelo);
+  border-radius: 8px;
+  background: var(--amarelo-suave);
+  color: var(--cor-texto);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .conteudo-principal {
+    margin-left: 0;
+  }
+
+  .conteudo-pagina {
+    padding: 20px 16px 36px;
+  }
+}
+
+@media (max-width: 560px) {
+  .cabecalho-pagina h1 {
+    font-size: 27px;
+  }
+
+  .contatos-tabela {
+    padding: 18px 14px;
+  }
+}

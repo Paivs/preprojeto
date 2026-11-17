@@ -27,11 +27,11 @@ export async function atualizarSenha(id, senhaHash) {
   );
 }
 
-export async function criar({ nome, cnpj, email, senhaHash, perfil = 'cliente' }) {
+export async function criar({ nome, cnpj, email, telefone, senhaHash, perfil = 'cliente' }) {
   try {
-    const sql = `INSERT INTO usuario (nome_empresa, cnpj, email, senha, nivel_permissao)
-                 VALUES (?, ?, ?, ?, ?)`;
-    const [resultado] = await pool.query(sql, [nome, cnpj, email, senhaHash, perfil]);
+    const sql = `INSERT INTO usuario (nome_empresa, cnpj, email, telefone, senha, nivel_permissao)
+                 VALUES (?, ?, ?, ?, ?, ?)`;
+    const [resultado] = await pool.query(sql, [nome, cnpj, email, telefone, senhaHash, perfil]);
     return {
       id_usuario: resultado.insertId,
       nome_empresa: nome,
