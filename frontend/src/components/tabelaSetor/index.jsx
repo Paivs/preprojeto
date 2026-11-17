@@ -1,125 +1,97 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { API_BASE_URL } from "@/lib/api";
 import "./tabelaSetor.css";
 
-const setoresIniciais = [
-  {
-    id: 1,
-    nome: "Administrativo",
-    descricao: "Escritórios e salas de reunião",
-    consumo: 4992,
-    custo: 3744,
-    usuario: "0042",
-  },
-  {
-    id: 2,
-    nome: "Operacional",
-    descricao: "Produção e infraestrutura",
-    consumo: 3744,
-    custo: 2808,
-    usuario: "0042",
-  },
-  {
-    id: 3,
-    nome: "Tecnologia",
-    descricao: "Servidores e equipamentos de TI",
-    consumo: 2496,
-    custo: 1872,
-    usuario: "0042",
-  },
-  {
-    id: 4,
-    nome: "Áreas comuns",
-    descricao: "Circulação e espaços coletivos",
-    consumo: 1248,
-    custo: 936,
-    usuario: "0042",
-  },
-];
-
 const formatarMoeda = (valor) =>
-  Number(valor).toLocaleString("pt-BR", {
+  Number(valor || 0).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
-
 const formatarConsumo = (valor) =>
-  `${Number(valor).toLocaleString("pt-BR")} kWh`;
+  `${Number(valor || 0).toLocaleString("pt-BR")} kWh`;
 
-export default function TabelaSetores({
-  setores = setoresIniciais,
-  idUsuario = "0042",
-  onEditar,
-}) {
+export default function TabelaSetores() {
+  const [setores, setSetores] = useState([]);
   const [busca, setBusca] = useState("");
-  const [pagina, setPagina] = useState(1);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
 
-  const itensPorPagina = 7;
+  useEffect(() => {
+    let ativo = true;
+    async function carregar() {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        if (ativo) {
+          setErro(
+            "Sua sessão não foi encontrada. Entre novamente para ver seus setores."
+          );
+          setCarregando(false);
+        }
+        return;
+      }
+      try {
+        const resposta = await fetch(`${API_BASE_URL}/setores`, {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
+        });
+        const resultado = await resposta.json().catch(() => ({}));
+        if (!resposta.ok)
+          throw new Error(
+            resultado.erro || "Não foi possível carregar seus setores."
+          );
+        if (ativo)
+          setSetores(Array.isArray(resultado.dados) ? resultado.dados : []);
+      } catch (falha) {
+        if (ativo) setErro(falha.message || "Não foi possível conectar à API.");
+      } finally {
+        if (ativo) setCarregando(false);
+      }
+    }
+    function atualizar() {
+      setCarregando(true);
+      setErro("");
+      carregar();
+    }
+    carregar();
+    window.addEventListener("setores:atualizar", atualizar);
+    return () => {
+      ativo = false;
+      window.removeEventListener("setores:atualizar", atualizar);
+    };
+  }, []);
 
-  // Filtrar setores pelo usuário e pela busca
   const setoresFiltrados = useMemo(() => {
-    const termo = busca.trim().toLowerCase();
-
-    return setores.filter((setor) => {
-      const pertenceAoUsuario = String(setor.usuario) === String(idUsuario);
-
-      const correspondeBusca =
-        String(setor.nome || "")
-          .toLowerCase()
-          .includes(termo) ||
-        String(setor.descricao || "")
-          .toLowerCase()
-          .includes(termo);
-
-      return pertenceAoUsuario && correspondeBusca;
-    });
-  }, [setores, busca, idUsuario]);
-
-  // Calcular quantidade de páginas
-  const totalPaginas = Math.max(
-    1,
-    Math.ceil(setoresFiltrados.length / itensPorPagina)
-  );
-
-  // Garantir que a página atual continue válida
-  const paginaAtual = Math.min(pagina, totalPaginas);
-
-  // Selecionar setores da página atual
-  const setoresExibidos = setoresFiltrados.slice(
-    (paginaAtual - 1) * itensPorPagina,
-    paginaAtual * itensPorPagina
-  );
-
-  // Atualizar busca
-  function atualizarBusca(valor) {
-    setBusca(valor);
-    setPagina(1);
-  }
+    const termo = busca.trim().toLocaleLowerCase("pt-BR");
+    return setores.filter((setor) =>
+      `${setor.nome_setor} ${setor.descricao || ""}`
+        .toLocaleLowerCase("pt-BR")
+        .includes(termo)
+    );
+  }, [setores, busca]);
 
   return (
     <section className="tabela-setores">
       <header className="tabela-setores__topo">
         <div className="tabela-setores__titulo">
           <h2>Seus setores</h2>
-
           <p>
-            {setoresFiltrados.length} setores vinculados ao id_usuario:{" "}
-            {idUsuario}
+            {setores.length}{" "}
+            {setores.length === 1 ? "setor cadastrado" : "setores cadastrados"}
           </p>
         </div>
-
         <div className="tabela-setores__busca">
           <input
             type="search"
             placeholder="Buscar setor..."
             aria-label="Buscar setor"
             value={busca}
-            onChange={(e) => atualizarBusca(e.target.value)}
+            onChange={(e) => setBusca(e.target.value)}
           />
         </div>
       </header>
-
       <div className="tabela-setores__rolagem">
         <table>
           <thead>
@@ -128,78 +100,61 @@ export default function TabelaSetores({
               <th>Descrição</th>
               <th>Consumo global</th>
               <th>Custo energia</th>
-              <th>Usuário</th>
               <th className="coluna-acoes">Ações</th>
             </tr>
           </thead>
-
           <tbody>
-            {setoresExibidos.length > 0 ? (
-              setoresExibidos.map((setor) => (
-                <tr key={setor.id}>
-                  <td className="setor-nome">{setor.nome}</td>
-
-                  <td className="setor-descricao">{setor.descricao}</td>
-
-                  <td>{formatarConsumo(setor.consumo)}</td>
-
+            {carregando ? (
+              <tr>
+                <td colSpan={5} className="setor-vazio">
+                  Carregando setores...
+                </td>
+              </tr>
+            ) : erro ? (
+              <tr>
+                <td colSpan={5} className="setor-vazio setor-erro">
+                  {erro}
+                </td>
+              </tr>
+            ) : setoresFiltrados.length ? (
+              setoresFiltrados.map((setor) => (
+                <tr key={setor.id_setor}>
+                  <td className="setor-nome">{setor.nome_setor}</td>
+                  <td className="setor-descricao">
+                    {setor.descricao || "Sem descrição"}
+                  </td>
+                  <td>{formatarConsumo(setor.consumo_geral)}</td>
                   <td>{formatarMoeda(setor.custo)}</td>
-
-                  <td>{setor.usuario}</td>
-
                   <td className="coluna-acoes">
-                    <button
-                      type="button"
-                      className="setor-botao-editar"
-                      onClick={() => onEditar?.(setor)}
+                    <Link
+                      className="setor-botao-visualizar"
+                      href={`/userPages/setores/${setor.id_setor}`}
                     >
-                      Editar
+                      Visualizar{" "}
+                      <i className="bi bi-arrow-right" aria-hidden="true" />
+                    </Link>
+                    <button type="button" className="btn-excluir">
+                    <i className="bi bi-trash"></i>
                     </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="setor-vazio">
-                  Nenhum setor encontrado.
+                <td colSpan={5} className="setor-vazio">
+                  {setores.length
+                    ? "Nenhum setor corresponde à busca."
+                    : "Você ainda não cadastrou setores."}
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-
       <footer className="tabela-setores__rodape">
         <span>
-          Mostrando {setoresExibidos.length} de {setoresFiltrados.length}{" "}
-          setores
+          Mostrando {setoresFiltrados.length} de {setores.length} setores
         </span>
-
-        <nav className="setor-paginacao" aria-label="Paginação dos setores">
-          <button
-            type="button"
-            aria-label="Página anterior"
-            disabled={paginaAtual === 1}
-            onClick={() => setPagina((atual) => Math.max(1, atual - 1))}
-          >
-            ‹
-          </button>
-
-          <span>
-            {paginaAtual} / {totalPaginas}
-          </span>
-
-          <button
-            type="button"
-            aria-label="Próxima página"
-            disabled={paginaAtual >= totalPaginas}
-            onClick={() =>
-              setPagina((atual) => Math.min(totalPaginas, atual + 1))
-            }
-          >
-            ›
-          </button>
-        </nav>
       </footer>
     </section>
   );
