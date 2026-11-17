@@ -1,15 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/lib/api";
 import "./modalNovoCliente.css";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-
-export default function ModalNovoCliente({ onFechar, onSucesso }) {
-  const [empresa, setEmpresa] = useState("");
-  const [cnpj, setCnpj] = useState("");
-  const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState("");
+export default function ModalNovoCliente({ onFechar, onSucesso, contato = null }) {
+  const [empresa, setEmpresa] = useState(contato?.nome || "");
+  const [cnpj, setCnpj] = useState(contato?.cnpj || "");
+  const [email, setEmail] = useState(contato?.email || "");
+  const [telefone, setTelefone] = useState(contato?.telefone || "");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -29,19 +28,28 @@ export default function ModalNovoCliente({ onFechar, onSucesso }) {
     setEnviando(true);
 
     try {
-      const resposta = await fetch(`${apiUrl}/api/auth/registrar`, {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        setErro("Sua sessão não foi encontrada. Entre novamente como administrador.");
+        return;
+      }
+
+      const resposta = await fetch(`${API_BASE_URL}/usuarios`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome: empresa, cnpj, email, senha }),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ nome: empresa, cnpj, email, telefone, senha }),
       });
-      const resultado = await resposta.json();
+      const resultado = await resposta.json().catch(() => ({}));
 
       if (!resposta.ok) {
         setErro(resultado.erro || "Não foi possível cadastrar o cliente.");
         return;
       }
 
-      onSucesso({ empresa: empresa.trim(), email: email.trim() });
+      await onSucesso({ empresa: empresa.trim(), email: email.trim(), contato });
       onFechar();
     } catch {
       setErro("Não foi possível conectar ao servidor.");

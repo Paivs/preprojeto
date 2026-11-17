@@ -33,7 +33,7 @@ export default function Setores() {
             </button>
           </div>
           <div className="container-table">
-            <TabelaSetores />
+            <TabelaSetores setoresAdicionais={setoresAdicionais} />
           </div>
         </main>
       </div>

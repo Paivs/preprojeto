@@ -14,6 +14,7 @@ import { authRouter } from "./routes/AuthRoutes.js";
 import financeiroRoutes from "./routes/financeiroRoutes.js";
 import pagamentoRoutes from "./routes/pagamentoRoutes.js";
 import configuracaoAdminRoutes from "./routes/configuracaoAdminRoutes.js";
+import configuracaoUsuarioRoutes from "./routes/configuracaoUsuarioRoutes.js";
 
 const app = express();
 
@@ -56,6 +57,7 @@ app.use("/api/emails", autenticar, autorizarAdmin, emailRoutes);
 app.use("/api/financeiro", autenticar, autorizarAdmin, financeiroRoutes);
 app.use("/api/pagamentos", autenticar, autorizarAdmin, pagamentoRoutes);
 app.use("/api/configuracoes/admin", autenticar, autorizarAdmin, configuracaoAdminRoutes);
+app.use("/api/configuracoes/usuario", autenticar, configuracaoUsuarioRoutes);
 
 // Protegida: precisa de token E ser admin
 app.use("/api/usuarios", autenticar, autorizarAdmin, usuarioRoutes);

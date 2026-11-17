@@ -469,6 +469,41 @@
   border-color: var(--roxo-claro);
 }
 
+.perfil-link-configuracoes,
+.perfil-painel-rodape .perfil-botao-sair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  color: var(--cor-texto-secundario);
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+
+.perfil-link-configuracoes:hover {
+  color: var(--cor-texto);
+  border-color: var(--roxo-claro);
+}
+
+.perfil-painel-rodape .perfil-botao-sair:hover {
+  color: var(--cor-vermelho);
+  border-color: var(--cor-vermelho);
+  background: var(--vermelho-suave);
+}
+
+.perfil-link-configuracoes:focus-visible,
+.perfil-painel-rodape .perfil-botao-sair:focus-visible {
+  outline: 2px solid var(--roxo-claro);
+  outline-offset: 2px;
+}
+
 .perfil:focus-visible,
 .botao-icone:focus-visible,
 .perfil-painel button:focus-visible,

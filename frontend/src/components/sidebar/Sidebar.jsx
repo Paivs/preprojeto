@@ -71,6 +71,18 @@ export default function Sidebar() {
             </Link>
 
             <Link
+              href="/adminPages/contatos"
+              className={`menu-item ${
+                pathname === "/adminPages/contatos" ? "menu-item-ativo" : ""
+              }`}
+            >
+              <span>
+                <i className="bi bi-inbox"></i>
+              </span>
+              <span>Pedidos de contato</span>
+            </Link>
+
+            <Link
               href="/adminPages/financeiro"
               className={`menu-item ${
                 pathname === "/adminPages/financeiro" ? "menu-item-ativo" : ""

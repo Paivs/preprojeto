@@ -1,6 +1,15 @@
 import * as ContatoModel from '../models/ContatoModels.js';
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SITUACOES_ATUALIZAVEIS = new Set(['ignorado', 'convertido']);
+
+function validarId(idRecebido) {
+  const id = Number(idRecebido);
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new TypeError('ID do contato deve ser um número inteiro positivo.');
+  }
+  return id;
+}
 
 function validarTexto(valor, campo, { obrigatorio = false, maximo } = {}) {
   if (valor === undefined || valor === null || valor === '') {
@@ -46,4 +55,24 @@ export async function criar(dados = {}) {
   }
 
   return ContatoModel.criar(contato);
+}
+
+export async function listar() {
+  return ContatoModel.listar();
+}
+
+export async function atualizarSituacao(idRecebido, dados = {}) {
+  const id = validarId(idRecebido);
+  if (!SITUACOES_ATUALIZAVEIS.has(dados.situacao)) {
+    throw new TypeError('Situação deve ser "ignorado" ou "convertido".');
+  }
+
+  const atualizado = await ContatoModel.atualizarSituacao(id, dados.situacao);
+  if (!atualizado) {
+    const erro = new Error(`Contato ${id} não encontrado.`);
+    erro.status = 404;
+    throw erro;
+  }
+
+  return { id_contato: id, situacao: dados.situacao };
 }
