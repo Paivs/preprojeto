@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import ModalNovoCliente from "@/components/clientes/ModalNovoCliente";
@@ -206,14 +207,15 @@ export default function Clientes() {
                     <th>DISPOSITIVOS</th>
                     <th>CONSUMO TOTAL</th>
                     <th>STATUS DO PAGAMENTO</th>
+                    <th>AÇÕES</th>
                   </tr>
                 </thead>
                 <tbody>
                   {carregando ? (
-                    <tr><td colSpan={4} className="mensagem-tabela">Carregando clientes...</td></tr>
+                    <tr><td colSpan={5} className="mensagem-tabela">Carregando clientes...</td></tr>
                   ) : clientes.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="mensagem-tabela">
+                      <td colSpan={5} className="mensagem-tabela">
                         {erro ? "" : "Nenhum cliente encontrado."}
                       </td>
                     </tr>
@@ -237,6 +239,16 @@ export default function Clientes() {
                           <span className={`badge-status ${status.classe}`}>
                             <span aria-hidden="true">●</span> {status.texto}
                           </span>
+                        </td>
+                        <td>
+                          <Link
+                            className="btn-gerenciar-cliente"
+                            href={`/adminPages/clientes/${cliente.id_usuario}`}
+                            aria-label={`Editar ou excluir ${cliente.nome_empresa}`}
+                          >
+                            <i className="bi bi-pencil-square" aria-hidden="true"></i>
+                            Gerenciar
+                          </Link>
                         </td>
                       </tr>
                     );

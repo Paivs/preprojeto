@@ -335,6 +335,27 @@
   background-color: var(--cor-campo);
 }
 
+.btn-gerenciar-cliente {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 7px;
+  color: var(--cor-texto-secundario);
+  background: var(--cor-campo);
+  font-size: 0.8rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.btn-gerenciar-cliente:hover {
+  border-color: var(--cor-destaque);
+  color: var(--cor-destaque);
+  background: var(--roxo-suave);
+}
+
 .rodape-tabela {
   display: flex;
   justify-content: space-between;
