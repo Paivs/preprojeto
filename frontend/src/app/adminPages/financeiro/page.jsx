@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import CardIndicador from "@/components/CardIndicador";
@@ -20,39 +20,53 @@ export default function Financeiro() {
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(true);
 
-  useEffect(() => {
-    let ativo = true;
+  const [atualizando, setAtualizando] = useState(false);
+  const [atualizadoEm, setAtualizadoEm] = useState(null);
+  const requisicaoAtiva = useRef(false);
 
-    async function carregarResumo() {
-      try {
-        const token = sessionStorage.getItem("token");
-        if (!token) throw new Error("Sua sessão expirou. Entre novamente para ver os dados financeiros.");
+  const carregarResumo = useCallback(async () => {
+    if (requisicaoAtiva.current) return;
+    requisicaoAtiva.current = true;
+    setAtualizando(true);
 
-        const resposta = await fetch(`${API_BASE_URL}/financeiro/resumo`, {
-          headers: { Authorization: `Bearer ${token}` },
-          cache: "no-store",
-        });
-        const resultado = await resposta.json();
-        if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível carregar o resumo financeiro.");
-        if (ativo) {
-          setResumo(resultado.dados);
-          setErro("");
-        }
-      } catch (erroRequisicao) {
-        if (ativo) setErro(erroRequisicao.message || "Não foi possível conectar ao servidor.");
-      } finally {
-        if (ativo) setCarregando(false);
-      }
+    try {
+      const token = sessionStorage.getItem("token");
+      if (!token) throw new Error("Sua sess\u00e3o expirou. Entre novamente para ver os dados financeiros.");
+
+      const resposta = await fetch(`${API_BASE_URL}/financeiro/resumo?_atualizacao=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      const resultado = await resposta.json();
+      if (!resposta.ok) throw new Error(resultado.erro || "N\u00e3o foi poss\u00edvel carregar o resumo financeiro.");
+
+      setResumo(resultado.dados);
+      setAtualizadoEm(new Date());
+      setErro("");
+    } catch (erroRequisicao) {
+      setErro(erroRequisicao.message || "N\u00e3o foi poss\u00edvel conectar ao servidor.");
+    } finally {
+      requisicaoAtiva.current = false;
+      setCarregando(false);
+      setAtualizando(false);
     }
-
-    carregarResumo();
-    const intervalo = window.setInterval(carregarResumo, 15000);
-    return () => {
-      ativo = false;
-      window.clearInterval(intervalo);
-    };
   }, []);
 
+  useEffect(() => {
+    carregarResumo();
+    const atualizarAoVoltar = () => {
+      if (document.visibilityState === "visible") carregarResumo();
+    };
+    const intervalo = window.setInterval(atualizarAoVoltar, 5000);
+    document.addEventListener("visibilitychange", atualizarAoVoltar);
+    window.addEventListener("focus", atualizarAoVoltar);
+
+    return () => {
+      window.clearInterval(intervalo);
+      document.removeEventListener("visibilitychange", atualizarAoVoltar);
+      window.removeEventListener("focus", atualizarAoVoltar);
+    };
+  }, [carregarResumo]);
   const percentual = resumo?.percentualRecebido ?? 0;
   const variacao = resumo?.variacaoMensal;
   const dadosGrafico = [
@@ -72,6 +86,14 @@ export default function Financeiro() {
         <div className="container">
           {erro && <p className="financeiro-feedback erro" role="alert">{erro}</p>}
           {carregando && <p className="financeiro-feedback" role="status">Carregando resumo financeiro...</p>}
+
+          {!carregando && <div className="financeiro-atualizacao">
+            <span>{atualizadoEm ? `Atualizado \u00e0s ${atualizadoEm.toLocaleTimeString("pt-BR")}` : "Aguardando atualiza\u00e7\u00e3o"}</span>
+            <button type="button" onClick={carregarResumo} disabled={atualizando}>
+              <i className={`bi ${atualizando ? "bi-arrow-repeat" : "bi-arrow-clockwise"}`} aria-hidden="true" />
+              {atualizando ? "Atualizando..." : "Atualizar agora"}
+            </button>
+          </div>}
 
           <div className="topo-pag">
             <CardIndicador titulo="Total Recebido" valor={resumo ? formatarMoeda(resumo.totalRecebido) : "—"} icone="bi bi-cash-stack" numero="01" />
