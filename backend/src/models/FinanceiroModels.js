@@ -7,7 +7,7 @@ export async function obterResumo() {
       COALESCE(SUM(CASE WHEN status = 'pago' THEN valor ELSE 0 END), 0) AS total_recebido,
       COALESCE(SUM(CASE WHEN status = 'pago' AND data_pagamento >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01') THEN valor ELSE 0 END), 0) AS recebido_mes,
       COALESCE(SUM(CASE WHEN status = 'pago' AND data_pagamento >= DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH, '%Y-%m-01') AND data_pagamento < DATE_FORMAT(CURRENT_DATE, '%Y-%m-01') THEN valor ELSE 0 END), 0) AS recebido_mes_anterior,
-      COALESCE(SUM(CASE WHEN status IN ('nao_pago', 'atrasado') THEN 1 ELSE 0 END), 0) AS pagamentos_pendentes,
+      COUNT(CASE WHEN status IN ('nao_pago', 'atrasado') THEN 1 END) AS pagamentos_pendentes,
       COALESCE(SUM(CASE WHEN status = 'pago' THEN 1 ELSE 0 END), 0) AS quantidade_recebimentos
     FROM pagamento
   `);
