@@ -1,53 +1,85 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import "./relatorio.css";
 
-const registros = [
-  { data: "30/10/2026  18:30", setor: "Sala de estar", equipamento: "Ar-condicionado", consumo: 2.4, custo: 1.80, estado: "Normal" },
-  { data: "30/10/2026  17:00", setor: "Cozinha", equipamento: "Geladeira", consumo: 1.2, custo: 0.90, estado: "Normal" },
-  { data: "30/10/2026  15:30", setor: "Quarto principal", equipamento: "Lâmpadas LED", consumo: 0.6, custo: 0.45, estado: "Normal" },
-  { data: "29/10/2026  20:00", setor: "Sala de estar", equipamento: "TV e entretenimento", consumo: 1.8, custo: 1.35, estado: "Normal" },
-  { data: "29/10/2026  13:30", setor: "Lavanderia", equipamento: "Máquina de lavar", consumo: 3.1, custo: 2.33, estado: "Atenção" },
-  { data: "28/10/2026  19:00", setor: "Cozinha", equipamento: "Forno elétrico", consumo: 2.7, custo: 2.03, estado: "Normal" },
-  { data: "28/10/2026  11:00", setor: "Escritório", equipamento: "Computador", consumo: 1.1, custo: 0.83, estado: "Normal" },
-];
-
-const diasSemana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-const colunas = Array.from({ length: 30 }, (_, i) => i + 1);
-
-function intensidade(dia, coluna) {
-  const pico = coluna >= 10 && coluna <= 20 && dia >= 2 && dia <= 5;
-  return (dia * 7 + coluna * 11) % 13 < (pico ? 11 : 6)
-    ? Math.min(4, Math.floor(((dia * 3 + coluna * 5) % 15) / 3))
-    : 0;
-}
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 function formatarMoeda(valor) {
-  return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  return Number(valor || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function formatarConsumo(valor) {
+  return `${Number(valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kWh`;
 }
 
 export default function Relatorios() {
-  const [periodo, setPeriodo] = useState("30");
-  const [setor, setSetor] = useState("Todos os setores");
-  const [agrupamento, setAgrupamento] = useState("Dia a semana");
-  const [filtrosAplicados, setFiltrosAplicados] = useState({ periodo: "30", setor: "Todos os setores", agrupamento: "Dia a semana" });
+  const [setores, setSetores] = useState([]);
+  const [equipamentos, setEquipamentos] = useState([]);
+  const [setorSelecionado, setSetorSelecionado] = useState("todos");
   const [busca, setBusca] = useState("");
   const [ordemAsc, setOrdemAsc] = useState(false);
-  const [diaSelecionado, setDiaSelecionado] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
 
-  const linhas = useMemo(() => {
-    return registros
-      .filter((item) => filtrosAplicados.setor === "Todos os setores" || item.setor === filtrosAplicados.setor)
-      .filter((item) => `${item.data} ${item.setor} ${item.equipamento}`.toLowerCase().includes(busca.toLowerCase()))
-      .sort((a, b) => ordemAsc ? a.consumo - b.consumo : b.consumo - a.consumo);
-  }, [filtrosAplicados, busca, ordemAsc]);
+  const carregarDados = useCallback(async () => {
+    setCarregando(true);
+    setErro("");
+    try {
+      const token = sessionStorage.getItem("token");
+      if (!token) throw new Error("Sua sessão expirou. Entre novamente.");
+      const headers = { Authorization: `Bearer ${token}` };
+      const [respostaSetores, respostaEquipamentos] = await Promise.all([
+        fetch(`${API_URL}/api/setores`, { headers }),
+        fetch(`${API_URL}/api/equipamentos`, { headers }),
+      ]);
+      const [resultadoSetores, resultadoEquipamentos] = await Promise.all([
+        respostaSetores.json(), respostaEquipamentos.json(),
+      ]);
+      if (!respostaSetores.ok || !resultadoSetores.sucesso) {
+        throw new Error(resultadoSetores.erro || "Não foi possível carregar os setores.");
+      }
+      if (!respostaEquipamentos.ok || !resultadoEquipamentos.sucesso) {
+        throw new Error(resultadoEquipamentos.erro || "Não foi possível carregar os equipamentos.");
+      }
+      setSetores(resultadoSetores.dados);
+      setEquipamentos(resultadoEquipamentos.dados);
+    } catch (error) {
+      setErro(error.message || "Não foi possível carregar os dados do relatório.");
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
+
+  useEffect(() => { carregarDados(); }, [carregarDados]);
+
+  const linhas = useMemo(() => setores
+    .filter((setor) => setorSelecionado === "todos" || String(setor.id_setor) === setorSelecionado)
+    .map((setor) => {
+      const dispositivos = equipamentos.filter((equipamento) => Number(equipamento.id_setor) === Number(setor.id_setor));
+      return {
+        ...setor,
+        consumo_geral: Number(setor.consumo_geral || 0),
+        custo: Number(setor.custo || 0),
+        quantidade: dispositivos.length,
+        nomesEquipamentos: dispositivos.map((item) => item.nome_equipamento).join(", "),
+      };
+    })
+    .filter((item) => `${item.nome_setor} ${item.nomesEquipamentos}`.toLowerCase().includes(busca.trim().toLowerCase()))
+    .sort((a, b) => ordemAsc ? a.consumo_geral - b.consumo_geral : b.consumo_geral - a.consumo_geral),
+  [setores, equipamentos, setorSelecionado, busca, ordemAsc]);
+
+  const totais = useMemo(() => linhas.reduce((soma, item) => ({
+    consumo: soma.consumo + item.consumo_geral,
+    custo: soma.custo + item.custo,
+    dispositivos: soma.dispositivos + item.quantidade,
+  }), { consumo: 0, custo: 0, dispositivos: 0 }), [linhas]);
 
   function exportarCsv() {
-    const cabecalho = ["Data", "Setor", "Equipamento", "Consumo (kWh)", "Custo (R$)", "Status"];
-    const conteudo = [cabecalho, ...linhas.map((r) => [r.data, r.setor, r.equipamento, r.consumo.toFixed(2), r.custo.toFixed(2), r.estado])]
+    const cabecalho = ["Setor", "Equipamentos", "Quantidade de equipamentos", "Consumo acumulado (kWh)", "Custo acumulado (R$)"];
+    const conteudo = [cabecalho, ...linhas.map((item) => [item.nome_setor, item.nomesEquipamentos, item.quantidade, item.consumo_geral.toFixed(2), item.custo.toFixed(2)])]
       .map((linha) => linha.map((celula) => `"${String(celula).replaceAll('"', '""')}"`).join(";"))
       .join("\n");
     const url = URL.createObjectURL(new Blob(["\uFEFF", conteudo], { type: "text/csv;charset=utf-8" }));
@@ -58,11 +90,7 @@ export default function Relatorios() {
     URL.revokeObjectURL(url);
   }
 
-  function aplicarFiltros(evento) {
-    evento.preventDefault();
-    setFiltrosAplicados({ periodo, setor, agrupamento });
-    setDiaSelecionado(null);
-  }
+  const maiorConsumo = Math.max(...linhas.map((item) => item.consumo_geral), 0);
 
   return (
     <div className="pagina">
@@ -73,78 +101,59 @@ export default function Relatorios() {
           <div className="relatorios-cabecalho">
             <div>
               <span className="cabecalho-etiqueta">DESEMPENHO / RELATÓRIOS</span>
-              <h1>Dados que revelam oportunidades.</h1>
-              <p>Entenda seus padrões e tome decisões com mais precisão.</p>
+              <h1>Consumo por setor</h1>
+              <p>Acompanhe os dados acumulados registrados nos seus setores.</p>
             </div>
-            <button type="button" className="btn relatorio-exportar" onClick={exportarCsv}>
+            <button type="button" className="btn relatorio-exportar" onClick={exportarCsv} disabled={carregando || Boolean(erro)}>
               <i className="bi bi-download" aria-hidden="true" /> Exportar relatório
             </button>
           </div>
 
-          <form className="relatorio-filtros row g-3 align-items-end" onSubmit={aplicarFiltros}>
-            <label className="col-12 col-md-6 col-xl-3">
-              <span>Período</span>
-              <select className="form-select" value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
-                <option value="7">Últimos 7 dias</option><option value="30">01 out – 30 out, 2026</option><option value="90">Últimos 90 dias</option>
-              </select>
-            </label>
-            <label className="col-12 col-md-6 col-xl-3">
-              <span>Setor</span>
-              <select className="form-select" value={setor} onChange={(e) => setSetor(e.target.value)}>
-                {["Todos os setores", "Sala de estar", "Cozinha", "Quarto principal", "Lavanderia", "Escritório"].map((opcao) => <option key={opcao}>{opcao}</option>)}
-              </select>
-            </label>
-            <label className="col-12 col-md-6 col-xl-3">
-              <span>Agrupar por</span>
-              <select className="form-select" value={agrupamento} onChange={(e) => setAgrupamento(e.target.value)}>
-                <option>Dia a semana</option><option>Por dia</option><option>Por mês</option>
-              </select>
-            </label>
-            <div className="col-12 col-md-6 col-xl-3">
-              <button className="btn relatorio-aplicar w-100" type="submit">Aplicar filtros</button>
-            </div>
-          </form>
+          {erro && <div className="relatorio-mensagem erro" role="alert">{erro}<button type="button" onClick={carregarDados}>Tentar novamente</button></div>}
 
-          <section className="relatorio-painel heatmap-painel" aria-labelledby="heatmap-titulo">
+          <section className="relatorio-resumo" aria-label="Resumo do consumo">
+            <article><span>Consumo acumulado</span><strong>{formatarConsumo(totais.consumo)}</strong></article>
+            <article><span>Custo acumulado</span><strong>{formatarMoeda(totais.custo)}</strong></article>
+            <article><span>Equipamentos</span><strong>{totais.dispositivos.toLocaleString("pt-BR")}</strong></article>
+          </section>
+
+          <section className="relatorio-painel relatorio-grafico" aria-labelledby="grafico-titulo">
             <div className="relatorio-painel-topo">
-              <div><h2 id="heatmap-titulo">Quando seu consumo é maior?</h2><p>Mapa de consumo por hora e dia da semana · Outubro de 2026</p></div>
-              <span className="heatmap-aviso"><i className="bi bi-lightning-charge-fill" /> Pico de consumo: 16h às 21h</span>
+              <div><h2 id="grafico-titulo">Consumo acumulado por setor</h2><p>Comparação com base nos valores cadastrados em cada setor.</p></div>
             </div>
-            <div className="heatmap-scroll">
-              <div className="heatmap-grid" role="grid" aria-label="Mapa de calor do consumo de energia por dia">
-                <span className="heatmap-vazio" />
-                {colunas.map((coluna) => <span key={`h${coluna}`} className="heatmap-coluna-label">{coluna % 5 === 0 || coluna === 1 ? coluna : ""}</span>)}
-                {diasSemana.map((dia, linha) => (
-                  <div className="heatmap-linha" role="row" key={dia}>
-                    <span className="heatmap-dia">{dia}</span>
-                    {colunas.map((coluna) => {
-                      const nivel = intensidade(linha, coluna);
-                      const selecionado = diaSelecionado?.linha === linha && diaSelecionado?.coluna === coluna;
-                      return <button type="button" key={coluna} className={`heatmap-celula nivel-${nivel}${selecionado ? " selecionada" : ""}`} aria-label={`${dia}, ${coluna} de outubro, consumo ${nivel + 1}`} aria-pressed={selecionado} onClick={() => setDiaSelecionado({ linha, coluna })} title={`${dia}, ${coluna} de outubro · ${nivel < 2 ? "baixo" : nivel < 4 ? "moderado" : "alto"}`} />;
-                    })}
+            {carregando ? <p className="relatorio-estado">Carregando relatório...</p>
+              : !linhas.length ? <p className="relatorio-estado">Nenhum setor encontrado para os filtros selecionados.</p>
+                : <div className="relatorio-barras">{linhas.map((item) => (
+                  <div className="relatorio-barra-linha" key={item.id_setor}>
+                    <span title={item.nome_setor}>{item.nome_setor}</span>
+                    <div className="relatorio-barra-fundo"><div style={{ width: `${maiorConsumo ? (item.consumo_geral / maiorConsumo) * 100 : 0}%` }} /></div>
+                    <strong>{formatarConsumo(item.consumo_geral)}</strong>
                   </div>
-                ))}
-              </div>
-            </div>
-            {diaSelecionado && <div className="heatmap-selecao"><i className="bi bi-calendar-check" /> {diasSemana[diaSelecionado.linha]}, {diaSelecionado.coluna} de outubro: <strong>{(2.1 + intensidade(diaSelecionado.linha, diaSelecionado.coluna) * 1.35).toFixed(1).replace(".", ",")} kWh</strong><button type="button" aria-label="Limpar seleção" onClick={() => setDiaSelecionado(null)}><i className="bi bi-x-lg" /></button></div>}
-            <div className="heatmap-rodape"><span>Dados consolidados por hora.</span><div className="heatmap-legenda"><span>Menor consumo</span>{[0, 1, 2, 3, 4].map((nivel) => <i key={nivel} className={`heatmap-legenda-cor nivel-${nivel}`} />)}<span>Maior</span></div></div>
+                ))}</div>}
           </section>
 
           <section className="relatorio-painel tabela-painel" aria-labelledby="tabela-titulo">
             <div className="relatorio-painel-topo tabela-topo">
-              <div><h2 id="tabela-titulo">Dados de consumo</h2><p>Registros detalhados por setor e equipamento</p></div>
-              <label className="relatorio-busca"><i className="bi bi-search" /><input type="search" value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar dados" aria-label="Buscar nos dados" /></label>
+              <div><h2 id="tabela-titulo">Detalhamento por setor</h2><p>Consumo, custo e equipamentos vinculados.</p></div>
+              <div className="relatorio-controles">
+                <label className="relatorio-filtro-setor"><span className="visually-hidden">Filtrar por setor</span>
+                  <select value={setorSelecionado} onChange={(event) => setSetorSelecionado(event.target.value)}>
+                    <option value="todos">Todos os setores</option>
+                    {setores.map((item) => <option key={item.id_setor} value={String(item.id_setor)}>{item.nome_setor}</option>)}
+                  </select>
+                </label>
+                <label className="relatorio-busca"><i className="bi bi-search" /><input type="search" value={busca} onChange={(event) => setBusca(event.target.value)} placeholder="Buscar setor ou equipamento" aria-label="Buscar setor ou equipamento" /></label>
+              </div>
             </div>
             <div className="table-responsive relatorio-tabela-wrap">
               <table className="table relatorio-tabela">
-                <thead><tr><th>Data / hora</th><th>Setor</th><th>Equipamento</th><th><button type="button" className="relatorio-ordenar" onClick={() => setOrdemAsc((asc) => !asc)}>Consumo <i className={`bi ${ordemAsc ? "bi-sort-up" : "bi-sort-down"}`} /></button></th><th>Custo</th><th>Status</th></tr></thead>
-                <tbody>{linhas.map((item) => <tr key={`${item.data}-${item.equipamento}`}><td>{item.data}</td><td>{item.setor}</td><td>{item.equipamento}</td><td>{item.consumo.toFixed(2).replace(".", ",")} kWh</td><td>{formatarMoeda(item.custo)}</td><td><span className={`relatorio-status ${item.estado === "Atenção" ? "status-atencao" : ""}`}><i />{item.estado}</span></td></tr>)}
-                  {!linhas.length && <tr><td className="relatorio-vazio" colSpan="6">Nenhum registro encontrado para esses filtros.</td></tr>}
+                <thead><tr><th>Setor</th><th>Equipamentos</th><th><button type="button" className="relatorio-ordenar" onClick={() => setOrdemAsc((atual) => !atual)}>Consumo acumulado <i className={`bi ${ordemAsc ? "bi-sort-up" : "bi-sort-down"}`} /></button></th><th>Custo acumulado</th></tr></thead>
+                <tbody>{linhas.map((item) => <tr key={item.id_setor}><td>{item.nome_setor}</td><td>{item.quantidade}</td><td>{formatarConsumo(item.consumo_geral)}</td><td>{formatarMoeda(item.custo)}</td></tr>)}
+                  {!carregando && !erro && !linhas.length && <tr><td className="relatorio-vazio" colSpan="4">Nenhum registro encontrado para esses filtros.</td></tr>}
                 </tbody>
               </table>
             </div>
-            <div className="tabela-rodape"><span>Exibindo {linhas.length} de {registros.length} registros</span><div className="tabela-paginacao"><button type="button" aria-label="Página anterior" disabled><i className="bi bi-chevron-left" /></button><button type="button" className="pagina-atual">1</button><button type="button">2</button><button type="button">3</button><span>…</span><button type="button">10</button><button type="button" aria-label="Próxima página"><i className="bi bi-chevron-right" /></button><select aria-label="Registros por página" defaultValue="10"><option value="10">10</option><option value="25">25</option><option value="50">50</option></select></div></div>
-            <div className="relatorio-nota">Valores de consumo representam uma estimativa baseada nos dados de dispositivos.</div>
+            <div className="relatorio-nota">O sistema ainda não armazena medições históricas. Estes valores refletem os acumulados cadastrados atualmente por setor.</div>
           </section>
         </main>
       </div>

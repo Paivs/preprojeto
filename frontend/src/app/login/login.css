@@ -221,3 +221,9 @@
   opacity: 1;
   color: var(--roxo);
 }
+
+.mensagem-erro {
+  margin-top: 1rem;
+  font-size: .7rem;
+  color: var(--cor-vermelho);
+}
