@@ -7,6 +7,7 @@ export default class Usuario {
     nome_empresa,
     cnpj,
     email,
+    telefone = null,
     nivel_permissao = "cliente",
     consumo_total = 0,
     consumo_maximo = 0,
@@ -40,16 +41,15 @@ export default class Usuario {
     if (!PERFIS_PERMITIDOS.has(nivel_permissao)) {
       throw new TypeError('nivel_permissao deve ser "admin" ou "cliente".');
     }
-    if (telefone !== null && (typeof telefone !== 'string' || telefone.trim().length > 20)) {
-      throw new TypeError('Telefone deve ter no maximo 20 caracteres.');
+    if (telefone !== null && (typeof telefone !== "string" || telefone.trim().length > 20)) {
+      throw new TypeError("Telefone deve ter no maximo 20 caracteres.");
     }
-
     Object.assign(this, {
       ...(id_usuario === undefined ? {} : { id_usuario }),
       nome_empresa: nome_empresa.trim(),
       cnpj: cnpj.trim(),
       email: email.trim().toLowerCase(),
-      telefone: typeof telefone === 'string' ? telefone.trim() || null : null,
+      telefone: typeof telefone === "string" ? telefone.trim() || null : null,
       nivel_permissao,
       consumo_total: validarConsumo(consumo_total, "consumo_total"),
       consumo_maximo: validarConsumo(consumo_maximo, "consumo_maximo"),
