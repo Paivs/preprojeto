@@ -8,7 +8,7 @@ export default function PainelNovoSetor({ onFechar, onCriado }) {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [consumo, setConsumo] = useState("0");
-  const [custo, setCusto] = useState("0");
+  const [tarifaEnergia, setTarifaEnergia] = useState("0");
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
 
@@ -40,7 +40,7 @@ export default function PainelNovoSetor({ onFechar, onCriado }) {
           nome_setor: nome.trim(),
           descricao: descricao.trim() || null,
           consumo_geral: Number(consumo || 0),
-          custo: Number(custo || 0),
+          tarifa_energia: Number(tarifaEnergia || 0),
         }),
       });
       const resultado = await resposta.json().catch(() => ({}));
@@ -119,20 +119,22 @@ export default function PainelNovoSetor({ onFechar, onCriado }) {
               />
             </label>
             <label>
-              Custo de energia (R$)
+              Tarifa de energia (R$/kWh)
               <input
                 type="number"
                 min="0"
                 max="99999999.99"
-                step="0.01"
-                value={custo}
-                onChange={(e) => setCusto(e.target.value)}
+                step="0.000001"
+                value={tarifaEnergia}
+                onChange={(e) => setTarifaEnergia(e.target.value)}
               />
             </label>
           </div>
           <p className="setor-painel-ajuda">
-            Consumo e custo começam em zero e podem ser atualizados quando
-            houver dados.
+            Custo calculado: {(Number(consumo || 0) * Number(tarifaEnergia || 0)).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}. Use consumo × tarifa por kWh.
           </p>
           {erro && (
             <p className="setor-painel-erro" role="alert">

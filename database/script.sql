@@ -19,6 +19,7 @@ CREATE TABLE setor (
     nome_setor VARCHAR(100) NOT NULL,
     descricao TEXT,
     consumo_geral DECIMAL(10, 2) DEFAULT 0.00,
+    tarifa_energia DECIMAL(24, 12) NOT NULL DEFAULT 0.000000000000,
     custo_energia DECIMAL(10, 2) DEFAULT 0.00,
     id_usuario INT NOT NULL,
     CONSTRAINT fk_setor_usuario FOREIGN KEY (id_usuario) 
