@@ -18,6 +18,15 @@ function validarValor(valor, campo, padrao = 0) {
   return Math.round(numero * 100) / 100;
 }
 
+function validarTarifa(valor, campo, padrao = 0) {
+  if (valor === undefined || valor === null || valor === '') return padrao;
+  const numero = Number(valor);
+  if (!Number.isFinite(numero) || numero < 0 || numero > 99999999.99) {
+    throw new TypeError(`${campo} deve ser um número entre 0 e 99999999.99.`);
+  }
+  return Number(numero.toFixed(12));
+}
+
 function validarDados(dados = {}) {
   const nome = typeof dados.nome_setor === 'string' ? dados.nome_setor.trim() : '';
   if (!nome) throw new TypeError('Informe o nome do setor.');
@@ -29,11 +38,30 @@ function validarDados(dados = {}) {
   }
   if (typeof descricao === 'string') descricao = descricao.trim() || null;
 
+  const consumo = validarValor(dados.consumo_geral, 'Consumo geral');
+  let tarifaEnergia;
+  if (dados.tarifa_energia !== undefined) {
+    tarifaEnergia = validarTarifa(dados.tarifa_energia, 'Tarifa de energia');
+  } else {
+    const custoAnterior = validarValor(dados.custo, 'Custo de energia');
+    if (consumo === 0 && custoAnterior > 0) {
+      throw new TypeError('Informe consumo maior que zero para calcular a tarifa pelo custo legado.');
+    }
+    tarifaEnergia = consumo > 0
+      ? Number((custoAnterior / consumo).toFixed(12))
+      : 0;
+  }
+  const custoCalculado = consumo * tarifaEnergia;
+  if (!Number.isFinite(custoCalculado) || custoCalculado > 99999999.99) {
+    throw new TypeError('O custo calculado deve ser menor ou igual a 99999999.99.');
+  }
+
   return {
     nome_setor: nome,
     descricao,
-    consumo_geral: validarValor(dados.consumo_geral, 'Consumo geral'),
-    custo: validarValor(dados.custo, 'Custo de energia')
+    consumo_geral: consumo,
+    tarifa_energia: tarifaEnergia,
+    custo: Math.round((custoCalculado + Number.EPSILON) * 100) / 100
   };
 }
 

@@ -1,165 +1,250 @@
+"use client";
+
 import Link from "next/link";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
+import { API_BASE_URL } from "@/lib/api";
 import "./userDashboard.css";
 
-const indicadores = [
-  {
-    titulo: "Consumo de hoje",
-    valor: "28,4",
-    unidade: "kWh",
-    variacao: "12,8%",
-    descricao: "em relação a ontem",
-    icone: "bi-lightning-charge",
-    cor: "roxo",
-    tendencia: "queda",
-  },
-  {
-    titulo: "Economia no mês",
-    valor: "R$ 428",
-    unidade: "",
-    variacao: "18,2%",
-    descricao: "em relação ao mês passado",
-    icone: "bi-piggy-bank",
-    cor: "verde",
-    tendencia: "alta",
-  },
-  {
-    titulo: "Consumo médio",
-    valor: "6,2",
-    unidade: "kW",
-    variacao: "4,6%",
-    descricao: "em relação ao mês passado",
-    icone: "bi-speedometer2",
-    cor: "amarelo",
-    tendencia: "queda",
-  },
-  {
-    titulo: "Emissões evitadas",
-    valor: "18,6",
-    unidade: "kg CO₂",
-    variacao: "9,4%",
-    descricao: "a menos neste mês",
-    icone: "bi-tree",
-    cor: "azul",
-    tendencia: "alta",
-  },
-];
+const CORES_GRAFICO = ["#914ff0", "#4b70fc", "#e8b547", "#39a981", "#e77f5d"];
 
-const dispositivos = [
-  {
-    nome: "Ar-condicionado",
-    local: "Sala de estar",
-    consumo: "1,80",
-    icone: "bi-snow",
-    estado: "Ligado",
-  },
-  {
-    nome: "Aquecedor solar",
-    local: "Área externa",
-    consumo: "0,90",
-    icone: "bi-sun",
-    estado: "Ligado",
-  },
-  {
-    nome: "Iluminação",
-    local: "Casa toda",
-    consumo: "0,40",
-    icone: "bi-lightbulb",
-    estado: "Automático",
-  },
-];
+function numero(valor) {
+  const convertido = Number(valor);
+  return Number.isFinite(convertido) ? convertido : 0;
+}
 
-function Indicador({ indicador }) {
+function formatarNumero(valor) {
+  return numero(valor).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function formatarMoeda(valor) {
+  return numero(valor).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
+
+function obterFaixa(equipamento) {
+  const minimo = equipamento.consumo_minimo == null || equipamento.consumo_minimo === ""
+    ? null
+    : Number(equipamento.consumo_minimo);
+  const maximo = equipamento.consumo_maximo == null || equipamento.consumo_maximo === ""
+    ? null
+    : Number(equipamento.consumo_maximo);
+  const minimoValido = Number.isFinite(minimo);
+  const maximoValido = Number.isFinite(maximo);
+
+  if (!minimoValido && !maximoValido) return "Não informado";
+  if (!minimoValido) return `Até ${formatarNumero(maximo)} kWh`;
+  if (!maximoValido) return `A partir de ${formatarNumero(minimo)} kWh`;
+  return `${formatarNumero(minimo)} a ${formatarNumero(maximo)} kWh`;
+}
+
+function classeStatus(status) {
+  const valor = String(status || "").toLocaleLowerCase("pt-BR");
+  if (valor.includes("alerta") || valor.includes("atenção")) return "atencao";
+  if (valor.includes("inativo") || valor.includes("desligado")) return "desligado";
+  if (valor.includes("ativo")) return "normal";
+  return "desconhecido";
+}
+
+function iconeEquipamento(tipo) {
+  const valor = String(tipo || "").toLocaleLowerCase("pt-BR");
+  if (valor.includes("climat") || valor.includes("refrig")) return "bi-snow";
+  if (valor.includes("ilum")) return "bi-lightbulb";
+  if (valor.includes("aquec")) return "bi-thermometer-sun";
+  if (valor.includes("transporte")) return "bi-truck";
+  if (valor.includes("tecnologia") || valor.includes("servidor")) return "bi-hdd-network";
+  return "bi-lightning-charge";
+}
+
+function Indicador({ titulo, valor, unidade, descricao, icone, cor }) {
   return (
     <article className="indicador-dashboard">
       <div className="indicador-dashboard-topo">
-        <span
-          className={`indicador-dashboard-icone indicador-${indicador.cor}`}
-        >
-          <i className={`bi ${indicador.icone}`} aria-hidden="true" />
-        </span>
-        <span
-          className={`indicador-variacao indicador-variacao-${indicador.tendencia}`}
-        >
-          <i
-            className={`bi ${
-              indicador.tendencia === "alta"
-                ? "bi-arrow-up-right"
-                : "bi-arrow-down-right"
-            }`}
-          />
-          {indicador.variacao}
+        <span className={`indicador-dashboard-icone indicador-${cor}`}>
+          <i className={`bi ${icone}`} aria-hidden="true" />
         </span>
       </div>
-      <span className="indicador-dashboard-titulo">{indicador.titulo}</span>
+      <span className="indicador-dashboard-titulo">{titulo}</span>
       <strong className="indicador-dashboard-valor">
-        {indicador.valor}
-        <small>{indicador.unidade && ` ${indicador.unidade}`}</small>
+        {valor}
+        {unidade && <small> {unidade}</small>}
       </strong>
-      <span className="indicador-dashboard-descricao">
-        {indicador.descricao}
-      </span>
+      <span className="indicador-dashboard-descricao">{descricao}</span>
     </article>
   );
 }
 
-function GraficoSemanal() {
+function GraficoConsumo({ setores }) {
+  const maiorConsumo = Math.max(...setores.map((setor) => setor.consumo), 0);
+
+  if (!setores.length) {
+    return <p className="dashboard-estado-vazio">Nenhum setor cadastrado.</p>;
+  }
+
   return (
-    <div className="grafico-dashboard">
-      <div className="grafico-dashboard-eixo-y" aria-hidden="true">
-        <span>40</span>
-        <span>30</span>
-        <span>20</span>
-        <span>10</span>
-        <span>0</span>
-      </div>
-      <svg
-        viewBox="0 0 700 210"
-        preserveAspectRatio="none"
-        role="img"
-        aria-label="Consumo de energia ao longo dos últimos sete dias"
-      >
-        <defs>
-          <linearGradient id="area-consumo" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#914ff0" stopOpacity=".26" />
-            <stop offset="100%" stopColor="#914ff0" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        {[20, 62, 104, 146, 188].map((y) => (
-          <line
-            key={y}
-            x1="0"
-            y1={y}
-            x2="700"
-            y2={y}
-            className="grafico-dashboard-grade"
-          />
-        ))}
-        <path
-          d="M0 94 C35 90 45 62 88 72 S143 130 188 117 S245 84 288 94 S336 147 388 128 S440 55 488 70 S545 105 588 89 S651 52 700 60 L700 188 L0 188Z"
-          fill="url(#area-consumo)"
-        />
-        <path
-          d="M0 94 C35 90 45 62 88 72 S143 130 188 117 S245 84 288 94 S336 147 388 128 S440 55 488 70 S545 105 588 89 S651 52 700 60"
-          className="grafico-dashboard-linha"
-        />
-        <circle cx="488" cy="70" r="5" className="grafico-dashboard-ponto" />
-      </svg>
-      <div className="grafico-dashboard-eixo-x" aria-hidden="true">
-        <span>Seg</span>
-        <span>Ter</span>
-        <span>Qua</span>
-        <span>Qui</span>
-        <span>Sex</span>
-        <span>Sáb</span>
-        <span>Dom</span>
-      </div>
+    <div className="grafico-setores-dashboard">
+      {setores.map((setor) => {
+        const percentual = maiorConsumo > 0 ? (setor.consumo / maiorConsumo) * 100 : 0;
+        return (
+          <div className="grafico-setor-dashboard" key={setor.id_setor}>
+            <div className="grafico-setor-topo-dashboard">
+              <span title={setor.nome_setor}>{setor.nome_setor}</span>
+              <strong>{formatarNumero(setor.consumo)} kWh</strong>
+            </div>
+            <div
+              className="grafico-setor-fundo-dashboard"
+              role="meter"
+              aria-label={`Consumo informado em ${setor.nome_setor}`}
+              aria-valuenow={setor.consumo}
+              aria-valuemin="0"
+              aria-valuemax={maiorConsumo || 1}
+            >
+              <span style={{ width: `${percentual}%` }} />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
+function gradienteCustos(setores, total) {
+  if (!total) return "conic-gradient(var(--cor-borda) 0 100%)";
+
+  let inicio = 0;
+  const faixas = setores.map((setor, indice) => {
+    const fim = indice === setores.length - 1
+      ? 100
+      : inicio + (setor.custo / total) * 100;
+    const faixa = `${CORES_GRAFICO[indice % CORES_GRAFICO.length]} ${inicio}% ${fim}%`;
+    inicio = fim;
+    return faixa;
+  });
+
+  return `conic-gradient(from -90deg, ${faixas.join(", ")})`;
+}
+
 export default function UserDashboard() {
+  const [setores, setSetores] = useState([]);
+  const [equipamentos, setEquipamentos] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [atualizando, setAtualizando] = useState(false);
+  const [erro, setErro] = useState("");
+  const [ultimaAtualizacao, setUltimaAtualizacao] = useState(null);
+  const dadosCarregados = useRef(false);
+
+  const carregarDados = useCallback(async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      setErro("Sua sessão não foi encontrada. Entre novamente para ver o dashboard.");
+      setCarregando(false);
+      return;
+    }
+
+    if (dadosCarregados.current) setAtualizando(true);
+    else setCarregando(true);
+    setErro("");
+
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      const [respostaSetores, respostaEquipamentos] = await Promise.all([
+        fetch(`${API_BASE_URL}/setores`, { headers, cache: "no-store" }),
+        fetch(`${API_BASE_URL}/equipamentos`, { headers, cache: "no-store" }),
+      ]);
+      const [resultadoSetores, resultadoEquipamentos] = await Promise.all([
+        respostaSetores.json().catch(() => ({})),
+        respostaEquipamentos.json().catch(() => ({})),
+      ]);
+
+      if (!respostaSetores.ok || !resultadoSetores.sucesso) {
+        throw new Error(resultadoSetores.erro || "Não foi possível carregar os setores.");
+      }
+      if (!respostaEquipamentos.ok || !resultadoEquipamentos.sucesso) {
+        throw new Error(resultadoEquipamentos.erro || "Não foi possível carregar os equipamentos.");
+      }
+
+      setSetores(Array.isArray(resultadoSetores.dados) ? resultadoSetores.dados : []);
+      setEquipamentos(Array.isArray(resultadoEquipamentos.dados) ? resultadoEquipamentos.dados : []);
+      setUltimaAtualizacao(new Date());
+      dadosCarregados.current = true;
+    } catch (erroRequisicao) {
+      setErro(erroRequisicao.message || "Não foi possível conectar à API.");
+    } finally {
+      setCarregando(false);
+      setAtualizando(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    carregarDados();
+    const intervalo = window.setInterval(carregarDados, 60_000);
+    return () => window.clearInterval(intervalo);
+  }, [carregarDados]);
+
+  const setoresComDados = useMemo(() => setores.map((setor) => ({
+    ...setor,
+    consumo: numero(setor.consumo_geral),
+    custo: numero(setor.custo),
+  })), [setores]);
+
+  const totalConsumo = setoresComDados.reduce((total, setor) => total + setor.consumo, 0);
+  const totalCusto = setoresComDados.reduce((total, setor) => total + setor.custo, 0);
+  const setoresConsumo = [...setoresComDados]
+    .sort((a, b) => b.consumo - a.consumo)
+    .slice(0, 5);
+  const setoresCustoOrdenados = [...setoresComDados]
+    .filter((setor) => setor.custo > 0)
+    .sort((a, b) => b.custo - a.custo);
+  const setoresCusto = setoresCustoOrdenados.slice(0, 4);
+  const outrosCustos = setoresCustoOrdenados.slice(4).reduce((total, setor) => total + setor.custo, 0);
+  const distribuicaoCustos = outrosCustos > 0
+    ? [...setoresCusto, { id_setor: "outros", nome_setor: "Outros setores", custo: outrosCustos }]
+    : setoresCusto;
+  const equipamentosDestaque = [...equipamentos]
+    .sort((a, b) => numero(b.consumo_maximo) - numero(a.consumo_maximo))
+    .slice(0, 3);
+
+  const indicadores = [
+    {
+      titulo: "Consumo acumulado",
+      valor: formatarNumero(totalConsumo),
+      unidade: "kWh",
+      descricao: "Soma dos valores informados por setor",
+      icone: "bi-lightning-charge",
+      cor: "roxo",
+    },
+    {
+      titulo: "Custo acumulado",
+      valor: formatarMoeda(totalCusto),
+      unidade: "",
+      descricao: "Soma dos custos cadastrados por setor",
+      icone: "bi-currency-dollar",
+      cor: "verde",
+    },
+    {
+      titulo: "Setores cadastrados",
+      valor: setores.length.toLocaleString("pt-BR"),
+      unidade: "",
+      descricao: "Vinculados à sua conta",
+      icone: "bi-grid",
+      cor: "amarelo",
+    },
+    {
+      titulo: "Equipamentos cadastrados",
+      valor: equipamentos.length.toLocaleString("pt-BR"),
+      unidade: "",
+      descricao: "Vinculados aos seus setores",
+      icone: "bi-cpu",
+      cor: "azul",
+    },
+  ];
+
   return (
     <div className="pagina">
       <Sidebar />
@@ -170,25 +255,36 @@ export default function UserDashboard() {
         <main className="conteudo-pagina dashboard-pagina">
           <div className="cabecalho-pagina">
             <div>
-              <span className="cabecalho-etiqueta">
-                ACOMPANHAMENTO DE ENERGIA
-              </span>
+              <span className="cabecalho-etiqueta">ACOMPANHAMENTO DE ENERGIA</span>
               <h1>Visão Geral</h1>
-              <p>Monitore o consumo e a economia de energia da sua casa.</p>
+              <p>Dados cadastrados nos seus setores e equipamentos.</p>
             </div>
-            <button type="button" className="botao-periodo-dashboard">
-              <i className="bi bi-calendar3" /> Últimos 7 dias{" "}
-              <i className="bi bi-chevron-down" />
+            <button
+              type="button"
+              className="botao-periodo-dashboard"
+              onClick={carregarDados}
+              disabled={carregando || atualizando}
+            >
+              <i className={`bi ${atualizando ? "bi-arrow-repeat" : "bi-arrow-clockwise"}`} aria-hidden="true" />
+              {ultimaAtualizacao
+                ? `Atualizado às ${ultimaAtualizacao.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`
+                : "Atualizar dados"}
             </button>
           </div>
 
-          <section
-            className="row g-3 g-xl-4 indicadores-dashboard"
-            aria-label="Resumo do consumo"
-          >
+          {erro && (
+            <div className="dashboard-mensagem-erro" role="alert">
+              <span>{erro}</span>
+              <button type="button" onClick={carregarDados} disabled={atualizando}>
+                Tentar novamente
+              </button>
+            </div>
+          )}
+
+          <section className="row g-3 g-xl-4 indicadores-dashboard" aria-label="Resumo dos dados cadastrados">
             {indicadores.map((indicador) => (
               <div className="col-12 col-sm-6 col-xl-3" key={indicador.titulo}>
-                <Indicador indicador={indicador} />
+                <Indicador {...indicador} valor={carregando ? "—" : indicador.valor} />
               </div>
             ))}
           </section>
@@ -198,20 +294,17 @@ export default function UserDashboard() {
               <article className="painel-dashboard painel-consumo-dashboard">
                 <div className="topo-painel-dashboard">
                   <div>
-                    <h2>Consumo de energia</h2>
-                    <p>Consumo diário ao longo da semana</p>
+                    <h2>Consumo informado por setor</h2>
+                    <p>Valores acumulados cadastrados no banco de dados</p>
                   </div>
                   <span className="consumo-total-dashboard">
-                    184,6 <small>kWh</small>
+                    {carregando ? "—" : formatarNumero(totalConsumo)} <small>kWh</small>
                   </span>
                 </div>
-                <div className="resumo-grafico-dashboard">
-                  <span className="indicador-variacao indicador-variacao-queda">
-                    <i className="bi bi-arrow-down-right" /> 8,4%
-                  </span>
-                  <span>em relação à semana passada</span>
-                </div>
-                <GraficoSemanal />
+                <GraficoConsumo setores={carregando ? [] : setoresConsumo} />
+                {!carregando && setoresComDados.length > 5 && (
+                  <p className="dashboard-nota-grafico">Exibindo os 5 setores com maior consumo informado.</p>
+                )}
               </article>
             </div>
 
@@ -219,56 +312,38 @@ export default function UserDashboard() {
               <article className="painel-dashboard painel-meta-dashboard">
                 <div className="topo-painel-dashboard">
                   <div>
-                    <h2>Distribuição</h2>
-                    <p>Economia por setor</p>
-                  </div>
-                  <button type="button" className="menu-grafico-dashboard" aria-label="Mais opções do gráfico">
-                    <i className="bi bi-three-dots" />
-                  </button>
-                </div>
-                <div className="grafico-rosca-dashboard" role="img" aria-label="Distribuição da economia: climatização 38%, equipamentos 27%, iluminação 21%, outros 14%">
-                  <div className="grafico-rosca-centro">
-                    <strong>R$ 428</strong>
-                    <span>economizados</span>
-                  </div>
-                  <span className="meta-icone-dashboard">
-                    <i className="bi bi-bullseye" />
-                  </span>
-                </div>
-                <div
-                  className="meta-progresso-dashboard"
-                  role="img"
-                  aria-label="72 por cento da meta de economia concluída"
-                >
-                  <div>
-                    <strong>
-                      72<small>%</small>
-                    </strong>
-                    <span>da meta</span>
+                    <h2>Custos por setor</h2>
+                    <p>Distribuição dos custos cadastrados</p>
                   </div>
                 </div>
-                <div className="meta-valores-dashboard">
-                  <strong>R$ 428,00</strong>
-                  <span>de R$ 600,00</span>
-                </div>
-                <div
-                  className="progress progresso-meta-dashboard"
-                  role="progressbar"
-                  aria-label="Progresso da meta de economia"
-                  aria-valuenow="72"
-                  aria-valuemin="0"
-                  aria-valuemax="100"
-                >
-                  <div className="progress-bar" style={{ width: "72%" }} />
-                </div>
-                <div className="mensagem-meta-dashboard">
-                  <i className="bi bi-stars" />
-                  <p>
-                    <strong>Você está no caminho certo!</strong>
-                    <br />
-                    Mantendo esse ritmo, pode superar sua meta.
-                  </p>
-                </div>
+                {carregando ? (
+                  <p className="dashboard-estado-vazio">Carregando custos...</p>
+                ) : distribuicaoCustos.length ? (
+                  <>
+                    <div
+                      className="grafico-rosca-dashboard"
+                      role="img"
+                      aria-label={`Custos cadastrados por setor. Total: ${formatarMoeda(totalCusto)}.`}
+                      style={{ background: gradienteCustos(distribuicaoCustos, totalCusto) }}
+                    >
+                      <div className="grafico-rosca-centro">
+                        <strong>{formatarMoeda(totalCusto)}</strong>
+                        <span>custo cadastrado</span>
+                      </div>
+                    </div>
+                    <div className="legenda-distribuicao-dashboard">
+                      {distribuicaoCustos.map((setor, indice) => (
+                        <div className="item-legenda-dashboard" key={setor.id_setor}>
+                          <span style={{ backgroundColor: CORES_GRAFICO[indice % CORES_GRAFICO.length] }} />
+                          <span title={setor.nome_setor}>{setor.nome_setor}</span>
+                          <strong>{formatarMoeda(setor.custo)}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <p className="dashboard-estado-vazio">Nenhum custo informado nos setores.</p>
+                )}
               </article>
             </div>
           </section>
@@ -276,59 +351,54 @@ export default function UserDashboard() {
           <section className="painel-dashboard painel-dispositivos-dashboard">
             <div className="topo-painel-dashboard">
               <div>
-                <h2>Dispositivos em destaque</h2>
-                <p>Consumo dos equipamentos em tempo real</p>
+                <h2>Equipamentos cadastrados</h2>
+                <p>Status e faixa de consumo configurados</p>
               </div>
-              <Link
-                href="/userPages/dispositivos"
-                className="link-painel-dashboard"
-              >
-                Ver todos <i className="bi bi-arrow-right" />
+              <Link href="/userPages/dispositivos" className="link-painel-dashboard">
+                Ver todos <i className="bi bi-arrow-right" aria-hidden="true" />
               </Link>
             </div>
-            <div className="row g-3 dispositivos-dashboard-lista">
-              {dispositivos.map((dispositivo) => (
-                <div className="col-12 col-md-4" key={dispositivo.nome}>
-                  <article className="dispositivo-dashboard-card">
-                    <div className="dispositivo-dashboard-topo">
-                      <span className="icone-dispositivo-dashboard">
-                        <i className={`bi ${dispositivo.icone}`} />
-                      </span>
-                      <span className="status-dispositivo status-normal">
-                        <span className="status-ponto" />
-                        {dispositivo.estado}
-                      </span>
+            {carregando ? (
+              <p className="dashboard-estado-vazio">Carregando equipamentos...</p>
+            ) : equipamentosDestaque.length ? (
+              <div className="row g-3 dispositivos-dashboard-lista">
+                {equipamentosDestaque.map((equipamento) => {
+                  const status = equipamento.status || "Não informado";
+                  return (
+                    <div className="col-12 col-md-4" key={equipamento.id_equipamento}>
+                      <article className="dispositivo-dashboard-card">
+                        <div className="dispositivo-dashboard-topo">
+                          <span className="icone-dispositivo-dashboard">
+                            <i className={`bi ${iconeEquipamento(equipamento.tipo)}`} aria-hidden="true" />
+                          </span>
+                          <span className={`status-dispositivo status-${classeStatus(status)}`}>
+                            <span className="status-ponto" />
+                            {status}
+                          </span>
+                        </div>
+                        <h3>{equipamento.nome_equipamento}</h3>
+                        <p className="dispositivo-dashboard-local">
+                          <i className="bi bi-geo-alt" aria-hidden="true" />
+                          {equipamento.nome_setor || "Setor não informado"}
+                        </p>
+                        <div className="card-divisor" />
+                        <div className="dispositivo-dashboard-consumo">
+                          <span>Faixa cadastrada</span>
+                          <strong>{obterFaixa(equipamento)}</strong>
+                        </div>
+                      </article>
                     </div>
-                    <h3>{dispositivo.nome}</h3>
-                    <p className="dispositivo-dashboard-local">
-                      <i className="bi bi-geo-alt" />
-                      {dispositivo.local}
-                    </p>
-                    <div className="card-divisor" />
-                    <div className="dispositivo-dashboard-consumo">
-                      <span>Consumo em tempo real</span>
-                      <strong>
-                        {dispositivo.consumo} <small>kW</small>
-                      </strong>
-                    </div>
-                  </article>
-                </div>
-              ))}
-            </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="dashboard-estado-vazio">Nenhum equipamento cadastrado.</p>
+            )}
           </section>
 
-          <aside className="dica-dashboard">
-            <span className="dica-dashboard-icone">
-              <i className="bi bi-stars" />
-            </span>
-            <div>
-              <span className="dica-dashboard-etiqueta">DICA DE ECONOMIA</span>
-              <p>
-                Programe o ar-condicionado para desligar durante a madrugada e
-                economize até <strong>R$ 46,00</strong> este mês.
-              </p>
-            </div>
-          </aside>
+          <p className="dashboard-nota-dados">
+            Dados atualizados ao abrir o dashboard e a cada minuto. O banco ainda não armazena histórico nem leituras em tempo real.
+          </p>
         </main>
       </div>
     </div>

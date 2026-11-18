@@ -187,11 +187,116 @@
   margin-left: 10px;
 }
 
+.btn-excluir:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
 .btn-excluir:hover {
   border-color: var(--light-danger);
   transition: .3s ease;
   color: var(--light-danger);
   background: #e206063a;
+}
+
+.setor-erro-exclusao {
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  color: var(--cor-vermelho);
+  background: var(--vermelho-suave);
+  border-radius: 7px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.setor-exclusao-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(3, 7, 15, 0.62);
+  backdrop-filter: blur(2px);
+}
+
+.setor-exclusao-modal {
+  display: flex;
+  width: min(390px, 100%);
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  color: var(--cor-texto);
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.32);
+  text-align: center;
+}
+
+.setor-exclusao-icone {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  color: var(--cor-vermelho);
+  background: var(--vermelho-suave);
+  border-radius: 12px;
+  font-size: 17px;
+}
+
+.setor-exclusao-modal h2 {
+  margin: 0;
+  color: var(--cor-texto);
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.setor-exclusao-modal > p:not(.setor-erro-exclusao) {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.setor-exclusao-modal > p strong {
+  color: var(--cor-texto);
+}
+
+.setor-exclusao-acoes {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 5px;
+}
+
+.setor-exclusao-acoes button {
+  min-height: 36px;
+  padding: 0 13px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.setor-exclusao-cancelar {
+  color: var(--cor-texto-secundario);
+  background: transparent;
+  border: 1px solid var(--cor-borda);
+}
+
+.setor-exclusao-confirmar {
+  color: #fff;
+  background: var(--cor-vermelho-claro);
+  border: 1px solid var(--cor-vermelho-claro);
+}
+
+.setor-exclusao-acoes button:disabled {
+  cursor: wait;
+  opacity: 0.6;
 }
 
 .setor-botao-visualizar:focus-visible,

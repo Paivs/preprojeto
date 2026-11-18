@@ -18,6 +18,9 @@ export default function TabelaSetores() {
   const [busca, setBusca] = useState("");
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
+  const [erroExclusao, setErroExclusao] = useState("");
+  const [excluindoId, setExcluindoId] = useState(null);
+  const [setorPendenteExclusao, setSetorPendenteExclusao] = useState(null);
 
   useEffect(() => {
     let ativo = true;
@@ -62,6 +65,36 @@ export default function TabelaSetores() {
       window.removeEventListener("setores:atualizar", atualizar);
     };
   }, []);
+
+  async function excluirSetor() {
+    const setor = setorPendenteExclusao;
+    if (!setor) return;
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      setErroExclusao("Sua sessão expirou. Entre novamente para excluir o setor.");
+      return;
+    }
+
+    setExcluindoId(setor.id_setor);
+    setErroExclusao("");
+    try {
+      const resposta = await fetch(`${API_BASE_URL}/setores/${setor.id_setor}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const resultado = await resposta.json().catch(() => ({}));
+      if (!resposta.ok || !resultado.sucesso) {
+        throw new Error(resultado.erro || "Não foi possível excluir o setor.");
+      }
+
+      setSetores((atuais) => atuais.filter((item) => item.id_setor !== setor.id_setor));
+      setSetorPendenteExclusao(null);
+    } catch (falha) {
+      setErroExclusao(falha.message || "Não foi possível conectar à API.");
+    } finally {
+      setExcluindoId(null);
+    }
+  }
 
   const setoresFiltrados = useMemo(() => {
     const termo = busca.trim().toLocaleLowerCase("pt-BR");
@@ -133,8 +166,21 @@ export default function TabelaSetores() {
                       Visualizar{" "}
                       <i className="bi bi-arrow-right" aria-hidden="true" />
                     </Link>
-                    <button type="button" className="btn-excluir">
-                    <i className="bi bi-trash"></i>
+                    <button
+                      type="button"
+                      className="btn-excluir"
+                      onClick={() => {
+                        setErroExclusao("");
+                        setSetorPendenteExclusao(setor);
+                      }}
+                      disabled={excluindoId !== null}
+                      aria-label={`Excluir setor ${setor.nome_setor}`}
+                      title="Excluir setor"
+                    >
+                      <i
+                        className={`bi ${excluindoId === setor.id_setor ? "bi-arrow-repeat" : "bi-trash"}`}
+                        aria-hidden="true"
+                      />
                     </button>
                   </td>
                 </tr>
@@ -156,6 +202,55 @@ export default function TabelaSetores() {
           Mostrando {setoresFiltrados.length} de {setores.length} setores
         </span>
       </footer>
+      {setorPendenteExclusao && (
+        <div
+          className="setor-exclusao-fundo"
+          onMouseDown={(evento) => {
+            if (evento.target === evento.currentTarget && excluindoId === null) {
+              setSetorPendenteExclusao(null);
+              setErroExclusao("");
+            }
+          }}
+        >
+          <section
+            className="setor-exclusao-modal"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="setor-exclusao-titulo"
+            aria-describedby="setor-exclusao-descricao"
+          >
+            <span className="setor-exclusao-icone" aria-hidden="true">
+              <i className="bi bi-trash" />
+            </span>
+            <h2 id="setor-exclusao-titulo">Excluir setor?</h2>
+            <p id="setor-exclusao-descricao">
+              Excluir <strong>{setorPendenteExclusao.nome_setor}</strong> também remove os equipamentos vinculados.
+            </p>
+            {erroExclusao && <p className="setor-erro-exclusao" role="alert">{erroExclusao}</p>}
+            <div className="setor-exclusao-acoes">
+              <button
+                type="button"
+                className="setor-exclusao-cancelar"
+                onClick={() => {
+                  setSetorPendenteExclusao(null);
+                  setErroExclusao("");
+                }}
+                disabled={excluindoId !== null}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="setor-exclusao-confirmar"
+                onClick={excluirSetor}
+                disabled={excluindoId !== null}
+              >
+                {excluindoId !== null ? "Excluindo..." : "Excluir setor"}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </section>
   );
 }
