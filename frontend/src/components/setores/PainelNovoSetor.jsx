@@ -108,7 +108,7 @@ export default function PainelNovoSetor({ onFechar, onCriado }) {
           </label>
           <div className="setor-painel-campos-duplos">
             <label>
-              Consumo global (kWh)
+              Consumo global (kWh/mês)
               <input
                 type="number"
                 min="0"

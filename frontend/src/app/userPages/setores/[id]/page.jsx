@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import PainelEditarEquipamento from "@/components/setores/PainelEditarEquipamento";
+import ModalEditarSetor from "@/components/setores/ModalEditarSetor";
 import { API_BASE_URL } from "@/lib/api";
 import "./setorDetalhe.css";
 
@@ -29,6 +30,7 @@ export default function DetalheSetor() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [equipamentoEmEdicao, setEquipamentoEmEdicao] = useState(null);
+  const [modalEdicaoSetorAberto, setModalEdicaoSetorAberto] = useState(false);
 
   const equipamentosComFaixa = equipamentos.filter(
     (equipamento) =>
@@ -135,6 +137,14 @@ export default function DetalheSetor() {
                     <h1>{setor.nome_setor}</h1>
                     <p>{setor.descricao || "Sem descrição cadastrada."}</p>
                   </div>
+                  <button
+                    type="button"
+                    className="setor-detalhe-editar"
+                    onClick={() => setModalEdicaoSetorAberto(true)}
+                  >
+                    <i className="bi bi-pencil" aria-hidden="true" />
+                    Editar setor
+                  </button>
                 </header>
                 <section className="setor-resumo" aria-label="Resumo do setor">
                   <article className="resumo-consumo">
@@ -412,6 +422,16 @@ export default function DetalheSetor() {
               )
             );
             setEquipamentoEmEdicao(null);
+          }}
+        />
+      )}
+      {modalEdicaoSetorAberto && setor && (
+        <ModalEditarSetor
+          setor={setor}
+          onFechar={() => setModalEdicaoSetorAberto(false)}
+          onSalvo={(atualizado) => {
+            setSetor(atualizado);
+            setModalEdicaoSetorAberto(false);
           }}
         />
       )}
