@@ -198,7 +198,7 @@ export default function Login() {
             </div>
           </div>
 
-          {erro && <p className="mensagem-erro">{erro}</p>}
+          {erro && <p className="mensagem-erro"><i className="bi bi-exclamation-triangle"></i> {erro}</p>}
 
           <Link className="esquecer-senha" href="/">
             Esqueci minha senha

@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import ModalNovoCliente from "@/components/clientes/ModalNovoCliente";
+import ModalGerenciarCliente from "@/components/clientes/ModalGerenciarCliente";
 import "./clientes.css";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/$/, "");
@@ -44,6 +44,7 @@ function iniciaisEmpresa(nome = "") {
 
 export default function Clientes() {
   const [modalAberto, setModalAberto] = useState(false);
+  const [clienteParaGerenciar, setClienteParaGerenciar] = useState(null);
   const [clientes, setClientes] = useState([]);
   const [buscaInput, setBuscaInput] = useState("");
   const [buscaAplicada, setBuscaAplicada] = useState("");
@@ -241,14 +242,15 @@ export default function Clientes() {
                           </span>
                         </td>
                         <td>
-                          <Link
+                          <button
+                            type="button"
                             className="btn-gerenciar-cliente"
-                            href={`/adminPages/clientes/${cliente.id_usuario}`}
+                            onClick={() => setClienteParaGerenciar(cliente)}
                             aria-label={`Editar ou excluir ${cliente.nome_empresa}`}
                           >
                             <i className="bi bi-pencil-square" aria-hidden="true"></i>
                             Gerenciar
-                          </Link>
+                          </button>
                         </td>
                       </tr>
                     );
@@ -290,6 +292,16 @@ export default function Clientes() {
           onSucesso={() => {
             setModalAberto(false);
             carregarClientes(1, buscaAplicada);
+          }}
+        />
+      )}
+      {clienteParaGerenciar && (
+        <ModalGerenciarCliente
+          cliente={clienteParaGerenciar}
+          onFechar={() => setClienteParaGerenciar(null)}
+          onAlteracao={() => {
+            setClienteParaGerenciar(null);
+            carregarClientes(pagina, buscaAplicada);
           }}
         />
       )}

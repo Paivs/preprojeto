@@ -31,6 +31,38 @@
     color: #ff8a8a;
 }
 
+.financeiro-atualizacao {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    width: 100%;
+    color: var(--cor-texto-fraco);
+    font-size: 0.85rem;
+}
+
+.financeiro-atualizacao button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 7px;
+    background: var(--cor-card);
+    color: var(--cor-texto-secundario);
+    cursor: pointer;
+}
+
+.financeiro-atualizacao button:hover:not(:disabled) {
+    border-color: var(--cor-destaque);
+    color: var(--cor-destaque);
+}
+
+.financeiro-atualizacao button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
 .topo-pag{
     height: fit-content;
     width: 100%;
@@ -285,6 +317,84 @@
     padding: 1rem 0;
 }
 
+:root[data-tema="claro"] .financeiro-atualizacao button {
+    border-color: var(--cor-borda);
+    background: var(--cor-card);
+    color: var(--cor-texto-secundario);
+}
+
+:root[data-tema="claro"] .card-topo,
+:root[data-tema="claro"] .baixo-pag .card,
+:root[data-tema="claro"] .financeiro-grafico {
+    border-color: var(--cor-borda);
+    background: var(--cor-card);
+    box-shadow: 0 4px 14px rgba(30, 41, 59, 0.05);
+}
+
+:root[data-tema="claro"] .card-topo h2,
+:root[data-tema="claro"] .card h3,
+:root[data-tema="claro"] .info strong,
+:root[data-tema="claro"] .financeiro-grafico-coluna strong {
+    color: var(--cor-texto);
+}
+
+:root[data-tema="claro"] .card-topo .top strong,
+:root[data-tema="claro"] .card-topo .bottom strong,
+:root[data-tema="claro"] .simple-text,
+:root[data-tema="claro"] .insight,
+:root[data-tema="claro"] .box-barra,
+:root[data-tema="claro"] .financeiro-grafico-rotulo,
+:root[data-tema="claro"] .financeiro-grafico-cabecalho p,
+:root[data-tema="claro"] .financeiro-grafico-vazio {
+    color: var(--cor-texto-secundario);
+}
+
+:root[data-tema="claro"] .card-topo i {
+    color: var(--cor-destaque);
+    background: var(--roxo-suave);
+}
+
+:root[data-tema="claro"] .card-topo .bottom hr,
+:root[data-tema="claro"] .card hr {
+    background: var(--cor-borda);
+}
+
+:root[data-tema="claro"] .card h2 i,
+:root[data-tema="claro"] .box-pagamentos i {
+    color: var(--cor-destaque);
+}
+
+:root[data-tema="claro"] .box-pagamentos {
+    color: #765400;
+    background: var(--amarelo-suave);
+}
+
+:root[data-tema="claro"] .flex-barra strong {
+    color: var(--cor-destaque);
+}
+
+:root[data-tema="claro"] .barra {
+    background: linear-gradient(to right, var(--cor-destaque) var(--percentual-recebido, 0%), #d9dee8 var(--percentual-recebido, 0%));
+}
+
+:root[data-tema="claro"] .financeiro-grafico-coluna {
+    border-color: var(--cor-borda);
+    background: var(--light-bg-secondary);
+}
+
+:root[data-tema="claro"] .financeiro-grafico-unidade {
+    color: var(--cor-texto-secundario);
+    background: var(--light-bg-tertiary);
+}
+
+:root[data-tema="claro"] .financeiro-grafico-trilho {
+    background: #dfe4ec;
+}
+
+:root[data-tema="claro"] .financeiro-grafico-trilho span,
+:root[data-tema="claro"] .financeiro-grafico-coluna:last-child .financeiro-grafico-trilho span {
+    background: var(--cor-destaque);
+}
 @media (max-width: 700px) {
     .conteudo {
         margin-left: 0;

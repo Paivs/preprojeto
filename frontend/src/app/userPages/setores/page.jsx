@@ -9,6 +9,7 @@ import "./setores.css";
 
 export default function Setores() {
   const [painelAberto, setPainelAberto] = useState(false);
+  const [setoresAdicionais, setSetoresAdicionais] = useState([]);
 
   return (
     <div className="pagina">
