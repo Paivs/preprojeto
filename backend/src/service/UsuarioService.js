@@ -33,6 +33,7 @@ function dadosNormalizados(dados, atual = {}) {
     nome_empresa: dados.nome_empresa ?? dados.nome ?? atual.nome_empresa,
     cnpj: dados.cnpj ?? atual.cnpj,
     email: dados.email ?? atual.email,
+    telefone: dados.telefone !== undefined ? dados.telefone : (atual.telefone ?? null),
     nivel_permissao: dados.nivel_permissao ?? dados.perfil ?? atual.nivel_permissao ?? 'cliente',
     consumo_total: dados.consumo_total ?? atual.consumo_total ?? 0,
     consumo_maximo: dados.consumo_maximo ?? atual.consumo_maximo ?? 0
@@ -127,4 +128,96 @@ export async function excluir(idRecebido) {
   const id = validarId(idRecebido);
   const removeu = await UsuarioModel.excluir(id);
   if (!removeu) throw erroNaoEncontrado(id);
+}
+
+function formatarConfiguracao(usuario, apenasAdmin) {
+  if (apenasAdmin) {
+    return {
+      id_usuario: usuario.id_usuario,
+      nome_empresa: usuario.nome_empresa,
+      cnpj: usuario.cnpj,
+      email: usuario.email,
+      telefone: usuario.telefone,
+      consumo_maximo: Number(usuario.consumo_maximo || 0)
+    };
+  }
+  return {
+    id_usuario: usuario.id_usuario,
+    nome_empresa: usuario.nome_empresa,
+    cnpj: usuario.cnpj,
+    email: usuario.email,
+    perfil: usuario.nivel_permissao,
+    consumo_total: Number(usuario.consumo_total || 0),
+    consumo_maximo: Number(usuario.consumo_maximo || 0)
+  };
+}
+
+function erroConfiguracaoNaoEncontrada(apenasAdmin) {
+  const erro = new Error(apenasAdmin ? 'Administrador não encontrado.' : 'Usuário não encontrado.');
+  erro.status = 404;
+  return erro;
+}
+
+export async function buscarConfiguracao(idRecebido, apenasAdmin = false) {
+  const id = validarId(idRecebido);
+  const usuario = await UsuarioModel.buscarConfiguracao(id, apenasAdmin);
+  if (!usuario) throw erroConfiguracaoNaoEncontrada(apenasAdmin);
+  return formatarConfiguracao(usuario, apenasAdmin);
+}
+
+export async function atualizarConfiguracao(idRecebido, entrada = {}, apenasAdmin = false) {
+  const id = validarId(idRecebido);
+  const atual = await UsuarioModel.buscarConfiguracao(id, apenasAdmin);
+  if (!atual) throw erroConfiguracaoNaoEncontrada(apenasAdmin);
+
+  const telefone = apenasAdmin
+    ? (typeof entrada.telefone === 'string' ? entrada.telefone.trim() || null : null)
+    : atual.telefone;
+  const usuario = new Usuario({
+    id_usuario: id,
+    nome_empresa: entrada.nome_empresa,
+    cnpj: entrada.cnpj,
+    email: entrada.email,
+    telefone,
+    nivel_permissao: atual.nivel_permissao,
+    consumo_total: atual.consumo_total,
+    consumo_maximo: entrada.consumo_maximo
+  });
+
+  await validarUnicidade(usuario, id);
+  const atualizado = await UsuarioModel.atualizarConfiguracao(id, {
+    nome_empresa: usuario.nome_empresa,
+    email: usuario.email,
+    cnpj: usuario.cnpj,
+    telefone: usuario.telefone,
+    consumo_maximo: usuario.consumo_maximo
+  }, apenasAdmin);
+  if (!atualizado) throw erroConfiguracaoNaoEncontrada(apenasAdmin);
+  return formatarConfiguracao(atualizado, apenasAdmin);
+}
+
+export async function alterarSenhaConfiguracao(idRecebido, entrada = {}, apenasAdmin = false) {
+  const id = validarId(idRecebido);
+  const { senha_atual: senhaAtual, nova_senha: novaSenha, confirmar_senha: confirmarSenha } = entrada;
+  if (typeof senhaAtual !== 'string' || !senhaAtual) throw new TypeError('Informe sua senha atual.');
+  if (typeof novaSenha !== 'string' || !novaSenha) throw new TypeError('Informe a nova senha.');
+  if (!apenasAdmin && !REGEX_SENHA_FORTE.test(novaSenha)) {
+    throw new TypeError('A nova senha nao atende aos requisitos de seguranca.');
+  }
+  if (typeof confirmarSenha !== 'string' || !confirmarSenha) throw new TypeError('Confirme a nova senha.');
+  if (novaSenha !== confirmarSenha) throw new TypeError('A confirmacao da nova senha nao corresponde.');
+
+  const senhaGuardada = await UsuarioModel.buscarSenha(id, apenasAdmin);
+  if (!senhaGuardada) throw erroConfiguracaoNaoEncontrada(apenasAdmin);
+  const senhaConfere = senhaGuardada.startsWith('$2')
+    ? await bcrypt.compare(senhaAtual, senhaGuardada)
+    : senhaAtual === senhaGuardada;
+  if (!senhaConfere) {
+    const erro = new Error('A senha atual esta incorreta.');
+    erro.status = 401;
+    throw erro;
+  }
+
+  await UsuarioModel.atualizarSenha(id, await bcrypt.hash(novaSenha, 10), apenasAdmin);
+  return { mensagem: 'Senha alterada com sucesso.' };
 }

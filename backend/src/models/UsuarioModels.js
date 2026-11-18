@@ -23,6 +23,7 @@ const camposUsuario = `
   u.nome_empresa,
   u.cnpj,
   u.email,
+  u.telefone,
   u.nivel_permissao,
   COALESCE(u.consumo_total, 0) AS consumo_total,
   COALESCE(u.consumo_maximo, 0) AS consumo_maximo,
@@ -89,6 +90,55 @@ export async function buscarPorId(id) {
   return linhas[0] || null;
 }
 
+export async function buscarConfiguracao(id, apenasAdmin = false) {
+  const [linhas] = await pool.query(
+    `SELECT id_usuario, nome_empresa, cnpj, email, telefone, nivel_permissao,
+            COALESCE(consumo_total, 0) AS consumo_total,
+            COALESCE(consumo_maximo, 0) AS consumo_maximo
+       FROM usuario
+      WHERE id_usuario = ? ${apenasAdmin ? "AND nivel_permissao = 'admin'" : ''}`,
+    [id]
+  );
+  return linhas[0] || null;
+}
+
+export async function atualizarConfiguracao(id, dados, apenasAdmin = false) {
+  const sqlAdmin = `UPDATE usuario
+                       SET nome_empresa = ?, email = ?, cnpj = ?, telefone = ?, consumo_maximo = ?
+                     WHERE id_usuario = ? AND nivel_permissao = 'admin'`;
+  const sqlUsuario = `UPDATE usuario
+                         SET nome_empresa = ?, email = ?, cnpj = ?, consumo_maximo = ?
+                       WHERE id_usuario = ?`;
+  if (apenasAdmin) {
+    await pool.query(sqlAdmin, [
+      dados.nome_empresa, dados.email, dados.cnpj, dados.telefone, dados.consumo_maximo, id
+    ]);
+  } else {
+    await pool.query(sqlUsuario, [
+      dados.nome_empresa, dados.email, dados.cnpj, dados.consumo_maximo, id
+    ]);
+  }
+  return buscarConfiguracao(id, apenasAdmin);
+}
+
+export async function buscarSenha(id, apenasAdmin = false) {
+  const [linhas] = await pool.query(
+    `SELECT senha FROM usuario
+      WHERE id_usuario = ? ${apenasAdmin ? "AND nivel_permissao = 'admin'" : ''}`,
+    [id]
+  );
+  return linhas[0]?.senha || null;
+}
+
+export async function atualizarSenha(id, senhaHash, apenasAdmin = false) {
+  const [resultado] = await pool.query(
+    `UPDATE usuario SET senha = ?
+      WHERE id_usuario = ? ${apenasAdmin ? "AND nivel_permissao = 'admin'" : ''}`,
+    [senhaHash, id]
+  );
+  return resultado.affectedRows > 0;
+}
+
 export async function buscarPorEmail(email) {
   const [linhas] = await pool.query(
     'SELECT id_usuario, email FROM usuario WHERE email = ?',
@@ -109,12 +159,13 @@ export async function criar(usuario) {
   try {
     const [resultado] = await pool.query(
       `INSERT INTO usuario
-         (nome_empresa, cnpj, email, senha, nivel_permissao, consumo_total, consumo_maximo)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+         (nome_empresa, cnpj, email, telefone, senha, nivel_permissao, consumo_total, consumo_maximo)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         usuario.nome_empresa,
         usuario.cnpj,
         usuario.email,
+        usuario.telefone,
         usuario.senhaHash,
         usuario.nivel_permissao,
         usuario.consumo_total,
@@ -131,7 +182,7 @@ export async function atualizar(id, usuario) {
   try {
     const [resultado] = await pool.query(
       `UPDATE usuario
-          SET nome_empresa = ?, cnpj = ?, email = ?,
+          SET nome_empresa = ?, cnpj = ?, email = ?, telefone = ?,
               senha = COALESCE(?, senha), nivel_permissao = ?,
               consumo_total = ?, consumo_maximo = ?
         WHERE id_usuario = ?`,
@@ -139,6 +190,7 @@ export async function atualizar(id, usuario) {
         usuario.nome_empresa,
         usuario.cnpj,
         usuario.email,
+        usuario.telefone,
         usuario.senhaHash || null,
         usuario.nivel_permissao,
         usuario.consumo_total,
