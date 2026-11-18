@@ -145,11 +145,14 @@ export default function ConfiguracaoUser() {
         } catch {
           sessionStorage.removeItem("usuario");
         }
-        sessionStorage.setItem("usuario", JSON.stringify({
-          ...usuarioSessao,
-          nome: resultado.dados.nome_empresa,
-          email: resultado.dados.email,
-        }));
+        sessionStorage.setItem(
+          "usuario",
+          JSON.stringify({
+            ...usuarioSessao,
+            nome: resultado.dados.nome_empresa,
+            email: resultado.dados.email,
+          })
+        );
         window.dispatchEvent(new Event("volthouse:perfil-atualizado"));
       }
       aoConcluir?.();
@@ -310,6 +313,19 @@ export default function ConfiguracaoUser() {
                               alterarCampo("email", e.target.value)
                             }
                             maxLength={100}
+                            required
+                          />
+                        </label>
+                        <label className="config-campo">
+                          Telefone
+                          <input
+                            type="tel"
+                            value={perfil.telefone}
+                            onChange={(e) =>
+                              alterarCampo("telefone", e.target.value)
+                            }
+                            maxLength={20}
+                            placeholder="(11) 99999-9999"
                             required
                           />
                         </label>
