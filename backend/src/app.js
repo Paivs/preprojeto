@@ -10,6 +10,7 @@ import adminGeralRoutes from "./routes/adminGeralRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
+import relatosPublicosRoutes from "./routes/relatosPublicosRoutes.js";
 
 const app = express();
 
@@ -37,6 +38,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin-geral", adminGeralRoutes);
 app.use("/api/admin-municipal", adminMunicipalRoutes);
 app.use("/api/usuario", usuarioRoutes);
+app.use("/api/relatos", relatosPublicosRoutes);
+
 
 app.use(errorHandler);
 
