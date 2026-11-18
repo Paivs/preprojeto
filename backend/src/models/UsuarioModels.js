@@ -91,10 +91,15 @@ export async function buscarPorId(id) {
 }
 
 export async function buscarConfiguracao(id, apenasAdmin = false) {
+  const campos = apenasAdmin
+    ? `id_usuario, nome_empresa, cnpj, email, telefone, nivel_permissao,
+       COALESCE(consumo_total, 0) AS consumo_total,
+       COALESCE(consumo_maximo, 0) AS consumo_maximo`
+    : `id_usuario, nome_empresa, cnpj, email, nivel_permissao,
+       COALESCE(consumo_total, 0) AS consumo_total,
+       COALESCE(consumo_maximo, 0) AS consumo_maximo`;
   const [linhas] = await pool.query(
-    `SELECT id_usuario, nome_empresa, cnpj, email, telefone, nivel_permissao,
-            COALESCE(consumo_total, 0) AS consumo_total,
-            COALESCE(consumo_maximo, 0) AS consumo_maximo
+    `SELECT ${campos}
        FROM usuario
       WHERE id_usuario = ? ${apenasAdmin ? "AND nivel_permissao = 'admin'" : ''}`,
     [id]
