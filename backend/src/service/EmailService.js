@@ -6,9 +6,9 @@ const CAMINHO_LOGO = fileURLToPath(new URL('../assets/image.png', import.meta.ur
 const CID_LOGO = 'volthouse-logo';
 
 const TEXTO_PADRAO_HTML = `
-  <p>Olá {{nome}},</p>
-  <p>A VoltHouse ajuda sua empresa a acompanhar o consumo de energia por setor e equipamento.</p>
-  <p>Com essas informações, você pode entender melhor seus gastos, identificar oportunidades de economia e tomar decisões mais eficientes.</p>
+  <p style="margin:0 0 16px;font-size:24px;line-height:1.3;font-weight:700;color:#171923">Olá {{nome}},</p>
+  <p style="margin:0 0 12px;font-size:15px;line-height:1.7;color:#4b5563">A VoltHouse ajuda sua empresa a acompanhar o consumo de energia por setor e equipamento.</p>
+  <p style="margin:0;font-size:15px;line-height:1.7;color:#4b5563">Com essas informações, você pode entender melhor seus gastos, identificar oportunidades de economia e tomar decisões mais eficientes.</p>
 `;
 
 function validarTexto(valor, campo, { obrigatorio = false, maximo = 5000 } = {}) {
@@ -118,12 +118,12 @@ export async function enviarEmail(dados = {}) {
   const assuntoFinal = preencherCampos(assunto, nome, empresa);
   const camposTextoNormalizados = normalizarCampos(campos);
   const camposHtmlNormalizados = normalizarCampos(camposHtml);
-  const secaoImagem = `<div style="background:#11121a;text-align:center;padding:16px;margin-bottom:24px"><img src="cid:${CID_LOGO}" alt="VoltHouse — Controle seu consumo de energia" style="width:280px;max-width:100%;height:auto"></div>`;
+  const secaoImagem = `<img src="cid:${CID_LOGO}" width="512" alt="VoltHouse — Controle seu consumo de energia" style="display:block;width:100%;max-width:512px;height:auto;margin:0 auto;border:0">`;
   const secaoPersonalizadaHtml = mensagemPersonalizada
-    ? `<h2>Mensagem personalizada</h2><p>${escaparHtml(mensagemPersonalizada).replace(/\r?\n/g, '<br>')}</p>`
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;background:#f6f4ff;border:1px solid #e8e2ff;border-radius:10px"><tr><td style="padding:20px 22px"><h2 style="margin:0 0 10px;font-size:16px;color:#5825c7">Mensagem para você</h2><p style="margin:0;font-size:14px;line-height:1.7;color:#374151">${escaparHtml(mensagemPersonalizada).replace(/\r?\n/g, '<br>')}</p></td></tr></table>`
     : '';
   const secaoLoginHtml = emailLogin
-    ? `<h2>Este \u00e9 o seu login</h2><p>E-mail: ${camposHtml.emailLogin}<br>Senha: ${camposHtml.senhaLogin}</p>`
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px"><tr><td style="padding:20px 22px"><h2 style="margin:0 0 16px;font-size:17px;color:#171923">Este \u00e9 o seu login</h2><p style="margin:0 0 10px;font-size:14px;color:#4b5563"><strong style="color:#171923">E-mail</strong><br>${camposHtml.emailLogin}</p><p style="margin:0;font-size:14px;color:#4b5563"><strong style="color:#171923">Senha</strong><br>${camposHtml.senhaLogin}</p></td></tr></table>`
     : '';
   const textoPadrao = substituirCampos(TEXTO_PADRAO_HTML.replace(/<[^>]*>/g, '').trim(), camposTextoNormalizados);
   const texto = [
@@ -131,7 +131,39 @@ export async function enviarEmail(dados = {}) {
     mensagemPersonalizada,
     emailLogin ? `Este \u00e9 o seu login:\nE-mail: ${emailLogin}\nSenha: ${senhaLogin}` : ''
   ].filter(Boolean).join('\n\n');
-  const html = `<!doctype html><html><body>${secaoImagem}${substituirCampos(TEXTO_PADRAO_HTML, camposHtmlNormalizados)}${secaoPersonalizadaHtml}${secaoLoginHtml}</body></html>`;
+  const html = `<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body style="margin:0;padding:0;background:#f1f3f8;font-family:Arial,Helvetica,sans-serif;color:#171923">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f3f8;padding:32px 12px">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="width:100%;max-width:640px;background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden">
+            <tr>
+              <td style="padding:24px 32px 12px">${secaoImagem}</td>
+            </tr>
+            <tr>
+              <td style="padding:24px 40px 36px">
+                ${substituirCampos(TEXTO_PADRAO_HTML, camposHtmlNormalizados)}
+                ${secaoPersonalizadaHtml}
+                ${secaoLoginHtml}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:18px 32px;background:#fafafa;border-top:1px solid #eeeeF2;text-align:center;font-size:12px;line-height:1.6;color:#6b7280">
+                VoltHouse · Controle seu consumo de energia<br>
+                Este e-mail foi enviado para ${escaparHtml(email)}.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
 
   try {
     const resultado = await transportador.sendMail({
