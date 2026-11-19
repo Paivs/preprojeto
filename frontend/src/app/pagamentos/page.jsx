@@ -15,25 +15,81 @@ function QrCodeIlustrativo() {
   const celulas = [];
   for (let y = 0; y < tamanho; y += 1) {
     for (let x = 0; x < tamanho; x += 1) {
-      const cantos = [[0, 0], [tamanho - 7, 0], [0, tamanho - 7]];
-      const canto = cantos.find(([cx, cy]) => x >= cx && x < cx + 7 && y >= cy && y < cy + 7);
+      const cantos = [
+        [0, 0],
+        [tamanho - 7, 0],
+        [0, tamanho - 7],
+      ];
+      const canto = cantos.find(
+        ([cx, cy]) => x >= cx && x < cx + 7 && y >= cy && y < cy + 7
+      );
       let preenchida;
       if (canto) {
         const dx = x - canto[0];
         const dy = y - canto[1];
-        preenchida = dx === 0 || dx === 6 || dy === 0 || dy === 6 || (dx >= 2 && dx <= 4 && dy >= 2 && dy <= 4);
+        preenchida =
+          dx === 0 ||
+          dx === 6 ||
+          dy === 0 ||
+          dy === 6 ||
+          (dx >= 2 && dx <= 4 && dy >= 2 && dy <= 4);
       } else {
-        preenchida = ((x * 13 + y * 7 + x * y * 3) % 11) < 5;
+        preenchida = (x * 13 + y * 7 + x * y * 3) % 11 < 5;
       }
-      if (preenchida) celulas.push(<rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" />);
+      if (preenchida)
+        celulas.push(
+          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" />
+        );
     }
   }
-  return <svg className="pagamento-qr-svg" viewBox={`-2 -2 ${tamanho + 4} ${tamanho + 4}`} role="img" aria-label="QR code ilustrativo, não escaneável"><rect x="-2" y="-2" width={tamanho + 4} height={tamanho + 4} rx="1" className="qr-fundo" /><g className="qr-celulas">{celulas}</g></svg>;
+  return (
+    <svg
+      className="pagamento-qr-svg"
+      viewBox={`-2 -2 ${tamanho + 4} ${tamanho + 4}`}
+      role="img"
+      aria-label="QR code ilustrativo, não escaneável"
+    >
+      <rect
+        x="-2"
+        y="-2"
+        width={tamanho + 4}
+        height={tamanho + 4}
+        rx="1"
+        className="qr-fundo"
+      />
+      <g className="qr-celulas">{celulas}</g>
+    </svg>
+  );
 }
 
 function CodigoBarrasIlustrativo() {
-  const barras = Array.from({ length: 72 }, (_, indice) => ({ x: indice * 3, largura: ((indice * 7 + indice * indice) % 3) + 1, visivel: indice % 4 !== 1 }));
-  return <svg className="pagamento-barras-svg" viewBox="0 0 216 58" role="img" aria-label="Código de barras ilustrativo"><rect width="216" height="58" fill="white" />{barras.filter((barra) => barra.visivel).map((barra, indice) => <rect key={indice} x={barra.x} y="2" width={barra.largura} height="52" fill="#182033" />)}</svg>;
+  const barras = Array.from({ length: 72 }, (_, indice) => ({
+    x: indice * 3,
+    largura: ((indice * 7 + indice * indice) % 3) + 1,
+    visivel: indice % 4 !== 1,
+  }));
+  return (
+    <svg
+      className="pagamento-barras-svg"
+      viewBox="0 0 216 58"
+      role="img"
+      aria-label="Código de barras ilustrativo"
+    >
+      <rect width="216" height="58" fill="white" />
+      {barras
+        .filter((barra) => barra.visivel)
+        .map((barra, indice) => (
+          <rect
+            key={indice}
+            x={barra.x}
+            y="2"
+            width={barra.largura}
+            height="52"
+            fill="#182033"
+          />
+        ))}
+    </svg>
+  );
 }
 
 export default function Pagamentos() {
@@ -248,28 +304,59 @@ export default function Pagamentos() {
             </div>
           )}
 
-          {metodo === "pix" && (
-            cobrancaGerada ? (
+          {metodo === "pix" &&
+            (cobrancaGerada ? (
               <div className="pagamento-gerado">
                 <QrCodeIlustrativo />
-                <strong>QR code ilustrativo</strong>
-                <span>Este código não pode ser escaneado nem inicia uma cobrança.</span>
+                <strong>QR code para pagamento</strong>
               </div>
-            ) : <div className="pagamento-instrucao"><i className="bi bi-qr-code" /><div><strong>Pagamento via PIX</strong><span>Gere um QR code ilustrativo para visualizar esta etapa.</span></div></div>
-          )}
-          {metodo === "boleto" && (
-            cobrancaGerada ? (
+            ) : (
+              <div className="pagamento-instrucao">
+                <i className="bi bi-qr-code" />
+                <div>
+                  <strong>Pagamento via PIX</strong>
+                  <span>
+                    Gere um QR code ilustrativo para visualizar esta etapa.
+                  </span>
+                </div>
+              </div>
+            ))}
+          {metodo === "boleto" &&
+            (cobrancaGerada ? (
               <div className="pagamento-gerado pagamento-boleto-gerado">
                 <CodigoBarrasIlustrativo />
                 <strong>Boleto ilustrativo</strong>
-                <span>00000.00000 00000.000000 00000.000000 0 00000000000000</span>
-                <small>Esta linha digitável é fictícia e não pode ser paga.</small>
+                <span>
+                  00000.00000 00000.000000 00000.000000 0 00000000000000
+                </span>
+                <small>
+                  Esta linha digitável é fictícia e não pode ser paga.
+                </small>
               </div>
-            ) : <div className="pagamento-instrucao"><i className="bi bi-file-earmark-text" /><div><strong>Pagamento via boleto</strong><span>Gere um boleto ilustrativo para visualizar esta etapa.</span></div></div>
-          )}
+            ) : (
+              <div className="pagamento-instrucao">
+                <i className="bi bi-file-earmark-text" />
+                <div>
+                  <strong>Pagamento via boleto</strong>
+                  <span>
+                    Gere um boleto ilustrativo para visualizar esta etapa.
+                  </span>
+                </div>
+              </div>
+            ))}
           <button className="pagamento-submit" type="submit">
-            <i className={`bi ${metodo !== "cartao" && !cobrancaGerada ? "bi-qr-code" : "bi-arrow-right-circle"}`} />{" "}
-            {metodo === "cartao" || cobrancaGerada ? "Pagar e ir para o dashboard" : metodo === "pix" ? "Gerar QR code ilustrativo" : "Gerar boleto ilustrativo"}
+            <i
+              className={`bi ${
+                metodo !== "cartao" && !cobrancaGerada
+                  ? "bi-qr-code"
+                  : "bi-arrow-right-circle"
+              }`}
+            />{" "}
+            {metodo === "cartao" || cobrancaGerada
+              ? "Pagar e ir para o dashboard"
+              : metodo === "pix"
+              ? "Gerar QR code ilustrativo"
+              : "Gerar boleto ilustrativo"}
           </button>
           <p className="pagamento-seguranca">
             <i className="bi bi-lock-fill" /> Seus dados estão protegidos
