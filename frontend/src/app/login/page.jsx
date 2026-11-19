@@ -60,14 +60,33 @@ export default function Login() {
         return;
       }
 
-      const { token, usuario } = resultado.dados;
+      const { token, usuario, pagamentoPendente } = resultado.dados;
 
       // Armazena os dados da sessão
+<<<<<<< Updated upstream
       salvarSessao({ token, usuario });
 
       const destino = rotaInicialDoUsuario(usuario.perfil);
       if (destino === "/login") {
         limparSessao();
+=======
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("usuario", JSON.stringify(usuario));
+      if (pagamentoPendente) {
+        sessionStorage.setItem("pagamentoPendente", JSON.stringify(pagamentoPendente));
+      } else {
+        sessionStorage.removeItem("pagamentoPendente");
+      }
+
+      // Redireciona conforme o perfil
+      if (usuario.perfil === "admin") {
+        router.push("/adminPages/clientes");
+      } else if (usuario.perfil === "cliente") {
+        router.push(pagamentoPendente ? "/pagamentos" : "/userPages/dashboard");
+      } else {
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("usuario");
+>>>>>>> Stashed changes
         setErro("Perfil de usuário não reconhecido.");
       } else {
         router.replace(destino);
