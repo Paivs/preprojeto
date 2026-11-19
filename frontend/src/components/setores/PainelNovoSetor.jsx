@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/lib/api";
+import { requisicaoAutenticada } from "@/lib/session";
 import "./painelNovoSetor.css";
 
 export default function PainelNovoSetor({ onFechar, onCriado }) {
@@ -23,18 +24,12 @@ export default function PainelNovoSetor({ onFechar, onCriado }) {
   async function enviar(evento) {
     evento.preventDefault();
     setErro("");
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      setErro("Sua sessão não foi encontrada. Entre novamente.");
-      return;
-    }
     setSalvando(true);
     try {
-      const resposta = await fetch(`${API_BASE_URL}/setores`, {
+      const resposta = await requisicaoAutenticada(`${API_BASE_URL}/setores`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           nome_setor: nome.trim(),
@@ -46,7 +41,7 @@ export default function PainelNovoSetor({ onFechar, onCriado }) {
       const resultado = await resposta.json().catch(() => ({}));
       if (!resposta.ok)
         throw new Error(
-          resultado.erro || "Não foi possível adicionar o setor."
+          resultado.erro || resultado.message || "Não foi possível adicionar o setor."
         );
       onCriado();
     } catch (falha) {

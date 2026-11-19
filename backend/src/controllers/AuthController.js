@@ -30,3 +30,7 @@ export async function login(req, res, next) {
     return responderErro(erro, res, next);
   }
 }
+
+export function sessaoAtual(req, res) {
+  return res.status(200).json({ sucesso: true, dados: { usuario: req.usuario } });
+}
