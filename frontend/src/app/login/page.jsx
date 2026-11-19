@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { API_BASE_URL } from "@/lib/api";
+import { limparSessao, obterTokenSessao, rotaInicialDoUsuario, salvarSessao, validarSessao } from "@/lib/session";
 import "./login.css";
 
 export default function Login() {
@@ -15,6 +16,20 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
+
+  useEffect(() => {
+    const token = obterTokenSessao();
+    if (!token) return;
+    let ativo = true;
+    validarSessao(token)
+      .then((usuario) => {
+        if (ativo) router.replace(rotaInicialDoUsuario(usuario.perfil));
+      })
+      .catch((erro) => {
+        if (erro.status === 401) limparSessao();
+      });
+    return () => { ativo = false; };
+  }, [router]);
 
   // AUTENTICAÇÃO
   async function fazerLogin(e) {
@@ -48,18 +63,14 @@ export default function Login() {
       const { token, usuario } = resultado.dados;
 
       // Armazena os dados da sessão
-      sessionStorage.setItem("token", token);
-      sessionStorage.setItem("usuario", JSON.stringify(usuario));
+      salvarSessao({ token, usuario });
 
-      // Redireciona conforme o perfil
-      if (usuario.perfil === "admin") {
-        router.push("/adminPages/clientes");
-      } else if (usuario.perfil === "cliente") {
-        router.push("/userPages/dashboard");
-      } else {
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("usuario");
+      const destino = rotaInicialDoUsuario(usuario.perfil);
+      if (destino === "/login") {
+        limparSessao();
         setErro("Perfil de usuário não reconhecido.");
+      } else {
+        router.replace(destino);
       }
     } catch (erro) {
       setErro("Não foi possível conectar ao servidor.");

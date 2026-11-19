@@ -72,14 +72,14 @@ export default function SobreNos() {
             <section className="resultados">
                 <div className="container-resultados">
                     <div className="card-avaliacao">
-                        <h2>Título Exemplo</h2>
+                        <h2>TechNova Solutions</h2>
 
                         <strong>Cliente da VoltHouse</strong>
 
                         <hr />
 
                         <p>
-                            "Este é um texto exemplo de cliente que obteve resultados positivos com a Volt House como: Economia, controle de gastos, inovação"
+                            "A Volt House nos ajudou a identificar desperdícios de energia e reduzir nossos gastos. Com o monitoramento, conseguimos economizar 23% na conta de luz e melhorar nosso controle de consumo."
                         </p>
                     </div>
 

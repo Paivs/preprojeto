@@ -1,8 +1,21 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import "./home.css";
 import DashboardHero from "@/components/dashboardHero";
 
 export default function Home() {
+  const [rendaMensal, setRendaMensal] = useState(10000);
+  const formatarMoeda = (valor) =>
+    new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      maximumFractionDigits: 0,
+    }).format(valor);
+  const economiaMensal = rendaMensal * 0.3;
+  const economiaAnual = economiaMensal * 12;
+
   return (
     <>
       <main id="home">
@@ -68,14 +81,17 @@ export default function Home() {
                 <div className="box-simulador">
                   <div className="top-box">
                     <span>Sua renda mensal</span>
-                    <h3>R$10.000</h3>
+                    <h3>{formatarMoeda(rendaMensal)}</h3>
                   </div>
                   <div className="barra-medicao">
                     <input
                       type="range"
                       min="1000"
-                      max="15000"
-                      defaultValue="10000"
+                      max="30000"
+                      step="500"
+                      value={rendaMensal}
+                      onChange={(evento) => setRendaMensal(Number(evento.target.value))}
+                      aria-label="Renda mensal"
                       className="w-full h-1 bg-[#1a1738] rounded-lg appearance-none cursor-pointer accent-[#ffc72c]
                       [&::-webkit-slider-runnable-track]:bg-gradient-to-r 
                       [&::-webkit-slider-runnable-track]:from-[#5b21b6] 
@@ -108,21 +124,21 @@ export default function Home() {
                     <span>Seu potencial em 12 meses</span>
                     <p>ATÉ 30%</p>
                   </div>
-                  <h2>R$36.000</h2>
+                  <h2>{formatarMoeda(economiaAnual)}</h2>
                   <span>de economia por ano</span>
                 </div>
 
                 <div className="main-box-results">
                   <div className="chart-wrapper">
                     <div className="chart-column">
-                      <div className="label-value-default">R$ 10.000 / mês</div>
+                      <div className="label-value-default">{formatarMoeda(rendaMensal)} / mês</div>
                       <div className="bar-default" />
                       <div className="label-footer">Sem otimização</div>
                     </div>
 
                     <div className="chart-column">
                       <div className="label-value-highlight">
-                        R$ 7.000 / mês
+                        {formatarMoeda(rendaMensal - economiaMensal)} / mês
                       </div>
                       <div className="bar-highlight" />
                       <div className="label-footer">Com Volt House</div>
@@ -141,10 +157,10 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
-                  <div className="btn-diagnostico">
+                  <Link href="/contato" className="btn-diagnostico">
                     Quero esse diagnóstico{" "}
                     <i className="bi bi-arrow-up-right"></i>
-                  </div>
+                  </Link>
                 </div>
               </div>
             </div>

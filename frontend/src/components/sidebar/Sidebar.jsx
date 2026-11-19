@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { limparSessao, obterTokenSessao, obterUsuarioSessao, validarSessao } from "@/lib/session";
 import "./sidebar.css";
 
 export default function Sidebar() {
@@ -12,34 +13,56 @@ export default function Sidebar() {
   const router = useRouter();
 
   useEffect(() => {
-    const usuarioSalvo = sessionStorage.getItem("usuario");
+    let ativo = true;
 
-    if (!usuarioSalvo) {
-      router.replace("/login");
-      return;
-    }
-
-    try {
-      const usuario = JSON.parse(usuarioSalvo);
-
-      if (usuario.perfil !== "admin" && usuario.perfil !== "cliente") {
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("usuario");
+    async function conferirSessao() {
+      const token = obterTokenSessao();
+      if (!token) {
         router.replace("/login");
         return;
       }
 
-      setPerfil(usuario.perfil);
-    } catch {
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("usuario");
-      router.replace("/login");
+      const usuarioSalvo = obterUsuarioSessao();
+      if (usuarioSalvo?.perfil === "admin" || usuarioSalvo?.perfil === "cliente") {
+        if (ativo) setPerfil(usuarioSalvo.perfil);
+        if (usuarioSalvo.perfil === "admin" && pathname.startsWith("/userPages")) {
+          router.replace("/adminPages/clientes");
+          return;
+        }
+        if (usuarioSalvo.perfil === "cliente" && pathname.startsWith("/adminPages")) {
+          router.replace("/userPages/dashboard");
+          return;
+        }
+      }
+
+      try {
+        const usuario = await validarSessao(token);
+        if (usuario.perfil !== "admin" && usuario.perfil !== "cliente") {
+          throw new Error("Perfil invalido.");
+        }
+        if (usuario.perfil === "admin" && pathname.startsWith("/userPages")) {
+          router.replace("/adminPages/clientes");
+          return;
+        }
+        if (usuario.perfil === "cliente" && pathname.startsWith("/adminPages")) {
+          router.replace("/userPages/dashboard");
+          return;
+        }
+        if (ativo) setPerfil(usuario.perfil);
+      } catch (erro) {
+        if (erro.status === 401) {
+          limparSessao();
+          router.replace("/login");
+        }
+      }
     }
-  }, [router]);
+
+    conferirSessao();
+    return () => { ativo = false; };
+  }, [pathname, router]);
 
   function sair() {
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("usuario");
+    limparSessao();
     setPerfil(null);
     window.location.replace("/");
   }
