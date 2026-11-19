@@ -1,0 +1,112 @@
+import * as SetorModel from '../models/SetorModels.js';
+import { validarTermoBusca } from '../utils/busca.js';
+
+function validarId(valor, campo) {
+  const id = Number(valor);
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new TypeError(`${campo} deve ser um número inteiro positivo.`);
+  }
+  return id;
+}
+
+function validarValor(valor, campo, padrao = 0) {
+  if (valor === undefined || valor === null || valor === '') return padrao;
+  const numero = Number(valor);
+  if (!Number.isFinite(numero) || numero < 0 || numero > 99999999.99) {
+    throw new TypeError(`${campo} deve ser um número entre 0 e 99999999.99.`);
+  }
+  return Math.round(numero * 100) / 100;
+}
+
+function validarTarifa(valor, campo, padrao = 0) {
+  if (valor === undefined || valor === null || valor === '') return padrao;
+  const numero = Number(valor);
+  if (!Number.isFinite(numero) || numero < 0 || numero > 99999999.99) {
+    throw new TypeError(`${campo} deve ser um número entre 0 e 99999999.99.`);
+  }
+  return Number(numero.toFixed(12));
+}
+
+function validarDados(dados = {}) {
+  const nome = typeof dados.nome_setor === 'string' ? dados.nome_setor.trim() : '';
+  if (!nome) throw new TypeError('Informe o nome do setor.');
+  if (nome.length > 100) throw new TypeError('O nome do setor deve ter no máximo 100 caracteres.');
+
+  let descricao = dados.descricao ?? null;
+  if (descricao !== null && typeof descricao !== 'string') {
+    throw new TypeError('A descrição deve ser um texto.');
+  }
+  if (typeof descricao === 'string') descricao = descricao.trim() || null;
+
+  const consumo = validarValor(dados.consumo_geral, 'Consumo geral');
+  let tarifaEnergia;
+  if (dados.tarifa_energia !== undefined) {
+    tarifaEnergia = validarTarifa(dados.tarifa_energia, 'Tarifa de energia');
+  } else {
+    const custoAnterior = validarValor(dados.custo, 'Custo de energia');
+    if (consumo === 0 && custoAnterior > 0) {
+      throw new TypeError('Informe consumo maior que zero para calcular a tarifa pelo custo legado.');
+    }
+    tarifaEnergia = consumo > 0
+      ? Number((custoAnterior / consumo).toFixed(12))
+      : 0;
+  }
+  const custoCalculado = consumo * tarifaEnergia;
+  if (!Number.isFinite(custoCalculado) || custoCalculado > 99999999.99) {
+    throw new TypeError('O custo calculado deve ser menor ou igual a 99999999.99.');
+  }
+
+  return {
+    nome_setor: nome,
+    descricao,
+    consumo_geral: consumo,
+    tarifa_energia: tarifaEnergia,
+    custo: Math.round((custoCalculado + Number.EPSILON) * 100) / 100
+  };
+}
+
+export async function listar(idUsuarioRecebido, buscaRecebida) {
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const busca = validarTermoBusca(buscaRecebida);
+  return SetorModel.listarPorUsuario(idUsuario, busca);
+}
+
+export async function buscarPorId(idSetorRecebido, idUsuarioRecebido) {
+  const idSetor = validarId(idSetorRecebido, 'ID do setor');
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const setor = await SetorModel.buscarPorId(idSetor, idUsuario);
+  if (!setor) {
+    const erro = new Error('Setor não encontrado.');
+    erro.status = 404;
+    throw erro;
+  }
+  return setor;
+}
+
+export async function criar(dados, idUsuarioRecebido) {
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  return SetorModel.criar(validarDados(dados), idUsuario);
+}
+
+export async function atualizar(idSetorRecebido, dados, idUsuarioRecebido) {
+  const idSetor = validarId(idSetorRecebido, 'ID do setor');
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const existente = await SetorModel.buscarPorId(idSetor, idUsuario);
+  if (!existente) {
+    const erro = new Error('Setor não encontrado.');
+    erro.status = 404;
+    throw erro;
+  }
+  return SetorModel.atualizar(idSetor, validarDados(dados), idUsuario);
+}
+
+export async function excluir(idSetorRecebido, idUsuarioRecebido) {
+  const idSetor = validarId(idSetorRecebido, 'ID do setor');
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const removeu = await SetorModel.excluir(idSetor, idUsuario);
+  if (!removeu) {
+    const erro = new Error('Setor não encontrado.');
+    erro.status = 404;
+    throw erro;
+  }
+}
