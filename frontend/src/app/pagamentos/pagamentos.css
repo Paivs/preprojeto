@@ -350,6 +350,14 @@
   color: var(--cor-texto-secundario);
   font-size: 16px;
 }
+.pagamento-gerado { margin: 4px 0 18px; padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid #e4d9f2; border-radius: 12px; background: #faf8fd; text-align: center; }
+.pagamento-gerado > strong { font-size: 14px; }
+.pagamento-gerado > span, .pagamento-gerado > small { color: #5d687d; font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+.pagamento-gerado > small { font-size: 10px; }
+.pagamento-qr-svg { width: 210px; max-width: 100%; height: auto; padding: 10px; border-radius: 9px; background: #fff; }
+.qr-fundo { fill: #fff; }
+.qr-celulas { fill: #161a25; }
+.pagamento-barras-svg { width: min(100%, 330px); height: auto; padding: 8px; border-radius: 6px; background: #fff; }
 
 :root:not([data-tema="claro"]) .pagamento-page {
   background: #101421;
@@ -426,6 +434,9 @@
   background: #3b2028;
   color: #ff9aa4;
 }
+:root:not([data-tema="claro"]) .pagamento-gerado { background: #211a30; border-color: #3a304a; }
+:root:not([data-tema="claro"]) .pagamento-gerado > span,
+:root:not([data-tema="claro"]) .pagamento-gerado > small { color: #c3cada; }
 
 /* Escala confortável para leitura e interação. */
 .pagamento-page {
