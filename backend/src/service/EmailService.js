@@ -1,13 +1,14 @@
 import nodemailer from 'nodemailer';
+import { fileURLToPath } from 'node:url';
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CAMINHO_LOGO = fileURLToPath(new URL('../assets/image.png', import.meta.url));
+const CID_LOGO = 'volthouse-logo';
 
-// TODO: personalize o texto padrão e informe a URL pública da imagem.
-const IMAGEM_PADRAO_URL = '';
 const TEXTO_PADRAO_HTML = `
   <p>Olá {{nome}},</p>
-  <p>{{empresa}}</p>
-  <p>Confira abaixo as informações enviadas para você.</p>
+  <p>A VoltHouse ajuda sua empresa a acompanhar o consumo de energia por setor e equipamento.</p>
+  <p>Com essas informações, você pode entender melhor seus gastos, identificar oportunidades de economia e tomar decisões mais eficientes.</p>
 `;
 
 function validarTexto(valor, campo, { obrigatorio = false, maximo = 5000 } = {}) {
@@ -117,9 +118,7 @@ export async function enviarEmail(dados = {}) {
   const assuntoFinal = preencherCampos(assunto, nome, empresa);
   const camposTextoNormalizados = normalizarCampos(campos);
   const camposHtmlNormalizados = normalizarCampos(camposHtml);
-  const secaoImagem = IMAGEM_PADRAO_URL
-    ? `<img src="${IMAGEM_PADRAO_URL}" alt="" style="max-width:100%;height:auto">`
-    : '';
+  const secaoImagem = `<div style="background:#11121a;text-align:center;padding:16px;margin-bottom:24px"><img src="cid:${CID_LOGO}" alt="VoltHouse — Controle seu consumo de energia" style="width:280px;max-width:100%;height:auto"></div>`;
   const secaoPersonalizadaHtml = mensagemPersonalizada
     ? `<h2>Mensagem personalizada</h2><p>${escaparHtml(mensagemPersonalizada).replace(/\r?\n/g, '<br>')}</p>`
     : '';
@@ -139,11 +138,22 @@ export async function enviarEmail(dados = {}) {
       from: configuracao.from,
       to: nome ? { name: nome, address: email } : email,
       subject: assuntoFinal,
-      text,
-      html
+      text: texto,
+      html,
+      attachments: [{
+        filename: 'image.png',
+        path: CAMINHO_LOGO,
+        cid: CID_LOGO
+      }]
     });
     return { destinatario: email, messageId: resultado.messageId };
-  } catch {
+  } catch (erroOriginal) {
+    console.error('[EmailService] Falha no envio SMTP:', {
+      code: erroOriginal.code,
+      command: erroOriginal.command,
+      responseCode: erroOriginal.responseCode,
+      message: erroOriginal.message
+    });
     const erro = new Error('N\u00e3o foi poss\u00edvel enviar o e-mail. Verifique a configura\u00e7\u00e3o SMTP.');
     erro.status = 502;
     throw erro;
