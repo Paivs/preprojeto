@@ -120,10 +120,10 @@ export default function Header() {
                     </Link>
 
                     <Link
-                        href="/relatos"
+                        href="/mapa-de-relatos"
                         onClick={() => setMenuAberto(false)}
                     >
-                        Relatos
+                        Mapa de relatos
                     </Link>
 
                     {usuario ? (
