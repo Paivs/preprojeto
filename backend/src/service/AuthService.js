@@ -1,14 +1,6 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import * as UsuarioModel from '../models/AuthModels.js';
-
-function obterSegredo() {
-  const segredo = process.env.JWT_SECRET;
-  if (!segredo) {
-    throw new Error('JWT_SECRET não definido no .env.');
-  }
-  return segredo;
-}
+import { criarSessao } from '../lib/session.js';
 
 // Aceita senha com hash bcrypt ou senha antiga em texto puro, sem alterá-la no login.
 async function conferirSenha(usuario, senhaDigitada) {
@@ -22,9 +14,6 @@ async function conferirSenha(usuario, senhaDigitada) {
 }
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-function assinarToken(payload, options) {
-  return jwt.sign(payload, obterSegredo(), options);
-}
 
 export async function registrar({ nome, nome_empresa, cnpj, email, telefone, senha } = {}) {
   const nomeLimpo = typeof (nome_empresa ?? nome) === 'string'
@@ -103,15 +92,8 @@ export async function login({ email, senha } = {}) {
     throw erro;
   }
 
-  const token = assinarToken(
-    { perfil: usuario.perfil },
-    { subject: String(usuario.id_usuario), expiresIn: '2h' }
-  );
-
   return {
-    token,
-    tipo: 'Bearer',
-    expiraEm: '2h',
+    ...criarSessao(usuario),
     usuario: { id: usuario.id_usuario, nome: usuario.nome_empresa, perfil: usuario.perfil }
   };
 }
