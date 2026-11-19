@@ -7,7 +7,7 @@ import Footer from "@/components/footer";
 export default function LayoutConteudo({ children }) {
   const pathname = usePathname();
 
-  const rotasSemHeaderFooter = ["/userPages", "/adminPages", "/login"];
+  const rotasSemHeaderFooter = ["/userPages", "/adminPages", "/login", "/pagamentos"];
 
   const esconderHeaderFooter = rotasSemHeaderFooter.some(
     (rota) => pathname === rota || pathname.startsWith(`${rota}/`)
