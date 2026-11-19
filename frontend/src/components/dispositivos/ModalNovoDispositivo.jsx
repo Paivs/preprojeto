@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Icone from "./Icone";
-import "./modal.css";
+import "@/components/setores/painelNovoSetor.css";
 
 export default function ModalNovoDispositivo({
   onSalvar,
@@ -57,22 +57,36 @@ export default function ModalNovoDispositivo({
   }
 
   return (
-    <div className="modal-fundo" onClick={() => !salvando && onFechar()}>
-      <div
-        className="modal"
+    <div
+      className="setor-painel-fundo"
+      onMouseDown={(evento) =>
+        evento.target === evento.currentTarget && !salvando && onFechar()
+      }
+    >
+      <aside
+        className="setor-painel"
         role="dialog"
         aria-modal="true"
-        aria-label="Adicionar dispositivo"
-        onClick={(evento) => evento.stopPropagation()}
+        aria-labelledby="novo-dispositivo-titulo"
       >
-        <div className="modal-topo">
-          <h2>Adicionar equipamento</h2>
-          <button type="button" className="botao-fechar" onClick={onFechar} aria-label="Fechar" disabled={salvando}>
+        <header className="setor-painel-cabecalho">
+          <div>
+            <span>DISPOSITIVOS</span>
+            <h2 id="novo-dispositivo-titulo">Adicionar equipamento</h2>
+            <p>Cadastre um equipamento e associe-o a um setor.</p>
+          </div>
+          <button
+            type="button"
+            className="setor-painel-fechar"
+            onClick={onFechar}
+            disabled={salvando}
+            aria-label="Fechar painel"
+          >
             <Icone nome="x" />
           </button>
-        </div>
+        </header>
 
-        <form className="modal-formulario" onSubmit={enviar}>
+        <form className="setor-painel-formulario" onSubmit={enviar}>
           <label>
             Nome do equipamento
             <input
@@ -123,24 +137,23 @@ export default function ModalNovoDispositivo({
             Status
             <select value={status} onChange={(evento) => setStatus(evento.target.value)}>
               <option value="Ativo">Ativo</option>
-              <option value="Alerta">Alerta</option>
               <option value="Inativo">Inativo</option>
             </select>
           </label>
 
-          {!setores.length && <p className="modal-erro">{erroSetores || "Cadastre um setor antes de adicionar equipamento."}</p>}
-          {erro && <p className="modal-erro">{erro}</p>}
+          {!setores.length && <p className="setor-painel-erro">{erroSetores || "Cadastre um setor antes de adicionar equipamento."}</p>}
+          {erro && <p className="setor-painel-erro">{erro}</p>}
 
-          <div className="modal-botoes">
-            <button type="button" className="botao-secundario" onClick={onFechar} disabled={salvando}>
+          <footer className="setor-painel-acoes">
+            <button type="button" className="setor-painel-cancelar" onClick={onFechar} disabled={salvando}>
               Cancelar
             </button>
-            <button type="submit" className="botao-adicionar" disabled={salvando || !setores.length}>
+            <button type="submit" className="setor-painel-salvar" disabled={salvando || !setores.length}>
               {salvando ? "Salvando..." : "Adicionar"}
             </button>
-          </div>
+          </footer>
         </form>
-      </div>
+      </aside>
     </div>
   );
 }

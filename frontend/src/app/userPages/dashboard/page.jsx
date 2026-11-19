@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
+import { normalizarStatus } from "@/components/dispositivos/dados";
 import { API_BASE_URL } from "@/lib/api";
 import "./userDashboard.css";
 
@@ -45,11 +46,7 @@ function obterFaixa(equipamento) {
 }
 
 function classeStatus(status) {
-  const valor = String(status || "").toLocaleLowerCase("pt-BR");
-  if (valor.includes("alerta") || valor.includes("atenção")) return "atencao";
-  if (valor.includes("inativo") || valor.includes("desligado")) return "desligado";
-  if (valor.includes("ativo")) return "normal";
-  return "desconhecido";
+  return normalizarStatus(status) === "Ativo" ? "ativo" : "inativo";
 }
 
 function iconeEquipamento(tipo) {
@@ -195,6 +192,8 @@ export default function UserDashboard() {
 
   const totalConsumo = setoresComDados.reduce((total, setor) => total + setor.consumo, 0);
   const totalCusto = setoresComDados.reduce((total, setor) => total + setor.custo, 0);
+  const totalCustoFormatado = formatarMoeda(totalCusto);
+  const fonteTotalCusto = Math.max(12, Math.min(22, 190 / totalCustoFormatado.length));
   const setoresConsumo = [...setoresComDados]
     .sort((a, b) => b.consumo - a.consumo)
     .slice(0, 5);
@@ -327,7 +326,7 @@ export default function UserDashboard() {
                       style={{ background: gradienteCustos(distribuicaoCustos, totalCusto) }}
                     >
                       <div className="grafico-rosca-centro">
-                        <strong>{formatarMoeda(totalCusto)}</strong>
+                        <strong style={{ fontSize: `${fonteTotalCusto}px` }}>{totalCustoFormatado}</strong>
                         <span>custo cadastrado</span>
                       </div>
                     </div>
@@ -363,7 +362,7 @@ export default function UserDashboard() {
             ) : equipamentosDestaque.length ? (
               <div className="row g-3 dispositivos-dashboard-lista">
                 {equipamentosDestaque.map((equipamento) => {
-                  const status = equipamento.status || "Não informado";
+                  const status = normalizarStatus(equipamento.status);
                   return (
                     <div className="col-12 col-md-4" key={equipamento.id_equipamento}>
                       <article className="dispositivo-dashboard-card">

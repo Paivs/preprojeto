@@ -23,8 +23,9 @@
 }
 
 .cabecalho-pagina h1 {
+  font-family: var(--font-nunito);
   font-size: 32px;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: -0.02em;
   margin: 8px 0 6px;
   color: var(--dark-text-primary);
@@ -304,6 +305,27 @@
 .badge-status.sem-pagamentos {
   background-color: rgba(55, 65, 81, 0.55);
   color: #d1d5db;
+}
+
+:root[data-tema="claro"] .badge-status.pago {
+  background-color: var(--verde-suave);
+  color: var(--light-success);
+}
+
+:root[data-tema="claro"] .badge-status.nao-pago {
+  background-color: var(--amarelo-suave);
+  color: #805700;
+}
+
+:root[data-tema="claro"] .badge-status.atrasado {
+  background-color: var(--vermelho-suave);
+  color: var(--light-danger);
+}
+
+:root[data-tema="claro"] .badge-status.cancelado,
+:root[data-tema="claro"] .badge-status.sem-pagamentos {
+  background-color: var(--light-bg-tertiary);
+  color: var(--light-text-secondary);
 }
 
 .mensagem-tabela {
