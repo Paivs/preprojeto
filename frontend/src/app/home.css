@@ -87,6 +87,7 @@
 }
 
 .home-header-buttons {
+    font-family: 'Nunito', sans-serif;
     display: flex;
     align-items: center;
     gap: 20px;
@@ -198,6 +199,7 @@
 }
 
 .home-button-primary {
+    font-family: 'Nunito', sans-serif;
     padding: 16px 22px;
     display: inline-flex;
     align-items: center;
@@ -211,6 +213,7 @@
 }
 
 .home-button-secondary {
+    font-family: 'Nunito', sans-serif;
     color: var(--home-navy);
     font-size: 13px;
     font-weight: 700;
@@ -255,6 +258,7 @@
 }
 
 .home-visual-card {
+    font-family: 'Nunito', sans-serif;
     width: 100%;
     max-width: 430px;
     position: relative;
@@ -274,8 +278,9 @@
 }
 
 .home-visual-label {
+    font-family: 'Nunito', sans-serif;
     color: var(--home-blue);
-    font-size: 9px;
+    font-size: 13px;
     font-weight: 800;
     letter-spacing: 1.4px;
 }
@@ -368,7 +373,7 @@
 .pin-three {
     bottom: 14%;
     left: 48%;
-    color: #198754;
+    color: #DC3545;
 }
 
 .home-map-center {
@@ -430,7 +435,7 @@
     font-size: 10px;
 }
 
-.home-floating-card {
+/* .home-floating-card {
     position: absolute;
     bottom: 20px;
     left: -20px;
@@ -443,7 +448,7 @@
     border: 1px solid #E8ECF2;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(16, 27, 45, .1);
-}
+} */
 
 .home-floating-card > i {
     width: 36px;
@@ -533,6 +538,7 @@
 }
 
 .home-feature-icon {
+    font-family: 'Nunito', sans-serif;
     width: 49px;
     height: 49px;
     display: flex;
@@ -556,7 +562,7 @@
     background: #E7F4ED;
     color: #198754;
 }
-
+/* 
 .home-feature-number {
     position: absolute;
     top: 34px;
@@ -564,7 +570,7 @@
     color: #CBD5E1;
     font-size: 12px;
     font-weight: 800;
-}
+} */
 
 .home-feature-card h3 {
     margin: 25px 0 12px;
@@ -625,6 +631,7 @@
 }
 
 .home-cta-button {
+    font-family: 'Nunito', sans-serif;
     display: inline-flex;
     align-items: center;
     gap: 12px;

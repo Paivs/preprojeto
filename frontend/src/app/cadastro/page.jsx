@@ -143,7 +143,9 @@ export default function Cadastro() {
 
   return (
     <section className="page-login">
-      <div className="lado-esquerdo">
+      {/* <div className="lado-esquerdo">
+
+      <div className="container-text-lado-esquerdo">
         <div className="img-lado-esquerdo">
           <img
             className="img-logo"
@@ -152,19 +154,20 @@ export default function Cadastro() {
           />
         </div>
 
-        <div className="text-lado-esquerdo">
-          <h1>
-            Faça parte de uma{" "}
-            <span className="quebra-linha">comunidade mais segura.</span>
-          </h1>
+          <div className="text-lado-esquerdo">
+            <h1>
+              Faça parte de uma{" "}
+              <span className="quebra-linha">comunidade mais segura.</span>
+            </h1>
 
-          <p>
-            Registre e acompanhe relatos de ocorrências
-            <span className="quebra-linha">
-              por região, contribuindo para uma cidade
-            </span>
-            <span> mais informada e segura.</span>
-          </p>
+            <p>
+              Registre e acompanhe relatos de ocorrências
+              <span className="quebra-linha">
+                por região, contribuindo para uma cidade
+              </span>
+              <span> mais informada e segura.</span>
+            </p>
+          </div>
         </div>
 
         <div className="icon-lado-esquerdo">
@@ -195,7 +198,57 @@ export default function Cadastro() {
             </p>
           </div>
         </div>
+      </div> */}
+
+<div className="lado-esquerdo">
+  <div className="container-text-lado-esquerdo">
+    <div className="img-lado-esquerdo">
+      <img
+        className="img-logo"
+        src="/imagens/logo.png"
+        alt="Logo AlertABC"
+      />
+    </div>
+
+    <div className="text-lado-esquerdo">
+      <h1>
+        Faça parte de uma{" "}
+        <span className="quebra-linha">comunidade mais segura.</span>
+      </h1>
+
+      <p>
+        Registre e acompanhe relatos de ocorrências por região, contribuindo
+        para uma cidade mais informada e segura.
+      </p>
+    </div>
+
+    <div className="icon-lado-esquerdo">
+      <div className="icon">
+        <i className="bi bi-geo-alt"></i>
+        <div>
+          <h3>Mapa interativo</h3>
+          <p>Visualize relatos por localização.</p>
+        </div>
       </div>
+
+      <div className="icon">
+        <i className="bi bi-file-earmark-plus"></i>
+        <div>
+          <h3>Registre relatos</h3>
+          <p>Compartilhe informações com a comunidade.</p>
+        </div>
+      </div>
+
+      <div className="icon">
+        <i className="bi bi-shield-check"></i>
+        <div>
+          <h3>Mais segurança</h3>
+          <p>Contribua para uma cidade mais informada.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
       <div className="lado-direito">
         <div className="container-info-lado-direito">

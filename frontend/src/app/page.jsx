@@ -162,7 +162,7 @@ export default function Home() {
                             <i className="bi bi-file-earmark-plus"></i>
                         </div>
 
-                        <span className="home-feature-number">01</span>
+                        {/* <span className="home-feature-number">01</span> */}
 
                         <h3>Registre relatos</h3>
 
@@ -179,7 +179,7 @@ export default function Home() {
                             <i className="bi bi-geo-alt"></i>
                         </div>
 
-                        <span className="home-feature-number">02</span>
+                        {/* <span className="home-feature-number">02</span> */}
 
                         <h3>Consulte informações</h3>
 
@@ -196,7 +196,7 @@ export default function Home() {
                             <i className="bi bi-people"></i>
                         </div>
 
-                        <span className="home-feature-number">03</span>
+                        {/* <span className="home-feature-number">03</span> */}
 
                         <h3>Colabore com a comunidade</h3>
 

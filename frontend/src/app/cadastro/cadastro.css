@@ -19,7 +19,6 @@
     background-position: center;
     background-repeat: no-repeat;
 
-
     display: flex;
     flex-direction: column;
     gap: 25px;
@@ -30,8 +29,11 @@
     min-height: 100vh;
 }
 
+/*
 .text-lado-esquerdo {
     display: flex;
+    background-color: #ecfdf3;
+
     flex-direction: column;
     gap: 20px;
     padding-bottom: 10px;
@@ -65,6 +67,7 @@
 }
 
 .icon-lado-esquerdo{
+    background-color: #ecfdf3;
     display: flex;
     gap: 30px;
 }
@@ -75,7 +78,140 @@
 
 .icon-lado-esquerdo h3{
     font-size: 18px;
+} */
+
+
+
+/* .text-lado-esquerdo h1 {
+    margin: 0;
+    color: var(--home-navy);
+    font-size: clamp(38px, 5vw, 59px);
+    line-height: 1.12;
+    font-weight: 800;
+    letter-spacing: -2.5px;
 }
+
+.text-lado-esquerdo h1 span {
+    color: var(--home-blue);
+} */
+
+.lado-esquerdo {
+    background-image: url(/imagens/lado-esquerdo.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 50px;
+    width: 55%;
+    min-height: 100vh;
+}
+
+/* Quadro único englobando tudo */
+.container-text-lado-esquerdo {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    max-width: 560px; /* Limita a largura para ficar elegante e compacto */
+
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-top: 4px solid var(--home-blue, rgb(37, 77, 255));
+    border-radius: 16px;
+    padding: 36px 40px;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+}
+
+.img-logo {
+    width: 175px; /* Logo mais proporcional */
+    display: block;
+}
+
+.text-lado-esquerdo {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.text-lado-esquerdo h1 {
+    margin: 0;
+    color: var(--home-navy, #0f172a);
+    font-size: clamp(28px, 3vw, 38px); /* Tamanho executivo e equilibrado */
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+}
+
+.text-lado-esquerdo h1 span {
+    background: linear-gradient(90deg, var(--home-blue, rgb(37, 77, 255)) 0%, #00b4d8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.text-lado-esquerdo p {
+    margin: 0;
+    font-size: 14.5px;
+    color: #475569;
+    line-height: 1.55;
+}
+
+/* Grade de ícones integrada na base do quadro */
+.icon-lado-esquerdo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding-top: 22px;
+    border-top: 1px solid #e2e8f0; /* Linha divisória limpa */
+}
+
+.icon {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.icon i {
+    color: var(--home-blue, rgb(37, 77, 255));
+    font-size: 20px;
+    background: rgba(37, 77, 255, 0.08);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin-bottom: 4px;
+}
+
+.icon h3 {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.icon p {
+    margin: 0;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+.quebra-linha {
+    display: block;
+}
+
+
+
+
 
 /* Lado Direito do Site */
 
