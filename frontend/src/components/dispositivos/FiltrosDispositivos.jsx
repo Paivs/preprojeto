@@ -18,7 +18,7 @@ export default function FiltrosDispositivos({
         <Icone nome="busca" />
         <input
           type="text"
-          placeholder="Buscar equipamento ou local..."
+          placeholder="Buscar equipamento ou local"
           value={busca}
           onChange={(e) => onBusca(e.target.value)}
         />
@@ -36,9 +36,8 @@ export default function FiltrosDispositivos({
           aria-label="Filtrar por estado"
         >
           <option value="todos">Todos</option>
-          <option value="normal">Normal</option>
-          <option value="atencao">Atenção</option>
-          <option value="desligado">Desligado</option>
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
         </select>
 
         <select

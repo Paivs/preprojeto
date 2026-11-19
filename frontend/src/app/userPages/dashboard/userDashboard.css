@@ -787,20 +787,12 @@
   border-radius: 50%;
 }
 
-.status-normal .status-ponto {
+.status-ativo .status-ponto {
   background: var(--verde);
 }
 
-.status-atencao .status-ponto {
-  background: var(--amarelo);
-}
-
-.status-desligado .status-ponto {
+.status-inativo .status-ponto {
   background: var(--cor-texto-fraco);
-}
-
-.status-desconhecido .status-ponto {
-  background: var(--azul-claro);
 }
 
 .dispositivo-dashboard-consumo strong {

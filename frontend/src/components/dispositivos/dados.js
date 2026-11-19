@@ -7,10 +7,14 @@ export const CATEGORIAS = [
 ];
 
 export const ROTULO_ESTADO = {
-  normal: "Normal",
-  atencao: "Atenção",
-  desligado: "Desligado",
+  ativo: "Ativo",
+  inativo: "Inativo",
 };
+
+export function normalizarStatus(status) {
+  const valor = String(status || "").trim().toLocaleLowerCase("pt-BR");
+  return valor === "ativo" || valor === "normal" ? "Ativo" : "Inativo";
+}
 
 export function adaptarEquipamentoApi(equipamento) {
   return {
@@ -18,8 +22,8 @@ export function adaptarEquipamentoApi(equipamento) {
     nome: equipamento.nome_equipamento,
     local: equipamento.nome_setor || "Setor não informado",
     categoria: equipamento.tipo || "Outros",
-    grupo: (equipamento.nome_setor || "Sem setor").toLocaleUpperCase("pt-BR"),
-    status: equipamento.status || "Não informado",
+    grupo: equipamento.nome_setor || "Sem setor",
+    status: normalizarStatus(equipamento.status),
     consumoMinimo:
       equipamento.consumo_minimo === null || equipamento.consumo_minimo === undefined
         ? null
@@ -187,10 +191,7 @@ export function novoDispositivo({ nome, categoria, local }) {
 }
 
 export function obterEstado(d) {
-  const status = String(d.status || "").trim().toLocaleLowerCase("pt-BR");
-  if (status.includes("alerta") || status.includes("atenção")) return "atencao";
-  if (status.includes("inativo") || status.includes("desligado")) return "desligado";
-  return "normal";
+  return normalizarStatus(d.status) === "Ativo" ? "ativo" : "inativo";
 }
 
 export function formatarFaixaConsumo(dispositivo) {

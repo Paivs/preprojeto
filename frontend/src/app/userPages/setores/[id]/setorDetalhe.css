@@ -582,11 +582,6 @@
   background: var(--verde-suave);
   color: var(--verde);
 }
-.equipamento-status.status-alerta {
-  border-color: rgba(255, 209, 102, 0.2);
-  background: var(--amarelo-suave);
-  color: var(--cor-alerta);
-}
 .equipamento-status.status-inativo {
   border-color: var(--cor-borda);
   background: var(--cor-fundo);

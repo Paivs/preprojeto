@@ -16,13 +16,15 @@
     margin-bottom: 24px;
 }
 
-.cabecalho-etiqueta {
+.pagina-configuracao .cabecalho-pagina .cabecalho-etiqueta {
+    color: var(--amarelo);
+    font-family: var(--font-nunito);
     font-size: 11px;
     letter-spacing: 0.2em;
-    color: var(--amarelo);
 }
 
 .cabecalho-pagina h1 {
+    font-family: var(--font-nunito);
     font-size: 32px;
     font-weight: 700;
     letter-spacing: -0.02em;

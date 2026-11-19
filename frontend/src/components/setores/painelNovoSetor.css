@@ -85,6 +85,7 @@
   font-weight: 600;
 }
 .setor-painel-formulario input,
+.setor-painel-formulario select,
 .setor-painel-formulario textarea {
   width: 100%;
   padding: 11px 12px;
@@ -96,7 +97,19 @@
   font: 400 13px var(--font-inter);
   resize: vertical;
 }
+.setor-painel-formulario select {
+  cursor: pointer;
+}
+.setor-painel-formulario select option {
+  color: var(--cor-texto);
+  background-color: var(--cor-card);
+}
+.setor-painel-formulario select option:checked {
+  color: #fff;
+  background-color: var(--roxo);
+}
 .setor-painel-formulario input:focus,
+.setor-painel-formulario select:focus,
 .setor-painel-formulario textarea:focus {
   border-color: var(--cor-destaque);
 }

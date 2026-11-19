@@ -23,6 +23,7 @@
 }
 
 .cabecalho-pagina h1 {
+  font-family: var(--font-nunito);
   margin: 8px 0 6px;
   color: var(--dark-text-primary);
   font-size: 32px;

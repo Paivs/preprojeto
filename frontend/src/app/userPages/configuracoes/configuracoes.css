@@ -19,9 +19,9 @@
 }
 .config-hero .cabecalho-etiqueta {
   color: var(--amarelo);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-family: var(--font-nunito);
+  font-size: 11px;
+  letter-spacing: 0.2em;
 }
 .config-hero h1 {
   margin: 8px 0 6px;

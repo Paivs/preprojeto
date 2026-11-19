@@ -3,16 +3,17 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    height: 42px;
+    height: 44px;
     border: none;
-    padding: 0 18px;
+    padding: 0 16px;
     border-radius: 10px;
-    background: linear-gradient(135deg, var(--roxo-claro), var(--roxo));
+    background: var(--roxo);
     color: #fff;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
     white-space: nowrap;
     cursor: pointer;
+    transition: background-color .15s ease;
 }
 
 .botao-adicionar:hover {
@@ -24,15 +25,16 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    height: 42px;
-    padding: 0 14px;
+    height: 44px;
+    padding: 0 16px;
     border-radius: 10px;
     border: 1px solid var(--cor-borda);
     background: var(--cor-card);
     color: var(--cor-texto-secundario);
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
+    transition: background-color .15s ease;
 }
 
 .botao-secundario:hover {
@@ -49,11 +51,20 @@
     display: grid;
     place-items: center;
     color: var(--cor-texto-secundario);
+    background: transparent;
     cursor: pointer;
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease;
 }
 
 .botao-fechar:hover {
     background: var(--roxo-suave);
+}
+
+.botao-adicionar:focus-visible,
+.botao-secundario:focus-visible,
+.botao-fechar:focus-visible {
+    outline: 2px solid var(--roxo-claro);
+    outline-offset: 2px;
 }
 
 @media (max-width: 700px) {

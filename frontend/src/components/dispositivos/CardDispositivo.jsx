@@ -20,7 +20,7 @@ export default function CardDispositivo({
     >
       <div className="card-topo">
         <span
-          className={`icone-dispositivo ${estado === "atencao" ? "icone-dispositivo-atencao" : ""}`}
+          className="icone-dispositivo"
         >
           <Icone categoria={dispositivo.categoria} tamanho={22} />
         </span>
@@ -29,9 +29,6 @@ export default function CardDispositivo({
           <span className={`status-dispositivo status-${estado}`}>
             <span className="status-ponto" />
             {dispositivo.status}
-          </span>
-          <span className="card-pontos" aria-hidden="true">
-            <Icone nome="pontos" />
           </span>
         </div>
       </div>

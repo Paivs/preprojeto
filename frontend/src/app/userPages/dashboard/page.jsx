@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
+import { normalizarStatus } from "@/components/dispositivos/dados";
 import { API_BASE_URL } from "@/lib/api";
 import "./userDashboard.css";
 
@@ -45,11 +46,7 @@ function obterFaixa(equipamento) {
 }
 
 function classeStatus(status) {
-  const valor = String(status || "").toLocaleLowerCase("pt-BR");
-  if (valor.includes("alerta") || valor.includes("atenção")) return "atencao";
-  if (valor.includes("inativo") || valor.includes("desligado")) return "desligado";
-  if (valor.includes("ativo")) return "normal";
-  return "desconhecido";
+  return normalizarStatus(status) === "Ativo" ? "ativo" : "inativo";
 }
 
 function iconeEquipamento(tipo) {
@@ -363,7 +360,7 @@ export default function UserDashboard() {
             ) : equipamentosDestaque.length ? (
               <div className="row g-3 dispositivos-dashboard-lista">
                 {equipamentosDestaque.map((equipamento) => {
-                  const status = equipamento.status || "Não informado";
+                  const status = normalizarStatus(equipamento.status);
                   return (
                     <div className="col-12 col-md-4" key={equipamento.id_equipamento}>
                       <article className="dispositivo-dashboard-card">

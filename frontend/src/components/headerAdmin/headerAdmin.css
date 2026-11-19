@@ -1,8 +1,8 @@
 .topo {
   display: flex;
   align-items: center;
-  gap: 14px;
-  height: 68px;
+  gap: 16px;
+  height: 72px;
   padding: 0 32px;
   border-bottom: 1px solid var(--cor-borda);
 }
@@ -44,16 +44,16 @@
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .botao-icone {
   position: relative;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
-  border: 1px solid var(--cor-borda);
-  background: var(--cor-card);
+  border: 1px solid transparent;
+  background: transparent;
   display: grid;
   place-items: center;
   color: var(--cor-texto-secundario);
@@ -61,20 +61,23 @@
   transition: color .15s ease, background-color .15s ease, border-color .15s ease;
 }
 
-.botao-tema {
-  color: var(--amarelo);
+.botao-icone:hover {
+  color: var(--cor-texto);
+  background: var(--cor-card);
+  border-color: var(--cor-borda);
 }
 
+.botao-tema,
 :root[data-tema="claro"] .botao-tema {
-  color: var(--light-primary);
+  color: var(--cor-texto-secundario);
 }
 
 .botao-icone-ponto {
   position: absolute;
   top: 8px;
-  right: 9px;
-  width: 7px;
-  height: 7px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--amarelo);
 }
@@ -101,16 +104,17 @@
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--roxo-claro), var(--roxo));
-  border: 2px solid var(--amarelo);
   display: grid;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
   place-items: center;
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
+  border: 1px solid rgba(145, 79, 240, 0.25);
+  border-radius: 10px;
+  background: var(--roxo-suave);
+  color: var(--cor-destaque);
+  font-size: 14px;
+  font-weight: 800;
 }
 
 .perfil-dados {
@@ -278,9 +282,8 @@
   inset: 0;
   display: flex;
   justify-content: flex-end;
-  background: rgba(3, 5, 12, .68);
-  backdrop-filter: blur(3px);
-  animation: perfil-fundo-entrada .18s ease-out;
+  background: rgba(3, 5, 12, .56);
+  animation: perfil-fundo-entrada .16s ease-out;
 }
 
 .perfil-painel {
@@ -295,7 +298,7 @@
   background: var(--cor-sidebar);
   border-left: 1px solid var(--cor-borda);
   box-shadow: var(--sombra-painel);
-  animation: perfil-painel-entrada .24s ease-out;
+  animation: perfil-painel-entrada .2s ease-out;
 }
 
 .perfil-painel-topo {
@@ -309,29 +312,30 @@
 
 .perfil-painel-etiqueta {
   color: var(--roxo-claro);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .15em;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .perfil-painel-topo h2 {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   color: var(--cor-texto);
-  font-size: 17px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .perfil-painel-fechar {
   display: grid;
-  flex: 0 0 34px;
-  width: 34px;
-  height: 34px;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
   place-items: center;
   color: var(--cor-texto-secundario);
   background: var(--cor-card);
   border: 1px solid var(--cor-borda);
-  border-radius: 9px;
-  font-size: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease;
 }
 
 .perfil-painel-fechar:hover {
@@ -342,12 +346,13 @@
 .perfil-painel-identidade {
   display: flex;
   align-items: center;
-  gap: 13px;
-  margin: 21px 0 26px;
-  padding: 16px;
-  background: linear-gradient(130deg, var(--roxo-suave), transparent);
-  border: 1px solid rgba(145, 79, 240, .18);
-  border-radius: 13px;
+  gap: 16px;
+  margin: 24px 0 28px;
+  padding: 20px;
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  border-left: 3px solid var(--roxo-claro);
+  border-radius: 14px;
 }
 
 .perfil-painel-avatar {
@@ -356,10 +361,10 @@
   width: 48px;
   height: 48px;
   place-items: center;
-  color: #fff;
-  background: linear-gradient(135deg, var(--roxo-claro), var(--roxo));
-  border: 2px solid rgba(255, 223, 63, .75);
-  border-radius: 15px;
+  color: var(--cor-texto);
+  background: var(--roxo-suave);
+  border: 1px solid color-mix(in srgb, var(--roxo-claro) 32%, var(--cor-borda));
+  border-radius: 50%;
   font-size: 14px;
   font-weight: 700;
 }
@@ -379,7 +384,7 @@
 .perfil-painel-identidade p {
   margin: 0;
   color: var(--cor-texto-fraco);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .perfil-status-conta {
@@ -399,17 +404,17 @@
 }
 
 .perfil-detalhes h3 {
-  margin: 0 0 9px;
+  margin: 0 0 8px;
   color: var(--cor-texto);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .perfil-detalhe-linha {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 13px 0;
+  gap: 8px;
+  padding: 16px 0;
   border-bottom: 1px solid var(--cor-borda);
 }
 
@@ -418,35 +423,36 @@
   align-items: center;
   gap: 8px;
   color: var(--cor-texto-fraco);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .perfil-detalhe-linha > span i {
-  width: 14px;
-  color: var(--roxo-claro);
+  width: 16px;
+  color: var(--cor-texto-secundario);
   text-align: center;
 }
 
 .perfil-detalhe-linha strong {
-  padding-left: 22px;
+  padding-left: 24px;
+  overflow-wrap: anywhere;
   color: var(--cor-texto-secundario);
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 400;
 }
 
 .perfil-painel-rodape {
   display: grid;
-  gap: 18px;
+  gap: 12px;
   margin-top: auto;
-  padding-top: 22px;
+  padding-top: 24px;
 }
 
 .perfil-painel-rodape > span {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   color: var(--cor-texto-fraco);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .perfil-painel-rodape > span i { color: var(--verde); }
@@ -456,12 +462,13 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 42px;
+  min-height: 44px;
   color: var(--cor-texto-secundario);
   background: var(--cor-card);
   border: 1px solid var(--cor-borda);
   border-radius: 10px;
-  font-size: 11px;
+  font-size: 13px;
+  cursor: pointer;
 }
 
 .perfil-painel-rodape button:hover {
@@ -475,13 +482,13 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 42px;
+  min-height: 44px;
   color: var(--cor-texto-secundario);
   background: var(--cor-card);
   border: 1px solid var(--cor-borda);
   border-radius: 10px;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   text-decoration: none;
   cursor: pointer;
   transition: color .15s ease, border-color .15s ease, background .15s ease;
@@ -519,7 +526,7 @@
 }
 
 @keyframes perfil-painel-entrada {
-  from { transform: translateX(24px); opacity: .8; }
+  from { transform: translateX(16px); opacity: .85; }
   to { transform: translateX(0); opacity: 1; }
 }
 
@@ -536,5 +543,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .perfil-modal-fundo, .perfil-painel { animation: none; }
-  .notificacao-item { transition: none; }
+  .notificacao-item, .botao-icone { transition: none; }
 }

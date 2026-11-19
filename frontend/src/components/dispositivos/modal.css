@@ -1,3 +1,4 @@
+.modal-novo-fundo,
 .modal-fundo {
     position: fixed;
     inset: 0;
@@ -5,23 +6,25 @@
     display: grid;
     place-items: center;
     padding: 16px;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(3px);
+    background: rgba(3, 5, 12, 0.54);
     animation: modal-fundo-entrada 0.18s ease-out;
 }
 
-.modal {
+.modal-conteudo {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     max-width: 440px;
     max-height: 100%;
     overflow-y: auto;
     border: 1px solid var(--cor-borda);
+    border-radius: 14px;
     background: var(--cor-card);
-    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     animation: modal-entrada 0.24s ease-out;
 }
 
-.modal.modal-entrada-esquerda {
+.modal-conteudo.modal-entrada-esquerda {
     animation: modal-entrada-esquerda 0.24s ease-out;
 }
 
@@ -51,13 +54,13 @@
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    padding: 18px 20px;
+    padding: 16px 20px;
     border-bottom: 1px solid var(--cor-borda);
 }
 
 .modal-topo h2 {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--cor-texto);
 }
 
@@ -79,12 +82,20 @@
 .modal-formulario input[type="text"],
 .modal-formulario input[type="number"],
 .modal-formulario select {
-    height: 42px;
+    height: 44px;
     padding: 0 12px;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid var(--cor-borda);
     background: var(--cor-campo);
     color: var(--cor-texto);
+    font: 400 14px var(--font-nunito);
+}
+
+.modal-formulario input:focus-visible,
+.modal-formulario select:focus-visible {
+    border-color: var(--roxo-claro);
+    outline: 2px solid var(--roxo-suave);
+    outline-offset: 1px;
 }
 
 .modal-formulario input::placeholder {
@@ -104,7 +115,7 @@
 .modal-botoes {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 8px;
     margin-top: 4px;
 }
 
@@ -115,5 +126,12 @@
 
     .modal-botoes button {
         width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-novo-fundo,
+    .modal-conteudo {
+        animation: none;
     }
 }
