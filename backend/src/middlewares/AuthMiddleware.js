@@ -1,4 +1,4 @@
-import { verificarSessao } from '../lib/session.js';
+import { verificarSessao } from '../service/AuthService.js';
 
 export function autenticar(req, res, next) {
   const headerAuth = req.headers.authorization;
