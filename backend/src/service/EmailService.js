@@ -2,6 +2,14 @@ import nodemailer from 'nodemailer';
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// TODO: personalize o texto padrão e informe a URL pública da imagem.
+const IMAGEM_PADRAO_URL = '';
+const TEXTO_PADRAO_HTML = `
+  <p>Olá {{nome}},</p>
+  <p>{{empresa}}</p>
+  <p>Confira abaixo as informações enviadas para você.</p>
+`;
+
 function validarTexto(valor, campo, { obrigatorio = false, maximo = 5000 } = {}) {
   if (valor === undefined || valor === null || valor === '') {
     if (obrigatorio) throw new TypeError(`Informe ${campo}.`);
@@ -51,23 +59,40 @@ function preencherCampos(texto, nome, empresa) {
     .replace(/\{\{\s*empresa\s*\}\}/gi, () => empresa);
 }
 
+function escaparHtml(valor) {
+  return valor.replace(/[&<>"']/g, (caractere) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[caractere]);
+}
+
 export async function enviarEmail(dados = {}) {
-  if (Object.keys(dados).some((campo) => /senha|password/i.test(campo))) {
-    throw new TypeError('Não envie senha por e-mail. Envie um link seguro para criação de senha.');
-  }
+  const email = validarTexto(dados.email, 'o e-mail do destinat\u00e1rio', { obrigatorio: true, maximo: 254 });
+  if (!REGEX_EMAIL.test(email)) throw new TypeError('Informe um e-mail de destinat\u00e1rio v\u00e1lido.');
 
-  const email = validarTexto(dados.email, 'o e-mail do destinatário', { obrigatorio: true, maximo: 254 });
-  if (!REGEX_EMAIL.test(email)) throw new TypeError('Informe um e-mail de destinatário válido.');
-
-  const nome = validarTexto(dados.nome, 'o nome do destinatário', { maximo: 120 });
+  const nome = validarTexto(dados.nome, 'o nome do destinat\u00e1rio', { maximo: 120 });
   const empresa = validarTexto(dados.empresa, 'o nome da empresa', { maximo: 150 });
   const assunto = validarTexto(dados.assunto, 'o assunto', { obrigatorio: true, maximo: 150 });
-  const mensagem = validarTexto(dados.mensagem, 'a mensagem', { obrigatorio: true });
+  const mensagemPersonalizada = validarTexto(
+    dados.mensagemPersonalizada ?? dados.mensagem,
+    'a mensagem personalizada'
+  );
+  const emailLogin = validarTexto(dados.emailLogin, 'o e-mail de acesso', { maximo: 254 });
+  const senhaLogin = validarTexto(dados.senhaLogin, 'a senha de acesso', { maximo: 500 });
 
-  if (/[\r\n]/.test(assunto)) throw new TypeError('O assunto não pode conter quebras de linha.');
-  if (/[\r\n]/.test(nome)) throw new TypeError('O nome do destinatário não pode conter quebras de linha.');
+  if (/[\r\n]/.test(assunto)) throw new TypeError('O assunto n\u00e3o pode conter quebras de linha.');
+  if (/[\r\n]/.test(nome)) throw new TypeError('O nome do destinat\u00e1rio n\u00e3o pode conter quebras de linha.');
   if (!nome && !empresa) {
-    throw new TypeError('Informe o nome do destinatário ou o nome da empresa.');
+    throw new TypeError('Informe o nome do destinat\u00e1rio ou o nome da empresa.');
+  }
+  if (Boolean(emailLogin) !== Boolean(senhaLogin)) {
+    throw new TypeError('Informe o e-mail e a senha de acesso juntos.');
+  }
+  if (emailLogin && !REGEX_EMAIL.test(emailLogin)) {
+    throw new TypeError('Informe um e-mail de acesso v\u00e1lido.');
   }
 
   const configuracao = obterConfiguracaoSmtp();
@@ -78,19 +103,48 @@ export async function enviarEmail(dados = {}) {
     auth: configuracao.auth
   });
 
+  const campos = { nome, empresa, emailLogin, senhaLogin };
+  const camposHtml = Object.fromEntries(
+    Object.entries(campos).map(([chave, valor]) => [chave, escaparHtml(valor)])
+  );
+  const normalizarCampos = (valores) => Object.fromEntries(
+    Object.entries(valores).map(([chave, valor]) => [chave.toLowerCase(), valor])
+  );
+  const substituirCampos = (texto, valores) => texto.replace(
+    /\{\{\s*(nome|empresa|emailLogin|senhaLogin)\s*\}\}/gi,
+    (_match, chave) => valores[chave.toLowerCase()] || ''
+  );
   const assuntoFinal = preencherCampos(assunto, nome, empresa);
-  const mensagemFinal = preencherCampos(mensagem, nome, empresa);
+  const camposTextoNormalizados = normalizarCampos(campos);
+  const camposHtmlNormalizados = normalizarCampos(camposHtml);
+  const secaoImagem = IMAGEM_PADRAO_URL
+    ? `<img src="${IMAGEM_PADRAO_URL}" alt="" style="max-width:100%;height:auto">`
+    : '';
+  const secaoPersonalizadaHtml = mensagemPersonalizada
+    ? `<h2>Mensagem personalizada</h2><p>${escaparHtml(mensagemPersonalizada).replace(/\r?\n/g, '<br>')}</p>`
+    : '';
+  const secaoLoginHtml = emailLogin
+    ? `<h2>Este \u00e9 o seu login</h2><p>E-mail: ${camposHtml.emailLogin}<br>Senha: ${camposHtml.senhaLogin}</p>`
+    : '';
+  const textoPadrao = substituirCampos(TEXTO_PADRAO_HTML.replace(/<[^>]*>/g, '').trim(), camposTextoNormalizados);
+  const texto = [
+    textoPadrao,
+    mensagemPersonalizada,
+    emailLogin ? `Este \u00e9 o seu login:\nE-mail: ${emailLogin}\nSenha: ${senhaLogin}` : ''
+  ].filter(Boolean).join('\n\n');
+  const html = `<!doctype html><html><body>${secaoImagem}${substituirCampos(TEXTO_PADRAO_HTML, camposHtmlNormalizados)}${secaoPersonalizadaHtml}${secaoLoginHtml}</body></html>`;
 
   try {
     const resultado = await transportador.sendMail({
       from: configuracao.from,
       to: nome ? { name: nome, address: email } : email,
       subject: assuntoFinal,
-      text: mensagemFinal
+      text,
+      html
     });
     return { destinatario: email, messageId: resultado.messageId };
   } catch {
-    const erro = new Error('Não foi possível enviar o e-mail. Verifique a configuração SMTP.');
+    const erro = new Error('N\u00e3o foi poss\u00edvel enviar o e-mail. Verifique a configura\u00e7\u00e3o SMTP.');
     erro.status = 502;
     throw erro;
   }
