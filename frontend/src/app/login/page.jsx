@@ -4,7 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { API_BASE_URL } from "@/lib/api";
-import { limparSessao, obterTokenSessao, rotaInicialDoUsuario, salvarSessao, validarSessao } from "@/lib/session";
+import {
+  limparSessao,
+  obterTokenSessao,
+  salvarSessao,
+  validarSessao,
+} from "@/lib/session";
 import "./login.css";
 
 export default function Login() {
@@ -17,18 +22,62 @@ export default function Login() {
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
 
+  // Define para onde o usuário deve ir
+  function definirDestino(usuario, pagamentoPendente) {
+    if (usuario?.perfil === "admin") {
+      return "/adminPages/clientes";
+    }
+
+    if (usuario?.perfil === "cliente") {
+      return pagamentoPendente ? "/pagamentos" : "/userPages/dashboard";
+    }
+
+    return null;
+  }
+
+  // Limpa os dados da sessão
+  function limparDadosSessao() {
+    limparSessao();
+    sessionStorage.removeItem("pagamentoPendente");
+  }
+
+  // Verifica se já existe uma sessão ativa
   useEffect(() => {
     const token = obterTokenSessao();
+
     if (!token) return;
+
     let ativo = true;
+
     validarSessao(token)
       .then((usuario) => {
-        if (ativo) router.replace(rotaInicialDoUsuario(usuario.perfil));
+        if (!ativo) return;
+
+        const pagamentoSalvo = sessionStorage.getItem("pagamentoPendente");
+
+        const pagamentoPendente = pagamentoSalvo
+          ? JSON.parse(pagamentoSalvo)
+          : null;
+
+        const destino = definirDestino(usuario, pagamentoPendente);
+
+        if (destino) {
+          router.replace(destino);
+        } else {
+          limparDadosSessao();
+        }
       })
-      .catch((erro) => {
-        if (erro.status === 401) limparSessao();
+      .catch((erroValidacao) => {
+        if (!ativo) return;
+
+        if (erroValidacao.status === 401) {
+          limparDadosSessao();
+        }
       });
-    return () => { ativo = false; };
+
+    return () => {
+      ativo = false;
+    };
   }, [router]);
 
   // AUTENTICAÇÃO
@@ -39,19 +88,16 @@ export default function Login() {
     setCarregando(true);
 
     try {
-      const resposta = await fetch(
-        `${API_BASE_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            senha,
-          }),
+      const resposta = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          email,
+          senha,
+        }),
+      });
 
       const resultado = await resposta.json();
 
@@ -62,36 +108,36 @@ export default function Login() {
 
       const { token, usuario, pagamentoPendente } = resultado.dados;
 
-      // Armazena os dados da sessão
-<<<<<<< Updated upstream
+      if (!token || !usuario) {
+        setErro("O servidor retornou dados de login inválidos.");
+        return;
+      }
+
+      // Salva a sessão
       salvarSessao({ token, usuario });
 
-      const destino = rotaInicialDoUsuario(usuario.perfil);
-      if (destino === "/login") {
-        limparSessao();
-=======
-      sessionStorage.setItem("token", token);
-      sessionStorage.setItem("usuario", JSON.stringify(usuario));
+      // Salva a cobrança pendente para a página de pagamentos
       if (pagamentoPendente) {
-        sessionStorage.setItem("pagamentoPendente", JSON.stringify(pagamentoPendente));
+        sessionStorage.setItem(
+          "pagamentoPendente",
+          JSON.stringify(pagamentoPendente)
+        );
       } else {
         sessionStorage.removeItem("pagamentoPendente");
       }
 
-      // Redireciona conforme o perfil
-      if (usuario.perfil === "admin") {
-        router.push("/adminPages/clientes");
-      } else if (usuario.perfil === "cliente") {
-        router.push(pagamentoPendente ? "/pagamentos" : "/userPages/dashboard");
-      } else {
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("usuario");
->>>>>>> Stashed changes
+      // Define o destino conforme perfil e pagamento
+      const destino = definirDestino(usuario, pagamentoPendente);
+
+      if (!destino) {
+        limparDadosSessao();
         setErro("Perfil de usuário não reconhecido.");
-      } else {
-        router.replace(destino);
+        return;
       }
-    } catch (erro) {
+
+      router.replace(destino);
+    } catch (erroLogin) {
+      console.error("Erro ao fazer login:", erroLogin);
       setErro("Não foi possível conectar ao servidor.");
     } finally {
       setCarregando(false);
@@ -147,6 +193,7 @@ export default function Login() {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+
         ctx.fillStyle = `rgba(168, 85, 247, ${clampedOpacity})`;
         ctx.shadowBlur = 10;
         ctx.shadowColor = "#a855f7";
@@ -228,7 +275,11 @@ export default function Login() {
             </div>
           </div>
 
-          {erro && <p className="mensagem-erro"><i className="bi bi-exclamation-triangle"></i> {erro}</p>}
+          {erro && (
+            <p className="mensagem-erro">
+              <i className="bi bi-exclamation-triangle"></i> {erro}
+            </p>
+          )}
 
           <Link className="esquecer-senha" href="/">
             Esqueci minha senha
