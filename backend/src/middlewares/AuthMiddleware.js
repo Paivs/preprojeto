@@ -1,11 +1,4 @@
-import jwt from 'jsonwebtoken';
-
-function obterSegredo() {
-  if (!process.env.JWT_SECRET) {
-    throw new Error('JWT_SECRET não definido no .env.');
-  }
-  return process.env.JWT_SECRET;
-}
+import { verificarSessao } from '../service/AuthService.js';
 
 export function autenticar(req, res, next) {
   const headerAuth = req.headers.authorization;
@@ -18,11 +11,7 @@ export function autenticar(req, res, next) {
   }
 
   try {
-    const payload = jwt.verify(token, obterSegredo());
-    req.usuario = {
-      id: Number(payload.sub),
-      perfil: payload.perfil
-    };
+    req.usuario = verificarSessao(token);
     return next();
   } catch {
     return res.status(401).json({ sucesso: false, erro: 'Token inválido ou expirado.' });

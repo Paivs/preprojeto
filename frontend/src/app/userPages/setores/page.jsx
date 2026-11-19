@@ -9,7 +9,6 @@ import "./setores.css";
 
 export default function Setores() {
   const [painelAberto, setPainelAberto] = useState(false);
-  const [setoresAdicionais, setSetoresAdicionais] = useState([]);
 
   return (
     <div className="pagina">
@@ -34,7 +33,7 @@ export default function Setores() {
             </button>
           </div>
           <div className="container-table">
-            <TabelaSetores setoresAdicionais={setoresAdicionais} />
+            <TabelaSetores />
           </div>
         </main>
       </div>

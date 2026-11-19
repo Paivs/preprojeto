@@ -3,9 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
+import { API_BASE_URL } from "@/lib/api";
 import "./relatorio.css";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 function formatarMoeda(valor) {
   return Number(valor || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -32,8 +31,8 @@ export default function Relatorios() {
       if (!token) throw new Error("Sua sessão expirou. Entre novamente.");
       const headers = { Authorization: `Bearer ${token}` };
       const [respostaSetores, respostaEquipamentos] = await Promise.all([
-        fetch(`${API_URL}/api/setores`, { headers }),
-        fetch(`${API_URL}/api/equipamentos`, { headers }),
+        fetch(`${API_BASE_URL}/setores`, { headers }),
+        fetch(`${API_BASE_URL}/equipamentos`, { headers }),
       ]);
       const [resultadoSetores, resultadoEquipamentos] = await Promise.all([
         respostaSetores.json(), respostaEquipamentos.json(),

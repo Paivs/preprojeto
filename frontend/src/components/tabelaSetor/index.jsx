@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { createPortal } from "react-dom";
 import { API_BASE_URL } from "@/lib/api";
+import { requisicaoAutenticada } from "@/lib/session";
 import "./tabelaSetor.css";
 
 const formatarMoeda = (valor) =>
@@ -26,25 +27,14 @@ export default function TabelaSetores() {
   useEffect(() => {
     let ativo = true;
     async function carregar() {
-      const token = sessionStorage.getItem("token");
-      if (!token) {
-        if (ativo) {
-          setErro(
-            "Sua sessão não foi encontrada. Entre novamente para ver seus setores."
-          );
-          setCarregando(false);
-        }
-        return;
-      }
       try {
-        const resposta = await fetch(`${API_BASE_URL}/setores`, {
-          headers: { Authorization: `Bearer ${token}` },
+        const resposta = await requisicaoAutenticada(`${API_BASE_URL}/setores`, {
           cache: "no-store",
         });
         const resultado = await resposta.json().catch(() => ({}));
         if (!resposta.ok)
           throw new Error(
-            resultado.erro || "Não foi possível carregar seus setores."
+            resultado.erro || resultado.message || "Não foi possível carregar seus setores."
           );
         if (ativo)
           setSetores(Array.isArray(resultado.dados) ? resultado.dados : []);
@@ -89,22 +79,16 @@ export default function TabelaSetores() {
   async function excluirSetor() {
     const setor = setorPendenteExclusao;
     if (!setor) return;
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      setErroExclusao("Sua sessão expirou. Entre novamente para excluir o setor.");
-      return;
-    }
 
     setExcluindoId(setor.id_setor);
     setErroExclusao("");
     try {
-      const resposta = await fetch(`${API_BASE_URL}/setores/${setor.id_setor}`, {
+      const resposta = await requisicaoAutenticada(`${API_BASE_URL}/setores/${setor.id_setor}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
       });
       const resultado = await resposta.json().catch(() => ({}));
       if (!resposta.ok || !resultado.sucesso) {
-        throw new Error(resultado.erro || "Não foi possível excluir o setor.");
+        throw new Error(resultado.erro || resultado.message || "Não foi possível excluir o setor.");
       }
 
       setSetores((atuais) => atuais.filter((item) => item.id_setor !== setor.id_setor));
