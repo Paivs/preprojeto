@@ -10,7 +10,7 @@ function obterSegredo() {
   return segredo;
 }
 
-// Aceita hash bcrypt e também senha antiga em texto puro (converte para hash no 1º login).
+// Aceita senha com hash bcrypt ou senha antiga em texto puro, sem alterá-la no login.
 async function conferirSenha(usuario, senhaDigitada) {
   const guardada = usuario.senha_hash || '';
 
@@ -18,12 +18,7 @@ async function conferirSenha(usuario, senhaDigitada) {
     return bcrypt.compare(senhaDigitada, guardada);
   }
 
-  if (guardada !== '' && senhaDigitada === guardada) {
-    await UsuarioModel.atualizarSenha(usuario.id_usuario, await bcrypt.hash(senhaDigitada, 10));
-    return true;
-  }
-
-  return false;
+  return guardada !== '' && senhaDigitada === guardada;
 }
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
