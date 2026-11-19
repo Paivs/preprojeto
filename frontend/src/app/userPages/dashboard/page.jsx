@@ -192,6 +192,8 @@ export default function UserDashboard() {
 
   const totalConsumo = setoresComDados.reduce((total, setor) => total + setor.consumo, 0);
   const totalCusto = setoresComDados.reduce((total, setor) => total + setor.custo, 0);
+  const totalCustoFormatado = formatarMoeda(totalCusto);
+  const fonteTotalCusto = Math.max(12, Math.min(22, 190 / totalCustoFormatado.length));
   const setoresConsumo = [...setoresComDados]
     .sort((a, b) => b.consumo - a.consumo)
     .slice(0, 5);
@@ -324,7 +326,7 @@ export default function UserDashboard() {
                       style={{ background: gradienteCustos(distribuicaoCustos, totalCusto) }}
                     >
                       <div className="grafico-rosca-centro">
-                        <strong>{formatarMoeda(totalCusto)}</strong>
+                        <strong style={{ fontSize: `${fonteTotalCusto}px` }}>{totalCustoFormatado}</strong>
                         <span>custo cadastrado</span>
                       </div>
                     </div>

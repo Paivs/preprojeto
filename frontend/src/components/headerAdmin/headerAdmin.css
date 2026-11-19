@@ -282,7 +282,7 @@
   inset: 0;
   display: flex;
   justify-content: flex-end;
-  background: rgba(3, 5, 12, .56);
+  background: rgba(3, 5, 12, .54);
   animation: perfil-fundo-entrada .16s ease-out;
 }
 

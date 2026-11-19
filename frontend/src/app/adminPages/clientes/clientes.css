@@ -25,7 +25,7 @@
 .cabecalho-pagina h1 {
   font-family: var(--font-nunito);
   font-size: 32px;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: -0.02em;
   margin: 8px 0 6px;
   color: var(--dark-text-primary);

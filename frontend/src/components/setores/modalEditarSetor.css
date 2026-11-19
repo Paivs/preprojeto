@@ -6,8 +6,7 @@
   place-items: center;
   overflow-y: auto;
   padding: 20px;
-  background: rgba(3, 7, 15, 0.68);
-  backdrop-filter: blur(3px);
+  background: rgba(3, 5, 12, 0.54);
 }
 
 .modal-editar-setor {
