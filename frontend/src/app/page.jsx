@@ -47,8 +47,16 @@ export default function Home() {
           <div className="patrocinador-container">
             <div className="grid-patrocinador">
               <div className="img-pat">
-                <img className="logo-tema-escuro" src="/images/enelBranca.png" alt="Enel" />
-                <img className="logo-tema-claro" src="/images/enel.png" alt="Enel" />
+                <img
+                  className="logo-tema-escuro"
+                  src="/images/enelBranca.png"
+                  alt="Enel"
+                />
+                <img
+                  className="logo-tema-claro"
+                  src="/images/enel.png"
+                  alt="Enel"
+                />
               </div>
               <div className="img-pat">
                 <img src="/images/comercio.png" />
@@ -57,12 +65,30 @@ export default function Home() {
                 <img src="/images/energisa.png" />
               </div>
               <div className="img-pat">
-                <img className="logo-tema-escuro" src="/images/wegBranco.png" alt="WEG" />
-                <img className="logo-tema-claro" src="/images/weg.png" alt="WEG" />
+                <img
+                  className="logo-tema-escuro"
+                  src="/images/wegBranco.png"
+                  alt="WEG"
+                />
+                <img
+                  className="logo-tema-claro"
+                  src="/images/weg.png"
+                  alt="WEG"
+                />
               </div>
               <div className="img-pat">
-                <img className="logo-tema-escuro" src="/images/cpflBranco.png" style={{ width: "10vw" }} alt="CPFL Energia" />
-                <img className="logo-tema-claro" src="/images/cpfl.png" style={{ width: "10vw" }} alt="CPFL Energia" />
+                <img
+                  className="logo-tema-escuro"
+                  src="/images/cpflBranco.png"
+                  style={{ width: "10vw" }}
+                  alt="CPFL Energia"
+                />
+                <img
+                  className="logo-tema-claro"
+                  src="/images/cpfl.png"
+                  style={{ width: "10vw" }}
+                  alt="CPFL Energia"
+                />
               </div>
             </div>
           </div>
@@ -90,7 +116,9 @@ export default function Home() {
                       max="30000"
                       step="500"
                       value={rendaMensal}
-                      onChange={(evento) => setRendaMensal(Number(evento.target.value))}
+                      onChange={(evento) =>
+                        setRendaMensal(Number(evento.target.value))
+                      }
                       aria-label="Renda mensal"
                       className="w-full h-1 bg-[#1a1738] rounded-lg appearance-none cursor-pointer accent-[#ffc72c]
                       [&::-webkit-slider-runnable-track]:bg-gradient-to-r 
@@ -131,7 +159,9 @@ export default function Home() {
                 <div className="main-box-results">
                   <div className="chart-wrapper">
                     <div className="chart-column">
-                      <div className="label-value-default">{formatarMoeda(rendaMensal)} / mês</div>
+                      <div className="label-value-default">
+                        {formatarMoeda(rendaMensal)} / mês
+                      </div>
                       <div className="bar-default" />
                       <div className="label-footer">Sem otimização</div>
                     </div>

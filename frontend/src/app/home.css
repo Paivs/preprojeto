@@ -1,6 +1,31 @@
-#hero {
+#home {
+  overflow: hidden;
+  color: var(--cor-texto);
+  font-family: var(--font-primary);
+}
+
+#home #hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   border-bottom: 1px solid var(--cor-borda);
+  background:
+    radial-gradient(ellipse at 82% 38%, rgba(108, 43, 217, 0.14), transparent 38%),
+    var(--cor-fundo);
   padding: 0 0 6rem;
+}
+
+#home #hero::before {
+  position: absolute;
+  z-index: -1;
+  top: -15rem;
+  left: -14rem;
+  width: 34rem;
+  height: 34rem;
+  border-radius: 50%;
+  background: rgba(0, 201, 149, 0.08);
+  content: "";
+  filter: blur(100px);
 }
 
 .container-hero {
@@ -138,11 +163,9 @@
 }
 
 .box-simulador {
-  background: linear-gradient(
-    60deg,
-    var(--dark-bg-primary),
-    var(--dark-bg-secondary)
-  );
+  background: linear-gradient(60deg,
+      var(--dark-bg-primary),
+      var(--dark-bg-secondary));
   padding: 20px 30px;
   border-radius: 12px;
   border: 1px solid var(--cor-borda);
@@ -227,11 +250,9 @@
 }
 
 .box-results {
-  background: linear-gradient(
-    60deg,
-    var(--dark-bg-primary),
-    var(--dark-bg-secondary)
-  );
+  background: linear-gradient(60deg,
+      var(--dark-bg-primary),
+      var(--dark-bg-secondary));
   padding: 20px 30px;
   border-radius: 12px;
   border: 1px solid var(--cor-borda);
@@ -496,7 +517,6 @@
   padding: 30px 20px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 5px var(--roxo);
 }
 
 .card-group:hover {
