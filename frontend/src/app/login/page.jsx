@@ -6,9 +6,7 @@ import Link from "next/link";
 import { API_BASE_URL } from "@/lib/api";
 import {
   limparSessao,
-  obterTokenSessao,
   salvarSessao,
-  validarSessao,
 } from "@/lib/session";
 import "./login.css";
 
@@ -42,44 +40,6 @@ export default function Login() {
   }
 
   // Verifica se já existe uma sessão ativa
-  useEffect(() => {
-    const token = obterTokenSessao();
-
-    if (!token) return;
-
-    let ativo = true;
-
-    validarSessao(token)
-      .then((usuario) => {
-        if (!ativo) return;
-
-        const pagamentoSalvo = sessionStorage.getItem("pagamentoPendente");
-
-        const pagamentoPendente = pagamentoSalvo
-          ? JSON.parse(pagamentoSalvo)
-          : null;
-
-        const destino = definirDestino(usuario, pagamentoPendente);
-
-        if (destino) {
-          router.replace(destino);
-        } else {
-          limparDadosSessao();
-        }
-      })
-      .catch((erroValidacao) => {
-        if (!ativo) return;
-
-        if (erroValidacao.status === 401) {
-          limparDadosSessao();
-        }
-      });
-
-    return () => {
-      ativo = false;
-    };
-  }, [router]);
-
   // AUTENTICAÇÃO
   async function fazerLogin(e) {
     e.preventDefault();
