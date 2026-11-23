@@ -29,12 +29,14 @@ export function adicionarConsumoSimulado(equipamento) {
   const minimo = equipamento.consumo_minimo;
   const maximo = equipamento.consumo_maximo;
 
-  if (minimo === null || minimo === undefined || maximo === null || maximo === undefined) {
+  if (minimo === null || minimo === undefined) {
     return { ...equipamento, consumo_atual: null, consumo_atualizado_em: null };
   }
 
   const minimoNumero = Number(minimo);
-  const maximoNumero = Number(maximo);
+  const maximoNumero = maximo === null || maximo === undefined
+    ? minimoNumero
+    : Number(maximo);
   if (
     !Number.isFinite(minimoNumero) ||
     !Number.isFinite(maximoNumero) ||

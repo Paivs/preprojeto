@@ -42,7 +42,7 @@ export default function CardDispositivo({
       <div className="card-divisor" />
 
       <div>
-        <span className="consumo-rotulo">Consumo atual simulado</span>
+        <span className="consumo-rotulo">Consumo atual</span>
         <div className="consumo-linha">
           <p className="consumo-valor consumo-faixa">
             {Number.isFinite(dispositivo.consumoAtual)

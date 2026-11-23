@@ -26,13 +26,11 @@ export async function buscarPorId(idSetor, idUsuario) {
 export async function criar(setor, idUsuario) {
   const [resultado] = await pool.query(
     `INSERT INTO setor (nome_setor, descricao, consumo_geral, tarifa_energia, custo, id_usuario)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+     VALUES (?, ?, 0, ?, 0, ?)`,
     [
       setor.nome_setor,
       setor.descricao,
-      setor.consumo_geral,
       setor.tarifa_energia,
-      setor.custo,
       idUsuario
     ]
   );
@@ -42,14 +40,12 @@ export async function criar(setor, idUsuario) {
 export async function atualizar(idSetor, setor, idUsuario) {
   await pool.query(
     `UPDATE setor
-        SET nome_setor = ?, descricao = ?, consumo_geral = ?, tarifa_energia = ?, custo = ?
+        SET nome_setor = ?, descricao = ?, tarifa_energia = ?
       WHERE id_setor = ? AND id_usuario = ?`,
     [
       setor.nome_setor,
       setor.descricao,
-      setor.consumo_geral,
       setor.tarifa_energia,
-      setor.custo,
       idSetor,
       idUsuario
     ]
