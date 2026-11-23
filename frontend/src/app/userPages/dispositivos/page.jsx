@@ -138,8 +138,8 @@ export default function PaginaDispositivos() {
         <main className="conteudo-pagina">
           <div className="cabecalho-pagina">
             <div>
-              <span className="cabecalho-etiqueta">CONTROLE DE ATIVOS</span>
-              <h1>Meus Dispositivos</h1>
+              <span className="cabecalho-etiqueta">DISPOSITIVOS</span>
+              <h1>Meus dispositivos</h1>
               <p>Equipamentos vinculados à sua conta, organizados por setor.</p>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { pool } from '../config/database.js';
+import { pool } from "../config/database.js";
 
 const camposPagamento = `
   p.id_pagamento,
@@ -15,7 +15,7 @@ export async function listar() {
     `SELECT ${camposPagamento}
        FROM pagamento p
        INNER JOIN usuario u ON u.id_usuario = p.id_usuario
-      ORDER BY p.data_vencimento DESC, p.id_pagamento DESC`
+      ORDER BY p.data_vencimento DESC, p.id_pagamento DESC`,
   );
   return linhas;
 }
@@ -26,15 +26,31 @@ export async function buscarPorId(id) {
        FROM pagamento p
        INNER JOIN usuario u ON u.id_usuario = p.id_usuario
       WHERE p.id_pagamento = ?`,
-    [id]
+    [id],
   );
   return linhas[0] || null;
 }
 
+export async function confirmarPagamentoDoUsuario(
+  idPagamento,
+  idUsuario,
+  formaPagamento,
+) {
+  const [resultado] = await pool.query(
+    `UPDATE pagamento
+        SET status = 'pago', data_pagamento = CURRENT_TIMESTAMP,
+            forma_pagamento = ?
+      WHERE id_pagamento = ? AND id_usuario = ?
+        AND status IN ('nao_pago', 'atrasado')`,
+    [formaPagamento, idPagamento, idUsuario],
+  );
+  return resultado.affectedRows > 0;
+}
+
 export async function usuarioExiste(idUsuario) {
   const [linhas] = await pool.query(
-    'SELECT id_usuario FROM usuario WHERE id_usuario = ?',
-    [idUsuario]
+    "SELECT id_usuario FROM usuario WHERE id_usuario = ?",
+    [idUsuario],
   );
   return linhas.length > 0;
 }
@@ -50,8 +66,8 @@ export async function criar(pagamento) {
       pagamento.data_pagamento,
       pagamento.status,
       pagamento.forma_pagamento,
-      pagamento.id_usuario
-    ]
+      pagamento.id_usuario,
+    ],
   );
   return buscarPorId(resultado.insertId);
 }
@@ -69,16 +85,16 @@ export async function atualizar(id, pagamento) {
       pagamento.status,
       pagamento.forma_pagamento,
       pagamento.id_usuario,
-      id
-    ]
+      id,
+    ],
   );
   return buscarPorId(id);
 }
 
 export async function excluir(id) {
   const [resultado] = await pool.query(
-    'DELETE FROM pagamento WHERE id_pagamento = ?',
-    [id]
+    "DELETE FROM pagamento WHERE id_pagamento = ?",
+    [id],
   );
   return resultado.affectedRows > 0;
 }
