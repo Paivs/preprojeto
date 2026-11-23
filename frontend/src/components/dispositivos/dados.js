@@ -22,18 +22,8 @@ export function adaptarEquipamentoApi(equipamento) {
     nome: equipamento.nome_equipamento,
     local: equipamento.nome_setor || "Setor não informado",
     categoria: equipamento.tipo || "Outros",
-<<<<<<< HEAD
-    grupo: (equipamento.nome_setor || "Sem setor").toLocaleUpperCase("pt-BR"),
-    status: equipamento.status || "Não informado",
-    consumoAtual:
-      equipamento.consumo_atual === null || equipamento.consumo_atual === undefined
-        ? null
-        : Number(equipamento.consumo_atual),
-    consumoAtualizadoEm: equipamento.consumo_atualizado_em || null,
-=======
     grupo: equipamento.nome_setor || "Sem setor",
     status: normalizarStatus(equipamento.status),
->>>>>>> a90d9081cdacafbbecef9f2bcafc8ab974849b38
     consumoMinimo:
       equipamento.consumo_minimo === null || equipamento.consumo_minimo === undefined
         ? null
