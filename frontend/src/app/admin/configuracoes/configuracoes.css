@@ -1,0 +1,198 @@
+.config-content {
+    width: 100%;
+    padding: 30px;
+    color: #101b2d;
+}
+
+.config-header {
+    margin-bottom: 28px;
+}
+
+.config-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.config-header p {
+    color: #64748b;
+    font-size: 14px;
+    margin: 0;
+}
+
+.config-card {
+    background: #ffffff;
+    border: 1px solid #e5eaf1;
+    border-radius: 12px;
+    padding: 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 3px 12px rgba(16, 27, 45, 0.04);
+}
+
+.config-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 25px;
+}
+
+.config-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    background: #edf3ff;
+    color: #2457c5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+    flex-shrink: 0;
+}
+
+.config-card-header h2 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 5px;
+}
+
+.config-card-header p {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+}
+
+.config-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.config-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.config-field-full {
+    grid-column: 1 / -1;
+}
+
+.config-field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.config-field input {
+    width: 100%;
+    height: 44px;
+    border: 1px solid #dce3ec;
+    border-radius: 7px;
+    padding: 0 13px;
+    color: #101b2d;
+    background: #ffffff;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.config-field input:focus {
+    border-color: #2457c5;
+    box-shadow: 0 0 0 3px rgba(36, 87, 197, 0.10);
+}
+
+.config-field input:disabled {
+    background: #f3f5f8;
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+.config-field small {
+    color: #64748b;
+    font-size: 11px;
+}
+
+.config-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.config-actions button {
+    border: none;
+    border-radius: 7px;
+    padding: 12px 20px;
+    background: #2457c5;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.config-actions button:hover {
+    background: #1946a7;
+}
+
+.config-actions button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.config-password-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 12px;
+    margin-top: 18px;
+}
+
+.config-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.config-message.sucesso {
+    color: #166534;
+    background: #ecfdf3;
+    border: 1px solid #bbf7d0;
+}
+
+.config-message.erro {
+    color: #b42318;
+    background: #fef3f2;
+    border: 1px solid #fecdca;
+}
+
+.config-loading {
+    color: #64748b;
+    padding: 20px 0;
+}
+
+@media (max-width: 700px) {
+    .config-content {
+        padding: 20px 14px;
+    }
+
+    .config-card {
+        padding: 20px 16px;
+    }
+
+    .config-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .config-field-full {
+        grid-column: auto;
+    }
+
+    .config-actions button {
+        width: 100%;
+    }
+}

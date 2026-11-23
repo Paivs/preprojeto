@@ -1,0 +1,933 @@
+
+/* ==========================================
+   CONFIGURAÇÕES GERAIS
+========================================== */
+
+.admin-layout {
+    --admin-navy: #101b2d;
+    --admin-blue: #2457c5;
+    --admin-background: #f3f5f8;
+    --admin-text: #182438;
+    --admin-muted: #64748b;
+
+    --status-pendente: #e9a23b;
+    --status-aprovado: #198754;
+    --status-rejeitado: #dc3545;
+
+    display: flex;
+    min-height: 100vh;
+    background: var(--admin-background);
+    color: var(--admin-text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.admin-layout * {
+    box-sizing: border-box;
+}
+
+/* ==========================================
+   MENU LATERAL
+========================================== */
+
+.admin-sidebar {
+    width: 255px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 27px 18px 20px;
+
+    background: var(--admin-navy);
+    color: #fff;
+
+    z-index: 1100;
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 0 8px 32px;
+}
+
+.admin-brand-icon {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: var(--admin-blue);
+    color: #fff;
+
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.admin-brand h2 {
+    margin: 0;
+
+    font-size: 21px;
+    letter-spacing: -0.5px;
+}
+
+.admin-brand span {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #a9b6ca;
+    font-size: 11px;
+}
+
+.admin-menu-label {
+    padding: 12px 10px;
+
+    color: #8190a8;
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.admin-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 13px 12px;
+
+    border-radius: 8px;
+
+    color: #c2ccda;
+    text-decoration: none;
+
+    font-size: 13px;
+
+    transition: 0.2s;
+}
+
+.admin-nav-link:hover {
+    background: #1b2b43;
+    color: #fff;
+}
+
+.admin-nav-link.active {
+    background: var(--admin-blue);
+    color: #fff;
+    font-weight: 600;
+}
+
+.admin-nav-icon {
+    width: 20px;
+    text-align: center;
+
+    font-size: 19px;
+}
+
+.admin-sidebar-bottom {
+    margin-top: auto;
+}
+
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    padding: 17px 7px;
+
+    border-top: 1px solid #29384d;
+}
+
+.admin-avatar {
+    width: 37px;
+    height: 37px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #dce7fb;
+    color: var(--admin-blue);
+
+    font-weight: 700;
+}
+
+.admin-profile-info strong {
+    display: block;
+    font-size: 12px;
+}
+
+.admin-profile-info span {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #9ba9bd;
+    font-size: 10px;
+}
+
+.admin-logout {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 12px 8px;
+
+    color: #c2ccda;
+
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.admin-logout:hover {
+    color: #fff;
+}
+
+/* ==========================================
+   CONTEÚDO
+========================================== */
+
+.admin-main {
+    flex: 1;
+    min-width: 0;
+
+    margin-left: 255px;
+}
+
+.admin-content {
+    width: 100%;
+    max-width: 1600px;
+
+    margin: 0 auto;
+
+    padding: 35px 38px;
+}
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 28px;
+}
+
+.admin-eyebrow {
+    color: var(--admin-blue);
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+}
+
+.admin-header h1 {
+    margin: 9px 0 7px;
+
+    color: var(--admin-text);
+
+    font-size: 29px;
+    letter-spacing: -0.8px;
+}
+
+.admin-header p {
+    margin: 0;
+
+    color: var(--admin-muted);
+    font-size: 13px;
+}
+
+.admin-date {
+    padding: 10px 14px;
+
+    border: 1px solid #e0e5ed;
+    border-radius: 8px;
+
+    background: #fff;
+    color: var(--admin-muted);
+
+    font-size: 11px;
+}
+
+/* ==========================================
+   BOAS-VINDAS
+========================================== */
+
+.admin-welcome {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 175px;
+
+    margin-bottom: 30px;
+    padding: 30px 34px;
+
+    overflow: hidden;
+
+    border-radius: 12px;
+
+    background: linear-gradient(
+        110deg,
+        #101b2d,
+        #2457c5
+    );
+
+    color: #fff;
+}
+
+.admin-welcome span {
+    color: #b9d0ff;
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.admin-welcome h2 {
+    margin: 11px 0 8px;
+    font-size: 25px;
+}
+
+.admin-welcome p {
+    max-width: 520px;
+
+    margin: 0;
+
+    color: #d5e1f7;
+
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.welcome-decoration {
+    position: absolute;
+    right: 45px;
+
+    color: rgba(255, 255, 255, 0.09);
+
+    font-size: 170px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* ==========================================
+   SEÇÕES
+========================================== */
+
+.admin-section {
+    margin-bottom: 30px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 17px;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.section-heading p {
+    margin: 6px 0 0;
+
+    color: var(--admin-muted);
+    font-size: 11px;
+}
+
+.demo-label {
+    padding: 7px 10px;
+
+    border-radius: 6px;
+
+    background: #e9effb;
+    color: var(--admin-blue);
+
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* ==========================================
+   CARDS DE INDICADORES
+========================================== */
+
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.admin-stat-card {
+    min-width: 0;
+
+    padding: 20px;
+
+    border: 1px solid #e9edf3;
+    border-radius: 10px;
+
+    background: #fff;
+
+    box-shadow: 0 2px 8px rgba(16, 27, 45, 0.025);
+}
+
+.stat-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 8px;
+
+    color: var(--admin-muted);
+    font-size: 11px;
+}
+
+.stat-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #edf2fc;
+    color: var(--admin-blue);
+
+    font-size: 18px;
+}
+
+.stat-value {
+    display: block;
+
+    margin: 18px 0 7px;
+
+    font-size: 28px;
+    letter-spacing: -1px;
+}
+
+.stat-description {
+    color: #8a96a8;
+    font-size: 10px;
+}
+
+/* ==========================================
+   PAINÉIS
+========================================== */
+
+.admin-dashboard-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.6fr)
+        minmax(260px, 1fr);
+
+    gap: 17px;
+
+    margin-bottom: 20px;
+}
+
+.admin-panel {
+    min-width: 0;
+
+    padding: 23px;
+
+    border: 1px solid #e9edf3;
+    border-radius: 10px;
+
+    background: #fff;
+
+    box-shadow: 0 2px 8px rgba(16, 27, 45, 0.025);
+}
+
+/* ==========================================
+   GRÁFICO
+========================================== */
+
+.chart-placeholder {
+    height: 235px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+
+    gap: 20px;
+
+    padding: 20px 15px 0;
+
+    border-bottom: 1px solid #e8edf3;
+}
+
+.chart-column {
+    height: 100%;
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    text-align: center;
+}
+
+.chart-bar {
+    width: min(65px, 75%);
+    min-height: 15px;
+
+    border-radius: 7px 7px 0 0;
+}
+
+/* PENDENTES - LARANJA */
+
+.bar-blue {
+    background: var(--status-pendente);
+}
+
+/* APROVADOS - VERDE */
+
+.bar-green {
+    background: var(--status-aprovado);
+}
+
+/* REJEITADOS - VERMELHO */
+
+.bar-orange {
+    background: var(--status-rejeitado);
+}
+
+.chart-column span {
+    color: var(--admin-muted);
+    font-size: 10px;
+}
+
+.chart-column strong {
+    padding-bottom: 8px;
+    font-size: 12px;
+}
+
+/* ==========================================
+   RESUMO DO SISTEMA
+========================================== */
+
+.admin-summary {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding: 16px 0;
+
+    border-bottom: 1px solid #edf0f4;
+
+    font-size: 11px;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+.summary-item span {
+    color: var(--admin-muted);
+}
+
+.summary-item strong {
+    font-size: 14px;
+}
+
+/* ==========================================
+   TABELA DE RELATOS
+========================================== */
+
+.admin-recent {
+    margin-bottom: 25px;
+}
+
+.admin-text-link {
+    color: var(--admin-blue);
+
+    font-size: 11px;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+.admin-text-link:hover {
+    text-decoration: underline;
+}
+
+.admin-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+
+    border-collapse: collapse;
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+.admin-table th {
+    padding: 13px 14px;
+
+    background: #f7f9fc;
+    color: #718096;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.admin-table td {
+    padding: 16px 14px;
+
+    border-bottom: 1px solid #edf0f4;
+
+    color: #465368;
+    font-size: 11px;
+}
+
+.admin-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* ==========================================
+   STATUS DOS RELATOS
+========================================== */
+
+.status-badge {
+    display: inline-block;
+
+    padding: 6px 9px;
+
+    border-radius: 20px;
+
+    font-size: 9px;
+    font-weight: 600;
+}
+
+/* PENDENTE - LARANJA */
+
+.status-pending {
+    background: #fff4df;
+    color: #a66a08;
+}
+
+/* REJEITADO - VERMELHO */
+
+.status-progress {
+    background: #fce8e8;
+    color: #dc3545;
+}
+
+/* APROVADO - VERDE */
+
+.status-resolved {
+    background: #e5f5ec;
+    color: #198754;
+}
+
+/* ==========================================
+   PÁGINAS INTERNAS
+========================================== */
+
+.admin-empty-panel {
+    min-height: 330px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.empty-icon {
+    width: 65px;
+    height: 65px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 17px;
+
+    border-radius: 18px;
+
+    background: #edf2fc;
+    color: var(--admin-blue);
+
+    font-size: 30px;
+}
+
+.admin-empty-panel h2 {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+
+.admin-empty-panel p {
+    max-width: 400px;
+
+    margin: 0;
+
+    color: var(--admin-muted);
+
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+/* ==========================================
+   RODAPÉ
+========================================== */
+
+.admin-footer {
+    padding: 20px 0 5px;
+
+    color: #929daf;
+
+    font-size: 10px;
+    text-align: center;
+}
+
+/* ==========================================
+   TELA DE CARREGAMENTO
+========================================== */
+
+.admin-loading-screen {
+    position: fixed;
+    inset: 0;
+
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f3f5f8;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+}
+
+.loading-logo {
+    width: 65px;
+    height: 65px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 15px;
+
+    border-radius: 17px;
+
+    background: #2457c5;
+    color: #fff;
+
+    font-size: 35px;
+    font-weight: 800;
+}
+
+.loading-content h1 {
+    margin: 0;
+
+    color: #101b2d;
+
+    font-size: 27px;
+}
+
+.loading-content p {
+    margin: 10px 0 25px;
+
+    color: #64748b;
+    font-size: 13px;
+}
+
+.loading-spinner {
+    width: 35px;
+    height: 35px;
+
+    border: 3px solid #dce5f5;
+    border-top-color: #2457c5;
+
+    border-radius: 50%;
+
+    animation: admin-spin 0.8s linear infinite;
+}
+
+.loading-content > span {
+    margin-top: 13px;
+
+    color: #8a96a8;
+    font-size: 10px;
+}
+
+@keyframes admin-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================
+   RESPONSIVIDADE
+========================================== */
+
+@media (max-width: 1100px) {
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .admin-sidebar {
+        width: 70px;
+        padding: 20px 9px;
+    }
+
+    .admin-main {
+        margin-left: 70px;
+    }
+
+    .admin-brand {
+        justify-content: center;
+        padding: 0 0 25px;
+    }
+
+    .admin-brand > div:last-child,
+    .admin-menu-label,
+    .admin-nav-link > span:last-child,
+    .admin-profile-info,
+    .admin-logout {
+        display: none;
+    }
+
+    .admin-nav-link {
+        justify-content: center;
+        padding: 13px 5px;
+    }
+
+    .admin-nav-icon {
+        font-size: 21px;
+    }
+
+    .admin-profile {
+        justify-content: center;
+        padding: 15px 0;
+    }
+
+    .admin-content {
+        padding: 25px 18px;
+    }
+
+    .admin-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-header h1 {
+        font-size: 24px;
+    }
+
+    .admin-welcome {
+        min-height: 180px;
+        padding: 24px;
+    }
+
+    .admin-welcome h2 {
+        font-size: 21px;
+    }
+
+    .welcome-decoration {
+        right: 10px;
+        font-size: 110px;
+    }
+
+    .admin-stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .admin-stat-card {
+        padding: 15px;
+    }
+
+    .stat-card-top {
+        font-size: 10px;
+    }
+
+    .stat-value {
+        font-size: 23px;
+    }
+
+    .admin-panel {
+        padding: 17px;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 430px) {
+    .admin-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .demo-label {
+        font-size: 9px;
+    }
+
+    .chart-placeholder {
+        gap: 8px;
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .chart-column span {
+        font-size: 9px;
+    }
+}

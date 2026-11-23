@@ -1,0 +1,199 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    
+}
+
+.page-login{
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+  
+    
+}
+
+.lado-esquerdo {
+    background-image: url(/imagens/lado-esquerdo.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+
+
+    padding: 120px 150px 50px;
+    width: 55%;
+    min-height: 100vh;
+}
+
+.text-lado-esquerdo {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 10px;
+}
+
+.img-logo{
+    width: 250px;
+}
+
+.lado-esquerdo {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.icon {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.icon i {
+    color: rgb(37, 77, 255);
+    font-size: 30px;
+}
+
+
+
+.quebra-linha {
+    display: block;
+}
+
+.icon-lado-esquerdo{
+    display: flex;
+    gap: 30px;
+}
+
+.icon-lado-esquerdo p {
+    font-size: 12px;
+}
+
+.icon-lado-esquerdo h3{
+    font-size: 18px;
+}
+
+/* Lado Direito do Site */
+
+.lado-direito{
+    width: 40%;
+    min-height: 100vh;
+   
+    display: flex   ;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+   
+}
+
+.container-info-lado-direito {
+    display: flex;
+    flex-direction: column;
+    gap: 35px;    
+}
+
+.text-lado-direito {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.text-lado-direito h2 {
+    font-size: 35px;
+}
+
+.forms-login {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.forms-login form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+   
+
+    gap: 40px;
+}
+
+.input-person {
+    border: 1px solid rgba(214, 214, 214, 0.788);
+
+    width: 400px;
+    height: 48px;
+    border-radius: 6px;
+}
+
+.input-div {
+    border: 1px solid rgba(214, 214, 214, 0.788);
+
+    width: 400px;
+    height: 48px;
+    border-radius: 6px;
+}
+
+.input-person2 {
+    display: flex;
+    flex-direction: column;
+    
+}
+.input-person2 a {
+    color: rgb(37, 77, 255);
+    padding-top: 8px;
+    text-align: right;
+    font-size: 14px;
+}
+
+.botao-acao-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.botao-acao {
+    color: white;
+    background-color: rgb(37, 77, 255);
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 13px;
+    
+}
+.botao-acao2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 13px;
+    border-radius: 7px;
+    border: 1px solid rgb(37, 77, 255);
+}
+
+.botao-acao2 i {
+    color: rgb(0, 27, 150);
+    font-size: 20px;
+}
+
+.botao-acao2 a {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.aviso {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 13px;
+}
+
+
