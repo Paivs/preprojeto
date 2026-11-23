@@ -1,70 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { API_BASE_URL } from "@/lib/api";
 import "./headerAdmin.css";
 
-const notificacoesIniciais = [
-  {
-    id: 1,
-    icone: "bi-lightning-charge",
-    cor: "aviso",
-    titulo: "Consumo acima da média",
-    descricao:
-      "O ar-condicionado da sala está consumindo mais energia que o habitual.",
-    horario: "Há 10 minutos",
-    lida: false,
-  },
-  {
-    id: 2,
-    icone: "bi-receipt",
-    cor: "info",
-    titulo: "Nova fatura disponível",
-    descricao: "A fatura de novembro já pode ser consultada.",
-    horario: "Há 2 horas",
-    lida: false,
-  },
-  {
-    id: 3,
-    icone: "bi-check-circle",
-    cor: "sucesso",
-    titulo: "Meta de economia atualizada",
-    descricao: "Você atingiu 72% da sua meta de economia mensal.",
-    horario: "Ontem, às 18:42",
-    lida: true,
-  },
-];
+function formatarConsumo(valor) {
+  return Number(valor || 0).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
 
-const notificacoesAdmin = [
-  {
-    id: 1,
-    icone: "bi-person-plus",
-    cor: "info",
-    titulo: "Novo cliente cadastrado",
-    descricao: "Um novo cliente concluiu o cadastro na plataforma.",
-    horario: "Há 10 minutos",
-    lida: false,
-  },
-  {
-    id: 2,
-    icone: "bi-wifi-off",
-    cor: "aviso",
-    titulo: "Dispositivo sem comunicação",
-    descricao: "Um dispositivo está aguardando reconexão.",
-    horario: "Há 2 horas",
-    lida: false,
-  },
-  {
-    id: 3,
-    icone: "bi-check-circle",
-    cor: "sucesso",
-    titulo: "Sincronização concluída",
-    descricao: "Os dados da plataforma foram atualizados.",
-    horario: "Ontem, às 18:42",
-    lida: true,
-  },
-];
+function formatarHorario(valor) {
+  const data = new Date(valor);
+  if (!Number.isFinite(data.getTime())) return "Leitura mais recente";
+  return `Leitura em ${data.toLocaleString("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  })}`;
+}
+
+function obterIdsLidos(chave) {
+  try {
+    const ids = JSON.parse(localStorage.getItem(chave) || "[]");
+    return new Set(Array.isArray(ids) ? ids : []);
+  } catch {
+    return new Set();
+  }
+}
 
 export default function Header({ tipoUsuario = "usuario" }) {
   const [conta, setConta] = useState({
@@ -90,11 +54,71 @@ export default function Header({ tipoUsuario = "usuario" }) {
   const [temaClaro, setTemaClaro] = useState(false);
   const [perfilAberto, setPerfilAberto] = useState(false);
   const [notificacoesAbertas, setNotificacoesAbertas] = useState(false);
-  const [notificacoes, setNotificacoes] = useState(() =>
-    eAdmin ? notificacoesAdmin : notificacoesIniciais
-  );
+  const [notificacoes, setNotificacoes] = useState([]);
+  const [carregandoNotificacoes, setCarregandoNotificacoes] = useState(true);
+  const [erroNotificacoes, setErroNotificacoes] = useState("");
+  const chaveLidas = `volthouse-alertas-consumo-lidas:${conta.id_usuario || "sessao"}`;
   const notificacoesRef = useRef(null);
   const quantidadeNaoLidas = notificacoes.filter((item) => !item.lida).length;
+  const semAlertas =
+    !carregandoNotificacoes && !erroNotificacoes && notificacoes.length === 0;
+
+  const carregarNotificacoes = useCallback(async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      setNotificacoes([]);
+      setErroNotificacoes("Entre na sua conta para ver os alertas.");
+      setCarregandoNotificacoes(false);
+      return;
+    }
+
+    setCarregandoNotificacoes(true);
+    setErroNotificacoes("");
+    try {
+      const resposta = await fetch(
+        `${API_BASE_URL}/equipamentos/alertas-consumo`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
+        }
+      );
+      const resultado = await resposta.json().catch(() => ({}));
+      if (!resposta.ok || !resultado.sucesso) {
+        throw new Error(resultado.erro || "Falha ao carregar os alertas.");
+      }
+
+      const idsLidos = obterIdsLidos(chaveLidas);
+      const alertas = Array.isArray(resultado.dados) ? resultado.dados : [];
+      setNotificacoes(
+        alertas.map((alerta) => {
+          const id = `${alerta.id_equipamento}:${alerta.mes_referencia}`;
+          return {
+            id,
+            icone: "bi-lightning-charge",
+            cor: "aviso",
+            titulo: "Limite de consumo excedido",
+            descricao: `${alerta.nome_equipamento} (${alerta.nome_setor}): ${formatarConsumo(
+              alerta.consumo_mes
+            )} kWh neste mês; limite ${formatarConsumo(
+              alerta.consumo_maximo
+            )} kWh.`,
+            horario: formatarHorario(alerta.ultima_leitura),
+            lida: idsLidos.has(id),
+          };
+        })
+      );
+    } catch {
+      setErroNotificacoes("Não foi possível atualizar os alertas de consumo.");
+    } finally {
+      setCarregandoNotificacoes(false);
+    }
+  }, [chaveLidas]);
+
+  useEffect(() => {
+    carregarNotificacoes();
+    const intervalo = window.setInterval(carregarNotificacoes, 60_000);
+    return () => window.clearInterval(intervalo);
+  }, [carregarNotificacoes]);
 
   useEffect(() => {
     let ativo = true;
@@ -209,17 +233,30 @@ export default function Header({ tipoUsuario = "usuario" }) {
   }, [perfilAberto, notificacoesAbertas]);
 
   function alternarNotificacoes() {
-    setNotificacoesAbertas((abertas) => !abertas);
+    if (!notificacoesAbertas) carregarNotificacoes();
+    setNotificacoesAbertas(!notificacoesAbertas);
     setPerfilAberto(false);
   }
 
+  function salvarIdsLidos(idsNovos) {
+    try {
+      const ids = obterIdsLidos(chaveLidas);
+      idsNovos.forEach((id) => ids.add(id));
+      localStorage.setItem(chaveLidas, JSON.stringify([...ids]));
+    } catch {
+      // A leitura continua funcionando se o armazenamento local estiver indisponível.
+    }
+  }
+
   function marcarTodasComoLidas() {
+    salvarIdsLidos(notificacoes.map((item) => item.id));
     setNotificacoes((atuais) =>
       atuais.map((item) => ({ ...item, lida: true }))
     );
   }
 
   function marcarComoLida(id) {
+    salvarIdsLidos([id]);
     setNotificacoes((atuais) =>
       atuais.map((item) => (item.id === id ? { ...item, lida: true } : item))
     );
@@ -248,10 +285,11 @@ export default function Header({ tipoUsuario = "usuario" }) {
             <i className={`bi ${temaClaro ? "bi-moon-stars" : "bi-sun"}`} />
           </button>
 
-          <div
-            className="topo-menu-area topo-notificacoes"
-            ref={notificacoesRef}
-          >
+          {!eAdmin && (
+            <div
+              className="topo-menu-area topo-notificacoes"
+              ref={notificacoesRef}
+            >
             <button
               type="button"
               className="botao-icone botao-notificacoes"
@@ -276,7 +314,11 @@ export default function Header({ tipoUsuario = "usuario" }) {
                   <div>
                     <h2>Notificações</h2>
                     <p>
-                      {quantidadeNaoLidas
+                      {carregandoNotificacoes
+                        ? "Verificando limites..."
+                        : erroNotificacoes
+                          ? "Alertas indisponíveis"
+                          : quantidadeNaoLidas
                         ? `${quantidadeNaoLidas} avisos não lidos`
                         : "Tudo em dia"}
                     </p>
@@ -293,6 +335,17 @@ export default function Header({ tipoUsuario = "usuario" }) {
                 </div>
 
                 <div className="notificacoes-lista">
+                  {carregandoNotificacoes && notificacoes.length === 0 && (
+                    <p className="notificacoes-vazio">Buscando leituras de consumo...</p>
+                  )}
+                  {erroNotificacoes && notificacoes.length === 0 && (
+                    <p className="notificacoes-erro" role="alert">{erroNotificacoes}</p>
+                  )}
+                  {semAlertas && (
+                    <p className="notificacoes-vazio">
+                      Nenhum dispositivo ultrapassou o limite mensal.
+                    </p>
+                  )}
                   {notificacoes.map((notificacao) => (
                     <button
                       type="button"
@@ -320,10 +373,16 @@ export default function Header({ tipoUsuario = "usuario" }) {
                       )}
                     </button>
                   ))}
+                  {erroNotificacoes && notificacoes.length > 0 && (
+                    <p className="notificacoes-erro" role="alert">
+                      Os alertas podem estar desatualizados.
+                    </p>
+                  )}
                 </div>
               </section>
             )}
-          </div>
+            </div>
+          )}
 
           <button
             type="button"

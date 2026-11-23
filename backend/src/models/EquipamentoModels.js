@@ -117,3 +117,42 @@ export async function excluir(idEquipamento, idUsuario) {
   );
   return resultado.affectedRows > 0;
 }
+
+export async function registrarLeitura(idEquipamento, consumoKwh) {
+  const [resultado] = await pool.query(
+    `INSERT INTO leitura_consumo_equipamento (id_equipamento, consumo_kwh)
+     VALUES (?, ?)`,
+    [idEquipamento, consumoKwh]
+  );
+  return {
+    id_leitura: resultado.insertId,
+    id_equipamento: idEquipamento,
+    consumo_kwh: consumoKwh,
+  };
+}
+
+export async function listarAlertasConsumo(idUsuario) {
+  const [linhas] = await pool.query(
+    `SELECT
+       e.id_equipamento,
+       e.nome_equipamento,
+       e.consumo_maximo,
+       s.nome_setor,
+       ROUND(SUM(l.consumo_kwh), 2) AS consumo_mes,
+       MAX(l.criado_em) AS ultima_leitura,
+       DATE_FORMAT(CURRENT_DATE, '%Y-%m') AS mes_referencia
+     FROM equipamento e
+     INNER JOIN setor s ON s.id_setor = e.id_setor
+     INNER JOIN leitura_consumo_equipamento l
+       ON l.id_equipamento = e.id_equipamento
+     WHERE s.id_usuario = ?
+       AND e.consumo_maximo IS NOT NULL
+       AND l.criado_em >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
+       AND l.criado_em < DATE_FORMAT(DATE_ADD(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01')
+     GROUP BY e.id_equipamento, e.nome_equipamento, e.consumo_maximo, s.nome_setor
+     HAVING SUM(l.consumo_kwh) > e.consumo_maximo
+     ORDER BY ultima_leitura DESC`,
+    [idUsuario]
+  );
+  return linhas;
+}

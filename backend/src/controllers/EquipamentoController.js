@@ -19,6 +19,28 @@ export async function listar(req, res, next) {
   }
 }
 
+export async function listarAlertasConsumo(req, res, next) {
+  try {
+    const alertas = await EquipamentoService.listarAlertasConsumo(req.usuario.id);
+    return res.status(200).json({ sucesso: true, dados: alertas });
+  } catch (erro) {
+    return responderErro(erro, res, next);
+  }
+}
+
+export async function registrarLeitura(req, res, next) {
+  try {
+    const leitura = await EquipamentoService.registrarLeitura(
+      req.params.id,
+      req.body,
+      req.usuario.id
+    );
+    return res.status(201).json({ sucesso: true, dados: leitura });
+  } catch (erro) {
+    return responderErro(erro, res, next);
+  }
+}
+
 export async function listarPorSetor(req, res, next) {
   try {
     const equipamentos = await EquipamentoService.listarPorSetor(

@@ -19,6 +19,7 @@ export function normalizarStatus(status) {
 export function adaptarEquipamentoApi(equipamento) {
   return {
     id: equipamento.id_equipamento,
+    idSetor: equipamento.id_setor,
     nome: equipamento.nome_equipamento,
     local: equipamento.nome_setor || "Setor não informado",
     categoria: equipamento.tipo || "Outros",

@@ -19,6 +19,20 @@ function validarConsumo(valor, campo, padrao = null) {
   return Math.round(numero * 100) / 100;
 }
 
+function validarLeituraConsumo(valor) {
+  if (
+    (typeof valor !== 'number' && typeof valor !== 'string') ||
+    (typeof valor === 'string' && !valor.trim())
+  ) {
+    throw new TypeError('consumo_kwh deve ser um valor numerico valido e nao negativo.');
+  }
+  const numero = Number(valor);
+  if (!Number.isFinite(numero) || numero < 0 || numero > 99999999.99) {
+    throw new TypeError('consumo_kwh deve ser um valor numerico entre 0 e 99999999.99.');
+  }
+  return Math.round(numero * 100) / 100;
+}
+
 function validarTextoOpcional(valor, campo, limite) {
   if (valor === undefined || valor === null || valor === '') return null;
   if (typeof valor !== 'string') throw new TypeError(`${campo} deve ser um texto.`);
@@ -81,6 +95,22 @@ export async function listar(idUsuarioRecebido, buscaRecebida) {
   return adicionarConsumoSimuladoLista(
     await EquipamentoModel.listarPorUsuario(idUsuario, busca)
   );
+}
+
+export async function listarAlertasConsumo(idUsuarioRecebido) {
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuario');
+  return EquipamentoModel.listarAlertasConsumo(idUsuario);
+}
+
+export async function registrarLeitura(idEquipamentoRecebido, dados = {}, idUsuarioRecebido) {
+  const idEquipamento = validarId(idEquipamentoRecebido, 'ID do equipamento');
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuario');
+  const equipamento = await EquipamentoModel.buscarPorId(idEquipamento, idUsuario);
+  if (!equipamento) throw erroNaoEncontrado('Equipamento nao encontrado.');
+
+  // Cada leitura registra o consumo em kWh desde a leitura anterior.
+  const consumoKwh = validarLeituraConsumo(dados?.consumo_kwh);
+  return EquipamentoModel.registrarLeitura(idEquipamento, consumoKwh);
 }
 
 export async function listarPorSetor(idSetorRecebido, idUsuarioRecebido, buscaRecebida) {
