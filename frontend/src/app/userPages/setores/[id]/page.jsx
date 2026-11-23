@@ -327,7 +327,7 @@ export default function DetalheSetor() {
                           <th>Equipamento</th>
                           <th>Tipo</th>
                           <th>Status</th>
-                          <th>Consumo atual simulado</th>
+                          <th>Consumo atua</th>
                           <th>Faixa de consumo</th>
                           <th className="setor-coluna-acoes">Ações</th>
                         </tr>
@@ -396,14 +396,6 @@ export default function DetalheSetor() {
                       </tbody>
                     </table>
                   </div>
-<<<<<<< HEAD
-                  <p className="setor-nota">
-                    <i className="bi bi-info-circle" /> O consumo atual é
-                    simulado com base na faixa cadastrada e atualizado a cada
-                    3 segundos; não representa medição real.
-                  </p>
-=======
->>>>>>> a90d9081cdacafbbecef9f2bcafc8ab974849b38
                 </section>
               </>
             )
