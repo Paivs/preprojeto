@@ -77,7 +77,7 @@
   max-width: 720px;
   margin: 1.6rem 0 1.25rem;
   color: var(--cor-texto);
-  font-family: var(--font-space);
+  font-family: var(--font-primary);
   font-size: clamp(2.8rem, 5.2vw, 5rem);
   font-weight: 600;
   letter-spacing: -0.065em;
@@ -217,7 +217,7 @@
 .sobre-impacto-copy h2 {
   margin: 0.65rem 0 0.7rem;
   color: var(--cor-texto);
-  font-family: var(--font-space);
+  font-family: var(--font-primary);
   font-size: clamp(2rem, 3.4vw, 3rem);
   font-weight: 600;
   letter-spacing: -0.045em;
@@ -269,7 +269,7 @@
 
 .sobre-value-number {
   color: var(--cor-texto-fraco);
-  font-family: var(--font-space);
+  font-family: var(--font-primary);
   font-size: 0.82rem;
   letter-spacing: 0.08em;
 }
@@ -277,7 +277,7 @@
 .sobre-value-card h3 {
   margin: 1.5rem 0 0.55rem;
   color: var(--cor-texto);
-  font-family: var(--font-space);
+  font-family: var(--font-primary);
   font-size: 1.3rem;
   font-weight: 600;
 }
@@ -335,7 +335,7 @@
 .sobre-quote-card>p {
   margin: 1rem 0 1.6rem;
   color: var(--cor-texto);
-  font-family: var(--font-space);
+  font-family: var(--font-primary);
   font-size: 1.2rem;
   line-height: 1.65;
 }

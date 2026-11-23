@@ -21,14 +21,14 @@
 
 .cabecalho-pagina .cabecalho-etiqueta {
     color: var(--amarelo);
-    font-family: var(--font-nunito);
+    font-family: var(--font-primary);
     font-size: 11px;
     letter-spacing: 0.2em;
 
 }
 
 .cabecalho-pagina h1 {
-    font-family: var(--font-nunito);
+    font-family: var(--font-primary);
     font-size: 32px;
     font-weight: 400;
     letter-spacing: -0.02em;
@@ -482,7 +482,7 @@
 .financeiro-page-header h1 {
     margin: 0.3rem 0 0.35rem;
     color: var(--cor-texto);
-    font-family: var(--font-space);
+    font-family: var(--font-primary);
     font-size: clamp(2rem, 3vw, 2.65rem);
     font-weight: 600;
     letter-spacing: -0.045em;
@@ -549,7 +549,7 @@
 .financeiro-page .card-topo h2 {
     margin: 0;
     color: var(--cor-texto);
-    font-family: var(--font-space);
+    font-family: var(--font-primary);
     font-size: clamp(1.2rem, 1.8vw, 1.65rem);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
@@ -601,7 +601,7 @@
 
 .financeiro-page .financeiro-card h2 {
     margin: 0;
-    font-family: var(--font-space);
+    font-family: var(--font-primary);
     font-size: 1.05rem;
     font-weight: 600;
 }
@@ -622,7 +622,7 @@
     gap: 0.4rem;
     margin: 0;
     color: var(--cor-texto);
-    font-family: var(--font-space);
+    font-family: var(--font-primary);
     font-size: clamp(1.8rem, 3vw, 2.6rem);
     font-variant-numeric: tabular-nums;
     line-height: 1.15;
@@ -696,7 +696,7 @@
 }
 
 .financeiro-page .financeiro-grafico-cabecalho h2 {
-    font-family: var(--font-space);
+    font-family: var(--font-primary);
 }
 
 .financeiro-page .financeiro-grafico-cabecalho p,
@@ -713,7 +713,7 @@
 
 .financeiro-page .financeiro-grafico-coluna strong {
     color: var(--cor-texto);
-    font-family: var(--font-space);
+    font-family: var(--font-primary);
     font-variant-numeric: tabular-nums;
 }
 

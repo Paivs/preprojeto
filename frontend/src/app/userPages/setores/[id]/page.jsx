@@ -99,8 +99,10 @@ export default function DetalheSetor() {
       }
     }
     carregar();
+    const intervalo = window.setInterval(carregar, 3000);
     return () => {
       ativo = false;
+      window.clearInterval(intervalo);
     };
   }, [id]);
 
@@ -325,6 +327,7 @@ export default function DetalheSetor() {
                           <th>Equipamento</th>
                           <th>Tipo</th>
                           <th>Status</th>
+                          <th>Consumo atual simulado</th>
                           <th>Faixa de consumo</th>
                           <th className="setor-coluna-acoes">Ações</th>
                         </tr>
@@ -353,6 +356,11 @@ export default function DetalheSetor() {
                                 </span>
                               </td>
                               <td className="equipamento-faixa">
+                                {equipamento.consumo_atual == null
+                                  ? "Não informado"
+                                  : `${formatarValor(Number(equipamento.consumo_atual))} kWh`}
+                              </td>
+                              <td className="equipamento-faixa">
                                 {equipamento.consumo_minimo == null &&
                                 equipamento.consumo_maximo == null
                                   ? "Não informada"
@@ -378,7 +386,7 @@ export default function DetalheSetor() {
                         ) : (
                           <tr>
                             <td
-                              colSpan={5}
+                              colSpan={6}
                               className="setor-equipamentos-vazio"
                             >
                               Nenhum equipamento cadastrado neste setor.
@@ -388,6 +396,17 @@ export default function DetalheSetor() {
                       </tbody>
                     </table>
                   </div>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                  <p className="setor-nota">
+                    <i className="bi bi-info-circle" /> O consumo atual é
+                    simulado com base na faixa cadastrada e atualizado a cada
+                    3 segundos; não representa medição real.
+                  </p>
+=======
+>>>>>>> a90d9081cdacafbbecef9f2bcafc8ab974849b38
+>>>>>>> da1bd6f64e3d67d23da788a31ce37d45bc68e169
                 </section>
               </>
             )

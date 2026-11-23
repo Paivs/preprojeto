@@ -1,4 +1,5 @@
 import * as EquipamentoModel from '../models/EquipamentoModels.js';
+import { adicionarConsumoSimulado, adicionarConsumoSimuladoLista } from './SimulacaoConsumoService.js';
 import { validarTermoBusca } from '../utils/busca.js';
 
 function validarId(valor, campo) {
@@ -77,7 +78,9 @@ function erroNaoEncontrado(mensagem) {
 export async function listar(idUsuarioRecebido, buscaRecebida) {
   const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
   const busca = validarTermoBusca(buscaRecebida);
-  return EquipamentoModel.listarPorUsuario(idUsuario, busca);
+  return adicionarConsumoSimuladoLista(
+    await EquipamentoModel.listarPorUsuario(idUsuario, busca)
+  );
 }
 
 export async function listarPorSetor(idSetorRecebido, idUsuarioRecebido, buscaRecebida) {
@@ -86,7 +89,9 @@ export async function listarPorSetor(idSetorRecebido, idUsuarioRecebido, buscaRe
   const busca = validarTermoBusca(buscaRecebida);
   const setorValido = await EquipamentoModel.setorPertenceAoUsuario(idSetor, idUsuario);
   if (!setorValido) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
-  return EquipamentoModel.listarPorSetor(idSetor, idUsuario, busca);
+  return adicionarConsumoSimuladoLista(
+    await EquipamentoModel.listarPorSetor(idSetor, idUsuario, busca)
+  );
 }
 
 export async function buscarPorId(idEquipamentoRecebido, idUsuarioRecebido) {
@@ -94,7 +99,7 @@ export async function buscarPorId(idEquipamentoRecebido, idUsuarioRecebido) {
   const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
   const equipamento = await EquipamentoModel.buscarPorId(idEquipamento, idUsuario);
   if (!equipamento) throw erroNaoEncontrado('Equipamento não encontrado.');
-  return equipamento;
+  return adicionarConsumoSimulado(equipamento);
 }
 
 export async function criar(dados, idUsuarioRecebido) {
@@ -104,7 +109,7 @@ export async function criar(dados, idUsuarioRecebido) {
   if (!setorValido) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
   const criado = await EquipamentoModel.criar(equipamento, idUsuario);
   if (!criado) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
-  return criado;
+  return adicionarConsumoSimulado(criado);
 }
 
 export async function atualizar(idEquipamentoRecebido, dados, idUsuarioRecebido) {
@@ -118,7 +123,7 @@ export async function atualizar(idEquipamentoRecebido, dados, idUsuarioRecebido)
   if (!setorValido) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
   const atualizado = await EquipamentoModel.atualizar(idEquipamento, equipamento, idUsuario);
   if (!atualizado) throw erroNaoEncontrado('Equipamento não encontrado.');
-  return atualizado;
+  return adicionarConsumoSimulado(atualizado);
 }
 
 export async function excluir(idEquipamentoRecebido, idUsuarioRecebido) {

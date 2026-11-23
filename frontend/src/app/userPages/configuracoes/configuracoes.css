@@ -2,7 +2,7 @@
   width: calc(100% - 245px);
   min-height: 100vh;
   margin-left: 245px;
-  font-family: var(--font-nunito);
+  font-family: var(--font-primary);
   box-sizing: border-box;
 }
 
@@ -19,7 +19,7 @@
 }
 .config-hero .cabecalho-etiqueta {
   color: var(--amarelo);
-  font-family: var(--font-nunito);
+  font-family: var(--font-primary);
   font-size: 11px;
   letter-spacing: 0.2em;
 }
