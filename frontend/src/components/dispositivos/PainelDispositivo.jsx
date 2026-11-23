@@ -5,7 +5,7 @@ import Icone from "./Icone";
 import { formatarFaixaConsumo, formatarKwh, obterEstado } from "./dados";
 import "./painel.css";
 
-export default function PainelDispositivo({ dispositivo, onFechar }) {
+export default function PainelDispositivo({ dispositivo, onFechar, onEditar }) {
   const estado = obterEstado(dispositivo);
 
   useEffect(() => {
@@ -80,6 +80,12 @@ export default function PainelDispositivo({ dispositivo, onFechar }) {
               </div>
             </dl>
           </section>
+
+          <div className="painel-botoes">
+            <button type="button" className="botao-manutencao" onClick={onEditar}>
+              <Icone nome="editar" tamanho={16} /> Editar dispositivo
+            </button>
+          </div>
 
         </div>
       </aside>
