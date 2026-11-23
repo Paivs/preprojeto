@@ -4,6 +4,20 @@
     box-sizing: border-box;
     
 }
+input {
+    all: unset;
+    box-sizing: border-box;
+    width: 100%; /* Garante que ele ocupe o espaço disponível */
+  }
+  
+
+
+button {
+    all: unset;
+    box-sizing: border-box;
+    width: 100%; 
+  }
+  
 
 .page-login{
     display: flex;
@@ -109,8 +123,9 @@
     min-height: 100vh;
 }
 
-/* Quadro único englobando tudo */
 .container-text-lado-esquerdo {
+    position: absolute;
+    height: auto;
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -126,6 +141,7 @@
     border-radius: 16px;
     padding: 36px 40px;
     box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+    top:12%;
 }
 
 .img-logo {
