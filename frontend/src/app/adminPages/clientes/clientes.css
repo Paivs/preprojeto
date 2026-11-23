@@ -23,7 +23,7 @@
 }
 
 .cabecalho-pagina h1 {
-  font-family: var(--font-nunito);
+  font-family: var(--font-primary);
   font-size: 32px;
   font-weight: 400;
   letter-spacing: -0.02em;
@@ -61,7 +61,7 @@
   background: var(--dark-bg-card);
   border-radius: 12px;
   padding: 20px 20px;
-  font-family: var(--font-nunito);
+  font-family: var(--font-primary);
   font-size: 0.8rem;
 }
 
