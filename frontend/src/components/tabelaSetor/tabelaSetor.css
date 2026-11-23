@@ -107,11 +107,6 @@
   transition: background 0.2s ease;
 }
 
-.tabela-setores tbody tr:last-child td {
-  border-bottom: none;
-  padding: 20px 10px;
-}
-
 .tabela-setores tbody tr:hover td {
   background: rgba(132, 146, 166, 0.04);
 }

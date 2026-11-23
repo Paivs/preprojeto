@@ -3,6 +3,8 @@ import * as EquipamentoController from '../controllers/EquipamentoController.js'
 
 const router = Router();
 
+router.get('/alertas-consumo', EquipamentoController.listarAlertasConsumo);
+router.post('/:id/leituras', EquipamentoController.registrarLeitura);
 router.get('/', EquipamentoController.listar);
 router.get('/:id', EquipamentoController.buscarPorId);
 router.post('/', EquipamentoController.criar);

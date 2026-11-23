@@ -201,6 +201,19 @@
   overflow-y: auto;
 }
 
+.notificacoes-vazio,
+.notificacoes-erro {
+  margin: 0;
+  padding: 18px 17px;
+  color: var(--cor-texto-fraco);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.notificacoes-erro {
+  color: var(--cor-vermelho);
+}
+
 .notificacao-item {
   position: relative;
   display: flex;
