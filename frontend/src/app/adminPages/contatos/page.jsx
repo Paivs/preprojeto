@@ -6,16 +6,27 @@ import Header from "@/components/headerAdmin/HeaderAdmin";
 import ModalNovoCliente from "@/components/clientes/ModalNovoCliente";
 import "./contatos.css";
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/$/, "");
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api"
+).replace(/\/$/, "");
 
 const SITUACOES = {
   pendente: { texto: "Pendente", classe: "pendente" },
   ignorado: { texto: "Ignorado", classe: "ignorado" },
   convertido: { texto: "Cliente cadastrado", classe: "convertido" },
 };
+const ITENS_POR_PAGINA = 5;
 
 function iniciais(nome = "") {
-  return nome.trim().split(/\s+/).slice(0, 2).map((parte) => parte[0]).join("").toLocaleUpperCase("pt-BR") || "?";
+  return (
+    nome
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((parte) => parte[0])
+      .join("")
+      .toLocaleUpperCase("pt-BR") || "?"
+  );
 }
 
 export default function Contatos() {
@@ -25,6 +36,19 @@ export default function Contatos() {
   const [aviso, setAviso] = useState("");
   const [atualizandoId, setAtualizandoId] = useState(null);
   const [contatoSelecionado, setContatoSelecionado] = useState(null);
+  const [paginaAtual, setPaginaAtual] = useState(1);
+
+  const totalPaginas = Math.ceil(contatos.length / ITENS_POR_PAGINA);
+  const contatosDaPagina = contatos.slice(
+    (paginaAtual - 1) * ITENS_POR_PAGINA,
+    paginaAtual * ITENS_POR_PAGINA
+  );
+
+  useEffect(() => {
+    if (paginaAtual > Math.max(totalPaginas, 1)) {
+      setPaginaAtual(Math.max(totalPaginas, 1));
+    }
+  }, [paginaAtual, totalPaginas]);
 
   const carregarContatos = useCallback(async () => {
     setCarregando(true);
@@ -32,7 +56,9 @@ export default function Contatos() {
 
     const token = sessionStorage.getItem("token");
     if (!token) {
-      setErro("Sua sessão não foi encontrada. Entre novamente como administrador.");
+      setErro(
+        "Sua sessão não foi encontrada. Entre novamente como administrador."
+      );
       setContatos([]);
       setCarregando(false);
       return;
@@ -47,9 +73,13 @@ export default function Contatos() {
 
       if (!resposta.ok) {
         if (resposta.status === 401 || resposta.status === 403) {
-          throw new Error("Acesso não autorizado. Entre novamente com uma conta administradora.");
+          throw new Error(
+            "Acesso não autorizado. Entre novamente com uma conta administradora."
+          );
         }
-        throw new Error(resultado.erro || "Não foi possível carregar os pedidos de contato.");
+        throw new Error(
+          resultado.erro || "Não foi possível carregar os pedidos de contato."
+        );
       }
 
       setContatos(Array.isArray(resultado.dados) ? resultado.dados : []);
@@ -66,23 +96,28 @@ export default function Contatos() {
 
   async function salvarSituacao(contato, situacao) {
     const token = sessionStorage.getItem("token");
-    const resposta = await fetch(`${API_URL}/contato/${contato.id_contato}/situacao`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ situacao }),
-    });
+    const resposta = await fetch(
+      `${API_URL}/contato/${contato.id_contato}/situacao`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ situacao }),
+      }
+    );
     const resultado = await resposta.json().catch(() => ({}));
 
     if (!resposta.ok) {
       throw new Error(resultado.erro || "Não foi possível atualizar o pedido.");
     }
 
-    setContatos((atuais) => atuais.map((item) => (
-      item.id_contato === contato.id_contato ? { ...item, situacao } : item
-    )));
+    setContatos((atuais) =>
+      atuais.map((item) =>
+        item.id_contato === contato.id_contato ? { ...item, situacao } : item
+      )
+    );
   }
 
   async function ignorarPedido(contato) {
@@ -105,13 +140,17 @@ export default function Contatos() {
       await salvarSituacao(contato, "convertido");
       atualizado = true;
     } catch {
-      setAviso("Cliente cadastrado, mas não foi possível atualizar o estado deste pedido.");
+      setAviso(
+        "Cliente cadastrado, mas não foi possível atualizar o estado deste pedido."
+      );
     }
 
     setContatoSelecionado(null);
     await carregarContatos();
     if (!atualizado) {
-      setAviso("Cliente cadastrado, mas não foi possível atualizar o estado deste pedido.");
+      setAviso(
+        "Cliente cadastrado, mas não foi possível atualizar o estado deste pedido."
+      );
     }
   }
 
@@ -139,8 +178,16 @@ export default function Contatos() {
               </div>
             </div>
 
-            {erro && <p className="mensagem-tabela erro-tabela" role="alert">{erro}</p>}
-            {aviso && <p className="contatos-aviso" role="status">{aviso}</p>}
+            {erro && (
+              <p className="mensagem-tabela erro-tabela" role="alert">
+                {erro}
+              </p>
+            )}
+            {aviso && (
+              <p className="contatos-aviso" role="status">
+                {aviso}
+              </p>
+            )}
 
             <div className="tabela-wrapper">
               <table>
@@ -157,61 +204,118 @@ export default function Contatos() {
                 </thead>
                 <tbody>
                   {carregando ? (
-                    <tr><td colSpan={7} className="mensagem-tabela">Carregando pedidos...</td></tr>
+                    <tr>
+                      <td colSpan={7} className="mensagem-tabela">
+                        Carregando pedidos...
+                      </td>
+                    </tr>
                   ) : contatos.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="mensagem-tabela">
                         {erro ? "" : "Nenhum pedido de contato recebido."}
                       </td>
                     </tr>
-                  ) : contatos.map((contato) => {
-                    const situacao = SITUACOES[contato.situacao] || SITUACOES.pendente;
-                    return (
-                      <tr key={contato.id_contato}>
-                        <td>
-                          <div className="contato-nome">
-                            <div className="avatar-sigla">{iniciais(contato.nome)}</div>
-                            <strong>{contato.nome}</strong>
-                          </div>
-                        </td>
-                        <td>{contato.email}</td>
-                        <td>{contato.cnpj || "—"}</td>
-                        <td>{contato.telefone || "—"}</td>
-                        <td className="contato-mensagem">{contato.mensagem}</td>
-                        <td>
-                          <span className={`contato-status ${situacao.classe}`}>{situacao.texto}</span>
-                        </td>
-                        <td>
-                          {contato.situacao === "pendente" ? (
-                            <div className="contato-acoes">
-                              <button
-                                type="button"
-                                className="btn-adicionar-contato"
-                                onClick={() => setContatoSelecionado(contato)}
-                                aria-label={`Adicionar ${contato.nome} como cliente`}
-                              >
-                                <i className="bi bi-person-plus" aria-hidden="true" />
-                                Adicionar cliente
-                              </button>
-                              <button
-                                type="button"
-                                className="btn-ignorar-contato"
-                                onClick={() => ignorarPedido(contato)}
-                                disabled={atualizandoId === contato.id_contato}
-                                aria-label={`Ignorar pedido de ${contato.nome}`}
-                              >
-                                <i className="bi bi-archive" aria-hidden="true" />
-                                {atualizandoId === contato.id_contato ? "Atualizando..." : "Ignorar pedido"}
-                              </button>
+                  ) : (
+                    contatosDaPagina.map((contato) => {
+                      const situacao =
+                        SITUACOES[contato.situacao] || SITUACOES.pendente;
+                      return (
+                        <tr key={contato.id_contato}>
+                          <td>
+                            <div className="contato-nome">
+                              <div className="avatar-sigla">
+                                {iniciais(contato.nome)}
+                              </div>
+                              <strong>{contato.nome}</strong>
                             </div>
-                          ) : <span className="contato-acao-concluida">—</span>}
-                        </td>
-                      </tr>
-                    );
-                  })}
+                          </td>
+                          <td>{contato.email}</td>
+                          <td>{contato.cnpj || "—"}</td>
+                          <td>{contato.telefone || "—"}</td>
+                          <td className="contato-mensagem">
+                            {contato.mensagem}
+                          </td>
+                          <td>
+                            <span
+                              className={`contato-status ${situacao.classe}`}
+                            >
+                              {situacao.texto}
+                            </span>
+                          </td>
+                          <td>
+                            {contato.situacao === "pendente" ? (
+                              <div className="contato-acoes">
+                                <button
+                                  type="button"
+                                  className="btn-adicionar-contato"
+                                  onClick={() => setContatoSelecionado(contato)}
+                                  aria-label={`Adicionar ${contato.nome} como cliente`}
+                                >
+                                  <i
+                                    className="bi bi-person-plus"
+                                    aria-hidden="true"
+                                  />
+                                  Adicionar cliente
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn-ignorar-contato"
+                                  onClick={() => ignorarPedido(contato)}
+                                  disabled={
+                                    atualizandoId === contato.id_contato
+                                  }
+                                  aria-label={`Ignorar pedido de ${contato.nome}`}
+                                >
+                                  <i
+                                    className="bi bi-archive"
+                                    aria-hidden="true"
+                                  />
+                                  {atualizandoId === contato.id_contato
+                                    ? "Atualizando..."
+                                    : "Ignorar pedido"}
+                                </button>
+                              </div>
+                            ) : (
+                              <span className="contato-acao-concluida">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>
+            {!carregando && totalPaginas > 1 && (
+              <nav
+                className="contatos-paginacao"
+                aria-label="Paginação dos pedidos de contato"
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPaginaAtual((pagina) => Math.max(1, pagina - 1))
+                  }
+                  disabled={paginaAtual === 1}
+                >
+                  Anterior
+                </button>
+                <span aria-live="polite">
+                  Página {paginaAtual} de {totalPaginas}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPaginaAtual((pagina) =>
+                      Math.min(totalPaginas, pagina + 1)
+                    )
+                  }
+                  disabled={paginaAtual === totalPaginas}
+                >
+                  Próxima
+                </button>
+              </nav>
+            )}
           </section>
         </main>
       </div>

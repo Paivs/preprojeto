@@ -51,38 +51,6 @@
     color: #ff8a8a;
 }
 
-.financeiro-atualizacao {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    width: 100%;
-    color: var(--cor-texto-fraco);
-    font-size: 0.85rem;
-}
-
-.financeiro-atualizacao button {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 8px 12px;
-    border: 1px solid var(--cor-borda);
-    border-radius: 7px;
-    background: var(--cor-card);
-    color: var(--cor-texto-secundario);
-    cursor: pointer;
-}
-
-.financeiro-atualizacao button:hover:not(:disabled) {
-    border-color: var(--cor-destaque);
-    color: var(--cor-destaque);
-}
-
-.financeiro-atualizacao button:disabled {
-    cursor: wait;
-    opacity: 0.65;
-}
-
 .topo-pag {
     height: fit-content;
     width: 100%;
@@ -466,49 +434,6 @@
     padding-bottom: 3rem;
 }
 
-.financeiro-page-header {
-    width: 100%;
-    margin-bottom: 0.25rem;
-}
-
-.financeiro-eyebrow {
-    color: var(--cor-destaque);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-.financeiro-page-header h1 {
-    margin: 0.3rem 0 0.35rem;
-    color: var(--cor-texto);
-    font-family: var(--font-primary);
-    font-size: clamp(2rem, 3vw, 2.65rem);
-    font-weight: 600;
-    letter-spacing: -0.045em;
-    line-height: 1.15;
-}
-
-.financeiro-page-header p {
-    margin: 0;
-    color: var(--cor-texto-secundario);
-    font-size: 0.92rem;
-}
-
-.financeiro-page .financeiro-atualizacao {
-    flex-wrap: wrap;
-    gap: 0.65rem 0.85rem;
-    font-size: 0.78rem;
-}
-
-.financeiro-page .financeiro-atualizacao button {
-    min-height: 40px;
-    border-radius: 9px;
-    padding: 0 0.85rem;
-    font-weight: 600;
-    transition: border-color 160ms ease, color 160ms ease;
-}
-
 .financeiro-page .topo-pag {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -528,6 +453,7 @@
     padding: 1.2rem;
     background: var(--cor-card);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    font-family: var(--font-primary);
 }
 
 .financeiro-page .card-topo .top {
@@ -601,7 +527,7 @@
 
 .financeiro-page .financeiro-card h2 {
     margin: 0;
-    font-family: var(--font-primary);
+    font-family: var(--font-space);
     font-size: 1.05rem;
     font-weight: 600;
 }
