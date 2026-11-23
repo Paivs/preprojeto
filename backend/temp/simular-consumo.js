@@ -7,7 +7,7 @@ const intervaloMs = Math.max(500, Number(process.env.SIMULACAO_INTERVALO_MS) || 
 async function simular() {
   try {
     const [equipamentos] = await pool.query(
-      `SELECT id_equipamento, nome_equipamento, consumo_minimo, consumo_maximo
+      `SELECT id_equipamento, nome_equipamento, consumo_minimo, consumo_maximo, status
          FROM equipamento
         WHERE consumo_minimo IS NOT NULL AND consumo_maximo IS NOT NULL
         ORDER BY id_equipamento`
@@ -20,6 +20,11 @@ async function simular() {
 
     const agora = new Date().toLocaleTimeString("pt-BR");
     for (const equipamento of equipamentos) {
+      if (String(equipamento.status || "").trim().toLocaleLowerCase("pt-BR") === "inativo") {
+        console.log(`[${agora}] ${equipamento.nome_equipamento}: 0.00 kWh (inativo)`);
+        continue;
+      }
+
       const minimo = Number(equipamento.consumo_minimo);
       const maximo = Number(equipamento.consumo_maximo);
 
