@@ -14,10 +14,12 @@ const formatarMoeda = (valor) =>
   });
 const formatarConsumo = (valor) =>
   `${Number(valor || 0).toLocaleString("pt-BR")} kWh`;
+const ITENS_POR_PAGINA = 10;
 
 export default function TabelaSetores() {
   const [setores, setSetores] = useState([]);
   const [busca, setBusca] = useState("");
+  const [pagina, setPagina] = useState(1);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [erroExclusao, setErroExclusao] = useState("");
@@ -109,6 +111,15 @@ export default function TabelaSetores() {
     );
   }, [setores, busca]);
 
+  const totalPaginas = Math.ceil(setoresFiltrados.length / ITENS_POR_PAGINA);
+  const paginaAtual = Math.min(pagina, Math.max(totalPaginas, 1));
+  const inicioPagina = (paginaAtual - 1) * ITENS_POR_PAGINA;
+  const fimPagina = Math.min(inicioPagina + ITENS_POR_PAGINA, setoresFiltrados.length);
+  const setoresPaginados = setoresFiltrados.slice(
+    inicioPagina,
+    inicioPagina + ITENS_POR_PAGINA
+  );
+
   return (
     <section className="tabela-setores">
       <header className="tabela-setores__topo">
@@ -125,7 +136,10 @@ export default function TabelaSetores() {
             placeholder="Buscar setor..."
             aria-label="Buscar setor"
             value={busca}
-            onChange={(e) => setBusca(e.target.value)}
+            onChange={(e) => {
+              setBusca(e.target.value);
+              setPagina(1);
+            }}
           />
         </div>
       </header>
@@ -154,7 +168,7 @@ export default function TabelaSetores() {
                 </td>
               </tr>
             ) : setoresFiltrados.length ? (
-              setoresFiltrados.map((setor) => (
+              setoresPaginados.map((setor) => (
                 <tr key={setor.id_setor}>
                   <td className="setor-nome">{setor.nome_setor}</td>
                   <td className="setor-descricao">
@@ -203,8 +217,29 @@ export default function TabelaSetores() {
       </div>
       <footer className="tabela-setores__rodape">
         <span>
-          Mostrando {setoresFiltrados.length} de {setores.length} setores
+          Mostrando {setoresFiltrados.length ? inicioPagina + 1 : 0}–{fimPagina} de {setoresFiltrados.length} setores
         </span>
+        {totalPaginas > 1 && (
+          <nav className="setor-paginacao" aria-label="Paginação dos setores">
+            <button
+              type="button"
+              aria-label="Página anterior"
+              onClick={() => setPagina(paginaAtual - 1)}
+              disabled={paginaAtual === 1}
+            >
+              <i className="bi bi-chevron-left" aria-hidden="true" />
+            </button>
+            <span aria-live="polite">Página {paginaAtual} de {totalPaginas}</span>
+            <button
+              type="button"
+              aria-label="Próxima página"
+              onClick={() => setPagina(paginaAtual + 1)}
+              disabled={paginaAtual === totalPaginas}
+            >
+              <i className="bi bi-chevron-right" aria-hidden="true" />
+            </button>
+          </nav>
+        )}
       </footer>
       {setorPendenteExclusao && typeof document !== "undefined" && createPortal(
         <div
