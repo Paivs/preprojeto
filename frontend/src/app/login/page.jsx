@@ -111,74 +111,58 @@ export default function Login() {
     return (
         <section className="page-login">
 
-            <div className="lado-esquerdo">
 
-                <div className="img-lado-esquerdo">
-                    <img
-                        className="img-logo"
-                        src="/imagens/logo.png"
-                        alt="Logo AlertABC"
-                    />
-                </div>
 
-                <div className="text-lado-esquerdo">
-                    <h1>
-                        Mais informação
-                        <span className="quebra-linha">
-                            para uma cidade
-                        </span>
-                        <span className="quebra-linha">
-                            mais segura.
-                        </span>
-                    </h1>
-
-                    <p>
-                        Acompanhe, registre e consulte relatos de
-                        <span className="quebra-linha">
-                            ocorrências por região. Juntos por uma
-                        </span>
-                        <span> comunidade mais informada.</span>
-                    </p>
-                </div>
-
-                <div className="icon-lado-esquerdo">
-
-                    <div className="icon">
-                        <i className="bi bi-geo-alt"></i>
-                        <h3>Mapa interativo</h3>
-                        <p>
-                            Visualize relatos por
-                            <span className="quebra-linha">
-                                localização.
-                            </span>
-                        </p>
-                    </div>
-
-                    <div className="icon">
-                        <i className="bi bi-file-earmark-plus"></i>
-                        <h3>Registro de relatos</h3>
-                        <p>
-                            Compartilhe informações
-                            <span className="quebra-linha">
-                                com a comunidade.
-                            </span>
-                        </p>
-                    </div>
-
-                    <div className="icon">
-                        <i className="bi bi-shield-check"></i>
-                        <h3>Transparência</h3>
-                        <p>
-                            Consulte informações
-                            <span className="quebra-linha">
-                                de forma acessível.
-                            </span>
-                        </p>
-                    </div>
-
-                </div>
-
+        <div className="lado-esquerdo">
+          <div className="container-text-lado-esquerdo">
+            <div className="img-lado-esquerdo">
+              <img
+                className="img-logo"
+                src="/imagens/logo.png"
+                alt="Logo AlertABC"
+              />
             </div>
+
+            <div className="text-lado-esquerdo">
+              <h1>
+                Faça parte de uma{" "}
+                <span className="quebra-linha">comunidade mais segura.</span>
+              </h1>
+
+              <p>
+                Registre e acompanhe relatos de ocorrências por região, contribuindo
+                para uma cidade mais informada e segura.
+              </p>
+            </div>
+
+            <div className="icon-lado-esquerdo">
+              <div className="icon">
+                <i className="bi bi-geo-alt"></i>
+                <div>
+                  <h3>Mapa interativo</h3>
+                  <p>Visualize relatos por localização.</p>
+                </div>
+              </div>
+
+              <div className="icon">
+                <i className="bi bi-file-earmark-plus"></i>
+                <div>
+                  <h3>Registre relatos</h3>
+                  <p>Compartilhe informações com a comunidade.</p>
+                </div>
+              </div>
+
+              <div className="icon">
+                <i className="bi bi-shield-check"></i>
+                <div>
+                  <h3>Mais segurança</h3>
+                  <p>Contribua para uma cidade mais informada.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
 
             <div className="lado-direito">
 
