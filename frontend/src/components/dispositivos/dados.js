@@ -32,6 +32,10 @@ export function adaptarEquipamentoApi(equipamento) {
       equipamento.consumo_maximo === null || equipamento.consumo_maximo === undefined
         ? null
         : Number(equipamento.consumo_maximo),
+    consumoAtual:
+      equipamento.consumo_atual === null || equipamento.consumo_atual === undefined
+        ? null
+        : Number(equipamento.consumo_atual),
   };
 }
 

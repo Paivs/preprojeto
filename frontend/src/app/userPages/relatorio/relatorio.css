@@ -1,7 +1,7 @@
 .conteudo-principal {
   min-height: 100vh;
   margin-left: 245px;
-  font-family: var(--font-nunito);
+  font-family: var(--font-primary);
 }
 
 .relatorios-pagina {
@@ -48,7 +48,7 @@
   background: var(--roxo);
   border: 0;
   border-radius: 10px;
-  font-family: var(--font-nunito);
+  font-family: var(--font-primary);
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
@@ -86,7 +86,7 @@
   background-color: var(--cor-campo);
   border: 1px solid var(--cor-borda);
   border-radius: 10px;
-  font-family: var(--font-nunito);
+  font-family: var(--font-primary);
   font-size: 12px;
 }
 
@@ -322,7 +322,7 @@
   margin: 0;
   color: var(--cor-texto-secundario);
   border-color: var(--cor-borda);
-  font-family: var(--font-nunito);
+  font-family: var(--font-primary);
   font-size: 11px;
   vertical-align: middle;
 }

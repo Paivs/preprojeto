@@ -105,37 +105,6 @@ export default function Financeiro() {
               <p>Acompanhe faturamento, recebimentos e pagamentos pendentes.</p>
             </div>
           </div>
-          {erro && (
-            <p className="financeiro-feedback erro" role="alert">
-              {erro}
-            </p>
-          )}
-          {carregando && (
-            <p className="financeiro-feedback" role="status">
-              Carregando resumo financeiro...
-            </p>
-          )}
-
-          {!carregando && (
-            <div className="financeiro-atualizacao">
-              <span>
-                {atualizadoEm
-                  ? `Atualizado \u00e0s ${atualizadoEm.toLocaleTimeString("pt-BR")}`
-                  : "Aguardando atualiza\u00e7\u00e3o"}
-              </span>
-              <button
-                type="button"
-                onClick={carregarResumo}
-                disabled={atualizando}
-              >
-                <i
-                  className={`bi ${atualizando ? "bi-arrow-repeat" : "bi-arrow-clockwise"}`}
-                  aria-hidden="true"
-                />
-                {atualizando ? "Atualizando..." : "Atualizar agora"}
-              </button>
-            </div>
-          )}
 
           <div className="topo-pag">
             <CardIndicador

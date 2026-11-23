@@ -1,7 +1,7 @@
 .conteudo-principal {
     margin-left: 245px;
     min-height: 100vh;
-    font-family: var(--font-nunito);
+    font-family: var(--font-primary);
 }
 
 .conteudo-pagina {

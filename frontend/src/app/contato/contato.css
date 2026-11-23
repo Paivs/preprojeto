@@ -39,7 +39,7 @@
 .contato-intro h1 {
   margin: 1.25rem 0;
   color: var(--cor-texto);
-  font-family: var(--font-space);
+  font-family: var(--font-primary);
   font-size: clamp(2.5rem, 4.5vw, 4.15rem);
   font-weight: 700;
   letter-spacing: -0.045em;
@@ -208,7 +208,7 @@
 .contato-canais-title h2 {
   margin: 0.45rem 0 0;
   color: var(--cor-texto);
-  font-family: var(--font-space);
+  font-family: var(--font-primary);
   font-size: 1.8rem;
   font-weight: 650;
 }

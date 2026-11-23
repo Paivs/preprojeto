@@ -1,33 +1,8 @@
 import "dotenv/config";
 import { pool } from "../src/config/database.js";
+import { avancarLeitura } from "../src/service/SimulacaoConsumoService.js";
 
 const intervaloMs = Math.max(500, Number(process.env.SIMULACAO_INTERVALO_MS) || 3000);
-const leituras = new Map();
-
-function arredondar(valor) {
-  return Math.round(valor * 100) / 100;
-}
-
-function avancarLeitura(id, minimo, maximo) {
-  if (minimo === maximo) return minimo;
-
-  const anterior = leituras.get(id) || { valor: minimo, direcao: 1 };
-  const passo = Math.max((maximo - minimo) * 0.05, 0.01);
-  let valor = anterior.valor + anterior.direcao * passo;
-  let direcao = anterior.direcao;
-
-  if (valor >= maximo) {
-    valor = maximo;
-    direcao = -1;
-  } else if (valor <= minimo) {
-    valor = minimo;
-    direcao = 1;
-  }
-
-  valor = Math.min(maximo, Math.max(minimo, arredondar(valor)));
-  leituras.set(id, { valor, direcao });
-  return valor;
-}
 
 async function simular() {
   try {

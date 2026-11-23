@@ -263,7 +263,7 @@ export default function Home() {
         <section id="eficiencia">
           <div className="container-eficiencia">
             <div className="top-eficiencia">
-              <h3>O impacto aparece na operação. E na fatura.</h3>
+              <h3>O impacto aparece na operação e na fatura.</h3>
               <span>
                 Cenários que ilustram o potencial de uma gestão de energia
                 orientada por dados.

@@ -18,13 +18,13 @@
 
 .pagina-configuracao .cabecalho-pagina .cabecalho-etiqueta {
     color: var(--amarelo);
-    font-family: var(--font-nunito);
+    font-family: var(--font-primary);
     font-size: 11px;
     letter-spacing: 0.2em;
 }
 
 .cabecalho-pagina h1 {
-    font-family: var(--font-nunito);
+    font-family: var(--font-primary);
     font-size: 32px;
     font-weight: 400;
     letter-spacing: -0.02em;

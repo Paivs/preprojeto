@@ -124,7 +124,13 @@
 }
 
 .consumo-faixa {
-    font-size: 20px;
+    font-size: 24px;
+}
+
+.consumo-faixa-cadastrada {
+    margin-top: 8px;
+    color: var(--cor-texto-fraco);
+    font-size: 10px;
 }
 
 .alerta-consumo {
