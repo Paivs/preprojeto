@@ -95,7 +95,7 @@ export async function buscarConfiguracao(id, apenasAdmin = false) {
     ? `id_usuario, nome_empresa, cnpj, email, telefone, nivel_permissao,
        COALESCE(consumo_total, 0) AS consumo_total,
        COALESCE(consumo_maximo, 0) AS consumo_maximo`
-    : `id_usuario, nome_empresa, cnpj, email, nivel_permissao,
+    : `id_usuario, nome_empresa, cnpj, email, telefone, nivel_permissao,
        COALESCE(consumo_total, 0) AS consumo_total,
        COALESCE(consumo_maximo, 0) AS consumo_maximo`;
   const [linhas] = await pool.query(
@@ -112,7 +112,7 @@ export async function atualizarConfiguracao(id, dados, apenasAdmin = false) {
                        SET nome_empresa = ?, email = ?, cnpj = ?, telefone = ?, consumo_maximo = ?
                      WHERE id_usuario = ? AND nivel_permissao = 'admin'`;
   const sqlUsuario = `UPDATE usuario
-                         SET nome_empresa = ?, email = ?, cnpj = ?, consumo_maximo = ?
+                         SET nome_empresa = ?, email = ?, cnpj = ?, telefone = ?, consumo_maximo = ?
                        WHERE id_usuario = ?`;
   if (apenasAdmin) {
     await pool.query(sqlAdmin, [
@@ -120,7 +120,7 @@ export async function atualizarConfiguracao(id, dados, apenasAdmin = false) {
     ]);
   } else {
     await pool.query(sqlUsuario, [
-      dados.nome_empresa, dados.email, dados.cnpj, dados.consumo_maximo, id
+      dados.nome_empresa, dados.email, dados.cnpj, dados.telefone, dados.consumo_maximo, id
     ]);
   }
   return buscarConfiguracao(id, apenasAdmin);

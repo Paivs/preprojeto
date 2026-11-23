@@ -44,6 +44,7 @@ export default function ConfiguracaoUser() {
         ...resultado.dados,
         nome_empresa: resultado.dados.nome_empresa || "",
         email: resultado.dados.email || "",
+        telefone: resultado.dados.telefone || "",
         cnpj: resultado.dados.cnpj || "",
         consumo_maximo: resultado.dados.consumo_maximo ?? 0,
       });
@@ -73,6 +74,7 @@ export default function ConfiguracaoUser() {
       {
         nome_empresa: perfil.nome_empresa,
         email: perfil.email,
+        telefone: perfil.telefone,
         cnpj: perfil.cnpj,
         consumo_maximo: Number(perfil.consumo_maximo),
       },
@@ -87,6 +89,7 @@ export default function ConfiguracaoUser() {
       {
         nome_empresa: perfil.nome_empresa,
         email: perfil.email,
+        telefone: perfil.telefone,
         cnpj: perfil.cnpj,
         consumo_maximo: Number(perfil.consumo_maximo),
       },
