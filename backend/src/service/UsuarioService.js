@@ -146,6 +146,7 @@ function formatarConfiguracao(usuario, apenasAdmin) {
     nome_empresa: usuario.nome_empresa,
     cnpj: usuario.cnpj,
     email: usuario.email,
+    telefone: usuario.telefone,
     perfil: usuario.nivel_permissao,
     consumo_total: Number(usuario.consumo_total || 0),
     consumo_maximo: Number(usuario.consumo_maximo || 0)
@@ -170,8 +171,8 @@ export async function atualizarConfiguracao(idRecebido, entrada = {}, apenasAdmi
   const atual = await UsuarioModel.buscarConfiguracao(id, apenasAdmin);
   if (!atual) throw erroConfiguracaoNaoEncontrada(apenasAdmin);
 
-  const telefone = apenasAdmin
-    ? (typeof entrada.telefone === 'string' ? entrada.telefone.trim() || null : null)
+  const telefone = typeof entrada.telefone === 'string'
+    ? entrada.telefone.trim() || null
     : atual.telefone;
   const usuario = new Usuario({
     id_usuario: id,

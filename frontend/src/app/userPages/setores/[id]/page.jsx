@@ -327,7 +327,7 @@ export default function DetalheSetor() {
                           <th>Equipamento</th>
                           <th>Tipo</th>
                           <th>Status</th>
-                          <th>Consumo atual simulado</th>
+                          <th>Consumo atua</th>
                           <th>Faixa de consumo</th>
                           <th className="setor-coluna-acoes">Ações</th>
                         </tr>
