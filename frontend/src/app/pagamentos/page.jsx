@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/lib/api";
+import { obterTokenSessao } from "@/lib/session";
 import "./pagamentos.css";
 
 const metodos = [
@@ -21,7 +23,7 @@ function QrCodeIlustrativo() {
         [0, tamanho - 7],
       ];
       const canto = cantos.find(
-        ([cx, cy]) => x >= cx && x < cx + 7 && y >= cy && y < cy + 7
+        ([cx, cy]) => x >= cx && x < cx + 7 && y >= cy && y < cy + 7,
       );
       let preenchida;
       if (canto) {
@@ -38,7 +40,7 @@ function QrCodeIlustrativo() {
       }
       if (preenchida)
         celulas.push(
-          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" />
+          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" />,
         );
     }
   }
@@ -98,6 +100,8 @@ export default function Pagamentos() {
   const [cobrancaGerada, setCobrancaGerada] = useState(false);
   const [temaClaro, setTemaClaro] = useState(false);
   const [pagamento, setPagamento] = useState(null);
+  const [erroPagamento, setErroPagamento] = useState("");
+  const [salvando, setSalvando] = useState(false);
 
   useEffect(() => {
     const claro = document.documentElement.dataset.tema === "claro";
@@ -127,13 +131,45 @@ export default function Pagamentos() {
     setTemaClaro(novoTema === "claro");
   }
 
-  function pagar(evento) {
+  async function pagar(evento) {
     evento.preventDefault();
     if ((metodo === "pix" || metodo === "boleto") && !cobrancaGerada) {
       setCobrancaGerada(true);
       return;
     }
-    router.push("/userPages/dashboard");
+    setErroPagamento("");
+    setSalvando(true);
+    try {
+      const token = obterTokenSessao();
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
+      const resposta = await fetch(
+        `${API_BASE_URL}/auth/pagamentos/${pagamento.id_pagamento}/confirmar`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ forma_pagamento: metodo }),
+        },
+      );
+      const resultado = await resposta.json();
+      if (!resposta.ok)
+        throw new Error(
+          resultado.erro || "Não foi possível registrar o pagamento.",
+        );
+      sessionStorage.removeItem("pagamentoPendente");
+      router.push("/userPages/dashboard");
+    } catch (erro) {
+      setErroPagamento(
+        erro.message || "Não foi possível registrar o pagamento.",
+      );
+    } finally {
+      setSalvando(false);
+    }
   }
 
   function formatarData(data) {
@@ -316,7 +352,7 @@ export default function Pagamentos() {
                 <div>
                   <strong>Pagamento via PIX</strong>
                   <span>
-                    Gere um QR code ilustrativo para visualizar esta etapa.
+                    Gerar um QR code
                   </span>
                 </div>
               </div>
@@ -325,7 +361,7 @@ export default function Pagamentos() {
             (cobrancaGerada ? (
               <div className="pagamento-gerado pagamento-boleto-gerado">
                 <CodigoBarrasIlustrativo />
-                <strong>Boleto ilustrativo</strong>
+                <strong>Boleto</strong>
                 <span>
                   00000.00000 00000.000000 00000.000000 0 00000000000000
                 </span>
@@ -339,12 +375,21 @@ export default function Pagamentos() {
                 <div>
                   <strong>Pagamento via boleto</strong>
                   <span>
-                    Gere um boleto ilustrativo para visualizar esta etapa.
+                    Gerar um boleto
                   </span>
                 </div>
               </div>
             ))}
-          <button className="pagamento-submit" type="submit">
+          {erroPagamento && (
+            <p role="alert" className="pagamento-erro">
+              {erroPagamento}
+            </p>
+          )}
+          <button
+            className="pagamento-submit"
+            type="submit"
+            disabled={salvando}
+          >
             <i
               className={`bi ${
                 metodo !== "cartao" && !cobrancaGerada
@@ -352,11 +397,13 @@ export default function Pagamentos() {
                   : "bi-arrow-right-circle"
               }`}
             />{" "}
-            {metodo === "cartao" || cobrancaGerada
-              ? "Pagar e ir para o dashboard"
-              : metodo === "pix"
-              ? "Gerar QR code ilustrativo"
-              : "Gerar boleto ilustrativo"}
+            {salvando
+              ? "Registrando pagamento..."
+              : metodo === "cartao" || cobrancaGerada
+                ? "Pagar e ir para o dashboard"
+                : metodo === "pix"
+                  ? "Gerar QR code "
+                  : "Gerar boleto "}
           </button>
           <p className="pagamento-seguranca">
             <i className="bi bi-lock-fill" /> Seus dados estão protegidos

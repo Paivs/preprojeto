@@ -37,7 +37,7 @@ export default function ModalNovoSetor({ onSalvar, onFechar }) {
   return (
     <div className="modal-fundo" onClick={onFechar}>
       <div
-        className="modal modal-entrada-esquerda"
+        className="modal-conteudo modal-entrada-esquerda"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-novo-setor-titulo"

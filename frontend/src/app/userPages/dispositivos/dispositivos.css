@@ -18,15 +18,14 @@
 }
 
 .cabecalho-etiqueta {
-    font-size: 11px;
-    letter-spacing: 0.2em;
     color: var(--amarelo);
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .cabecalho-pagina h1 {
     font-size: 32px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: 500;
     margin: 8px 0 6px;
     color: var(--dark-text-primary);
 }
@@ -36,130 +35,23 @@
     color: var(--cor-texto-secundario);
 }
 
-.botao-fechar {
-    margin-left: auto;
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
-    border-radius: 10px;
-    border: 1px solid var(--amarelo);
-    display: grid;
-    place-items: center;
-    color: var(--cor-texto-secundario);
-    background: transparent;
-}
-
-.botao-fechar:hover {
-    background: var(--roxo-suave);
-    border-color: var(--roxo);
-    transition: .3s ease;
-}
-
-.botao-secundario {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    height: 42px;
-    padding: 0 14px;
-    border-radius: 10px;
-    border: 1px solid var(--cor-borda);
-    background: var(--cor-card);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--cor-texto);
-}
-
-.botao-secundario:hover {
-    background: var(--roxo-suave);
-}
-
-.modal-fundo {
+.painel-fundo {
     position: fixed;
     inset: 0;
     z-index: 100;
     display: flex;
     justify-content: flex-end;
-    background: rgba(3, 5, 12, .68);
-    backdrop-filter: blur(3px);
-    animation: modal-fundo-entrada 0.18s ease-out;
+    background: rgba(3, 5, 12, .54);
+    animation: painel-fundo-entrada 0.16s ease-out;
 }
 
-.modal {
-    display: flex;
-    flex-direction: column;
-    width: 440px;
-    max-width: min(100%, 440px);
-    height: 100%;
-    max-height: 100%;
-    padding: 0;
-    background: var(--cor-sidebar);
-    color: var(--cor-texto);
-    font-size: 1rem;
-    border-left: 1px solid var(--cor-borda);
-    box-shadow: var(--sombra-painel);
-    font-family: var(--font-nunito);
-    animation: modal-painel-entrada 0.24s ease-out;
-}
-
-.modal-topo {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    padding: 18px 20px;
-    border-bottom: 1px solid var(--cor-borda);
-}
-
-.modal-topo h2 {
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.modal-formulario {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 20px;
-}
-
-.modal-formulario label {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--cor-texto-secundario);
-}
-
-.modal-formulario input,
-.modal-formulario select {
-    width: 100%;
-    height: 42px;
-    padding: 0 12px;
-    border-radius: 10px;
-    border: 1px solid var(--cor-borda);
-    background: var(--cor-campo);
-    color: var(--cor-texto);
-}
-
-.modal-erro {
-    font-size: 12px;
-    color: var(--cor-vermelho);
-}
-
-.modal-botoes {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 4px;
-}
-
-@keyframes modal-fundo-entrada {
+@keyframes painel-fundo-entrada {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-@keyframes modal-painel-entrada {
-    from { transform: translateX(-24px); opacity: .8; }
-    to { transform: translateX(0); opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+    .painel-fundo {
+        animation: none;
+    }
 }

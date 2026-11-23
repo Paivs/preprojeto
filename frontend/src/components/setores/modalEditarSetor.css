@@ -1,0 +1,217 @@
+.modal-editar-setor-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 20px;
+  background: rgba(3, 5, 12, 0.54);
+}
+
+.modal-editar-setor {
+  width: min(520px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  color: var(--cor-texto);
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.35);
+  animation: modal-editar-setor-entrar 0.18s ease-out;
+}
+
+.modal-editar-setor-cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.modal-editar-setor-cabecalho > div > span {
+  color: var(--cor-texto-fraco);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.modal-editar-setor-cabecalho h2 {
+  margin: 5px 0 3px;
+  color: var(--cor-texto);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal-editar-setor-cabecalho p {
+  margin: 0;
+  color: var(--cor-texto-fraco);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.modal-editar-setor-fechar {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  color: var(--cor-texto-secundario);
+  background: transparent;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-editar-setor-fechar:hover:not(:disabled) {
+  color: var(--cor-texto);
+  background: var(--cor-campo);
+}
+
+.modal-editar-setor-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 24px 24px;
+}
+
+.modal-editar-setor-formulario label {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--cor-texto-secundario);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.modal-editar-setor-formulario input,
+.modal-editar-setor-formulario textarea {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+  color: var(--cor-texto);
+  background: var(--cor-campo);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  font: 400 13px var(--font-inter);
+  outline: none;
+}
+
+.modal-editar-setor-formulario textarea {
+  min-height: 76px;
+  resize: vertical;
+}
+
+.modal-editar-setor-formulario input:focus,
+.modal-editar-setor-formulario textarea:focus {
+  border-color: var(--cor-destaque);
+}
+
+.modal-editar-setor-campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.modal-editar-setor-previa {
+  margin: -4px 0 0;
+  color: var(--cor-texto-fraco);
+  font-size: 12px;
+}
+
+.modal-editar-setor-previa strong {
+  color: var(--cor-texto);
+  font-weight: 600;
+}
+
+.modal-editar-setor-erro {
+  margin: 0;
+  padding: 10px 12px;
+  color: var(--cor-vermelho);
+  background: var(--vermelho-suave);
+  border: 1px solid rgba(255, 104, 117, 0.2);
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.modal-editar-setor-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.modal-editar-setor-acoes button {
+  min-height: 40px;
+  padding: 0 15px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-editar-setor-cancelar {
+  color: var(--cor-texto-secundario);
+  background: transparent;
+  border: 1px solid var(--cor-borda);
+}
+
+.modal-editar-setor-salvar {
+  color: #fff;
+  background: var(--roxo);
+  border: 1px solid var(--roxo);
+}
+
+.modal-editar-setor-salvar:hover:not(:disabled) {
+  background: var(--roxo-hover);
+  border-color: var(--roxo-hover);
+}
+
+.modal-editar-setor button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.modal-editar-setor button:focus-visible {
+  outline: 2px solid var(--cor-destaque);
+  outline-offset: 2px;
+}
+
+@keyframes modal-editar-setor-entrar {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 540px) {
+  .modal-editar-setor-fundo {
+    padding: 12px;
+  }
+
+  .modal-editar-setor-cabecalho {
+    padding: 18px 18px 15px;
+  }
+
+  .modal-editar-setor-formulario {
+    padding: 16px 18px 18px;
+  }
+}
+
+@media (max-width: 420px) {
+  .modal-editar-setor-campos {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-editar-setor-acoes button {
+    flex: 1;
+    padding: 0 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-editar-setor {
+    animation: none;
+  }
+}

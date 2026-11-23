@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/lib/api";
+import { normalizarStatus } from "@/components/dispositivos/dados";
 import "./painelNovoSetor.css";
 
 export default function PainelEditarEquipamento({ equipamento, idSetor, onFechar, onSalvo }) {
@@ -9,7 +10,7 @@ export default function PainelEditarEquipamento({ equipamento, idSetor, onFechar
   const [tipo, setTipo] = useState(equipamento.tipo || "");
   const [consumoMinimo, setConsumoMinimo] = useState(equipamento.consumo_minimo ?? "0");
   const [consumoMaximo, setConsumoMaximo] = useState(equipamento.consumo_maximo ?? "");
-  const [status, setStatus] = useState(equipamento.status || "Ativo");
+  const [status, setStatus] = useState(normalizarStatus(equipamento.status));
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
 
@@ -41,7 +42,7 @@ export default function PainelEditarEquipamento({ equipamento, idSetor, onFechar
           tipo: tipo.trim() || null,
           consumo_minimo: minimo,
           consumo_maximo: maximo,
-          status: status.trim() || null,
+          status,
           id_setor: Number(idSetor),
         }),
       });
@@ -67,7 +68,7 @@ export default function PainelEditarEquipamento({ equipamento, idSetor, onFechar
             <label>Consumo mínimo (kWh)<input type="number" min="0" max="99999999.99" step="0.01" value={consumoMinimo} onChange={(e) => setConsumoMinimo(e.target.value)} /></label>
             <label>Consumo máximo (kWh)<input type="number" min="0" max="99999999.99" step="0.01" value={consumoMaximo} onChange={(e) => setConsumoMaximo(e.target.value)} placeholder="Opcional" /></label>
           </div>
-          <label>Status<input value={status} onChange={(e) => setStatus(e.target.value)} placeholder="Ex.: Ativo" maxLength={50} /></label>
+          <label>Status<select value={status} onChange={(e) => setStatus(e.target.value)}><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option></select></label>
           <p className="setor-painel-ajuda">Os valores de consumo são a faixa cadastrada do equipamento, não uma medição em tempo real.</p>
           {erro && <p className="setor-painel-erro" role="alert">{erro}</p>}
           <footer className="setor-painel-acoes">

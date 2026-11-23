@@ -6,6 +6,8 @@ import { useParams } from "next/navigation";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import PainelEditarEquipamento from "@/components/setores/PainelEditarEquipamento";
+import ModalEditarSetor from "@/components/setores/ModalEditarSetor";
+import { normalizarStatus } from "@/components/dispositivos/dados";
 import { API_BASE_URL } from "@/lib/api";
 import "./setorDetalhe.css";
 
@@ -29,6 +31,7 @@ export default function DetalheSetor() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [equipamentoEmEdicao, setEquipamentoEmEdicao] = useState(null);
+  const [modalEdicaoSetorAberto, setModalEdicaoSetorAberto] = useState(false);
 
   const equipamentosComFaixa = equipamentos.filter(
     (equipamento) =>
@@ -137,6 +140,14 @@ export default function DetalheSetor() {
                     <h1>{setor.nome_setor}</h1>
                     <p>{setor.descricao || "Sem descrição cadastrada."}</p>
                   </div>
+                  <button
+                    type="button"
+                    className="setor-detalhe-editar"
+                    onClick={() => setModalEdicaoSetorAberto(true)}
+                  >
+                    <i className="bi bi-pencil" aria-hidden="true" />
+                    Editar setor
+                  </button>
                 </header>
                 <section className="setor-resumo" aria-label="Resumo do setor">
                   <article className="resumo-consumo">
@@ -292,10 +303,6 @@ export default function DetalheSetor() {
                       </span>
                     </div>
                   )}
-                  <p className="grafico-faixas-nota">
-                    <i className="bi bi-info-circle" /> Valores cadastrados, não
-                    representam consumo medido ou histórico.
-                  </p>
                 </section>
                 <section className="setor-equipamentos">
                   <div className="setor-equipamentos-cabecalho">
@@ -339,19 +346,13 @@ export default function DetalheSetor() {
                               <td>
                                 <span
                                   className={`equipamento-status ${
-                                    String(equipamento.status || "")
-                                      .toLowerCase()
-                                      .includes("alerta")
-                                      ? "status-alerta"
-                                      : String(equipamento.status || "")
-                                          .toLowerCase()
-                                          .includes("inativo")
-                                      ? "status-inativo"
-                                      : "status-ativo"
+                                    normalizarStatus(equipamento.status) === "Ativo"
+                                      ? "status-ativo"
+                                      : "status-inativo"
                                   }`}
                                 >
                                   <i />
-                                  {equipamento.status || "Não informado"}
+                                  {normalizarStatus(equipamento.status)}
                                 </span>
                               </td>
                               <td className="equipamento-faixa">
@@ -395,11 +396,14 @@ export default function DetalheSetor() {
                       </tbody>
                     </table>
                   </div>
+<<<<<<< HEAD
                   <p className="setor-nota">
                     <i className="bi bi-info-circle" /> O consumo atual é
                     simulado com base na faixa cadastrada e atualizado a cada
                     3 segundos; não representa medição real.
                   </p>
+=======
+>>>>>>> a90d9081cdacafbbecef9f2bcafc8ab974849b38
                 </section>
               </>
             )
@@ -420,6 +424,16 @@ export default function DetalheSetor() {
               )
             );
             setEquipamentoEmEdicao(null);
+          }}
+        />
+      )}
+      {modalEdicaoSetorAberto && setor && (
+        <ModalEditarSetor
+          setor={setor}
+          onFechar={() => setModalEdicaoSetorAberto(false)}
+          onSalvo={(atualizado) => {
+            setSetor(atualizado);
+            setModalEdicaoSetorAberto(false);
           }}
         />
       )}

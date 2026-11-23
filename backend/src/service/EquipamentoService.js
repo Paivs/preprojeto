@@ -29,7 +29,24 @@ function validarTextoOpcional(valor, campo, limite) {
   return texto || null;
 }
 
-function validarDados(dados = {}) {
+function normalizarStatusExistente(valor) {
+  const status = String(valor || '').trim().toLocaleLowerCase('pt-BR');
+  return status === 'ativo' || status === 'normal' ? 'Ativo' : 'Inativo';
+}
+
+function validarStatus(valor, padrao = "Ativo") {
+  if (valor === undefined || valor === null || valor === "") return padrao;
+  if (typeof valor !== "string") {
+    throw new TypeError("Status deve ser Ativo ou Inativo.");
+  }
+
+  const status = valor.trim().toLocaleLowerCase("pt-BR");
+  if (status === "ativo") return "Ativo";
+  if (status === "inativo") return "Inativo";
+  throw new TypeError("Status deve ser Ativo ou Inativo.");
+}
+
+function validarDados(dados = {}, statusPadrao = "Ativo") {
   const nome = typeof dados.nome_equipamento === 'string' ? dados.nome_equipamento.trim() : '';
   if (!nome) throw new TypeError('Informe o nome do equipamento.');
   if (nome.length > 100) {
@@ -47,7 +64,7 @@ function validarDados(dados = {}) {
     tipo: validarTextoOpcional(dados.tipo, 'Tipo', 50),
     consumo_minimo: consumoMinimo,
     consumo_maximo: consumoMaximo,
-    status: validarTextoOpcional(dados.status, 'Status', 50),
+    status: validarStatus(dados.status, statusPadrao),
     id_setor: validarId(dados.id_setor, 'ID do setor')
   };
 }
@@ -101,7 +118,7 @@ export async function atualizar(idEquipamentoRecebido, dados, idUsuarioRecebido)
   const atual = await EquipamentoModel.buscarPorId(idEquipamento, idUsuario);
   if (!atual) throw erroNaoEncontrado('Equipamento não encontrado.');
 
-  const equipamento = validarDados(dados);
+  const equipamento = validarDados(dados, normalizarStatusExistente(atual.status));
   const setorValido = await EquipamentoModel.setorPertenceAoUsuario(equipamento.id_setor, idUsuario);
   if (!setorValido) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
   const atualizado = await EquipamentoModel.atualizar(idEquipamento, equipamento, idUsuario);

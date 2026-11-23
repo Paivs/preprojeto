@@ -1,24 +1,44 @@
-* {
-    font-family: var(--font-primary);
-}
-
-.conteudo{
+.conteudo-principal {
     margin-left: 245px;
     min-height: 100vh;
 }
 
-.container{
+.conteudo-pagina {
+    padding: 24px 32px 48px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin: auto;
-    width: 80vw;
-    min-height: 100vh;
-    height: auto;
-    padding-bottom: 3rem;
-    margin-top: 8vh;
     gap: 2rem;
-    /* background-color: aqua; */
+}
+
+.cabecalho-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.cabecalho-pagina .cabecalho-etiqueta {
+    color: var(--amarelo);
+    font-family: var(--font-nunito);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+
+}
+
+.cabecalho-pagina h1 {
+    font-family: var(--font-nunito);
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin: 8px 0 6px;
+    color: var(--dark-text-primary);
+}
+
+.cabecalho-pagina p {
+    font-size: 14px;
+    color: var(--cor-texto-secundario);
 }
 
 .financeiro-feedback {
@@ -63,22 +83,21 @@
     opacity: 0.65;
 }
 
-.topo-pag{
+.topo-pag {
     height: fit-content;
     width: 100%;
     display: flex;
     border: none;
     gap: 12px;
-    /* background-color: antiquewhite; */
 }
 
-.baixo-pag{
+.baixo-pag {
     display: flex;
     width: 100%;
     gap: 12px;
 }
 
-.card{
+.card {
     width: 50%;
     height: 300px;
     border: 1px solid var(--cinza-escuro);
@@ -91,18 +110,18 @@
     align-items: flex-start;
 }
 
-.card h2{
+.card h2 {
     font-size: 2rem;
     font-weight: 600;
     color: var(--cor-texto);
-    
+
     display: flex;
     align-items: center;
     width: 100%;
     justify-content: space-between;
 }
 
-.card hr{
+.card hr {
     width: 100%;
     opacity: 1;
     border: 0;
@@ -110,26 +129,26 @@
     background-color: var(--roxo-claro);
     margin-top: 20px;
     margin-bottom: 20px;
-    
+
 }
 
-.card h2 i{
+.card h2 i {
     color: var(--roxo-claro);
     font-size: 2.5rem;
 }
 
-.card h3{
+.card h3 {
     color: var(--branco);
     font-size: 2rem;
     font-weight: 600;
 }
 
-.simple-text{
+.simple-text {
     color: var(--dark-text-secondary);
     font-size: 1rem;
 }
 
-.info{
+.info {
     width: 90%;
     margin: 0 auto 0 auto;
     margin-top: 30px;
@@ -138,27 +157,27 @@
     justify-content: space-between;
 }
 
-.info strong{
+.info strong {
     color: var(--cinza);
     font-weight: 500;
     font-size: 1rem;
 }
 
-.card i{
+.card i {
     font-size: 1.5rem;
     color: var(--amarelo);
 }
 
-.flex-p{
+.flex-p {
     width: 90%;
-    margin: 30px auto 0 auto;
+    margin: 0 auto 0 auto;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     gap: 1rem;
 }
 
-.box-pagamentos{
+.box-pagamentos {
     color: var(--cinza);
     font-size: 1rem;
     padding: 0.7rem;
@@ -184,7 +203,7 @@
     gap: 1rem;
 }
 
-.barra{
+.barra {
     display: block;
     width: 220px;
     height: 6px;
@@ -208,7 +227,7 @@
     font-weight: 500;
 }
 
-.insight{
+.insight {
     font-weight: 400;
     font-size: 1.1rem;
     color: var(--dark-text-secondary);
@@ -395,6 +414,7 @@
 :root[data-tema="claro"] .financeiro-grafico-coluna:last-child .financeiro-grafico-trilho span {
     background: var(--cor-destaque);
 }
+
 @media (max-width: 700px) {
     .conteudo {
         margin-left: 0;
@@ -425,5 +445,338 @@
     .financeiro-grafico-coluna {
         gap: 0.7rem;
         padding: 0.9rem 0.75rem;
+    }
+}
+
+/* Layout refinado da visão financeira */
+.financeiro-page {
+    min-height: 100vh;
+    color: var(--cor-texto);
+}
+
+.financeiro-page .conteudo {
+    margin-left: 245px;
+}
+
+.financeiro-page .financeiro-container {
+    width: min(100% - 4rem, 1450px);
+    min-height: auto;
+    gap: 1.35rem;
+    margin: 2rem auto 0;
+    padding-bottom: 3rem;
+}
+
+.financeiro-page-header {
+    width: 100%;
+    margin-bottom: 0.25rem;
+}
+
+.financeiro-eyebrow {
+    color: var(--cor-destaque);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.financeiro-page-header h1 {
+    margin: 0.3rem 0 0.35rem;
+    color: var(--cor-texto);
+    font-family: var(--font-space);
+    font-size: clamp(2rem, 3vw, 2.65rem);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 1.15;
+}
+
+.financeiro-page-header p {
+    margin: 0;
+    color: var(--cor-texto-secundario);
+    font-size: 0.92rem;
+}
+
+.financeiro-page .financeiro-atualizacao {
+    flex-wrap: wrap;
+    gap: 0.65rem 0.85rem;
+    font-size: 0.78rem;
+}
+
+.financeiro-page .financeiro-atualizacao button {
+    min-height: 40px;
+    border-radius: 9px;
+    padding: 0 0.85rem;
+    font-weight: 600;
+    transition: border-color 160ms ease, color 160ms ease;
+}
+
+.financeiro-page .topo-pag {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.financeiro-page .card-topo {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    min-height: 155px;
+    height: auto;
+    justify-content: space-between;
+    overflow: hidden;
+    border: 1px solid var(--cor-borda);
+    border-radius: 14px;
+    padding: 1.2rem;
+    background: var(--cor-card);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.financeiro-page .card-topo .top {
+    align-items: flex-start;
+    gap: 0.6rem;
+}
+
+.financeiro-page .card-topo .flex-top {
+    min-width: 0;
+    gap: 0.45rem;
+}
+
+.financeiro-page .card-topo .top strong {
+    color: var(--cor-texto-secundario);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.financeiro-page .card-topo h2 {
+    margin: 0;
+    color: var(--cor-texto);
+    font-family: var(--font-space);
+    font-size: clamp(1.2rem, 1.8vw, 1.65rem);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.financeiro-page .card-topo .top i {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    padding: 0.65rem;
+    border: 1px solid rgba(145, 79, 240, 0.22);
+    border-radius: 11px;
+    background: var(--roxo-suave);
+    color: var(--cor-destaque);
+    font-size: 1rem;
+}
+
+.financeiro-page .card-topo .bottom strong {
+    color: var(--cor-texto-fraco);
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.financeiro-page .card-topo .bottom hr {
+    height: 2px;
+    margin: 0;
+    background: linear-gradient(90deg, var(--cor-destaque), transparent);
+}
+
+.financeiro-page .baixo-pag {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.financeiro-page .financeiro-card {
+    width: auto;
+    min-width: 0;
+    height: auto;
+    min-height: 260px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 14px;
+    padding: clamp(1.2rem, 2vw, 1.6rem);
+    background: var(--cor-card);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.financeiro-page .financeiro-card h2 {
+    margin: 0;
+    font-family: var(--font-space);
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.financeiro-page .financeiro-card h2 i {
+    color: var(--cor-destaque);
+    font-size: 1.25rem;
+}
+
+.financeiro-page .financeiro-resumo-card .info {
+    width: 100%;
+    margin: 1.6rem 0 0;
+}
+
+.financeiro-page .financeiro-resumo-card h3 {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.4rem;
+    margin: 0;
+    color: var(--cor-texto);
+    font-family: var(--font-space);
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.15;
+}
+
+.financeiro-page .simple-text {
+    color: var(--cor-texto-secundario);
+    font-family: var(--font-primary);
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+.financeiro-page .flex-p {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin: auto 0 0;
+}
+
+.financeiro-page .box-pagamentos {
+    margin: 0;
+    border: 1px solid rgba(255, 209, 102, 0.2);
+    border-radius: 999px;
+    padding: 0.5rem 0.7rem;
+    background: var(--amarelo-suave);
+    color: var(--cor-alerta);
+    font-size: 0.76rem;
+}
+
+.financeiro-page .box-pagamentos i {
+    color: var(--cor-alerta);
+    font-size: 0.9rem;
+}
+
+.financeiro-page .box-barra {
+    width: 100%;
+    gap: 0.6rem;
+    margin: 0;
+    color: var(--cor-texto-secundario);
+    font-size: 0.78rem;
+}
+
+.financeiro-page .flex-barra strong {
+    color: var(--cor-destaque);
+    font-weight: 700;
+}
+
+.financeiro-page .barra {
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(to right, var(--cor-destaque) var(--percentual-recebido, 0%), var(--cor-borda) var(--percentual-recebido, 0%));
+}
+
+.financeiro-page .financeiro-analysis-card hr {
+    height: 1px;
+    margin: 1rem 0;
+    background: var(--cor-borda);
+}
+
+.financeiro-page .insight {
+    margin: 0;
+    color: var(--cor-texto-secundario);
+    font-size: 0.92rem;
+    line-height: 1.8;
+}
+
+.financeiro-page .financeiro-grafico {
+    width: 100%;
+    min-height: 0;
+    gap: 1.25rem;
+}
+
+.financeiro-page .financeiro-grafico-cabecalho h2 {
+    font-family: var(--font-space);
+}
+
+.financeiro-page .financeiro-grafico-cabecalho p,
+.financeiro-page .financeiro-grafico-vazio,
+.financeiro-page .financeiro-grafico-rotulo {
+    color: var(--cor-texto-secundario);
+}
+
+.financeiro-page .financeiro-grafico-coluna {
+    border-color: var(--cor-borda);
+    border-radius: 12px;
+    background: var(--cor-fundo);
+}
+
+.financeiro-page .financeiro-grafico-coluna strong {
+    color: var(--cor-texto);
+    font-family: var(--font-space);
+    font-variant-numeric: tabular-nums;
+}
+
+.financeiro-page .financeiro-grafico-trilho {
+    background: var(--cor-borda);
+}
+
+.financeiro-page .financeiro-grafico-trilho span {
+    background: var(--roxo-claro);
+}
+
+.financeiro-page .financeiro-grafico-coluna:last-child .financeiro-grafico-trilho span {
+    background: var(--verde);
+}
+
+.financeiro-page button:focus-visible {
+    outline: 3px solid var(--amarelo);
+    outline-offset: 3px;
+}
+
+@media (max-width: 1100px) {
+    .financeiro-page .topo-pag {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .financeiro-page .conteudo {
+        margin-left: 0;
+    }
+
+    .financeiro-page .financeiro-container {
+        width: calc(100% - 2rem);
+        margin-top: 1.25rem;
+    }
+
+    .financeiro-page .baixo-pag {
+        grid-template-columns: 1fr;
+    }
+
+    .financeiro-page .financeiro-card {
+        min-height: 220px;
+    }
+}
+
+@media (max-width: 500px) {
+    .financeiro-page .topo-pag {
+        grid-template-columns: 1fr;
+    }
+
+    .financeiro-page .card-topo {
+        min-height: 130px;
+    }
+
+    .financeiro-page .financeiro-grafico-barras {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .financeiro-page .financeiro-atualizacao button,
+    .financeiro-page .financeiro-grafico-trilho span {
+        transition: none;
     }
 }

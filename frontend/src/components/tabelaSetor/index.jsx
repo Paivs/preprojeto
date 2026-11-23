@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { API_BASE_URL } from "@/lib/api";
 import { requisicaoAutenticada } from "@/lib/session";
 import "./tabelaSetor.css";
@@ -55,6 +56,25 @@ export default function TabelaSetores() {
       window.removeEventListener("setores:atualizar", atualizar);
     };
   }, []);
+
+  useEffect(() => {
+    if (!setorPendenteExclusao) return undefined;
+
+    const overflowAnterior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    function fecharComEscape(evento) {
+      if (evento.key === "Escape" && excluindoId === null) {
+        setSetorPendenteExclusao(null);
+        setErroExclusao("");
+      }
+    }
+
+    window.addEventListener("keydown", fecharComEscape);
+    return () => {
+      document.body.style.overflow = overflowAnterior;
+      window.removeEventListener("keydown", fecharComEscape);
+    };
+  }, [excluindoId, setorPendenteExclusao]);
 
   async function excluirSetor() {
     const setor = setorPendenteExclusao;
@@ -186,7 +206,7 @@ export default function TabelaSetores() {
           Mostrando {setoresFiltrados.length} de {setores.length} setores
         </span>
       </footer>
-      {setorPendenteExclusao && (
+      {setorPendenteExclusao && typeof document !== "undefined" && createPortal(
         <div
           className="setor-exclusao-fundo"
           onMouseDown={(evento) => {
@@ -203,18 +223,26 @@ export default function TabelaSetores() {
             aria-labelledby="setor-exclusao-titulo"
             aria-describedby="setor-exclusao-descricao"
           >
-            <span className="setor-exclusao-icone" aria-hidden="true">
-              <i className="bi bi-trash" />
-            </span>
-            <h2 id="setor-exclusao-titulo">Excluir setor?</h2>
-            <p id="setor-exclusao-descricao">
-              Excluir <strong>{setorPendenteExclusao.nome_setor}</strong> também remove os equipamentos vinculados.
-            </p>
+            <div className="setor-exclusao-cabecalho">
+              <span className="setor-exclusao-icone" aria-hidden="true">
+                <i className="bi bi-trash" />
+              </span>
+              <div>
+                <h2 id="setor-exclusao-titulo">Excluir setor?</h2>
+              </div>
+            </div>
+            <div className="setor-exclusao-aviso" id="setor-exclusao-descricao">
+              <i className="bi bi-exclamation-triangle" aria-hidden="true" />
+              <p>
+                <strong>{setorPendenteExclusao.nome_setor}</strong> e seus equipamentos vinculados serão removidos.
+              </p>
+            </div>
             {erroExclusao && <p className="setor-erro-exclusao" role="alert">{erroExclusao}</p>}
             <div className="setor-exclusao-acoes">
               <button
                 type="button"
                 className="setor-exclusao-cancelar"
+                autoFocus
                 onClick={() => {
                   setSetorPendenteExclusao(null);
                   setErroExclusao("");
@@ -233,7 +261,8 @@ export default function TabelaSetores() {
               </button>
             </div>
           </section>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );

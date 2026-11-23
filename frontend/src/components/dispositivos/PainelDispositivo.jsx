@@ -17,14 +17,14 @@ export default function PainelDispositivo({ dispositivo, onFechar }) {
   }, [onFechar]);
 
   return (
-    <div className="modal-fundo" onClick={onFechar}>
+    <div className="painel-fundo" onClick={onFechar}>
       <aside
         className="painel-detalhes"
         aria-label={`Detalhes de ${dispositivo.nome}`}
         onClick={(evento) => evento.stopPropagation()}
       >
         <div className="painel-topo">
-          <span className={`icone-dispositivo ${estado === "atencao" ? "icone-dispositivo-atencao" : ""}`}>
+          <span className="icone-dispositivo">
             <Icone categoria={dispositivo.categoria} tamanho={22} />
           </span>
           <div className="painel-titulo">
