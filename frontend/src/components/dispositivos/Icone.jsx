@@ -8,6 +8,7 @@ const CAMINHOS = {
     </>
   ),
   mais: <path d="M12 5v14M5 12h14" />,
+  editar: <path d="m16 4 4 4M4 20l4-.8L19 8a2.12 2.12 0 0 0-3-3L5 16l-1 4Z" />,
   relogio: (
     <>
       <circle cx="12" cy="12" r="10" />

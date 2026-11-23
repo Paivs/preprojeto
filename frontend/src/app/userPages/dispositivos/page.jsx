@@ -7,6 +7,7 @@ import FiltrosDispositivos from "@/components/dispositivos/FiltrosDispositivos";
 import ListaDispositivos from "@/components/dispositivos/ListaDispositivos";
 import PainelDispositivo from "@/components/dispositivos/PainelDispositivo";
 import ModalNovoDispositivo from "@/components/dispositivos/ModalNovoDispositivo";
+import ModalEditarDispositivo from "@/components/dispositivos/ModalEditarDispositivo";
 import { adaptarEquipamentoApi, obterEstado } from "@/components/dispositivos/dados";
 import "@/components/dispositivos/botoes.css";
 import "./dispositivos.css";
@@ -24,6 +25,7 @@ export default function PaginaDispositivos() {
   const [setores, setSetores] = useState([]);
   const [erroSetores, setErroSetores] = useState("");
   const [modalAberto, setModalAberto] = useState(false);
+  const [dispositivoEditando, setDispositivoEditando] = useState(null);
   const [salvando, setSalvando] = useState(false);
 
   const carregarDispositivos = useCallback(async (mostrarCarregamento = true) => {
@@ -116,6 +118,32 @@ export default function PaginaDispositivos() {
     }
   }
 
+  async function editarEquipamento(dados) {
+    const token = sessionStorage.getItem("token");
+    if (!token) throw new Error("Sua sessão expirou. Entre novamente.");
+
+    setSalvando(true);
+    try {
+      const resposta = await fetch(`${API_URL}/equipamentos/${dispositivoEditando.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(dados),
+      });
+      const resultado = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível salvar as alterações.");
+
+      const atualizado = adaptarEquipamentoApi(resultado.dados);
+      setDispositivos((atuais) => atuais.map((item) => item.id === atualizado.id ? atualizado : item));
+      setDispositivoEditando(null);
+      setSelecionadoId(null);
+    } finally {
+      setSalvando(false);
+    }
+  }
+
   const selecionado = dispositivos.find((dispositivo) => dispositivo.id === selecionadoId) || null;
   const categorias = [...new Set(dispositivos.map((dispositivo) => dispositivo.categoria))]
     .filter(Boolean)
@@ -174,6 +202,22 @@ export default function PaginaDispositivos() {
           key={selecionado.id}
           dispositivo={selecionado}
           onFechar={() => setSelecionadoId(null)}
+          onEditar={() => {
+            setDispositivoEditando(selecionado);
+            setSelecionadoId(null);
+          }}
+        />
+      )}
+
+      {dispositivoEditando && (
+        <ModalEditarDispositivo
+          key={dispositivoEditando.id}
+          dispositivo={dispositivoEditando}
+          setores={setores}
+          erroSetores={erroSetores}
+          salvando={salvando}
+          onSalvar={editarEquipamento}
+          onFechar={() => !salvando && setDispositivoEditando(null)}
         />
       )}
 

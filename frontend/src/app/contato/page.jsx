@@ -40,7 +40,6 @@ export default function Contato() {
               a encontrar novas formas de acompanhar o consumo e economizar.
             </p>
             <div className="contato-promise">
-              <i className="bi bi-lightning-charge-fill" aria-hidden="true" />
               <span>Uma conversa simples pode ser o primeiro passo para uma operação mais eficiente.</span>
             </div>
           </div>
