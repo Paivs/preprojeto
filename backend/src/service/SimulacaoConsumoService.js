@@ -26,6 +26,15 @@ export function avancarLeitura(id, minimo, maximo) {
 }
 
 export function adicionarConsumoSimulado(equipamento) {
+  const status = String(equipamento.status || '').trim().toLocaleLowerCase('pt-BR');
+  if (status === 'inativo') {
+    return {
+      ...equipamento,
+      consumo_atual: 0,
+      consumo_atualizado_em: new Date().toISOString()
+    };
+  }
+
   const minimo = equipamento.consumo_minimo;
   const maximo = equipamento.consumo_maximo;
 
