@@ -20,6 +20,11 @@ export function adaptarEquipamentoApi(equipamento) {
     categoria: equipamento.tipo || "Outros",
     grupo: (equipamento.nome_setor || "Sem setor").toLocaleUpperCase("pt-BR"),
     status: equipamento.status || "Não informado",
+    consumoAtual:
+      equipamento.consumo_atual === null || equipamento.consumo_atual === undefined
+        ? null
+        : Number(equipamento.consumo_atual),
+    consumoAtualizadoEm: equipamento.consumo_atualizado_em || null,
     consumoMinimo:
       equipamento.consumo_minimo === null || equipamento.consumo_minimo === undefined
         ? null

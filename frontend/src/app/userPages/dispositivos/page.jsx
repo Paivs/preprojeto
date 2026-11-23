@@ -26,9 +26,11 @@ export default function PaginaDispositivos() {
   const [modalAberto, setModalAberto] = useState(false);
   const [salvando, setSalvando] = useState(false);
 
-  const carregarDispositivos = useCallback(async () => {
-    setCarregando(true);
-    setErro("");
+  const carregarDispositivos = useCallback(async (mostrarCarregamento = true) => {
+    if (mostrarCarregamento) {
+      setCarregando(true);
+      setErro("");
+    }
 
     const token = sessionStorage.getItem("token");
     if (!token) {
@@ -82,6 +84,8 @@ export default function PaginaDispositivos() {
   useEffect(() => {
     carregarDispositivos();
     carregarSetores();
+    const intervalo = window.setInterval(() => carregarDispositivos(false), 3000);
+    return () => window.clearInterval(intervalo);
   }, [carregarDispositivos, carregarSetores]);
 
   async function adicionarEquipamento(dados) {

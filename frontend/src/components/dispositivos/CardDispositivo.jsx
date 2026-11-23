@@ -1,5 +1,5 @@
 import Icone from "./Icone";
-import { obterEstado, formatarFaixaConsumo } from "./dados";
+import { obterEstado, formatarFaixaConsumo, formatarKwh } from "./dados";
 import "./card.css";
 
 export default function CardDispositivo({
@@ -8,6 +8,7 @@ export default function CardDispositivo({
   onSelecionar,
 }) {
   const estado = obterEstado(dispositivo);
+  const faixaConsumo = formatarFaixaConsumo(dispositivo);
 
   return (
     <article
@@ -44,12 +45,17 @@ export default function CardDispositivo({
       <div className="card-divisor" />
 
       <div>
-        <span className="consumo-rotulo">Faixa de consumo cadastrada</span>
+        <span className="consumo-rotulo">Consumo atual simulado</span>
         <div className="consumo-linha">
           <p className="consumo-valor consumo-faixa">
-            {formatarFaixaConsumo(dispositivo)}
+            {Number.isFinite(dispositivo.consumoAtual)
+              ? <>{formatarKwh(dispositivo.consumoAtual)} <small>kWh</small></>
+              : "Não informado"}
           </p>
         </div>
+        <p className="consumo-faixa-cadastrada">
+          Faixa: {faixaConsumo === "Não informado" ? faixaConsumo : `${faixaConsumo} kWh`}
+        </p>
       </div>
 
       <div className="card-divisor" />

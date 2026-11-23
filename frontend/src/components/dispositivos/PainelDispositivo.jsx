@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Icone from "./Icone";
-import { formatarFaixaConsumo, obterEstado } from "./dados";
+import { formatarFaixaConsumo, formatarKwh, obterEstado } from "./dados";
 import "./painel.css";
 
 export default function PainelDispositivo({ dispositivo, onFechar }) {
@@ -63,6 +63,14 @@ export default function PainelDispositivo({ dispositivo, onFechar }) {
                 <dd>{dispositivo.categoria}</dd>
               </div>
               <div>
+                <dt>Consumo atual simulado</dt>
+                <dd>
+                  {Number.isFinite(dispositivo.consumoAtual)
+                    ? `${formatarKwh(dispositivo.consumoAtual)} kWh`
+                    : "Não informado"}
+                </dd>
+              </div>
+              <div>
                 <dt>Faixa de consumo</dt>
                 <dd>{formatarFaixaConsumo(dispositivo)}</dd>
               </div>
@@ -73,9 +81,6 @@ export default function PainelDispositivo({ dispositivo, onFechar }) {
             </dl>
           </section>
 
-          <p className="painel-nota-consumo">
-            A tabela de equipamentos contém consumo mínimo e máximo cadastrados; ela não fornece uma medição atual ou histórico.
-          </p>
         </div>
       </aside>
     </div>
