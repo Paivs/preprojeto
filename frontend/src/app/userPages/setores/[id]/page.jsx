@@ -396,6 +396,20 @@ export default function DetalheSetor() {
                       </tbody>
                     </table>
                   </div>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                  <p className="setor-nota">
+                    <i className="bi bi-info-circle" /> O consumo atual é
+                    simulado com base na faixa cadastrada e atualizado a cada
+                    3 segundos; não representa medição real.
+                  </p>
+=======
+>>>>>>> a90d9081cdacafbbecef9f2bcafc8ab974849b38
+>>>>>>> da1bd6f64e3d67d23da788a31ce37d45bc68e169
+>>>>>>> a8cf3465648f000a8bef3bb6a8a559ffa4f36cf2
                 </section>
               </>
             )

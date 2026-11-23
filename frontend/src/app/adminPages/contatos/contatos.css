@@ -23,7 +23,7 @@
 }
 
 .cabecalho-pagina h1 {
-  font-family: var(--font-nunito);
+  font-family: var(--font-primary);
   margin: 8px 0 6px;
   color: var(--dark-text-primary);
   font-size: 32px;
@@ -69,6 +69,37 @@
 .contatos-tabela .tabela-wrapper {
   width: 100%;
   overflow-x: auto;
+}
+
+.contatos-paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 18px;
+  color: var(--cor-texto-fraco);
+  font-size: 0.85rem;
+}
+
+.contatos-paginacao button {
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 7px;
+  background: var(--cor-campo);
+  color: var(--cor-texto);
+  font: inherit;
+  cursor: pointer;
+}
+
+.contatos-paginacao button:hover:not(:disabled) {
+  border-color: var(--cor-destaque);
+  color: var(--cor-destaque);
+}
+
+.contatos-paginacao button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .contatos-tabela table {
