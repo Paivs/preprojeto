@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { pool } from "../src/config/database.js";
-import { avancarLeitura } from "../src/service/SimulacaoConsumoService.js";
+import { adicionarConsumoSimulado } from "../src/service/SimulacaoConsumoService.js";
 
 const intervaloMs = Math.max(500, Number(process.env.SIMULACAO_INTERVALO_MS) || 3000);
 const ciclosEntreAlertas = 2;
@@ -69,12 +69,13 @@ async function simular() {
       const minimo = Number(equipamento.consumo_minimo);
       const maximo = Number(equipamento.consumo_maximo);
 
-      if (!Number.isFinite(minimo) || !Number.isFinite(maximo) || maximo < minimo) {
+      if (!Number.isFinite(minimo) || minimo < 0 || !Number.isFinite(maximo) || maximo < 0) {
         console.warn(`Equipamento ${equipamento.id_equipamento}: limites inválidos; ignorado.`);
         continue;
       }
 
-      const consumo = avancarLeitura(equipamento.id_equipamento, minimo, maximo);
+      const leitura = adicionarConsumoSimulado(equipamento);
+      const consumo = leitura.consumo_atual;
       if (cicloAtual % ciclosEntreAlertas === 0 && !alertaGerado) {
         alertaGerado = await registrarAlertaSimulado(equipamento, agora);
       }
