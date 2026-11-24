@@ -181,7 +181,7 @@
   color: var(--cor-vermelho);
 }
 
-.contato-status.convertido {
+.contato-status.respondido {
   background: var(--verde-suave);
   color: var(--verde);
 }

@@ -1,4 +1,5 @@
 import * as UsuarioService from '../service/UsuarioService.js';
+import * as EmailService from '../service/EmailService.js';
 
 function responderErro(erro, res, next, statusValidacao = 400) {
   if (erro instanceof TypeError) {
@@ -35,7 +36,37 @@ export async function buscarPorId(req, res, next) {
 export async function criar(req, res, next) {
   try {
     const usuario = await UsuarioService.criar(req.body);
-    return res.status(201).json({ sucesso: true, dados: usuario });
+    let emailEnviado = false;
+    let avisoEmail = 'Cliente cadastrado, mas o e-mail de acesso nao foi enviado.';
+
+    try {
+      await EmailService.enviarEmail({
+        email: usuario.email,
+        nome: usuario.nome_empresa,
+        empresa: usuario.nome_empresa,
+        assunto: 'Acesso a VoltHouse - {{empresa}}',
+        mensagemPersonalizada: 'Seu cadastro foi concluido. Use os dados abaixo para acessar a plataforma.',
+        emailLogin: usuario.email,
+        senhaLogin: req.body.senha
+      });
+      emailEnviado = true;
+      avisoEmail = null;
+    } catch (erroEmail) {
+      console.error('[UsuarioController] Cliente criado, mas e-mail falhou:', {
+        status: erroEmail.status,
+        message: erroEmail.message
+      });
+    }
+
+    return res.status(201).json({
+      sucesso: true,
+      mensagem: emailEnviado
+        ? 'Cliente cadastrado e e-mail enviado.'
+        : 'Cliente cadastrado; o e-mail de acesso nao foi enviado.',
+      email_enviado: emailEnviado,
+      aviso: avisoEmail,
+      dados: usuario
+    });
   } catch (erro) {
     return responderErro(erro, res, next);
   }
