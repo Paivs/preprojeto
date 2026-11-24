@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Icone from "./Icone";
+import { CATEGORIAS } from "./dados";
 import "@/components/setores/painelNovoSetor.css";
 
 export default function ModalNovoDispositivo({
@@ -102,13 +103,12 @@ export default function ModalNovoDispositivo({
 
           <label>
             Tipo
-            <input
-              type="text"
-              value={tipo}
-              onChange={(evento) => setTipo(evento.target.value)}
-              placeholder="Ex.: Climatização"
-              maxLength={50}
-            />
+            <select value={tipo} onChange={(evento) => setTipo(evento.target.value)}>
+              <option value="">Selecione um tipo (opcional)</option>
+              {CATEGORIAS.map((categoria) => (
+                <option key={categoria} value={categoria}>{categoria}</option>
+              ))}
+            </select>
           </label>
 
           <label>

@@ -1,0 +1,197 @@
+.confirmacao-exclusao-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(3, 6, 14, 0.76);
+  backdrop-filter: blur(5px);
+}
+
+.confirmacao-exclusao-modal {
+  width: min(100%, 420px);
+  padding: 0 26px 22px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 18px;
+  background: var(--cor-sidebar);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.48);
+  color: var(--dark-text-primary);
+  overflow: hidden;
+  animation: confirmacao-exclusao-entrar 160ms ease-out;
+}
+
+@keyframes confirmacao-exclusao-entrar {
+  from { opacity: 0; transform: translateY(8px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirmacao-exclusao-modal { animation: none; }
+}
+
+.confirmacao-exclusao-cabecalho {
+  padding: 26px 0 22px;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.confirmacao-exclusao-etiqueta {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--cor-texto-fraco);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .12em;
+}
+
+.confirmacao-exclusao-icone {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 104, 117, 0.24);
+  border-radius: 13px;
+  background: var(--vermelho-suave);
+  color: var(--cor-vermelho);
+  font-size: 17px;
+}
+
+.confirmacao-exclusao-modal h2 {
+  margin: 0 0 7px;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+}
+
+.confirmacao-exclusao-cabecalho p {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.confirmacao-exclusao-dispositivo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 13px 14px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  background: var(--cor-card);
+}
+
+.confirmacao-exclusao-dispositivo-icone {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--roxo-suave);
+  color: var(--roxo-claro);
+}
+
+.confirmacao-exclusao-dispositivo > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.confirmacao-exclusao-dispositivo strong {
+  overflow: hidden;
+  color: var(--dark-text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.confirmacao-exclusao-dispositivo small {
+  overflow: hidden;
+  color: var(--cor-texto-fraco);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.confirmacao-exclusao-modal .confirmacao-exclusao-aviso {
+  margin: 12px 2px 0;
+  color: var(--cor-texto-fraco);
+  font-size: 11px;
+}
+
+.confirmacao-exclusao-modal .confirmacao-exclusao-erro {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 104, 117, 0.25);
+  border-radius: 9px;
+  background: var(--vermelho-suave);
+  color: var(--cor-vermelho);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.confirmacao-exclusao-acoes {
+  display: flex;
+  justify-content: stretch;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.confirmacao-exclusao-acoes button {
+  min-height: 43px;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.confirmacao-exclusao-acoes button:focus-visible {
+  outline: 2px solid var(--roxo-claro);
+  outline-offset: 2px;
+}
+
+.confirmacao-exclusao-acoes button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.confirmacao-exclusao-cancelar {
+  border: 1px solid var(--cor-borda);
+  background: transparent;
+  color: var(--cor-texto-secundario);
+}
+
+.confirmacao-exclusao-confirmar {
+  border: 1px solid #e34e5d;
+  background: #e34e5d;
+  color: #fff;
+}
+
+.confirmacao-exclusao-confirmar:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+@media (max-width: 480px) {
+  .confirmacao-exclusao-modal {
+    padding: 0 20px 20px;
+  }
+
+  .confirmacao-exclusao-acoes {
+    flex-direction: column-reverse;
+  }
+}
