@@ -1,0 +1,109 @@
+"use client";
+
+import { useEffect } from "react";
+import Icone from "./Icone";
+import { formatarFaixaConsumo, formatarKwh, obterEstado } from "./dados";
+import "./painel.css";
+
+export default function PainelDispositivo({
+  dispositivo,
+  onFechar,
+  onEditar,
+  onExcluir,
+  excluindo = false,
+}) {
+  const estado = obterEstado(dispositivo);
+
+  useEffect(() => {
+    function aoPressionarTecla(evento) {
+      if (evento.key === "Escape") onFechar();
+    }
+    window.addEventListener("keydown", aoPressionarTecla);
+    return () => window.removeEventListener("keydown", aoPressionarTecla);
+  }, [onFechar]);
+
+  return (
+    <div className="painel-fundo" onClick={onFechar}>
+      <aside
+        className="painel-detalhes"
+        aria-label={`Detalhes de ${dispositivo.nome}`}
+        onClick={(evento) => evento.stopPropagation()}
+      >
+        <div className="painel-topo">
+          <span className="icone-dispositivo">
+            <Icone categoria={dispositivo.categoria} tamanho={22} />
+          </span>
+          <div className="painel-titulo">
+            <small>{dispositivo.grupo}</small>
+            <h2>{dispositivo.nome}</h2>
+          </div>
+          <button
+            type="button"
+            className="botao-fechar"
+            onClick={onFechar}
+            aria-label="Fechar painel"
+          >
+            <Icone nome="x" />
+          </button>
+        </div>
+
+        <div className="painel-corpo">
+          <section className="painel-status">
+            <div>
+              <span className="painel-rotulo">Status do equipamento</span>
+              <p className={`painel-status-texto status-${estado}`}>
+                <span className="status-ponto" /> {dispositivo.status}
+              </p>
+            </div>
+          </section>
+
+          <section className="painel-secao">
+            <h3>Dados cadastrados</h3>
+            <dl className="painel-dados-lista">
+              <div>
+                <dt>Setor</dt>
+                <dd>{dispositivo.local}</dd>
+              </div>
+              <div>
+                <dt>Tipo</dt>
+                <dd>{dispositivo.categoria}</dd>
+              </div>
+              <div>
+                <dt>Consumo atual</dt>
+                <dd>
+                  {Number.isFinite(dispositivo.consumoAtual)
+                    ? `${formatarKwh(dispositivo.consumoAtual)} kWh`
+                    : "Não informado"}
+                </dd>
+              </div>
+              <div>
+                <dt>Faixa de consumo</dt>
+                <dd>{formatarFaixaConsumo(dispositivo)}</dd>
+              </div>
+              <div>
+                <dt>Identificador</dt>
+                <dd>#{dispositivo.id}</dd>
+              </div>
+            </dl>
+          </section>
+
+          <div className="painel-botoes">
+            <button type="button" className="botao-manutencao" onClick={onEditar}>
+              <Icone nome="editar" tamanho={16} /> Editar dispositivo
+            </button>
+            <button
+              type="button"
+              className="botao-excluir-equipamento"
+              onClick={onExcluir}
+              disabled={excluindo}
+            >
+              <i className={`bi ${excluindo ? "bi-hourglass-split" : "bi-trash3"}`} aria-hidden="true" />
+              {excluindo ? "Excluindo..." : "Excluir dispositivo"}
+            </button>
+          </div>
+
+        </div>
+      </aside>
+    </div>
+  );
+}

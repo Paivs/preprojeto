@@ -1,0 +1,238 @@
+.conteudo-principal {
+    margin-left: 245px;
+    min-height: 100vh;
+}
+
+.conteudo-pagina {
+    padding: 24px 32px 48px;
+}
+
+.cabecalho-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.pagina-configuracao .cabecalho-pagina .cabecalho-etiqueta {
+    color: var(--amarelo);
+    font-family: var(--font-primary);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+}
+
+.cabecalho-pagina h1 {
+    font-family: var(--font-primary);
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin: 8px 0 6px;
+    color: var(--dark-text-primary);
+}
+
+.cabecalho-pagina p {
+    font-size: 14px;
+    color: var(--cor-texto-secundario);
+}
+
+.grid-group-config {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.grid-group-config > form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.config-feedback {
+    margin: 0 0 16px;
+    color: var(--dark-text-secondary);
+}
+
+.config-feedback.erro {
+    color: #ff8a8a;
+}
+
+.config-feedback.sucesso {
+    color: var(--verde);
+}
+
+.group-config {
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    background: var(--dark-bg-card);
+    padding: 20px 30px;
+}
+
+.cabecalho-dados {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid var(--cor-borda);
+    padding: 10px 0;
+    margin-bottom: 1rem;
+}
+
+.cabecalho-dados i {
+    color: var(--light-primary);
+    background: var(--roxo-suave);
+    padding: 7px 10px;
+    border-radius: 6px;
+}
+
+.tema-dados {
+    line-height: 1.4;
+    margin-bottom: 0;
+    font-family: var(--font-primary);
+}
+
+.tema-dados h4 {
+    color: var(--cor-texto);
+    font-size: 1.05rem;
+    line-height: 1.3;
+    margin: 0 0 4px;
+}
+
+.tema-dados span {
+    font-size: .7rem;
+    color: var(--dark-text-tertiary);
+    line-height: 1.4;
+}
+
+.main-dados {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.group-value {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.dados-config {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dados-config label {
+    color: var(--dark-text-primary);
+    font-family: var(--font-primary);
+    font-size: .9rem;
+    margin-top: 1rem;
+}
+
+.dados-config input {
+    padding: 10px 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    background: var(--cor-campo);
+    color: var(--cor-texto);
+    font-size: .8rem;
+    outline: none;
+}
+
+.dados-config input::placeholder {
+    color: var(--cor-texto-fraco);
+    opacity: 1;
+}
+
+.dados-config input:focus {
+    border: 1px solid var(--roxo);
+}
+
+.dados-config input:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+}
+
+.dados-config input[aria-invalid="true"] {
+    border-color: #ff6875;
+}
+
+.erro-campo-senha {
+    color: #ff8a8a;
+    font-size: .78rem;
+    line-height: 1.4;
+}
+
+.config-botao {
+    display: block;
+    margin: 20px 0 0 auto;
+    border: 1px solid var(--roxo);
+    border-radius: 7px;
+    padding: 10px 18px;
+    background: var(--roxo);
+    color: var(--branco);
+    font: inherit;
+    font-size: .9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter .2s ease, opacity .2s ease;
+}
+
+.config-botao:hover:not(:disabled) {
+    filter: brightness(1.12);
+}
+
+.config-botao:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.config-botao-secundario {
+    margin-top: 20px;
+}
+
+@media (max-width: 700px) {
+    .pagina-configuracao .sidebar {
+        width: 68px;
+        padding: 16px 6px;
+    }
+
+    .pagina-configuracao .logo {
+        justify-content: center;
+        padding: 4px 0 24px;
+    }
+
+    .pagina-configuracao .logo-imagem {
+        max-width: 48px;
+    }
+
+    .pagina-configuracao .menu-titulo {
+        display: none;
+    }
+
+    .pagina-configuracao .menu-item {
+        justify-content: center;
+        padding: 11px 6px;
+    }
+
+    .pagina-configuracao .menu-item span:last-child {
+        display: none;
+    }
+
+    .pagina-configuracao .conteudo-principal {
+        margin-left: 68px;
+    }
+
+    .conteudo-pagina {
+        padding: 20px 16px 36px;
+    }
+
+    .group-config {
+        padding: 18px;
+    }
+
+    .group-value {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}

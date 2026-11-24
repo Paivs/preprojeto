@@ -3,26 +3,77 @@ import express from "express";
 import helmet from "helmet";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
+import { autenticar, autorizarAdmin } from "./middlewares/AuthMiddleware.js";
 import healthRoutes from "./routes/healthRoutes.js";
+import usuarioRoutes from "./routes/usuarioRoutes.js";
+import setorRoutes from "./routes/setorRoutes.js";
+import equipamentoRoutes from "./routes/equipamentoRoutes.js";
+import emailRoutes from "./routes/emailRoutes.js";
+import contatoRoutes from "./routes/contatoRoutes.js";
+import { authRouter } from "./routes/AuthRoutes.js";
+import financeiroRoutes from "./routes/financeiroRoutes.js";
+import pagamentoRoutes from "./routes/pagamentoRoutes.js";
+import * as UsuarioController from "./controllers/UsuarioController.js";
 
 const app = express();
 
+// 1. Defesas de borda: Helmet e CORS
 app.use(helmet());
+
+const origensPermitidas = (
+  process.env.CORS_ORIGENS || process.env.FRONTEND_URL || "http://localhost:3000"
+)
+  .split(",")
+  .map((o) => o.trim());
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin(origem, callback) {
+      if (!origem || origensPermitidas.includes(origem)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Origem não permitida pelo CORS."));
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
 app.use(express.json());
 
-app.get("/", (request, response) => {
-  response.json({
-    message: "API do projeto base",
-  });
+// 2. Rotas
+app.get("/", (req, res) => {
+  res.json({ message: "API do projeto base" });
 });
 
 app.use("/api/health", healthRoutes);
+app.use("/api/auth", authRouter); // pública: login e registrar
+app.use("/api/contato", contatoRoutes);
 
+app.use("/api/setores", autenticar, setorRoutes);
+app.use("/api/equipamentos", autenticar, equipamentoRoutes);
+app.use("/api/emails", autenticar, autorizarAdmin, emailRoutes);
+app.use("/api/financeiro", autenticar, autorizarAdmin, financeiroRoutes);
+app.use("/api/pagamentos", autenticar, autorizarAdmin, pagamentoRoutes);
+app.get("/api/configuracoes/admin", autenticar, autorizarAdmin, UsuarioController.buscarConfiguracaoAdmin);
+app.put("/api/configuracoes/admin", autenticar, autorizarAdmin, UsuarioController.atualizarConfiguracaoAdmin);
+app.put("/api/configuracoes/admin/senha", autenticar, autorizarAdmin, UsuarioController.alterarSenhaAdmin);
+app.get("/api/configuracoes/usuario", autenticar, UsuarioController.buscarConfiguracaoUsuario);
+app.put("/api/configuracoes/usuario", autenticar, UsuarioController.atualizarConfiguracaoUsuario);
+app.put("/api/configuracoes/usuario/senha", autenticar, UsuarioController.alterarSenhaUsuario);
+
+// Protegida: precisa de token E ser admin
+app.use("/api/usuarios", autenticar, autorizarAdmin, usuarioRoutes);
+
+// 3. Fallback 404 (rota que não existe)
+app.use((req, res) => {
+  res.status(404).json({
+    sucesso: false,
+    erro: `A rota ${req.method} ${req.originalUrl} não existe.`,
+  });
+});
+
+// 4. Tratador global de erros
 app.use(errorHandler);
 
 export default app;

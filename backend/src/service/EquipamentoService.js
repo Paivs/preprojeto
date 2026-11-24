@@ -1,0 +1,164 @@
+import * as EquipamentoModel from '../models/EquipamentoModels.js';
+import { adicionarConsumoSimulado, adicionarConsumoSimuladoLista } from './SimulacaoConsumoService.js';
+import { validarTermoBusca } from '../utils/busca.js';
+
+function validarId(valor, campo) {
+  const id = Number(valor);
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new TypeError(`${campo} deve ser um número inteiro positivo.`);
+  }
+  return id;
+}
+
+function validarConsumo(valor, campo, padrao = null) {
+  if (valor === undefined || valor === null || valor === '') return padrao;
+  const numero = Number(valor);
+  if (!Number.isFinite(numero) || numero < 0 || numero > 99999999.99) {
+    throw new TypeError(`${campo} deve ser um número entre 0 e 99999999.99.`);
+  }
+  return Math.round(numero * 100) / 100;
+}
+
+function validarLeituraConsumo(valor) {
+  if (
+    (typeof valor !== 'number' && typeof valor !== 'string') ||
+    (typeof valor === 'string' && !valor.trim())
+  ) {
+    throw new TypeError('consumo_kwh deve ser um valor numerico valido e nao negativo.');
+  }
+  const numero = Number(valor);
+  if (!Number.isFinite(numero) || numero < 0 || numero > 99999999.99) {
+    throw new TypeError('consumo_kwh deve ser um valor numerico entre 0 e 99999999.99.');
+  }
+  return Math.round(numero * 100) / 100;
+}
+
+function validarTextoOpcional(valor, campo, limite) {
+  if (valor === undefined || valor === null || valor === '') return null;
+  if (typeof valor !== 'string') throw new TypeError(`${campo} deve ser um texto.`);
+  const texto = valor.trim();
+  if (texto.length > limite) {
+    throw new TypeError(`${campo} deve ter no máximo ${limite} caracteres.`);
+  }
+  return texto || null;
+}
+
+function normalizarStatusExistente(valor) {
+  const status = String(valor || '').trim().toLocaleLowerCase('pt-BR');
+  return status === 'ativo' || status === 'normal' ? 'Ativo' : 'Inativo';
+}
+
+function validarStatus(valor, padrao = "Ativo") {
+  if (valor === undefined || valor === null || valor === "") return padrao;
+  if (typeof valor !== "string") {
+    throw new TypeError("Status deve ser Ativo ou Inativo.");
+  }
+
+  const status = valor.trim().toLocaleLowerCase("pt-BR");
+  if (status === "ativo") return "Ativo";
+  if (status === "inativo") return "Inativo";
+  throw new TypeError("Status deve ser Ativo ou Inativo.");
+}
+
+function validarDados(dados = {}, statusPadrao = "Ativo") {
+  const nome = typeof dados.nome_equipamento === 'string' ? dados.nome_equipamento.trim() : '';
+  if (!nome) throw new TypeError('Informe o nome do equipamento.');
+  if (nome.length > 100) {
+    throw new TypeError('O nome do equipamento deve ter no máximo 100 caracteres.');
+  }
+
+  const consumoMinimo = validarConsumo(dados.consumo_minimo, 'Consumo mínimo', 0);
+  const consumoMaximo = validarConsumo(dados.consumo_maximo, 'Consumo máximo');
+  if (consumoMaximo !== null && consumoMaximo < consumoMinimo) {
+    throw new TypeError('Consumo máximo não pode ser menor que o consumo mínimo.');
+  }
+
+  return {
+    nome_equipamento: nome,
+    tipo: validarTextoOpcional(dados.tipo, 'Tipo', 50),
+    consumo_minimo: consumoMinimo,
+    consumo_maximo: consumoMaximo,
+    status: validarStatus(dados.status, statusPadrao),
+    id_setor: validarId(dados.id_setor, 'ID do setor')
+  };
+}
+
+function erroNaoEncontrado(mensagem) {
+  const erro = new Error(mensagem);
+  erro.status = 404;
+  return erro;
+}
+
+export async function listar(idUsuarioRecebido, buscaRecebida) {
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const busca = validarTermoBusca(buscaRecebida);
+  return adicionarConsumoSimuladoLista(
+    await EquipamentoModel.listarPorUsuario(idUsuario, busca)
+  );
+}
+
+export async function listarAlertasConsumo(idUsuarioRecebido) {
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuario');
+  return EquipamentoModel.listarAlertasConsumo(idUsuario);
+}
+
+export async function registrarLeitura(idEquipamentoRecebido, dados = {}, idUsuarioRecebido) {
+  const idEquipamento = validarId(idEquipamentoRecebido, 'ID do equipamento');
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuario');
+  const equipamento = await EquipamentoModel.buscarPorId(idEquipamento, idUsuario);
+  if (!equipamento) throw erroNaoEncontrado('Equipamento nao encontrado.');
+
+  // Cada leitura registra o consumo em kWh desde a leitura anterior.
+  const consumoKwh = validarLeituraConsumo(dados?.consumo_kwh);
+  return EquipamentoModel.registrarLeitura(idEquipamento, consumoKwh);
+}
+
+export async function listarPorSetor(idSetorRecebido, idUsuarioRecebido, buscaRecebida) {
+  const idSetor = validarId(idSetorRecebido, 'ID do setor');
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const busca = validarTermoBusca(buscaRecebida);
+  const setorValido = await EquipamentoModel.setorPertenceAoUsuario(idSetor, idUsuario);
+  if (!setorValido) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
+  return adicionarConsumoSimuladoLista(
+    await EquipamentoModel.listarPorSetor(idSetor, idUsuario, busca)
+  );
+}
+
+export async function buscarPorId(idEquipamentoRecebido, idUsuarioRecebido) {
+  const idEquipamento = validarId(idEquipamentoRecebido, 'ID do equipamento');
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const equipamento = await EquipamentoModel.buscarPorId(idEquipamento, idUsuario);
+  if (!equipamento) throw erroNaoEncontrado('Equipamento não encontrado.');
+  return adicionarConsumoSimulado(equipamento);
+}
+
+export async function criar(dados, idUsuarioRecebido) {
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const equipamento = validarDados(dados);
+  const setorValido = await EquipamentoModel.setorPertenceAoUsuario(equipamento.id_setor, idUsuario);
+  if (!setorValido) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
+  const criado = await EquipamentoModel.criar(equipamento, idUsuario);
+  if (!criado) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
+  return adicionarConsumoSimulado(criado);
+}
+
+export async function atualizar(idEquipamentoRecebido, dados, idUsuarioRecebido) {
+  const idEquipamento = validarId(idEquipamentoRecebido, 'ID do equipamento');
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const atual = await EquipamentoModel.buscarPorId(idEquipamento, idUsuario);
+  if (!atual) throw erroNaoEncontrado('Equipamento não encontrado.');
+
+  const equipamento = validarDados(dados, normalizarStatusExistente(atual.status));
+  const setorValido = await EquipamentoModel.setorPertenceAoUsuario(equipamento.id_setor, idUsuario);
+  if (!setorValido) throw erroNaoEncontrado('Setor não encontrado para este usuário.');
+  const atualizado = await EquipamentoModel.atualizar(idEquipamento, equipamento, idUsuario);
+  if (!atualizado) throw erroNaoEncontrado('Equipamento não encontrado.');
+  return adicionarConsumoSimulado(atualizado);
+}
+
+export async function excluir(idEquipamentoRecebido, idUsuarioRecebido) {
+  const idEquipamento = validarId(idEquipamentoRecebido, 'ID do equipamento');
+  const idUsuario = validarId(idUsuarioRecebido, 'ID do usuário');
+  const removeu = await EquipamentoModel.excluir(idEquipamento, idUsuario);
+  if (!removeu) throw erroNaoEncontrado('Equipamento não encontrado.');
+}
