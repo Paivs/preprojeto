@@ -153,7 +153,7 @@ export default function ModalNovoCliente({ onFechar, onSucesso, contato = null }
               value={senha}
               onChange={(evento) => setSenha(evento.target.value)}
               placeholder="Crie uma senha segura"
-              autoComplete="new-password"
+              autoComplete="off"
               minLength={8}
               pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}"
               title="Use ao menos 8 caracteres, com maiúscula, minúscula, número e símbolo."

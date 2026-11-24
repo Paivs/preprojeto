@@ -362,7 +362,7 @@ export default function ConfiguracaoAdmin() {
                       <input
                         id="nova_senha"
                         type="password"
-                        autoComplete="new-password"
+                        autoComplete="off"
                         value={senha.nova_senha}
                         aria-invalid={erroSenha?.campo === "nova_senha"}
                         aria-describedby={
@@ -396,7 +396,7 @@ export default function ConfiguracaoAdmin() {
                       <input
                         id="confirmar_senha"
                         type="password"
-                        autoComplete="new-password"
+                        autoComplete="off"
                         value={senha.confirmar_senha}
                         aria-invalid={erroSenha?.campo === "confirmar_senha"}
                         aria-describedby={
