@@ -63,7 +63,7 @@ export default function Header({ tipoUsuario = "usuario" }) {
   const semAlertas =
     !carregandoNotificacoes && !erroNotificacoes && notificacoes.length === 0;
 
-  const carregarNotificacoes = useCallback(async () => {
+  const carregarNotificacoes = useCallback(async (silencioso = false) => {
     const token = sessionStorage.getItem("token");
     if (!token) {
       setNotificacoes([]);
@@ -72,8 +72,10 @@ export default function Header({ tipoUsuario = "usuario" }) {
       return;
     }
 
-    setCarregandoNotificacoes(true);
-    setErroNotificacoes("");
+    if (!silencioso) {
+      setCarregandoNotificacoes(true);
+      setErroNotificacoes("");
+    }
     try {
       const resposta = await fetch(
         `${API_BASE_URL}/equipamentos/alertas-consumo`,
@@ -87,6 +89,7 @@ export default function Header({ tipoUsuario = "usuario" }) {
         throw new Error(resultado.erro || "Falha ao carregar os alertas.");
       }
 
+      setErroNotificacoes("");
       const idsLidos = obterIdsLidos(chaveLidas);
       const alertas = Array.isArray(resultado.dados) ? resultado.dados : [];
       setNotificacoes(
@@ -110,13 +113,13 @@ export default function Header({ tipoUsuario = "usuario" }) {
     } catch {
       setErroNotificacoes("Não foi possível atualizar os alertas de consumo.");
     } finally {
-      setCarregandoNotificacoes(false);
+      if (!silencioso) setCarregandoNotificacoes(false);
     }
   }, [chaveLidas]);
 
   useEffect(() => {
     carregarNotificacoes();
-    const intervalo = window.setInterval(carregarNotificacoes, 60_000);
+    const intervalo = window.setInterval(() => carregarNotificacoes(true), 3_000);
     return () => window.clearInterval(intervalo);
   }, [carregarNotificacoes]);
 
