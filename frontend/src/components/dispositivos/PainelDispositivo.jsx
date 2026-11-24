@@ -69,7 +69,7 @@ export default function PainelDispositivo({
                 <dd>{dispositivo.categoria}</dd>
               </div>
               <div>
-                <dt>Consumo atual simulado</dt>
+                <dt>Consumo atual</dt>
                 <dd>
                   {Number.isFinite(dispositivo.consumoAtual)
                     ? `${formatarKwh(dispositivo.consumoAtual)} kWh`

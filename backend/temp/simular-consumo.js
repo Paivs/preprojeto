@@ -1,92 +1,77 @@
-import "dotenv/config";
+﻿import "dotenv/config";
 import { pool } from "../src/config/database.js";
-import { adicionarConsumoSimulado } from "../src/service/SimulacaoConsumoService.js";
 
-const intervaloMs = Math.max(500, Number(process.env.SIMULACAO_INTERVALO_MS) || 3000);
-const ciclosEntreAlertas = 2;
-let cicloAtual = 0;
-
-async function registrarAlertaSimulado(equipamento, agora) {
+const intervaloMs = Math.max(500, Number(process.env.SIMULACAO_INTERVALO_MS) || 500);
+function registrarAlertaSimulado(equipamento, consumoAnterior, consumoAtual, agora) {
   const limite = Number(equipamento.consumo_maximo);
-  if (!Number.isFinite(limite) || limite < 0) return false;
-
-  const [linhas] = await pool.query(
-    `SELECT COALESCE(SUM(consumo_kwh), 0) AS consumo_mes
-       FROM leitura_consumo_equipamento
-      WHERE id_equipamento = ?
-        AND criado_em >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
-        AND criado_em < DATE_FORMAT(DATE_ADD(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01')`,
-    [equipamento.id_equipamento]
-  );
-  const consumoMes = Number(linhas[0]?.consumo_mes || 0);
-  if (consumoMes > limite) return false;
-
-  const excedente = Math.max(0.01, Number((limite * 0.05).toFixed(2)));
-  const totalAlvo = Math.min(
-    99999999.99,
-    Number((limite + excedente).toFixed(2))
-  );
-  if (totalAlvo <= limite) {
-    console.warn(`Equipamento ${equipamento.id_equipamento}: limite maximo; excedente nao gerado.`);
-    return false;
+  if (Number.isFinite(limite) && consumoAnterior <= limite && consumoAtual > limite) {
+    console.log(`[${agora}] ALERTA ${equipamento.nome_equipamento}: ${consumoAtual.toFixed(2)} kWh no mes (limite ${limite.toFixed(2)} kWh).`);
   }
-
-  const consumoLeitura = Number((totalAlvo - consumoMes).toFixed(2));
-  await pool.query(
-    `INSERT INTO leitura_consumo_equipamento (id_equipamento, consumo_kwh)
-     VALUES (?, ?)`,
-    [equipamento.id_equipamento, consumoLeitura]
-  );
-  console.log(
-    `[${agora}] ALERTA ${equipamento.nome_equipamento}: ${totalAlvo.toFixed(2)} kWh no mes (limite ${limite.toFixed(2)} kWh).`
-  );
-  return true;
 }
 
 async function simular() {
   try {
-    cicloAtual += 1;
     const [equipamentos] = await pool.query(
-      `SELECT id_equipamento, nome_equipamento, consumo_minimo, consumo_maximo, status
+      `SELECT id_equipamento, nome_equipamento, consumo_minimo, consumo_maximo, status,
+              incremento_consumo_simulado,
+              CASE
+                WHEN consumo_mensal_atualizado_em >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
+                 AND consumo_mensal_atualizado_em < DATE_FORMAT(DATE_ADD(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01')
+                THEN consumo_mensal
+                ELSE 0
+              END AS consumo_mes
          FROM equipamento
-        WHERE consumo_minimo IS NOT NULL AND consumo_maximo IS NOT NULL
         ORDER BY id_equipamento`
     );
 
     if (equipamentos.length === 0) {
-      console.log("Nenhum equipamento tem mínimo e máximo definidos.");
+      console.log("Nenhum equipamento tem mÃ­nimo e mÃ¡ximo definidos.");
       return;
     }
 
     const agora = new Date().toLocaleTimeString("pt-BR");
-    let alertaGerado = false;
     for (const equipamento of equipamentos) {
       if (String(equipamento.status || "").trim().toLocaleLowerCase("pt-BR") === "inativo") {
         console.log(`[${agora}] ${equipamento.nome_equipamento}: 0.00 kWh (inativo)`);
         continue;
       }
 
-      const minimo = Number(equipamento.consumo_minimo);
       const maximo = Number(equipamento.consumo_maximo);
 
-      if (!Number.isFinite(minimo) || minimo < 0 || !Number.isFinite(maximo) || maximo < 0) {
-        console.warn(`Equipamento ${equipamento.id_equipamento}: limites inválidos; ignorado.`);
-        continue;
+      const consumoAnterior = Number(equipamento.consumo_mes || 0);
+      let incremento = Number(equipamento.incremento_consumo_simulado);
+      if (!Number.isFinite(incremento) || incremento <= 0) {
+        incremento = Number((0.1 + Number(equipamento.id_equipamento) / 100).toFixed(2));
+        await pool.query(
+          `UPDATE equipamento
+              SET incremento_consumo_simulado = ?
+            WHERE id_equipamento = ? AND incremento_consumo_simulado <= 0`,
+          [incremento, equipamento.id_equipamento]
+        );
       }
-
-      const leitura = adicionarConsumoSimulado(equipamento);
-      const consumo = leitura.consumo_atual;
-      if (cicloAtual % ciclosEntreAlertas === 0 && !alertaGerado) {
-        alertaGerado = await registrarAlertaSimulado(equipamento, agora);
-      }
-      console.log(`[${agora}] ${equipamento.nome_equipamento}: ${consumo.toFixed(2)} kWh (mín. ${minimo.toFixed(2)}, máx. ${maximo.toFixed(2)})`);
+      incremento = Math.max(0.001, Number((incremento * 0.1).toFixed(2)));
+      await pool.query(
+        `UPDATE equipamento
+            SET consumo_mensal = CASE
+                  WHEN consumo_mensal_atualizado_em >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
+                   AND consumo_mensal_atualizado_em < DATE_FORMAT(DATE_ADD(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01')
+                  THEN consumo_mensal + ?
+                  ELSE ?
+                END,
+                consumo_mensal_atualizado_em = CURRENT_TIMESTAMP
+          WHERE id_equipamento = ?`,
+        [incremento, incremento, equipamento.id_equipamento]
+      );
+      const consumoAtual = Number((consumoAnterior + incremento).toFixed(2));
+      registrarAlertaSimulado(equipamento, consumoAnterior, consumoAtual, agora);
+      console.log(`[${agora}] ${equipamento.nome_equipamento}: ${consumoAtual.toFixed(2)} kWh no mes (+${incremento.toFixed(2)} kWh)`);
     }
   } catch (erro) {
     console.error("Falha ao simular consumo:", erro.message);
   }
 }
 
-console.log(`Simulação iniciada. Intervalo: ${intervaloMs} ms. Pare com Ctrl+C.`);
+console.log(`SimulaÃ§Ã£o iniciada. Intervalo: ${intervaloMs} ms. Pare com Ctrl+C.`);
 await simular();
 const temporizador = setInterval(simular, intervaloMs);
 

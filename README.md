@@ -192,6 +192,8 @@ O projeto esta sem Tailwind e sem Bootstrap por padrao. Cada aluno pode instalar
 
 ## Banco de Dados
 
+Para uma base existente, aplique `database/migrations/2026_11_24_0000_migrate_leitura_to_equipamento.sql`. Ela move o acumulado do mês atual para `equipamento` e remove a tabela de leituras.
+
 O arquivo `database/init/01-schema.sql` cria a base inicial quando o container MySQL sobe pela primeira vez.
 
 Para uma base existente, aplique `database/migrations/2026_11_18_1600_add_tarifa_energia_setor.sql` uma vez antes de iniciar o backend atualizado. A migração adiciona a tarifa por kWh e a deriva dos custos já registrados.
