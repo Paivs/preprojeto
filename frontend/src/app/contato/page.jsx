@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/api";
 import "./contato.css";
 
 const canais = [
@@ -26,6 +30,42 @@ const canais = [
 ];
 
 export default function Contato() {
+  const [enviando, setEnviando] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+
+  async function enviarContato(evento) {
+    evento.preventDefault();
+    const formulario = evento.currentTarget;
+    const campos = new FormData(formulario);
+    setEnviando(true);
+    setFeedback(null);
+
+    try {
+      const resposta = await fetch(`${API_BASE_URL}/contato`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          empresa: campos.get("empresa"),
+          cnpj: campos.get("cnpj"),
+          email: campos.get("email"),
+          telefone: campos.get("telefone"),
+          mensagem: campos.get("mensagem"),
+        }),
+      });
+      const resultado = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) {
+        throw new Error(resultado.erro || resultado.message || "Não foi possível enviar sua mensagem.");
+      }
+
+      formulario.reset();
+      setFeedback({ tipo: "sucesso", texto: resultado.mensagem || "Mensagem enviada com sucesso." });
+    } catch (erro) {
+      setFeedback({ tipo: "erro", texto: erro.message || "Não foi possível conectar à API." });
+    } finally {
+      setEnviando(false);
+    }
+  }
+
   return (
     <div className="contato-page">
       <section className="contato-hero">
@@ -52,9 +92,9 @@ export default function Contato() {
                 <p>Preencha seus dados e entraremos em contato.</p>
               </div>
             </div>
-            <form className="row g-3">
+            <form className="row g-3" onSubmit={enviarContato}>
               <div className="col-md-6">
-                <label className="form-label" htmlFor="nome">Empresa</label>
+                <label className="form-label" htmlFor="empresa">Empresa</label>
                 <input className="form-control" id="empresa" name="empresa" type="text" placeholder="Nome da empresa" autoComplete="name" required />
               </div>
               <div className="col-md-6">
@@ -74,8 +114,13 @@ export default function Contato() {
                 <textarea className="form-control" id="mensagem" name="mensagem" rows="4" placeholder="Conte um pouco sobre o que você precisa." required />
               </div>
               <div className="col-12 contato-submit-row">
-                <button className="btn contato-submit" type="submit">
-                  Enviar mensagem <i className="bi bi-arrow-right" aria-hidden="true" />
+                {feedback && (
+                  <p className={`contato-feedback contato-feedback-${feedback.tipo}`} role={feedback.tipo === "erro" ? "alert" : "status"}>
+                    {feedback.texto}
+                  </p>
+                )}
+                <button className="btn contato-submit" type="submit" disabled={enviando}>
+                  {enviando ? "Enviando..." : "Enviar mensagem"} <i className="bi bi-arrow-right" aria-hidden="true" />
                 </button>
                 <small><i className="bi bi-lock" aria-hidden="true" /> Seus dados serão usados apenas para este contato.</small>
               </div>

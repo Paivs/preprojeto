@@ -162,6 +162,20 @@
   margin-top: 1rem;
 }
 
+.contato-feedback {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.contato-feedback-sucesso {
+  color: var(--verde);
+}
+
+.contato-feedback-erro {
+  color: var(--cor-vermelho);
+}
+
 .contato-submit {
   display: inline-flex;
   align-items: center;
