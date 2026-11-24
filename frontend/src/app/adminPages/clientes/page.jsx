@@ -51,6 +51,7 @@ function iniciaisEmpresa(nome = "") {
 export default function Clientes() {
   const [modalAberto, setModalAberto] = useState(false);
   const [clienteParaGerenciar, setClienteParaGerenciar] = useState(null);
+  const [modoModal, setModoModal] = useState("gerenciar");
   const [clientes, setClientes] = useState([]);
   const [buscaInput, setBuscaInput] = useState("");
   const [buscaAplicada, setBuscaAplicada] = useState("");
@@ -291,14 +292,29 @@ export default function Clientes() {
                             <button
                               type="button"
                               className="btn-gerenciar-cliente"
-                              onClick={() => setClienteParaGerenciar(cliente)}
-                              aria-label={`Editar ou excluir ${cliente.nome_empresa}`}
+                              onClick={() => {
+                                setModoModal("gerenciar");
+                                setClienteParaGerenciar(cliente);
+                              }}
+                              aria-label={`Editar ${cliente.nome_empresa} e consultar seus pagamentos`}
                             >
                               <i
                                 className="bi bi-pencil-square"
                                 aria-hidden="true"
                               ></i>
                               Gerenciar
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-cobrar-cliente"
+                              onClick={() => {
+                                setModoModal("cobranca");
+                                setClienteParaGerenciar(cliente);
+                              }}
+                              aria-label={`Gerar cobrança para ${cliente.nome_empresa}`}
+                            >
+                              <i className="bi bi-receipt" aria-hidden="true"></i>
+                              Gerar cobrança
                             </button>
                           </td>
                         </tr>
@@ -354,6 +370,7 @@ export default function Clientes() {
       {clienteParaGerenciar && (
         <ModalGerenciarCliente
           cliente={clienteParaGerenciar}
+          modo={modoModal}
           onFechar={() => setClienteParaGerenciar(null)}
           onAlteracao={() => {
             setClienteParaGerenciar(null);

@@ -399,6 +399,27 @@
   background: var(--roxo-suave);
 }
 
+.btn-cobrar-cliente {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--roxo);
+  border-radius: 7px;
+  color: var(--branco);
+  background: var(--roxo);
+  font-size: 0.8rem;
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-cobrar-cliente:hover {
+  background: var(--roxo-escuro);
+}
+
 .rodape-tabela {
   display: flex;
   justify-content: space-between;

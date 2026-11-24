@@ -11,6 +11,9 @@ function responderErro(erro, res, next) {
   if (erro.status === 401) {
     return res.status(401).json({ sucesso: false, erro: erro.message });
   }
+  if (erro.status === 403) {
+    return res.status(403).json({ sucesso: false, erro: erro.message });
+  }
   return next(erro);
 }
 

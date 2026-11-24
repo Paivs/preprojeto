@@ -66,7 +66,7 @@ export async function listar({ limite, offset, busca, nivel_permissao }) {
        FROM usuario u
        ${joinsResumo}
        ${filtroSql}
-      ORDER BY u.id_usuario
+      ORDER BY u.id_usuario DESC
       LIMIT ? OFFSET ?`,
     [...valoresFiltro, limiteNum, offsetNum]
   );
