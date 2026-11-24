@@ -155,7 +155,7 @@ export default function Sidebar() {
               <span>
                 <i className="bi bi-inboxes"></i>
               </span>
-              <span>Dispositivos</span>
+              <span>Equipamentos</span>
             </Link>
 
             <Link

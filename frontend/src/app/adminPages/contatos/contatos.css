@@ -146,12 +146,15 @@
 .contato-nome .avatar-sigla {
   width: 36px;
   height: 36px;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
   border-radius: 8px;
   background: var(--roxo-suave);
   color: var(--cor-destaque);
   font-size: 0.75rem;
   font-weight: 700;
+  line-height: 1;
 }
 
 .contato-mensagem {
@@ -181,7 +184,7 @@
   color: var(--cor-vermelho);
 }
 
-.contato-status.convertido {
+.contato-status.respondido {
   background: var(--verde-suave);
   color: var(--verde);
 }

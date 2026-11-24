@@ -5,18 +5,9 @@ import { createPortal } from "react-dom";
 import { API_BASE_URL } from "@/lib/api";
 import "./modalEditarSetor.css";
 
-function formatarMoeda(valor) {
-  const numero = Number(valor);
-  return (Number.isFinite(numero) ? numero : 0).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-}
-
 export default function ModalEditarSetor({ setor, onFechar, onSalvo }) {
   const [nome, setNome] = useState(setor.nome_setor || "");
   const [descricao, setDescricao] = useState(setor.descricao || "");
-  const [consumo, setConsumo] = useState(String(setor.consumo_geral ?? 0));
   const [tarifa, setTarifa] = useState(String(setor.tarifa_energia ?? 0));
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
@@ -49,7 +40,6 @@ export default function ModalEditarSetor({ setor, onFechar, onSalvo }) {
     const dados = {
       nome_setor: nome.trim(),
       descricao: descricao.trim() || null,
-      consumo_geral: Number(consumo || 0),
       tarifa_energia: Number(tarifa || 0),
     };
 
@@ -74,8 +64,6 @@ export default function ModalEditarSetor({ setor, onFechar, onSalvo }) {
       setSalvando(false);
     }
   }
-
-  const custoPrevisto = Number(consumo || 0) * Number(tarifa || 0);
 
   if (typeof document === "undefined") return null;
 
@@ -128,18 +116,7 @@ export default function ModalEditarSetor({ setor, onFechar, onSalvo }) {
               rows={3}
             />
           </label>
-          <div className="modal-editar-setor-campos">
-            <label>
-              Consumo global (kWh/mês)
-              <input
-                type="number"
-                min="0"
-                max="99999999.99"
-                step="0.01"
-                value={consumo}
-                onChange={(evento) => setConsumo(evento.target.value)}
-              />
-            </label>
+          <div className="modal-editar-setor-campos modal-editar-setor-campo-unico">
             <label>
               Tarifa (R$/kWh)
               <input
@@ -152,9 +129,6 @@ export default function ModalEditarSetor({ setor, onFechar, onSalvo }) {
               />
             </label>
           </div>
-          <p className="modal-editar-setor-previa">
-            Custo estimado: <strong>{formatarMoeda(custoPrevisto)}</strong>
-          </p>
           {erro && <p className="modal-editar-setor-erro" role="alert">{erro}</p>}
           <footer className="modal-editar-setor-acoes">
             <button

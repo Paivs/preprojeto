@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Icone from "./Icone";
+import { CATEGORIAS } from "./dados";
 
 export default function ModalEditarDispositivo({
   dispositivo,
@@ -92,7 +93,13 @@ export default function ModalEditarDispositivo({
           </label>
           <label>
             Tipo
-            <input value={tipo} onChange={(evento) => setTipo(evento.target.value)} maxLength={50} />
+            <select value={tipo} onChange={(evento) => setTipo(evento.target.value)}>
+              <option value="">Selecione um tipo (opcional)</option>
+              {tipo && !CATEGORIAS.includes(tipo) && <option value={tipo}>{tipo}</option>}
+              {CATEGORIAS.map((categoria) => (
+                <option key={categoria} value={categoria}>{categoria}</option>
+              ))}
+            </select>
           </label>
           <label>
             Setor

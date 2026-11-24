@@ -5,7 +5,13 @@ import Icone from "./Icone";
 import { formatarFaixaConsumo, formatarKwh, obterEstado } from "./dados";
 import "./painel.css";
 
-export default function PainelDispositivo({ dispositivo, onFechar, onEditar }) {
+export default function PainelDispositivo({
+  dispositivo,
+  onFechar,
+  onEditar,
+  onExcluir,
+  excluindo = false,
+}) {
   const estado = obterEstado(dispositivo);
 
   useEffect(() => {
@@ -84,6 +90,15 @@ export default function PainelDispositivo({ dispositivo, onFechar, onEditar }) {
           <div className="painel-botoes">
             <button type="button" className="botao-manutencao" onClick={onEditar}>
               <Icone nome="editar" tamanho={16} /> Editar dispositivo
+            </button>
+            <button
+              type="button"
+              className="botao-excluir-equipamento"
+              onClick={onExcluir}
+              disabled={excluindo}
+            >
+              <i className={`bi ${excluindo ? "bi-hourglass-split" : "bi-trash3"}`} aria-hidden="true" />
+              {excluindo ? "Excluindo..." : "Excluir dispositivo"}
             </button>
           </div>
 
