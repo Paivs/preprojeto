@@ -243,10 +243,6 @@ export default function Login() {
             </p>
           )}
 
-          <Link className="esquecer-senha" href="/">
-            Esqueci minha senha
-          </Link>
-
           <div className="btn-entrar">
             <button type="submit" disabled={carregando}>
               {carregando ? "Entrando..." : "Entrar"}
