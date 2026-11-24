@@ -190,15 +190,6 @@
   color: var(--cor-texto-fraco);
 }
 
-.esquecer-senha {
-    font-size: .7rem;
-    color: var(--light-primary);
-}
-
-.esquecer-senha:hover {
-    color: var(--light-primary-hover);
-}
-
 .btn-entrar {
     margin-top: 2rem;
 }
