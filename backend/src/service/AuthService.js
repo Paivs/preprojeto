@@ -137,6 +137,18 @@ export async function login({ email, senha } = {}) {
       ? await UsuarioModel.buscarPagamentoPendente(usuario.id_usuario)
       : null;
 
+  if (
+    usuario.perfil === "cliente" &&
+    !pagamentoPendente &&
+    !(await UsuarioModel.possuiPagamentoAprovado(usuario.id_usuario))
+  ) {
+    const erro = new Error(
+      "Sua conta ainda não possui uma cobrança registrada. Entre em contato com a VoltHouse para liberar o acesso."
+    );
+    erro.status = 403;
+    throw erro;
+  }
+
   return {
     ...criarSessao(usuario),
     usuario: {
