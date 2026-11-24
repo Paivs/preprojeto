@@ -97,6 +97,18 @@
   z-index: 10;
 }
 
+.voltar {
+  position: absolute;
+  top: 4%;
+  left: 7%;
+  font-size: 1rem;
+}
+
+.voltar a {
+  text-decoration: none;
+  color: var(--cor-texto);
+}
+
 .top-login {
   display: flex;
   flex-direction: column;
