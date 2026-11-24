@@ -52,6 +52,7 @@ export default function Clientes() {
   const [paginacao, setPaginacao] = useState({ total: 0, totalPaginas: 0 });
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
+  const [avisoCadastro, setAvisoCadastro] = useState(null);
 
   const carregarClientes = useCallback(async (paginaSolicitada, termoBusca) => {
     setCarregando(true);
@@ -146,6 +147,12 @@ export default function Clientes() {
               </button>
             </div>
           </div>
+
+          {avisoCadastro && (
+            <p className={`aviso-cadastro-cliente aviso-cadastro-${avisoCadastro.tipo}`} role="status">
+              {avisoCadastro.texto}
+            </p>
+          )}
 
           <div className="grid-kpi">
             <div className="kpi-group">
@@ -289,8 +296,11 @@ export default function Clientes() {
       {modalAberto && (
         <ModalNovoCliente
           onFechar={() => setModalAberto(false)}
-          onSucesso={() => {
+          onSucesso={({ emailEnviado, avisoEmail }) => {
             setModalAberto(false);
+            setAvisoCadastro(emailEnviado
+              ? { tipo: "sucesso", texto: "Cliente cadastrado e e-mail de acesso enviado." }
+              : { tipo: "aviso", texto: avisoEmail || "Cliente cadastrado, mas o e-mail não foi enviado." });
             carregarClientes(1, buscaAplicada);
           }}
         />

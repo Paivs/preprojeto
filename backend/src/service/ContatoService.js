@@ -1,7 +1,7 @@
 import * as ContatoModel from '../models/ContatoModels.js';
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const SITUACOES_ATUALIZAVEIS = new Set(['ignorado', 'convertido']);
+const SITUACOES_ATUALIZAVEIS = new Set(['ignorado', 'respondido']);
 
 function validarId(idRecebido) {
   const id = Number(idRecebido);
@@ -64,7 +64,7 @@ export async function listar() {
 export async function atualizarSituacao(idRecebido, dados = {}) {
   const id = validarId(idRecebido);
   if (!SITUACOES_ATUALIZAVEIS.has(dados.situacao)) {
-    throw new TypeError('Situação deve ser "ignorado" ou "convertido".');
+    throw new TypeError('Situação deve ser "ignorado" ou "respondido".');
   }
 
   const atualizado = await ContatoModel.atualizarSituacao(id, dados.situacao);

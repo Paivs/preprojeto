@@ -13,7 +13,7 @@ const API_URL = (
 const SITUACOES = {
   pendente: { texto: "Pendente", classe: "pendente" },
   ignorado: { texto: "Ignorado", classe: "ignorado" },
-  convertido: { texto: "Cliente cadastrado", classe: "convertido" },
+  respondido: { texto: "Respondido", classe: "respondido" },
 };
 const ITENS_POR_PAGINA = 5;
 
@@ -137,7 +137,7 @@ export default function Contatos() {
     let atualizado = false;
     setAviso("");
     try {
-      await salvarSituacao(contato, "convertido");
+      await salvarSituacao(contato, "respondido");
       atualizado = true;
     } catch {
       setAviso(
