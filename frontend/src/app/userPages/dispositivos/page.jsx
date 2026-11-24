@@ -8,6 +8,7 @@ import ListaDispositivos from "@/components/dispositivos/ListaDispositivos";
 import PainelDispositivo from "@/components/dispositivos/PainelDispositivo";
 import ModalNovoDispositivo from "@/components/dispositivos/ModalNovoDispositivo";
 import ModalEditarDispositivo from "@/components/dispositivos/ModalEditarDispositivo";
+import ModalConfirmarExclusao from "@/components/dispositivos/ModalConfirmarExclusao";
 import { adaptarEquipamentoApi, obterEstado } from "@/components/dispositivos/dados";
 import "@/components/dispositivos/botoes.css";
 import "./dispositivos.css";
@@ -27,6 +28,9 @@ export default function PaginaDispositivos() {
   const [modalAberto, setModalAberto] = useState(false);
   const [dispositivoEditando, setDispositivoEditando] = useState(null);
   const [salvando, setSalvando] = useState(false);
+  const [excluindoId, setExcluindoId] = useState(null);
+  const [erroExclusao, setErroExclusao] = useState("");
+  const [dispositivoParaExcluir, setDispositivoParaExcluir] = useState(null);
 
   const carregarDispositivos = useCallback(async (mostrarCarregamento = true) => {
     if (mostrarCarregamento) {
@@ -144,6 +148,33 @@ export default function PaginaDispositivos() {
     }
   }
 
+  async function excluirEquipamento(dispositivo) {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      setErroExclusao("Sua sessão expirou. Entre novamente.");
+      return;
+    }
+
+    setExcluindoId(dispositivo.id);
+    setErroExclusao("");
+    try {
+      const resposta = await fetch(`${API_URL}/equipamentos/${dispositivo.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const resultado = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível excluir o equipamento.");
+
+      setDispositivos((atuais) => atuais.filter((item) => item.id !== dispositivo.id));
+      setSelecionadoId((atual) => atual === dispositivo.id ? null : atual);
+      setDispositivoParaExcluir(null);
+    } catch (erroRequisicao) {
+      setErroExclusao(erroRequisicao.message || "Não foi possível excluir o equipamento.");
+    } finally {
+      setExcluindoId(null);
+    }
+  }
+
   const selecionado = dispositivos.find((dispositivo) => dispositivo.id === selecionadoId) || null;
   const categorias = [...new Set(dispositivos.map((dispositivo) => dispositivo.categoria))]
     .filter(Boolean)
@@ -202,6 +233,11 @@ export default function PaginaDispositivos() {
           key={selecionado.id}
           dispositivo={selecionado}
           onFechar={() => setSelecionadoId(null)}
+          onExcluir={() => {
+            setErroExclusao("");
+            setDispositivoParaExcluir(selecionado);
+          }}
+          excluindo={excluindoId === selecionado.id}
           onEditar={() => {
             setDispositivoEditando(selecionado);
             setSelecionadoId(null);
@@ -218,6 +254,18 @@ export default function PaginaDispositivos() {
           salvando={salvando}
           onSalvar={editarEquipamento}
           onFechar={() => !salvando && setDispositivoEditando(null)}
+        />
+      )}
+
+      {dispositivoParaExcluir && (
+        <ModalConfirmarExclusao
+          dispositivo={dispositivoParaExcluir}
+          carregando={excluindoId === dispositivoParaExcluir.id}
+          erro={erroExclusao}
+          onCancelar={() => {
+            if (excluindoId === null) setDispositivoParaExcluir(null);
+          }}
+          onConfirmar={() => excluirEquipamento(dispositivoParaExcluir)}
         />
       )}
 

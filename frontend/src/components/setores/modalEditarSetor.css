@@ -115,6 +115,10 @@
   gap: 12px;
 }
 
+.modal-editar-setor-campo-unico {
+  grid-template-columns: 1fr;
+}
+
 .modal-editar-setor-previa {
   margin: -4px 0 0;
   color: var(--cor-texto-fraco);

@@ -121,6 +121,9 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+.setor-painel-tarifa-unica {
+  grid-template-columns: 1fr;
+}
 .setor-painel-ajuda {
   margin-top: -10px;
   color: var(--cor-texto-fraco);
