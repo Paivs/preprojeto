@@ -496,7 +496,7 @@ export default function ConfiguracaoUser() {
                           Nova senha
                           <input
                             type="password"
-                            autoComplete="new-password"
+                            autoComplete="off"
                             minLength={8}
                             value={senha.nova}
                             onChange={(e) =>
@@ -516,7 +516,7 @@ export default function ConfiguracaoUser() {
                           Confirme a nova senha
                           <input
                             type="password"
-                            autoComplete="new-password"
+                            autoComplete="off"
                             minLength={8}
                             value={senha.confirmar}
                             onChange={(e) =>
