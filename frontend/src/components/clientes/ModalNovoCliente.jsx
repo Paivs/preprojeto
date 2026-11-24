@@ -49,7 +49,13 @@ export default function ModalNovoCliente({ onFechar, onSucesso, contato = null }
         return;
       }
 
-      await onSucesso({ empresa: empresa.trim(), email: email.trim(), contato });
+      await onSucesso({
+        empresa: empresa.trim(),
+        email: email.trim(),
+        contato,
+        emailEnviado: resultado.email_enviado !== false,
+        avisoEmail: resultado.aviso || null,
+      });
       onFechar();
     } catch {
       setErro("Não foi possível conectar ao servidor.");

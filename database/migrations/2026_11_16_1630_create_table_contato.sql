@@ -4,8 +4,9 @@ CREATE TABLE IF NOT EXISTS contato (
     email VARCHAR(100) NOT NULL,
     cnpj VARCHAR(18) NULL,
     telefone VARCHAR(20) NULL,
-    mensagem TEXT NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    mensagem TEXT NOT NULL,
+    situacao ENUM('pendente', 'respondido', 'ignorado') NOT NULL DEFAULT 'pendente'
+);
 
 -- Rollback manual, se necessário: DROP TABLE contato;
 -- Atenção: o rollback exclui permanentemente os contatos registrados.
