@@ -17,11 +17,22 @@ export default function FiltrosDispositivos({
       <div className="campo-busca">
         <Icone nome="busca" />
         <input
-          type="text"
+          type="search"
+          aria-label="Buscar equipamentos por nome ou local"
           placeholder="Buscar equipamento ou local"
           value={busca}
           onChange={(e) => onBusca(e.target.value)}
         />
+        {busca && (
+          <button
+            type="button"
+            className="campo-busca-limpar"
+            aria-label="Limpar busca"
+            onClick={() => onBusca("")}
+          >
+            <i className="bi bi-x-circle-fill" aria-hidden="true" />
+          </button>
+        )}
       </div>
 
       <div className="filtros-grupo">

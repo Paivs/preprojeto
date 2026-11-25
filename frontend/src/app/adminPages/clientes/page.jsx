@@ -209,7 +209,7 @@ export default function Clientes() {
             <div className="cabecalho-table">
               <div className="cabecalho-left">
                 <h2>Base de clientes</h2>
-                <span>Dados carregados da API</span>
+                <span>Consulte os clientes cadastrados.</span>
               </div>
               <div className="cabecalho-right">
                 <form className="barra-pesquisa" onSubmit={pesquisar}>

@@ -81,14 +81,15 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={toast}>
       {children}
-      <div className="toast-regiao" aria-live="polite" aria-atomic="false">
+      <div className="toast-regiao" role="region" aria-label="Notificações">
         {toasts.map((item) => {
           const configuracao = TIPOS[item.tipo];
           return (
             <section
               className={`toast-item toast-${item.tipo}${item.saindo ? " toast-saindo" : ""}`}
               key={item.id}
-              role="status"
+              role={item.tipo === "error" ? "alert" : "status"}
+              aria-atomic="true"
             >
               <i className={`bi ${configuracao.icone} toast-icone`} aria-hidden="true" />
               <div className="toast-conteudo">

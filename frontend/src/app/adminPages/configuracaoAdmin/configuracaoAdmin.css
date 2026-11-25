@@ -46,7 +46,7 @@
 .grid-group-config > form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    min-width: 0;
 }
 
 .config-feedback {
@@ -63,26 +63,34 @@
 }
 
 .group-config {
+    min-width: 0;
+    padding: 22px;
     border: 1px solid var(--cor-borda);
-    border-radius: 12px;
-    background: var(--dark-bg-card);
-    padding: 20px 30px;
+    border-radius: 16px;
+    background: var(--cor-card);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
 }
 
 .cabecalho-dados {
     display: flex;
-    gap: 10px;
+    gap: 13px;
     align-items: center;
     border-bottom: 1px solid var(--cor-borda);
-    padding: 10px 0;
-    margin-bottom: 1rem;
+    padding: 0 0 17px;
+    margin-bottom: 18px;
 }
 
 .cabecalho-dados i {
-    color: var(--light-primary);
+    display: grid;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    color: var(--cor-destaque);
     background: var(--roxo-suave);
-    padding: 7px 10px;
-    border-radius: 6px;
+    border: 1px solid color-mix(in srgb, var(--cor-destaque) 20%, transparent);
+    border-radius: 12px;
+    font-size: 17px;
 }
 
 .tema-dados {
@@ -93,27 +101,49 @@
 
 .tema-dados h4 {
     color: var(--cor-texto);
-    font-size: 1.05rem;
+    font-size: 1rem;
+    font-weight: 600;
     line-height: 1.3;
     margin: 0 0 4px;
 }
 
 .tema-dados span {
-    font-size: .7rem;
-    color: var(--dark-text-tertiary);
+    font-size: .78rem;
+    color: var(--cor-texto-fraco);
     line-height: 1.4;
 }
 
 .main-dados {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
+}
+
+.card-config {
+    padding: 4px 18px 18px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    background: var(--cor-campo);
 }
 
 .group-value {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 16px;
+}
+
+.group-value-senha {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 22px;
+}
+
+.dados-config-coluna {
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    padding-left: 22px;
+    border-left: 1px solid var(--cor-borda);
 }
 
 .dados-config {
@@ -125,18 +155,24 @@
 .dados-config label {
     color: var(--dark-text-primary);
     font-family: var(--font-primary);
-    font-size: .9rem;
-    margin-top: 1rem;
+    font-size: .8rem;
+    font-weight: 500;
+    margin-top: 14px;
 }
 
 .dados-config input {
-    padding: 10px 10px;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 9px 12px;
     border: 1px solid var(--cor-borda);
-    border-radius: 6px;
-    background: var(--cor-campo);
+    border-radius: 9px;
+    background: var(--cor-card);
     color: var(--cor-texto);
-    font-size: .8rem;
+    font: inherit;
+    font-size: .85rem;
     outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
 }
 
 .dados-config input::placeholder {
@@ -145,7 +181,8 @@
 }
 
 .dados-config input:focus {
-    border: 1px solid var(--roxo);
+    border-color: var(--cor-destaque);
+    box-shadow: 0 0 0 3px var(--roxo-suave);
 }
 
 .dados-config input:disabled {
@@ -165,14 +202,15 @@
 
 .config-botao {
     display: block;
-    margin: 20px 0 0 auto;
-    border: 1px solid var(--roxo);
-    border-radius: 7px;
-    padding: 10px 18px;
-    background: var(--roxo);
+    min-height: 42px;
+    margin: 16px 0 0 auto;
+    border: 1px solid var(--cor-destaque);
+    border-radius: 9px;
+    padding: 0 17px;
+    background: var(--cor-destaque);
     color: var(--branco);
     font: inherit;
-    font-size: .9rem;
+    font-size: .82rem;
     font-weight: 600;
     cursor: pointer;
     transition: filter .2s ease, opacity .2s ease;
@@ -188,7 +226,7 @@
 }
 
 .config-botao-secundario {
-    margin-top: 20px;
+    margin-top: 16px;
 }
 
 @media (max-width: 700px) {
@@ -231,8 +269,29 @@
         padding: 18px;
     }
 
+    .card-config {
+        padding: 2px 12px 14px;
+    }
+
     .group-value {
         grid-template-columns: 1fr;
         gap: 8px;
+    }
+
+    .group-value-senha {
+        grid-template-columns: 1fr;
+    }
+
+    .dados-config-coluna {
+        padding: 12px 0 0;
+        border-top: 1px solid var(--cor-borda);
+        border-left: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dados-config input,
+    .config-botao {
+        transition: none;
     }
 }
