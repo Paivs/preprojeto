@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import "./modalGerenciarCliente.css";
+import { useToast } from "@/components/toast/ToastProvider";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/$/, "");
 
 export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onFechar, onAlteracao }) {
+  const toast = useToast();
   const secaoCobrancaRef = useRef(null);
   const [formulario, setFormulario] = useState({ nome_empresa: "", cnpj: "", email: "" });
   const [novoPagamento, setNovoPagamento] = useState({
@@ -23,6 +25,10 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
   const [registrando, setRegistrando] = useState(false);
   const [erro, setErro] = useState("");
   const [erroPagamentos, setErroPagamentos] = useState("");
+
+  useEffect(() => {
+    if (erro) toast.error(erro);
+  }, [erro, toast]);
 
   useEffect(() => {
     let ativo = true;
@@ -96,7 +102,7 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
       });
       const resultado = await resposta.json().catch(() => ({}));
       if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível salvar as alterações.");
-      onAlteracao();
+      onAlteracao("Dados do cliente atualizados com sucesso.");
     } catch (falha) {
       setErro(falha.message || "Não foi possível conectar à API.");
       setSalvando(false);
@@ -147,7 +153,7 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
       setPagamentos((atuais) => atuais.map((item) => (
         String(item.id_pagamento) === String(resultado.dados.id_pagamento) ? resultado.dados : item
       )));
-      onAlteracao();
+      onAlteracao("Status do pagamento atualizado com sucesso.");
     } catch (falha) {
       setErro(falha.message || "Não foi possível conectar à API.");
       setSalvando(false);
@@ -174,7 +180,7 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
       });
       const resultado = await resposta.json().catch(() => ({}));
       if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível registrar o pagamento.");
-      onAlteracao();
+      onAlteracao("Pagamento cadastrado com sucesso.");
     } catch (falha) {
       setErro(falha.message || "Não foi possível conectar à API.");
       setRegistrando(false);
@@ -192,7 +198,7 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
       });
       const resultado = await resposta.json().catch(() => ({}));
       if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível excluir o cliente.");
-      onAlteracao();
+      onAlteracao("Cliente excluído com sucesso.");
     } catch (falha) {
       setErro(falha.message || "Não foi possível conectar à API.");
       setSalvando(false);

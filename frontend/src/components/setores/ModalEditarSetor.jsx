@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { API_BASE_URL } from "@/lib/api";
+import { useToast } from "@/components/toast/ToastProvider";
 import "./modalEditarSetor.css";
 
 export default function ModalEditarSetor({ setor, onFechar, onSalvo }) {
+  const toast = useToast();
   const [nome, setNome] = useState(setor.nome_setor || "");
   const [descricao, setDescricao] = useState(setor.descricao || "");
   const [tarifa, setTarifa] = useState(String(setor.tarifa_energia ?? 0));
@@ -57,8 +59,10 @@ export default function ModalEditarSetor({ setor, onFechar, onSalvo }) {
       if (!resposta.ok || !resultado.sucesso) {
         throw new Error(resultado.erro || "Não foi possível atualizar o setor.");
       }
+      toast.success("Alterações do setor salvas com sucesso.");
       onSalvo(resultado.dados);
     } catch (falha) {
+      toast.error(falha.message || "Não foi possível salvar as alterações do setor.");
       setErro(falha.message || "Não foi possível conectar à API.");
     } finally {
       setSalvando(false);

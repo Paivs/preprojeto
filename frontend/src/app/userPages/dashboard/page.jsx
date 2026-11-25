@@ -6,6 +6,7 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import { normalizarStatus } from "@/components/dispositivos/dados";
 import { API_BASE_URL } from "@/lib/api";
+import { useToast } from "@/components/toast/ToastProvider";
 import "./userDashboard.css";
 
 const CORES_GRAFICO = ["#914ff0", "#4b70fc", "#e8b547", "#39a981", "#e77f5d"];
@@ -128,6 +129,7 @@ function gradienteCustos(setores, total) {
 }
 
 export default function UserDashboard() {
+  const toast = useToast();
   const [setores, setSetores] = useState([]);
   const [equipamentos, setEquipamentos] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -136,11 +138,12 @@ export default function UserDashboard() {
   const [ultimaAtualizacao, setUltimaAtualizacao] = useState(null);
   const dadosCarregados = useRef(false);
 
-  const carregarDados = useCallback(async () => {
+  const carregarDados = useCallback(async (notificar = false) => {
     const token = sessionStorage.getItem("token");
     if (!token) {
       setErro("Sua sessão não foi encontrada. Entre novamente para ver o dashboard.");
       setCarregando(false);
+      if (notificar) toast.error("Sua sessão expirou. Entre novamente para ver o dashboard.");
       return;
     }
 
@@ -170,17 +173,19 @@ export default function UserDashboard() {
       setEquipamentos(Array.isArray(resultadoEquipamentos.dados) ? resultadoEquipamentos.dados : []);
       setUltimaAtualizacao(new Date());
       dadosCarregados.current = true;
+      if (notificar) toast.success("Dados do dashboard atualizados.");
     } catch (erroRequisicao) {
+      if (notificar) toast.error(erroRequisicao.message || "Não foi possível atualizar os dados.");
       setErro(erroRequisicao.message || "Não foi possível conectar à API.");
     } finally {
       setCarregando(false);
       setAtualizando(false);
     }
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     carregarDados();
-    const intervalo = window.setInterval(carregarDados, 60_000);
+    const intervalo = window.setInterval(() => carregarDados(), 60_000);
     return () => window.clearInterval(intervalo);
   }, [carregarDados]);
 
@@ -261,7 +266,7 @@ export default function UserDashboard() {
             <button
               type="button"
               className="botao-periodo-dashboard"
-              onClick={carregarDados}
+              onClick={() => carregarDados(true)}
               disabled={carregando || atualizando}
             >
               <i className={`bi ${atualizando ? "bi-arrow-repeat" : "bi-arrow-clockwise"}`} aria-hidden="true" />
@@ -274,7 +279,7 @@ export default function UserDashboard() {
           {erro && (
             <div className="dashboard-mensagem-erro" role="alert">
               <span>{erro}</span>
-              <button type="button" onClick={carregarDados} disabled={atualizando}>
+              <button type="button" onClick={() => carregarDados(true)} disabled={atualizando}>
                 Tentar novamente
               </button>
             </div>

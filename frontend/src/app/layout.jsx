@@ -2,7 +2,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Script from "next/script";
 import "./globals.css";
+import "./microinteracoes.css";
 import LayoutConteudo from "@/components/layoutConteudo";
+import { ToastProvider } from "@/components/toast/ToastProvider";
 export const metadata = {
   title: "Volt House",
   description: "Template base com Next.js, Express e MySQL",
@@ -24,7 +26,9 @@ export default function RootLayout({ children }) {
         </Script>
       </head>
       <body>
-        <LayoutConteudo>{children}</LayoutConteudo>
+        <ToastProvider>
+          <LayoutConteudo>{children}</LayoutConteudo>
+        </ToastProvider>
         <script
           src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
           integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"

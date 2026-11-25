@@ -5,6 +5,7 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import ModalNovoCliente from "@/components/clientes/ModalNovoCliente";
 import ModalGerenciarCliente from "@/components/clientes/ModalGerenciarCliente";
+import { useToast } from "@/components/toast/ToastProvider";
 import "./clientes.css";
 
 const API_URL = (
@@ -49,6 +50,7 @@ function iniciaisEmpresa(nome = "") {
 }
 
 export default function Clientes() {
+  const toast = useToast();
   const [modalAberto, setModalAberto] = useState(false);
   const [clienteParaGerenciar, setClienteParaGerenciar] = useState(null);
   const [modoModal, setModoModal] = useState("gerenciar");
@@ -372,7 +374,8 @@ export default function Clientes() {
           cliente={clienteParaGerenciar}
           modo={modoModal}
           onFechar={() => setClienteParaGerenciar(null)}
-          onAlteracao={() => {
+          onAlteracao={(mensagem) => {
+            if (mensagem) toast.success(mensagem);
             setClienteParaGerenciar(null);
             carregarClientes(pagina, buscaAplicada);
           }}

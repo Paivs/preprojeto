@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/lib/api";
 import { normalizarStatus } from "@/components/dispositivos/dados";
+import { useToast } from "@/components/toast/ToastProvider";
 import "./painelNovoSetor.css";
 
 export default function PainelEditarEquipamento({ equipamento, idSetor, onFechar, onSalvo }) {
+  const toast = useToast();
   const [nome, setNome] = useState(equipamento.nome_equipamento || "");
   const [tipo, setTipo] = useState(equipamento.tipo || "");
   const [consumoMinimo, setConsumoMinimo] = useState(equipamento.consumo_minimo ?? "0");
@@ -48,8 +50,10 @@ export default function PainelEditarEquipamento({ equipamento, idSetor, onFechar
       });
       const resultado = await resposta.json().catch(() => ({}));
       if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível salvar as alterações.");
+      toast.success("Alterações do equipamento salvas com sucesso.");
       onSalvo(resultado.dados);
     } catch (falha) {
+      toast.error(falha.message || "Não foi possível salvar as alterações do equipamento.");
       setErro(falha.message || "Não foi possível conectar à API.");
     } finally { setSalvando(false); }
   }
