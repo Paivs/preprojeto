@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/lib/api";
 import { requisicaoAutenticada } from "@/lib/session";
+import { useToast } from "@/components/toast/ToastProvider";
 import "./painelNovoSetor.css";
 
 export default function PainelNovoSetor({ onFechar, onCriado }) {
+  const toast = useToast();
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [tarifaEnergia, setTarifaEnergia] = useState("0");
@@ -41,8 +43,10 @@ export default function PainelNovoSetor({ onFechar, onCriado }) {
         throw new Error(
           resultado.erro || resultado.message || "Não foi possível adicionar o setor."
         );
+      toast.success("Setor cadastrado com sucesso.");
       onCriado();
     } catch (falha) {
+      toast.error(falha.message || "Não foi possível cadastrar o setor.");
       setErro(falha.message || "Não foi possível conectar à API.");
     } finally {
       setSalvando(false);

@@ -9,6 +9,7 @@ import PainelDispositivo from "@/components/dispositivos/PainelDispositivo";
 import ModalNovoDispositivo from "@/components/dispositivos/ModalNovoDispositivo";
 import ModalEditarDispositivo from "@/components/dispositivos/ModalEditarDispositivo";
 import ModalConfirmarExclusao from "@/components/dispositivos/ModalConfirmarExclusao";
+import { useToast } from "@/components/toast/ToastProvider";
 import { adaptarEquipamentoApi, obterEstado } from "@/components/dispositivos/dados";
 import "@/components/dispositivos/botoes.css";
 import "./dispositivos.css";
@@ -16,6 +17,7 @@ import "./dispositivos.css";
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/$/, "");
 
 export default function PaginaDispositivos() {
+  const toast = useToast();
   const [dispositivos, setDispositivos] = useState([]);
   const [selecionadoId, setSelecionadoId] = useState(null);
   const [busca, setBusca] = useState("");
@@ -117,6 +119,10 @@ export default function PaginaDispositivos() {
         await carregarDispositivos();
       }
       setModalAberto(false);
+      toast.success("Equipamento cadastrado com sucesso.");
+    } catch (falha) {
+      toast.error(falha.message || "Não foi possível cadastrar o equipamento.");
+      throw falha;
     } finally {
       setSalvando(false);
     }
@@ -143,6 +149,10 @@ export default function PaginaDispositivos() {
       setDispositivos((atuais) => atuais.map((item) => item.id === atualizado.id ? atualizado : item));
       setDispositivoEditando(null);
       setSelecionadoId(null);
+      toast.success("Alterações do equipamento salvas com sucesso.");
+    } catch (falha) {
+      toast.error(falha.message || "Não foi possível salvar as alterações.");
+      throw falha;
     } finally {
       setSalvando(false);
     }
@@ -168,8 +178,10 @@ export default function PaginaDispositivos() {
       setDispositivos((atuais) => atuais.filter((item) => item.id !== dispositivo.id));
       setSelecionadoId((atual) => atual === dispositivo.id ? null : atual);
       setDispositivoParaExcluir(null);
+      toast.success("Equipamento excluído com sucesso.");
     } catch (erroRequisicao) {
       setErroExclusao(erroRequisicao.message || "Não foi possível excluir o equipamento.");
+      toast.error(erroRequisicao.message || "Não foi possível excluir o equipamento.");
     } finally {
       setExcluindoId(null);
     }

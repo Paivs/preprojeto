@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createPortal } from "react-dom";
 import { API_BASE_URL } from "@/lib/api";
 import { requisicaoAutenticada } from "@/lib/session";
+import { useToast } from "@/components/toast/ToastProvider";
 import "./tabelaSetor.css";
 
 const formatarMoeda = (valor) =>
@@ -17,6 +18,7 @@ const formatarConsumo = (valor) =>
 const ITENS_POR_PAGINA = 10;
 
 export default function TabelaSetores() {
+  const toast = useToast();
   const [setores, setSetores] = useState([]);
   const [busca, setBusca] = useState("");
   const [pagina, setPagina] = useState(1);
@@ -95,7 +97,9 @@ export default function TabelaSetores() {
 
       setSetores((atuais) => atuais.filter((item) => item.id_setor !== setor.id_setor));
       setSetorPendenteExclusao(null);
+      toast.success("Setor excluído com sucesso.");
     } catch (falha) {
+      toast.error(falha.message || "Não foi possível excluir o setor.");
       setErroExclusao(falha.message || "Não foi possível conectar à API.");
     } finally {
       setExcluindoId(null);

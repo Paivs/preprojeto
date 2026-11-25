@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/lib/api";
+import { useToast } from "@/components/toast/ToastProvider";
 import "./modalNovoCliente.css";
 
 export default function ModalNovoCliente({ onFechar, onSucesso, contato = null }) {
+  const toast = useToast();
   const [empresa, setEmpresa] = useState(contato?.nome || "");
   const [cnpj, setCnpj] = useState(contato?.cnpj || "");
   const [email, setEmail] = useState(contato?.email || "");
@@ -30,6 +32,7 @@ export default function ModalNovoCliente({ onFechar, onSucesso, contato = null }
     try {
       const token = sessionStorage.getItem("token");
       if (!token) {
+        toast.error("Sua sessão expirou. Entre novamente como administrador.");
         setErro("Sua sessão não foi encontrada. Entre novamente como administrador.");
         return;
       }
@@ -45,10 +48,15 @@ export default function ModalNovoCliente({ onFechar, onSucesso, contato = null }
       const resultado = await resposta.json().catch(() => ({}));
 
       if (!resposta.ok) {
+        toast.error(resultado.erro || "Não foi possível cadastrar o cliente.");
         setErro(resultado.erro || "Não foi possível cadastrar o cliente.");
         return;
       }
 
+      toast.success("Cliente cadastrado com sucesso.");
+      if (resultado.email_enviado === false) {
+        toast.warning(resultado.aviso || "Cliente cadastrado, mas o e-mail de acesso não foi enviado.");
+      }
       await onSucesso({
         empresa: empresa.trim(),
         email: email.trim(),
@@ -57,7 +65,8 @@ export default function ModalNovoCliente({ onFechar, onSucesso, contato = null }
         avisoEmail: resultado.aviso || null,
       });
       onFechar();
-    } catch {
+    } catch (falha) {
+      toast.error(falha.message || "Não foi possível cadastrar o cliente.");
       setErro("Não foi possível conectar ao servidor.");
     } finally {
       setEnviando(false);
