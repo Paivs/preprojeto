@@ -8,6 +8,8 @@ import ListaDispositivos from "@/components/dispositivos/ListaDispositivos";
 import PainelDispositivo from "@/components/dispositivos/PainelDispositivo";
 import ModalNovoDispositivo from "@/components/dispositivos/ModalNovoDispositivo";
 import ModalEditarDispositivo from "@/components/dispositivos/ModalEditarDispositivo";
+import ModalConfirmarExclusao from "@/components/dispositivos/ModalConfirmarExclusao";
+import { useToast } from "@/components/toast/ToastProvider";
 import { adaptarEquipamentoApi, obterEstado } from "@/components/dispositivos/dados";
 import "@/components/dispositivos/botoes.css";
 import "./dispositivos.css";
@@ -15,6 +17,7 @@ import "./dispositivos.css";
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/$/, "");
 
 export default function PaginaDispositivos() {
+  const toast = useToast();
   const [dispositivos, setDispositivos] = useState([]);
   const [selecionadoId, setSelecionadoId] = useState(null);
   const [busca, setBusca] = useState("");
@@ -27,6 +30,9 @@ export default function PaginaDispositivos() {
   const [modalAberto, setModalAberto] = useState(false);
   const [dispositivoEditando, setDispositivoEditando] = useState(null);
   const [salvando, setSalvando] = useState(false);
+  const [excluindoId, setExcluindoId] = useState(null);
+  const [erroExclusao, setErroExclusao] = useState("");
+  const [dispositivoParaExcluir, setDispositivoParaExcluir] = useState(null);
 
   const carregarDispositivos = useCallback(async (mostrarCarregamento = true) => {
     if (mostrarCarregamento) {
@@ -113,6 +119,10 @@ export default function PaginaDispositivos() {
         await carregarDispositivos();
       }
       setModalAberto(false);
+      toast.success("Equipamento cadastrado com sucesso.");
+    } catch (falha) {
+      toast.error(falha.message || "Não foi possível cadastrar o equipamento.");
+      throw falha;
     } finally {
       setSalvando(false);
     }
@@ -139,8 +149,41 @@ export default function PaginaDispositivos() {
       setDispositivos((atuais) => atuais.map((item) => item.id === atualizado.id ? atualizado : item));
       setDispositivoEditando(null);
       setSelecionadoId(null);
+      toast.success("Alterações do equipamento salvas com sucesso.");
+    } catch (falha) {
+      toast.error(falha.message || "Não foi possível salvar as alterações.");
+      throw falha;
     } finally {
       setSalvando(false);
+    }
+  }
+
+  async function excluirEquipamento(dispositivo) {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      setErroExclusao("Sua sessão expirou. Entre novamente.");
+      return;
+    }
+
+    setExcluindoId(dispositivo.id);
+    setErroExclusao("");
+    try {
+      const resposta = await fetch(`${API_URL}/equipamentos/${dispositivo.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const resultado = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível excluir o equipamento.");
+
+      setDispositivos((atuais) => atuais.filter((item) => item.id !== dispositivo.id));
+      setSelecionadoId((atual) => atual === dispositivo.id ? null : atual);
+      setDispositivoParaExcluir(null);
+      toast.success("Equipamento excluído com sucesso.");
+    } catch (erroRequisicao) {
+      setErroExclusao(erroRequisicao.message || "Não foi possível excluir o equipamento.");
+      toast.error(erroRequisicao.message || "Não foi possível excluir o equipamento.");
+    } finally {
+      setExcluindoId(null);
     }
   }
 
@@ -170,8 +213,8 @@ export default function PaginaDispositivos() {
         <main className="conteudo-pagina">
           <div className="cabecalho-pagina">
             <div>
-              <span className="cabecalho-etiqueta">DISPOSITIVOS</span>
-              <h1>Meus dispositivos</h1>
+              <span className="cabecalho-etiqueta">EQUIPAMENTOS</span>
+              <h1>Meus equipamentos</h1>
               <p>Equipamentos vinculados à sua conta, organizados por setor.</p>
             </div>
           </div>
@@ -202,6 +245,11 @@ export default function PaginaDispositivos() {
           key={selecionado.id}
           dispositivo={selecionado}
           onFechar={() => setSelecionadoId(null)}
+          onExcluir={() => {
+            setErroExclusao("");
+            setDispositivoParaExcluir(selecionado);
+          }}
+          excluindo={excluindoId === selecionado.id}
           onEditar={() => {
             setDispositivoEditando(selecionado);
             setSelecionadoId(null);
@@ -218,6 +266,18 @@ export default function PaginaDispositivos() {
           salvando={salvando}
           onSalvar={editarEquipamento}
           onFechar={() => !salvando && setDispositivoEditando(null)}
+        />
+      )}
+
+      {dispositivoParaExcluir && (
+        <ModalConfirmarExclusao
+          dispositivo={dispositivoParaExcluir}
+          carregando={excluindoId === dispositivoParaExcluir.id}
+          erro={erroExclusao}
+          onCancelar={() => {
+            if (excluindoId === null) setDispositivoParaExcluir(null);
+          }}
+          onConfirmar={() => excluirEquipamento(dispositivoParaExcluir)}
         />
       )}
 

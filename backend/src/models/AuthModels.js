@@ -26,6 +26,17 @@ export async function buscarPagamentoPendente(idUsuario) {
   return linhas[0] || null;
 }
 
+export async function possuiPagamentoAprovado(idUsuario) {
+  const [linhas] = await pool.query(
+    `SELECT id_pagamento
+       FROM pagamento
+      WHERE id_usuario = ? AND status = 'pago'
+      LIMIT 1`,
+    [idUsuario]
+  );
+  return linhas.length > 0;
+}
+
 export async function buscarPorCnpj(cnpj) {
   const [linhas] = await pool.query(
     "SELECT id_usuario, cnpj FROM usuario WHERE cnpj = ?",

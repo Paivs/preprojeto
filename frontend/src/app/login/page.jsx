@@ -4,10 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { API_BASE_URL } from "@/lib/api";
-import {
-  limparSessao,
-  salvarSessao,
-} from "@/lib/session";
+import { limparSessao, salvarSessao } from "@/lib/session";
 import "./login.css";
 
 export default function Login() {
@@ -180,6 +177,11 @@ export default function Login() {
       <canvas ref={canvasRef} className="particles-canvas" />
 
       <div className="card-login">
+        <div className="voltar">
+          <Link href="/">
+            <i className="bi bi-arrow-left"></i>
+          </Link>
+        </div>
         <div className="top-login">
           <img src="/images/logo.png" alt="Volt House" />
 
@@ -240,10 +242,6 @@ export default function Login() {
               <i className="bi bi-exclamation-triangle"></i> {erro}
             </p>
           )}
-
-          <Link className="esquecer-senha" href="/">
-            Esqueci minha senha
-          </Link>
 
           <div className="btn-entrar">
             <button type="submit" disabled={carregando}>

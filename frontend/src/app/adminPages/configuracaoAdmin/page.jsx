@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar.jsx";
 import Header from "@/components/headerAdmin/HeaderAdmin.jsx";
 import { API_BASE_URL } from "@/lib/api";
+import { useToast } from "@/components/toast/ToastProvider";
 import "./configuracaoAdmin.css";
 
 const perfilVazio = {
@@ -35,6 +36,7 @@ async function requisitarConfiguracao(token, rota, opcoes = {}) {
 }
 
 export default function ConfiguracaoAdmin() {
+  const toast = useToast();
   const [token, setToken] = useState("");
   const [perfil, setPerfil] = useState(perfilVazio);
   const [senha, setSenha] = useState({
@@ -128,12 +130,14 @@ export default function ConfiguracaoAdmin() {
         }),
       );
       window.dispatchEvent(new Event("volthouse:perfil-atualizado"));
+      toast.success("Configurações salvas com sucesso.");
       setFeedback({
         tipo: "sucesso",
         texto: "Configurações salvas com sucesso.",
       });
     } catch (erro) {
       setFeedback({ tipo: "erro", texto: erro.message });
+      toast.error(erro.message || "Não foi possível salvar as configurações.");
     } finally {
       setSalvandoPerfil(false);
     }
@@ -151,7 +155,9 @@ export default function ConfiguracaoAdmin() {
       });
       setSenha({ senha_atual: "", nova_senha: "", confirmar_senha: "" });
       setFeedback({ tipo: "sucesso", texto: resultado.mensagem });
+      toast.success(resultado.mensagem || "Senha atualizada com sucesso.");
     } catch (erro) {
+      toast.error(erro.message || "Não foi possível atualizar a senha.");
       const textoErro = erro.message.toLowerCase();
       const campo =
         erro.status === 401 || textoErro.includes("senha atual")
@@ -267,51 +273,6 @@ export default function ConfiguracaoAdmin() {
                   </div>
                 </div>
               </section>
-
-              <section className="group-config">
-                <div className="cabecalho-dados">
-                  <i className="bi bi-lightning" />
-                  <div className="tema-dados">
-                    <h4>Parâmetros de energia</h4>
-                    <span>
-                      Limite usado como referência para o monitoramento
-                      energético.
-                    </span>
-                  </div>
-                </div>
-                <div className="main-dados">
-                  <div className="card-config">
-                    <div className="group-value-limite">
-                      <div className="dados-config">
-                        <label htmlFor="consumo_maximo">
-                          Limite padrão de consumo (kWh)
-                        </label>
-                        <input
-                          id="consumo_maximo"
-                          type="number"
-                          min="0"
-                          max="99999999.99"
-                          step="0.01"
-                          name="consumo_maximo"
-                          value={perfil.consumo_maximo}
-                          onChange={atualizarCampo}
-                          required
-                          disabled={carregando || !perfilCarregado}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <button
-                  className="config-botao"
-                  type="submit"
-                  disabled={
-                    carregando || !perfilCarregado || salvandoPerfil || !token
-                  }
-                >
-                  {salvandoPerfil ? "Salvando..." : "Salvar configurações"}
-                </button>
-              </section>
             </form>
 
             <form className="group-config" onSubmit={salvarSenha}>
@@ -362,7 +323,7 @@ export default function ConfiguracaoAdmin() {
                       <input
                         id="nova_senha"
                         type="password"
-                        autoComplete="new-password"
+                        autoComplete="off"
                         value={senha.nova_senha}
                         aria-invalid={erroSenha?.campo === "nova_senha"}
                         aria-describedby={
@@ -396,7 +357,7 @@ export default function ConfiguracaoAdmin() {
                       <input
                         id="confirmar_senha"
                         type="password"
-                        autoComplete="new-password"
+                        autoComplete="off"
                         value={senha.confirmar_senha}
                         aria-invalid={erroSenha?.campo === "confirmar_senha"}
                         aria-describedby={

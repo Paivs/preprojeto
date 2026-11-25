@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./modalGerenciarCliente.css";
+import { useToast } from "@/components/toast/ToastProvider";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/$/, "");
 
-export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }) {
+export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onFechar, onAlteracao }) {
+  const toast = useToast();
+  const secaoCobrancaRef = useRef(null);
   const [formulario, setFormulario] = useState({ nome_empresa: "", cnpj: "", email: "" });
   const [novoPagamento, setNovoPagamento] = useState({
     valor: "",
@@ -22,6 +25,10 @@ export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }
   const [registrando, setRegistrando] = useState(false);
   const [erro, setErro] = useState("");
   const [erroPagamentos, setErroPagamentos] = useState("");
+
+  useEffect(() => {
+    if (erro) toast.error(erro);
+  }, [erro, toast]);
 
   useEffect(() => {
     let ativo = true;
@@ -95,7 +102,7 @@ export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }
       });
       const resultado = await resposta.json().catch(() => ({}));
       if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível salvar as alterações.");
-      onAlteracao();
+      onAlteracao("Dados do cliente atualizados com sucesso.");
     } catch (falha) {
       setErro(falha.message || "Não foi possível conectar à API.");
       setSalvando(false);
@@ -146,7 +153,7 @@ export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }
       setPagamentos((atuais) => atuais.map((item) => (
         String(item.id_pagamento) === String(resultado.dados.id_pagamento) ? resultado.dados : item
       )));
-      onAlteracao();
+      onAlteracao("Status do pagamento atualizado com sucesso.");
     } catch (falha) {
       setErro(falha.message || "Não foi possível conectar à API.");
       setSalvando(false);
@@ -173,7 +180,7 @@ export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }
       });
       const resultado = await resposta.json().catch(() => ({}));
       if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível registrar o pagamento.");
-      onAlteracao();
+      onAlteracao("Pagamento cadastrado com sucesso.");
     } catch (falha) {
       setErro(falha.message || "Não foi possível conectar à API.");
       setRegistrando(false);
@@ -191,7 +198,7 @@ export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }
       });
       const resultado = await resposta.json().catch(() => ({}));
       if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível excluir o cliente.");
-      onAlteracao();
+      onAlteracao("Cliente excluído com sucesso.");
     } catch (falha) {
       setErro(falha.message || "Não foi possível conectar à API.");
       setSalvando(false);
@@ -209,7 +216,7 @@ export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }
         <header className="gerenciar-modal-topo">
           <div>
             <span>CLIENTE #{cliente.id_usuario}</span>
-            <h2 id="gerenciar-cliente-titulo">Gerenciar cliente</h2>
+            <h2 id="gerenciar-cliente-titulo">{modo === "cobranca" ? "Gerar cobrança" : "Gerenciar cliente"}</h2>
           </div>
           <button type="button" onClick={onFechar} disabled={salvando || registrando} aria-label="Fechar modal">
             <i className="bi bi-x-lg" aria-hidden="true" />
@@ -220,7 +227,7 @@ export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }
           <p className="gerenciar-modal-mensagem">Carregando dados do cliente...</p>
         ) : (
           <>
-            <form onSubmit={salvar}>
+            {modo === "gerenciar" && <form onSubmit={salvar}>
               <label>
                 Nome da empresa
                 <input name="nome_empresa" value={formulario.nome_empresa} onChange={alterarCampo} />
@@ -234,9 +241,6 @@ export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }
                 <input name="email" type="email" value={formulario.email} onChange={alterarCampo} />
               </label>
               <footer className="gerenciar-modal-acoes">
-                <button type="button" className="gerenciar-excluir" onClick={excluir} disabled={salvando || registrando}>
-                  Excluir cliente
-                </button>
                 <div>
                   <button type="button" className="gerenciar-cancelar" onClick={onFechar} disabled={salvando || registrando}>
                     Cancelar
@@ -246,9 +250,9 @@ export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }
                   </button>
                 </div>
               </footer>
-            </form>
+            </form>}
 
-            <section className="gerenciar-pagamento">
+            {modo === "gerenciar" && <section className="gerenciar-pagamento">
               <h3>Status do pagamento</h3>
               {erroPagamentos ? (
                 <p className="gerenciar-modal-mensagem">{erroPagamentos}</p>
@@ -287,10 +291,13 @@ export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }
               ) : (
                 <p className="gerenciar-modal-mensagem">Este cliente ainda não tem pagamentos registrados.</p>
               )}
-            </section>
+            </section>}
 
-            <section className="gerenciar-pagamento">
-              <h3>Registrar pagamento</h3>
+            {modo === "cobranca" && <section className="gerenciar-pagamento" ref={secaoCobrancaRef}>
+              <h3>Gerar cobrança</h3>
+              <p className="gerenciar-modal-mensagem">
+                Cadastre um valor e vencimento. A cobrança ficará pendente e o cliente poderá acessar a página de pagamento ao entrar.
+              </p>
               <form className="gerenciar-form-pagamento" onSubmit={registrarPagamento}>
                 <label>
                   Valor
@@ -320,10 +327,10 @@ export default function ModalGerenciarCliente({ cliente, onFechar, onAlteracao }
                   </label>
                 )}
                 <button type="submit" className="gerenciar-salvar gerenciar-atualizar-pagamento" disabled={registrando || salvando}>
-                  {registrando ? "Registrando..." : "Registrar pagamento"}
+                  {registrando ? "Gerando cobrança..." : "Gerar cobrança"}
                 </button>
               </form>
-            </section>
+            </section>}
             {erro && <p className="gerenciar-modal-erro" role="alert">{erro}</p>}
           </>
         )}

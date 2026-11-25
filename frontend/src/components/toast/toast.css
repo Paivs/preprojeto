@@ -1,0 +1,137 @@
+.toast-regiao {
+  position: fixed;
+  z-index: 1200;
+  left: 24px;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  display: grid;
+  gap: 10px;
+  width: min(410px, calc(100vw - 48px));
+  pointer-events: none;
+}
+
+.toast-item {
+  --toast-cor: var(--cor-informacao);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px 14px;
+  color: var(--cor-texto);
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  border-left: 3px solid var(--toast-cor);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .24);
+  pointer-events: auto;
+  animation: toast-entrada .2s ease-out both;
+}
+
+.toast-success {
+  --toast-cor: var(--cor-sucesso);
+}
+
+.toast-error {
+  --toast-cor: var(--cor-vermelho);
+}
+
+.toast-warning {
+  --toast-cor: var(--cor-alerta);
+}
+
+.toast-info {
+  --toast-cor: var(--cor-informacao);
+}
+
+.toast-icone {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--toast-cor);
+  font-size: 17px;
+}
+
+.toast-conteudo {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-conteudo strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.toast-conteudo p {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.toast-fechar {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  margin: -5px -4px 0 0;
+  color: var(--cor-texto-fraco);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.toast-fechar:hover {
+  color: var(--cor-texto);
+  background: var(--roxo-suave);
+}
+
+.toast-fechar:focus-visible {
+  outline: 2px solid var(--cor-destaque);
+  outline-offset: 2px;
+}
+
+.toast-saindo {
+  animation: toast-saida .18s ease-in both;
+}
+
+@keyframes toast-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-saida {
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (max-width: 600px) {
+  .toast-regiao {
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: 12px;
+    width: auto;
+  }
+
+  .toast-item {
+    padding: 13px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .toast-item,
+  .toast-saindo {
+    animation: none;
+  }
+}

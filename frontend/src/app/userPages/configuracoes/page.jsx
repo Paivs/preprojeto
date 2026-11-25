@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import { API_BASE_URL } from "@/lib/api";
+import { useToast } from "@/components/toast/ToastProvider";
 import "./configuracoes.css";
 
 const abas = [
@@ -13,6 +14,7 @@ const abas = [
 ];
 
 export default function ConfiguracaoUser() {
+  const toast = useToast();
   const [abaAtiva, setAbaAtiva] = useState("perfil");
   const [perfil, setPerfil] = useState(null);
   const [carregando, setCarregando] = useState(true);
@@ -160,7 +162,9 @@ export default function ConfiguracaoUser() {
       }
       aoConcluir?.();
       setSucesso(mensagem);
+      toast.success(mensagem);
     } catch (falha) {
+      toast.error(falha.message || "Não foi possível salvar as alterações.");
       setErro(falha.message || "Não foi possível conectar à API.");
     } finally {
       setSalvando(false);
@@ -496,7 +500,7 @@ export default function ConfiguracaoUser() {
                           Nova senha
                           <input
                             type="password"
-                            autoComplete="new-password"
+                            autoComplete="off"
                             minLength={8}
                             value={senha.nova}
                             onChange={(e) =>
@@ -516,7 +520,7 @@ export default function ConfiguracaoUser() {
                           Confirme a nova senha
                           <input
                             type="password"
-                            autoComplete="new-password"
+                            autoComplete="off"
                             minLength={8}
                             value={senha.confirmar}
                             onChange={(e) =>

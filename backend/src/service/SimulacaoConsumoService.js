@@ -12,6 +12,14 @@ function consumoEsperadoNoMes(consumoEsperado, agora = new Date()) {
 
 export function adicionarConsumoSimulado(equipamento) {
   const status = String(equipamento.status || '').trim().toLocaleLowerCase('pt-BR');
+  if (equipamento.consumo_mes !== undefined) {
+    return {
+      ...equipamento,
+      consumo_atual: status === 'inativo' ? 0 : Number(equipamento.consumo_mes),
+      consumo_atualizado_em: equipamento.consumo_atualizado_em
+    };
+  }
+
   if (status === 'inativo') {
     return {
       ...equipamento,

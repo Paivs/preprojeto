@@ -1,0 +1,60 @@
+.pagina :is(button, a, [role="button"]) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pagina :is(button, a, [role="button"]):focus-visible,
+.pagina :is(input, select, textarea):focus-visible {
+  outline: 2px solid var(--cor-destaque);
+  outline-offset: 3px;
+}
+
+.pagina :is(button, a, [role="button"]):active:not(:disabled) {
+  animation: microinteracao-clique .12s ease-out;
+}
+
+.pagina :is(input, select, textarea):focus {
+  box-shadow: 0 0 0 3px var(--roxo-suave);
+}
+
+.pagina :is(input, select, textarea):user-invalid {
+  border-color: var(--cor-vermelho);
+}
+
+.pagina :is(input, select, textarea):user-valid {
+  border-color: color-mix(in srgb, var(--verde) 55%, var(--cor-borda));
+}
+
+.painel-notificacoes {
+  animation: menu-entrada .16s ease-out both;
+  transform-origin: top right;
+}
+
+@keyframes microinteracao-clique {
+  50% {
+    transform: scale(.98);
+  }
+}
+
+@keyframes menu-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .pagina :is(button, a, [role="button"]):active:not(:disabled),
+  .painel-notificacoes {
+    animation: none;
+  }
+
+  .pagina :is(input, select, textarea) {
+    scroll-behavior: auto;
+  }
+}

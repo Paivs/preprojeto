@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/lib/api";
 import { requisicaoAutenticada } from "@/lib/session";
+import { useToast } from "@/components/toast/ToastProvider";
 import "./painelNovoSetor.css";
 
 export default function PainelNovoSetor({ onFechar, onCriado }) {
+  const toast = useToast();
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [consumo, setConsumo] = useState("0");
   const [tarifaEnergia, setTarifaEnergia] = useState("0");
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
@@ -34,7 +35,6 @@ export default function PainelNovoSetor({ onFechar, onCriado }) {
         body: JSON.stringify({
           nome_setor: nome.trim(),
           descricao: descricao.trim() || null,
-          consumo_geral: Number(consumo || 0),
           tarifa_energia: Number(tarifaEnergia || 0),
         }),
       });
@@ -43,8 +43,10 @@ export default function PainelNovoSetor({ onFechar, onCriado }) {
         throw new Error(
           resultado.erro || resultado.message || "Não foi possível adicionar o setor."
         );
+      toast.success("Setor cadastrado com sucesso.");
       onCriado();
     } catch (falha) {
+      toast.error(falha.message || "Não foi possível cadastrar o setor.");
       setErro(falha.message || "Não foi possível conectar à API.");
     } finally {
       setSalvando(false);
@@ -101,18 +103,7 @@ export default function PainelNovoSetor({ onFechar, onCriado }) {
               rows={4}
             />
           </label>
-          <div className="setor-painel-campos-duplos">
-            <label>
-              Consumo global (kWh/mês)
-              <input
-                type="number"
-                min="0"
-                max="99999999.99"
-                step="0.01"
-                value={consumo}
-                onChange={(e) => setConsumo(e.target.value)}
-              />
-            </label>
+          <div className="setor-painel-campos-duplos setor-painel-tarifa-unica">
             <label>
               Tarifa de energia (R$/kWh)
               <input
@@ -125,12 +116,6 @@ export default function PainelNovoSetor({ onFechar, onCriado }) {
               />
             </label>
           </div>
-          <p className="setor-painel-ajuda">
-            Custo calculado: {(Number(consumo || 0) * Number(tarifaEnergia || 0)).toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}. Use consumo × tarifa por kWh.
-          </p>
           {erro && (
             <p className="setor-painel-erro" role="alert">
               {erro}

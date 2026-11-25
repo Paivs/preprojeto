@@ -35,6 +35,9 @@ CREATE TABLE equipamento (
     nome_equipamento VARCHAR(100) NOT NULL,
     tipo VARCHAR(50),
     consumo_atual DECIMAL(10, 2) DEFAULT 0.00,
+    consumo_mensal DECIMAL(11, 2) NOT NULL DEFAULT 0.00,
+    consumo_mensal_atualizado_em DATETIME NULL,
+    incremento_consumo_simulado DECIMAL(11, 2) NOT NULL DEFAULT 0.00,
     status VARCHAR(50),
     id_setor INT NOT NULL,
     CONSTRAINT fk_equipamento_setor FOREIGN KEY (id_setor) 
