@@ -1,5 +1,11 @@
+<<<<<<< HEAD:backend/src/simular-consumo.js
+import "dotenv/config";
+import { pool } from "./config/database.js";
+import { adicionarConsumoSimulado } from "./service/SimulacaoConsumoService.js";
+=======
 ﻿import "dotenv/config";
 import { pool } from "../src/config/database.js";
+>>>>>>> 88511f0d5a617b7eca04dc773141d87527cfa069:backend/temp/simular-consumo.js
 
 const intervaloMs = Math.max(500, Number(process.env.SIMULACAO_INTERVALO_MS) || 500);
 function registrarAlertaSimulado(equipamento, consumoAnterior, consumoAtual, agora) {
