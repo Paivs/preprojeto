@@ -94,8 +94,9 @@ export default function Header({ tipoUsuario = "usuario" }) {
       const alertas = Array.isArray(resultado.dados) ? resultado.dados : [];
       setNotificacoes(
         alertas.map((alerta) => {
-          const id = `${alerta.id_equipamento}:${alerta.mes_referencia}`;
-          return {
+          const alertaConta = alerta.tipo_alerta === "conta";
+          const id = alerta.id_alerta || `${alerta.id_equipamento}:${alerta.mes_referencia}`;
+          const notificacao = {
             id,
             icone: "bi-lightning-charge",
             cor: "aviso",
@@ -105,9 +106,14 @@ export default function Header({ tipoUsuario = "usuario" }) {
             )} kWh neste mês; limite ${formatarConsumo(
               alerta.consumo_maximo
             )} kWh.`,
-            horario: formatarHorario(alerta.ultima_leitura),
+            horario: alertaConta ? "Consumo mensal da unidade" : formatarHorario(alerta.ultima_leitura),
             lida: idsLidos.has(id),
           };
+          if (alertaConta) {
+            notificacao.titulo = "Limite mensal da unidade excedido";
+            notificacao.descricao = `Consumo total da unidade: ${formatarConsumo(alerta.consumo_mes)} kWh neste mês; limite ${formatarConsumo(alerta.consumo_maximo)} kWh.`;
+          }
+          return notificacao;
         })
       );
     } catch {

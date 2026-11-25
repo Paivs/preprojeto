@@ -25,7 +25,7 @@ async function simular() {
     );
 
     if (equipamentos.length === 0) {
-      console.log("Nenhum equipamento tem mÃ­nimo e mÃ¡ximo definidos.");
+      console.log("Nenhum equipamento tem mi­nimo e máximo definidos.");
       return;
     }
 
@@ -39,17 +39,20 @@ async function simular() {
       const maximo = Number(equipamento.consumo_maximo);
 
       const consumoAnterior = Number(equipamento.consumo_mes || 0);
-      let incremento = Number(equipamento.incremento_consumo_simulado);
-      if (!Number.isFinite(incremento) || incremento <= 0) {
-        incremento = Number((0.1 + Number(equipamento.id_equipamento) / 100).toFixed(2));
+      let incrementoBase = Number(equipamento.incremento_consumo_simulado);
+      if (!Number.isFinite(incrementoBase) || incrementoBase <= 0) {
+        incrementoBase = Number((0.1 + Number(equipamento.id_equipamento) / 100).toFixed(2));
         await pool.query(
           `UPDATE equipamento
               SET incremento_consumo_simulado = ?
             WHERE id_equipamento = ? AND incremento_consumo_simulado <= 0`,
-          [incremento, equipamento.id_equipamento]
+          [incrementoBase, equipamento.id_equipamento]
         );
       }
-      incremento = Math.max(0.001, Number((incremento * 0.1).toFixed(2)));
+      const incremento = Math.max(
+        0.01,
+        Number((incrementoBase * (0.05 + Math.random() * 0.15)).toFixed(2))
+      );
       await pool.query(
         `UPDATE equipamento
             SET consumo_mensal = CASE
@@ -71,7 +74,7 @@ async function simular() {
   }
 }
 
-console.log(`SimulaÃ§Ã£o iniciada. Intervalo: ${intervaloMs} ms. Pare com Ctrl+C.`);
+console.log(`Simulação iniciada. Intervalo: ${intervaloMs} ms. Pare com Ctrl+C.`);
 await simular();
 const temporizador = setInterval(simular, intervaloMs);
 

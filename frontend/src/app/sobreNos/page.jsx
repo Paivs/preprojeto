@@ -31,10 +31,6 @@ export default function SobreNos() {
       <section className="sobre-hero" aria-labelledby="sobre-titulo">
         <div className="sobre-hero-inner">
           <div className="sobre-hero-copy">
-            <span className="sobre-eyebrow">
-              <i className="bi bi-lightning-charge-fill" aria-hidden="true" />
-              Tecnologia para um consumo melhor
-            </span>
             <h1 id="sobre-titulo">
               Energia sob controle.
               <span>Futuro em evolução.</span>

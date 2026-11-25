@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import Usuario from '../models/Usuario.js';
 import * as UsuarioModel from '../models/UsuarioModels.js';
+import * as SetorService from './SetorService.js';
 import { validarTermoBusca } from '../utils/busca.js';
 
 const REGEX_SENHA_FORTE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
@@ -130,7 +131,7 @@ export async function excluir(idRecebido) {
   if (!removeu) throw erroNaoEncontrado(id);
 }
 
-function formatarConfiguracao(usuario, apenasAdmin) {
+function formatarConfiguracao(usuario, apenasAdmin, consumoTotal = usuario.consumo_total) {
   if (apenasAdmin) {
     return {
       id_usuario: usuario.id_usuario,
@@ -148,7 +149,7 @@ function formatarConfiguracao(usuario, apenasAdmin) {
     email: usuario.email,
     telefone: usuario.telefone,
     perfil: usuario.nivel_permissao,
-    consumo_total: Number(usuario.consumo_total || 0),
+    consumo_total: Number(consumoTotal || 0),
     consumo_maximo: Number(usuario.consumo_maximo || 0)
   };
 }
@@ -163,7 +164,10 @@ export async function buscarConfiguracao(idRecebido, apenasAdmin = false) {
   const id = validarId(idRecebido);
   const usuario = await UsuarioModel.buscarConfiguracao(id, apenasAdmin);
   if (!usuario) throw erroConfiguracaoNaoEncontrada(apenasAdmin);
-  return formatarConfiguracao(usuario, apenasAdmin);
+  if (apenasAdmin) return formatarConfiguracao(usuario, true);
+  const setores = await SetorService.listar(id);
+  const consumoTotal = setores.reduce((total, setor) => total + Number(setor.consumo_geral || 0), 0);
+  return formatarConfiguracao(usuario, false, consumoTotal);
 }
 
 export async function atualizarConfiguracao(idRecebido, entrada = {}, apenasAdmin = false) {
@@ -194,7 +198,10 @@ export async function atualizarConfiguracao(idRecebido, entrada = {}, apenasAdmi
     consumo_maximo: usuario.consumo_maximo
   }, apenasAdmin);
   if (!atualizado) throw erroConfiguracaoNaoEncontrada(apenasAdmin);
-  return formatarConfiguracao(atualizado, apenasAdmin);
+  if (apenasAdmin) return formatarConfiguracao(atualizado, true);
+  const setores = await SetorService.listar(id);
+  const consumoTotal = setores.reduce((total, setor) => total + Number(setor.consumo_geral || 0), 0);
+  return formatarConfiguracao(atualizado, false, consumoTotal);
 }
 
 export async function alterarSenhaConfiguracao(idRecebido, entrada = {}, apenasAdmin = false) {

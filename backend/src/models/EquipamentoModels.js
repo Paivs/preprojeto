@@ -171,5 +171,6 @@ export async function listarAlertasConsumo(idUsuario) {
      ORDER BY e.consumo_mensal_atualizado_em DESC`,
     [idUsuario]
   );
+
   return linhas;
 }

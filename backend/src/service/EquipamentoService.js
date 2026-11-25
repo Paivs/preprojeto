@@ -1,4 +1,6 @@
 import * as EquipamentoModel from '../models/EquipamentoModels.js';
+import * as UsuarioModel from '../models/UsuarioModels.js';
+import * as SetorService from './SetorService.js';
 import { adicionarConsumoSimulado, adicionarConsumoSimuladoLista } from './SimulacaoConsumoService.js';
 import { validarTermoBusca } from '../utils/busca.js';
 
@@ -99,7 +101,31 @@ export async function listar(idUsuarioRecebido, buscaRecebida) {
 
 export async function listarAlertasConsumo(idUsuarioRecebido) {
   const idUsuario = validarId(idUsuarioRecebido, 'ID do usuario');
-  return EquipamentoModel.listarAlertasConsumo(idUsuario);
+  const [alertas, usuario, setores] = await Promise.all([
+    EquipamentoModel.listarAlertasConsumo(idUsuario),
+    UsuarioModel.buscarConfiguracao(idUsuario),
+    SetorService.listar(idUsuario)
+  ]);
+  const consumoTotal = setores.reduce(
+    (total, setor) => total + Number(setor.consumo_geral || 0),
+    0
+  );
+  const limite = Number(usuario?.consumo_maximo || 0);
+
+  if (limite <= 0 || consumoTotal <= limite) return alertas;
+
+  const agora = new Date();
+  const mesReferencia = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}`;
+  return [
+    ...alertas,
+    {
+      tipo_alerta: 'conta',
+      id_alerta: `conta:${idUsuario}:${mesReferencia}`,
+      consumo_maximo: limite,
+      consumo_mes: consumoTotal,
+      mes_referencia: mesReferencia
+    }
+  ];
 }
 
 export async function registrarLeitura(idEquipamentoRecebido, dados = {}, idUsuarioRecebido) {
