@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { pool } from "../src/config/database.js";
-import { adicionarConsumoSimulado } from "../src/service/SimulacaoConsumoService.js";
+import { pool } from "./config/database.js";
+import { adicionarConsumoSimulado } from "./service/SimulacaoConsumoService.js";
 
 const intervaloMs = Math.max(500, Number(process.env.SIMULACAO_INTERVALO_MS) || 3000);
 const ciclosEntreAlertas = 2;
