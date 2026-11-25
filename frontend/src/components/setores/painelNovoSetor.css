@@ -1,0 +1,184 @@
+.setor-painel-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  justify-content: flex-start;
+  background: rgba(3, 5, 12, 0.54);
+}
+.setor-painel {
+  width: min(440px, 100%);
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--cor-card);
+  border-right: 1px solid var(--cor-borda);
+  box-shadow: 12px 0 40px rgba(0, 0, 0, 0.3);
+  animation: setor-painel-entrar 0.22s ease-out;
+}
+@keyframes setor-painel-entrar {
+  from {
+    transform: translateX(-24px);
+    opacity: 0.7;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.setor-painel-cabecalho {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 28px 26px 22px;
+  border-bottom: 1px solid var(--cor-borda);
+}
+.setor-painel-cabecalho > div > span {
+  color: var(--amarelo);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+.setor-painel-cabecalho h2 {
+  margin-top: 9px;
+  color: var(--cor-texto);
+  font-size: 22px;
+}
+.setor-painel-cabecalho p {
+  margin-top: 6px;
+  color: var(--cor-texto-fraco);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.setor-painel-fechar {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  margin-left: auto;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+}
+.setor-painel-fechar:hover {
+  background: var(--roxo-suave);
+  color: var(--cor-destaque);
+}
+.setor-painel-formulario {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 19px;
+  padding: 24px 26px;
+}
+.setor-painel-formulario label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--cor-texto-secundario);
+  font-size: 12px;
+  font-weight: 600;
+}
+.setor-painel-formulario input,
+.setor-painel-formulario select,
+.setor-painel-formulario textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  outline: none;
+  background: var(--cor-campo);
+  color: var(--cor-texto);
+  font: 400 13px var(--font-inter);
+  resize: vertical;
+}
+.setor-painel-formulario select {
+  cursor: pointer;
+}
+.setor-painel-formulario select option {
+  color: var(--cor-texto);
+  background-color: var(--cor-card);
+}
+.setor-painel-formulario select option:checked {
+  color: #fff;
+  background-color: var(--roxo);
+}
+.setor-painel-formulario input:focus,
+.setor-painel-formulario select:focus,
+.setor-painel-formulario textarea:focus {
+  border-color: var(--cor-destaque);
+}
+.setor-painel-formulario input::placeholder,
+.setor-painel-formulario textarea::placeholder {
+  color: var(--cor-texto-fraco);
+}
+.setor-painel-campos-duplos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.setor-painel-tarifa-unica {
+  grid-template-columns: 1fr;
+}
+.setor-painel-ajuda {
+  margin-top: -10px;
+  color: var(--cor-texto-fraco);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.setor-painel-erro {
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 104, 117, 0.3);
+  border-radius: 7px;
+  background: var(--vermelho-suave);
+  color: var(--cor-vermelho);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.setor-painel-acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 20px;
+}
+.setor-painel-cancelar,
+.setor-painel-salvar {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.setor-painel-cancelar {
+  border: 1px solid var(--cor-borda);
+  background: transparent;
+  color: var(--cor-texto-secundario);
+}
+.setor-painel-salvar {
+  flex: 1;
+  border: 0;
+  background: linear-gradient(135deg, var(--roxo-claro), var(--roxo));
+  color: #fff;
+}
+.setor-painel-salvar:hover:not(:disabled) {
+  background: var(--roxo-hover);
+}
+.setor-painel button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+@media (max-width: 480px) {
+  .setor-painel-cabecalho,
+  .setor-painel-formulario {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+  .setor-painel-campos-duplos {
+    grid-template-columns: 1fr;
+  }
+}

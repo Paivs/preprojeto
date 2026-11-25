@@ -1,0 +1,113 @@
+.pagina :is(button, a, [role="button"]) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pagina :is(button, a, [role="button"]):focus-visible,
+.pagina :is(input, select, textarea):focus-visible {
+  outline: 1px solid var(--cor-destaque);
+}
+
+.pagina :is(button, a, [role="button"]):active:not(:disabled) {
+  animation: microinteracao-clique .12s ease-out;
+}
+
+.pagina :is(input, select, textarea):focus {
+  box-shadow: 0 0 0 3px var(--roxo-suave);
+}
+
+.pagina :is(input, select, textarea):user-invalid {
+  border-color: var(--cor-vermelho);
+}
+
+.pagina :is(input, select, textarea):user-valid {
+  border-color: color-mix(in srgb, var(--verde) 55%, var(--cor-borda));
+}
+
+.pagina :is(button, a, [role="button"]):disabled {
+  cursor: wait;
+  opacity: .72;
+}
+
+.pagina button:disabled .bi-arrow-repeat {
+  animation: microinteracao-carregando .8s linear infinite;
+}
+
+.cliente-pagina button:disabled .bi-arrow-repeat {
+  animation: microinteracao-carregando .8s linear infinite;
+}
+
+.cliente-pagina :is(button, a):focus-visible {
+  outline: 1px solid var(--cor-destaque);
+  outline-offset: 2px;
+}
+
+.pagina .card-dispositivo {
+  transition: transform .16s ease, border-color .16s ease, background-color .16s ease;
+}
+
+.pagina .card-dispositivo:hover {
+  transform: translateY(-2px);
+}
+
+.pagina .tabela-wrapper tbody tr,
+.pagina .contatos-tabela tbody tr,
+.pagina .tabela-setores tbody tr {
+  transition: background-color .15s ease;
+}
+
+.pagina :is(.tabela-wrapper, .contatos-tabela, .tabela-setores) tbody tr:hover {
+  background-color: color-mix(in srgb, var(--cor-destaque) 5%, transparent);
+}
+
+.painel-notificacoes {
+  animation: menu-entrada .16s ease-out both;
+  transform-origin: top right;
+}
+
+@keyframes microinteracao-clique {
+  50% {
+    transform: scale(.98);
+  }
+}
+
+@keyframes microinteracao-carregando {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes menu-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .pagina :is(button, a, [role="button"]):active:not(:disabled),
+  .painel-notificacoes,
+  .pagina button:disabled .bi-arrow-repeat,
+  .cliente-pagina button:disabled .bi-arrow-repeat {
+    animation: none;
+  }
+
+  .pagina :is(button, a, [role="button"], input, select, textarea),
+  .cliente-pagina :is(button, a, input, select, textarea) {
+    transition: none !important;
+  }
+
+  .pagina .card-dispositivo,
+  .pagina .tabela-wrapper tbody tr,
+  .pagina .contatos-tabela tbody tr,
+  .pagina .tabela-setores tbody tr {
+    transition: none;
+  }
+
+  .pagina .card-dispositivo:hover {
+    transform: none;
+  }
+}
