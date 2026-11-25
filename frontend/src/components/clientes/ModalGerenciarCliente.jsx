@@ -23,6 +23,7 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
   const [registrando, setRegistrando] = useState(false);
+  const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const [erro, setErro] = useState("");
   const [erroPagamentos, setErroPagamentos] = useState("");
 
@@ -75,11 +76,14 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
 
   useEffect(() => {
     function fecharComEscape(evento) {
-      if (evento.key === "Escape" && !salvando && !registrando) onFechar();
+      if (evento.key === "Escape" && !salvando && !registrando) {
+        if (confirmarExclusao) setConfirmarExclusao(false);
+        else onFechar();
+      }
     }
     window.addEventListener("keydown", fecharComEscape);
     return () => window.removeEventListener("keydown", fecharComEscape);
-  }, [onFechar, registrando, salvando]);
+  }, [confirmarExclusao, onFechar, registrando, salvando]);
 
   function alterarCampo(evento) {
     setFormulario((atual) => ({ ...atual, [evento.target.name]: evento.target.value }));
@@ -198,6 +202,7 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
       });
       const resultado = await resposta.json().catch(() => ({}));
       if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível excluir o cliente.");
+      setConfirmarExclusao(false);
       onAlteracao("Cliente excluído com sucesso.");
     } catch (falha) {
       setErro(falha.message || "Não foi possível conectar à API.");
@@ -241,6 +246,9 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
                 <input name="email" type="email" value={formulario.email} onChange={alterarCampo} />
               </label>
               <footer className="gerenciar-modal-acoes">
+                <button type="button" className="gerenciar-excluir" onClick={() => setConfirmarExclusao(true)} disabled={salvando || registrando}>
+                  Excluir cliente
+                </button>
                 <div>
                   <button type="button" className="gerenciar-cancelar" onClick={onFechar} disabled={salvando || registrando}>
                     Cancelar
@@ -341,6 +349,30 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
           </>
         )}
       </section>
-    </div >
+      {confirmarExclusao && (
+        <div
+          className="confirmar-exclusao-fundo"
+          onMouseDown={(evento) => {
+            if (evento.target === evento.currentTarget && !salvando) setConfirmarExclusao(false);
+          }}
+        >
+          <section className="confirmar-exclusao-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmar-exclusao-titulo" aria-describedby="confirmar-exclusao-descricao">
+            <span className="confirmar-exclusao-icone" aria-hidden="true"><i className="bi bi-exclamation-triangle" /></span>
+            <h2 id="confirmar-exclusao-titulo">Excluir cliente?</h2>
+            <p id="confirmar-exclusao-descricao">
+              O cliente <strong>{cliente.nome_empresa || `#${cliente.id_usuario}`}</strong> será removido. Esta ação não pode ser desfeita.
+            </p>
+            <footer>
+              <button type="button" className="confirmar-exclusao-cancelar" onClick={() => setConfirmarExclusao(false)} disabled={salvando}>
+                Cancelar
+              </button>
+              <button type="button" className="confirmar-exclusao-botao" onClick={excluir} disabled={salvando}>
+                {salvando ? "Excluindo..." : "Sim, excluir"}
+              </button>
+            </footer>
+          </section>
+        </div>
+      )}
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-﻿import "dotenv/config";
+import "dotenv/config";
 import { pool } from "../src/config/database.js";
 
 const intervaloMs = Math.max(500, Number(process.env.SIMULACAO_INTERVALO_MS) || 500);
