@@ -41,6 +41,14 @@
   --toast-cor: var(--cor-informacao);
 }
 
+:root[data-tema="claro"] .toast-success {
+  --toast-cor: var(--light-success);
+}
+
+:root[data-tema="claro"] .toast-info {
+  --toast-cor: var(--light-info);
+}
+
 .toast-icone {
   flex: 0 0 auto;
   margin-top: 1px;
@@ -70,11 +78,11 @@
 
 .toast-fechar {
   display: grid;
-  flex: 0 0 28px;
-  width: 28px;
-  height: 28px;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
   place-items: center;
-  margin: -5px -4px 0 0;
+  margin: -8px -7px 0 0;
   color: var(--cor-texto-fraco);
   background: transparent;
   border: 0;

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import Header from "@/components/headerAdmin/HeaderAdmin";
 import ModalNovoCliente from "@/components/clientes/ModalNovoCliente";
+import { useToast } from "@/components/toast/ToastProvider";
 import "./contatos.css";
 
 const API_URL = (
@@ -30,6 +31,7 @@ function iniciais(nome = "") {
 }
 
 export default function Contatos() {
+  const toast = useToast();
   const [contatos, setContatos] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
@@ -126,7 +128,9 @@ export default function Contatos() {
     setAviso("");
     try {
       await salvarSituacao(contato, "ignorado");
+      toast.success("Pedido marcado como ignorado.");
     } catch (erroRequisicao) {
+      toast.error(erroRequisicao.message || "Não foi possível atualizar o pedido.");
       setErro(erroRequisicao.message || "Não foi possível atualizar o pedido.");
     } finally {
       setAtualizandoId(null);
@@ -139,7 +143,9 @@ export default function Contatos() {
     try {
       await salvarSituacao(contato, "respondido");
       atualizado = true;
+      toast.success("Pedido de contato atualizado.");
     } catch {
+      toast.warning("Cliente cadastrado, mas não foi possível atualizar o estado do pedido.");
       setAviso(
         "Cliente cadastrado, mas não foi possível atualizar o estado deste pedido."
       );

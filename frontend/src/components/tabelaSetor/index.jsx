@@ -135,6 +135,7 @@ export default function TabelaSetores() {
           </p>
         </div>
         <div className="tabela-setores__busca">
+          <i className="bi bi-search" aria-hidden="true" />
           <input
             type="search"
             placeholder="Buscar setor..."
@@ -145,6 +146,18 @@ export default function TabelaSetores() {
               setPagina(1);
             }}
           />
+          {busca && (
+            <button
+              type="button"
+              aria-label="Limpar busca"
+              onClick={() => {
+                setBusca("");
+                setPagina(1);
+              }}
+            >
+              <i className="bi bi-x-circle-fill" aria-hidden="true" />
+            </button>
+          )}
         </div>
       </header>
       <div className="tabela-setores__rolagem">

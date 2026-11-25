@@ -309,7 +309,13 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
                 </label>
                 <label>
                   Forma de pagamento
-                  <input name="forma_pagamento" value={novoPagamento.forma_pagamento} onChange={alterarNovoPagamento} maxLength={50} placeholder="Ex.: Boleto ou PIX" required />
+                  <select name="forma_pagamento" value={novoPagamento.forma_pagamento} onChange={alterarNovoPagamento} required>
+                    <option value="">Selecione</option>
+                    <option value="boleto">Boleto</option>
+                    <option value="pix">PIX</option>
+                    <option value="cartao">Cartão</option>
+                  </select>
+                  {/* <input name="forma_pagamento" value={novoPagamento.forma_pagamento} onChange={alterarNovoPagamento} maxLength={50} placeholder="Ex.: Boleto ou PIX" required /> */}
                 </label>
                 <label>
                   Status inicial
@@ -335,6 +341,6 @@ export default function ModalGerenciarCliente({ cliente, modo = "gerenciar", onF
           </>
         )}
       </section>
-    </div>
+    </div >
   );
 }

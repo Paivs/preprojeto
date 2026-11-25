@@ -49,7 +49,6 @@ export default function ConfiguracaoAdmin() {
   const [perfilCarregado, setPerfilCarregado] = useState(false);
   const [salvandoPerfil, setSalvandoPerfil] = useState(false);
   const [salvandoSenha, setSalvandoSenha] = useState(false);
-  const [feedback, setFeedback] = useState(null);
 
   useEffect(() => {
     let ativo = true;
@@ -57,11 +56,7 @@ export default function ConfiguracaoAdmin() {
       const tokenSessao = sessionStorage.getItem("token");
       if (!tokenSessao) {
         if (ativo) {
-          setFeedback({
-            tipo: "erro",
-            texto:
-              "Sua sessão expirou. Entre novamente para editar as configurações.",
-          });
+          toast.error("Sua sessão expirou. Entre novamente para editar as configurações.");
           setCarregando(false);
         }
         return;
@@ -80,7 +75,7 @@ export default function ConfiguracaoAdmin() {
           setPerfilCarregado(true);
         }
       } catch (erro) {
-        if (ativo) setFeedback({ tipo: "erro", texto: erro.message });
+        if (ativo) toast.error(erro.message);
       } finally {
         if (ativo) setCarregando(false);
       }
@@ -89,7 +84,7 @@ export default function ConfiguracaoAdmin() {
     return () => {
       ativo = false;
     };
-  }, []);
+  }, [toast]);
 
   function atualizarCampo(evento) {
     const { name, value } = evento.target;
@@ -98,7 +93,6 @@ export default function ConfiguracaoAdmin() {
 
   async function salvarPerfil(evento) {
     evento.preventDefault();
-    setFeedback(null);
     setSalvandoPerfil(true);
     try {
       const dados = await requisitarConfiguracao(token, "", {
@@ -131,12 +125,7 @@ export default function ConfiguracaoAdmin() {
       );
       window.dispatchEvent(new Event("volthouse:perfil-atualizado"));
       toast.success("Configurações salvas com sucesso.");
-      setFeedback({
-        tipo: "sucesso",
-        texto: "Configurações salvas com sucesso.",
-      });
     } catch (erro) {
-      setFeedback({ tipo: "erro", texto: erro.message });
       toast.error(erro.message || "Não foi possível salvar as configurações.");
     } finally {
       setSalvandoPerfil(false);
@@ -145,7 +134,6 @@ export default function ConfiguracaoAdmin() {
 
   async function salvarSenha(evento) {
     evento.preventDefault();
-    setFeedback(null);
     setErroSenha(null);
     setSalvandoSenha(true);
     try {
@@ -154,7 +142,6 @@ export default function ConfiguracaoAdmin() {
         body: JSON.stringify(senha),
       });
       setSenha({ senha_atual: "", nova_senha: "", confirmar_senha: "" });
-      setFeedback({ tipo: "sucesso", texto: resultado.mensagem });
       toast.success(resultado.mensagem || "Senha atualizada com sucesso.");
     } catch (erro) {
       toast.error(erro.message || "Não foi possível atualizar a senha.");
@@ -187,14 +174,6 @@ export default function ConfiguracaoAdmin() {
             </div>
           </div>
 
-          {feedback && (
-            <p
-              className={`config-feedback ${feedback.tipo}`}
-              role={feedback.tipo === "erro" ? "alert" : "status"}
-            >
-              {feedback.texto}
-            </p>
-          )}
           {carregando && (
             <p className="config-feedback" role="status">
               Carregando configurações...
@@ -272,6 +251,14 @@ export default function ConfiguracaoAdmin() {
                     </div>
                   </div>
                 </div>
+                <button
+                  className="config-botao"
+                  type="submit"
+                  disabled={carregando || !perfilCarregado || salvandoPerfil || !token}
+                  aria-busy={salvandoPerfil}
+                >
+                  {salvandoPerfil ? "Salvando..." : "Salvar dados"}
+                </button>
               </section>
             </form>
 
@@ -285,7 +272,7 @@ export default function ConfiguracaoAdmin() {
               </div>
               <div className="main-dados">
                 <div className="card-config">
-                  <div className="group-value">
+                  <div className="group-value group-value-senha">
                     <div className="dados-config">
                       <label htmlFor="senha_atual">Senha atual</label>
                       <input
@@ -318,71 +305,73 @@ export default function ConfiguracaoAdmin() {
                         </span>
                       )}
                     </div>
-                    <div className="dados-config">
-                      <label htmlFor="nova_senha">Nova senha</label>
-                      <input
-                        id="nova_senha"
-                        type="password"
-                        autoComplete="off"
-                        value={senha.nova_senha}
-                        aria-invalid={erroSenha?.campo === "nova_senha"}
-                        aria-describedby={
-                          erroSenha?.campo === "nova_senha"
-                            ? "erro-nova-senha"
-                            : undefined
-                        }
-                        onChange={(evento) => {
-                          setSenha((atual) => ({
-                            ...atual,
-                            nova_senha: evento.target.value,
-                          }));
-                          setErroSenha(null);
-                        }}
-                        disabled={carregando}
-                      />
-                      {erroSenha?.campo === "nova_senha" && (
-                        <span
-                          className="erro-campo-senha"
-                          id="erro-nova-senha"
-                          role="alert"
-                        >
-                          {erroSenha.texto}
-                        </span>
-                      )}
-                    </div>
-                    <div className="dados-config">
-                      <label htmlFor="confirmar_senha">
-                        Confirmar nova senha
-                      </label>
-                      <input
-                        id="confirmar_senha"
-                        type="password"
-                        autoComplete="off"
-                        value={senha.confirmar_senha}
-                        aria-invalid={erroSenha?.campo === "confirmar_senha"}
-                        aria-describedby={
-                          erroSenha?.campo === "confirmar_senha"
-                            ? "erro-confirmar-senha"
-                            : undefined
-                        }
-                        onChange={(evento) => {
-                          setSenha((atual) => ({
-                            ...atual,
-                            confirmar_senha: evento.target.value,
-                          }));
-                          setErroSenha(null);
-                        }}
-                        disabled={carregando}
-                      />
-                      {erroSenha?.campo === "confirmar_senha" && (
-                        <span
-                          className="erro-campo-senha"
-                          id="erro-confirmar-senha"
-                          role="alert"
-                        >
-                          {erroSenha.texto}
-                        </span>
-                      )}
+                    <div className="dados-config-coluna">
+                      <div className="dados-config">
+                        <label htmlFor="nova_senha">Nova senha</label>
+                        <input
+                          id="nova_senha"
+                          type="password"
+                          autoComplete="off"
+                          value={senha.nova_senha}
+                          aria-invalid={erroSenha?.campo === "nova_senha"}
+                          aria-describedby={
+                            erroSenha?.campo === "nova_senha"
+                              ? "erro-nova-senha"
+                              : undefined
+                          }
+                          onChange={(evento) => {
+                            setSenha((atual) => ({
+                              ...atual,
+                              nova_senha: evento.target.value,
+                            }));
+                            setErroSenha(null);
+                          }}
+                          disabled={carregando}
+                        />
+                        {erroSenha?.campo === "nova_senha" && (
+                          <span
+                            className="erro-campo-senha"
+                            id="erro-nova-senha"
+                            role="alert"
+                          >
+                            {erroSenha.texto}
+                          </span>
+                        )}
+                      </div>
+                      <div className="dados-config">
+                        <label htmlFor="confirmar_senha">
+                          Confirmar nova senha
+                        </label>
+                        <input
+                          id="confirmar_senha"
+                          type="password"
+                          autoComplete="off"
+                          value={senha.confirmar_senha}
+                          aria-invalid={erroSenha?.campo === "confirmar_senha"}
+                          aria-describedby={
+                            erroSenha?.campo === "confirmar_senha"
+                              ? "erro-confirmar-senha"
+                              : undefined
+                          }
+                          onChange={(evento) => {
+                            setSenha((atual) => ({
+                              ...atual,
+                              confirmar_senha: evento.target.value,
+                            }));
+                            setErroSenha(null);
+                          }}
+                          disabled={carregando}
+                        />
+                        {erroSenha?.campo === "confirmar_senha" && (
+                          <span
+                            className="erro-campo-senha"
+                            id="erro-confirmar-senha"
+                            role="alert"
+                          >
+                            {erroSenha.texto}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
